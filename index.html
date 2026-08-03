@@ -171,6 +171,7 @@ input,select,button,textarea{font-family:inherit; font-size:16px;}
     <span data-i18n="goldRateShort"></span>
     <span class="rv num" id="rateVal">—</span>
     <span class="rt" id="rateTime"></span>
+    <button class="rb" onclick="openMargin()" title="margin" style="font-size:13px">%</button>
     <button class="rb" onclick="refreshRate(true)" title="refresh">↻</button>
   </div>
 
@@ -179,6 +180,7 @@ input,select,button,textarea{font-family:inherit; font-size:16px;}
     <div class="field" style="margin:12px 0 8px">
       <input id="searchBox" type="search" data-i18n-ph="search" oninput="renderItems()" autocapitalize="off">
     </div>
+    <div class="chips" id="catFilterRow" style="margin:0 0 10px; flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch;"></div>
     <div class="filterrow">
       <span class="eyebrow" style="margin:0" data-i18n="items"></span>
       <span class="count" id="itemCount"></span>
@@ -223,6 +225,10 @@ input,select,button,textarea{font-family:inherit; font-size:16px;}
     <div class="bars" id="bars"></div>
     <div class="eyebrow" data-i18n="recentSales"></div>
     <ul class="salelist" id="saleList"></ul>
+    <div style="margin-top:16px; display:flex; gap:8px;">
+      <button class="btn ghost" onclick="exportSales()" data-i18n="exportSales"></button>
+      <button class="btn ghost" onclick="exportItems()" data-i18n="exportItems"></button>
+    </div>
   </div>
 
   <nav class="tabbar">
@@ -262,6 +268,18 @@ input,select,button,textarea{font-family:inherit; font-size:16px;}
   </div>
 </div>
 
+<!-- ======== MARGIN MODAL ======== -->
+<div id="marginModal" class="modal hidden" onclick="if(event.target===this)closeMargin()">
+  <div class="sheet">
+    <h3 data-i18n="margin"></h3>
+    <div class="field"><label data-i18n="marginHint"></label>
+      <input id="marginInput" type="number" inputmode="decimal" step="0.1" placeholder="0"></div>
+    <button class="btn" onclick="saveMargin()" data-i18n="save"></button>
+    <button class="link" onclick="closeMargin()" data-i18n="cancel"></button>
+    <div class="msg" id="marginMsg"></div>
+  </div>
+</div>
+
 <!-- ======== SELL MODAL ======== -->
 <div id="sellModal" class="modal hidden" onclick="if(event.target===this)closeSell()">
   <div class="sheet">
@@ -293,7 +311,10 @@ const STR = {
   needCodeWeight:"Լրացրեք կոդը և քաշը", sold:"վաճառք", uploading:"Բեռնում…",
   delConfirm:"Ջնջե՞լ այս ապրանքը (վաճառքների պատմությունը կմնա)", checkEmail:"Ստուգեք էլ. փոստը՝ հաստատման համար",
   g:"գ", live:"շուկա", manual:"ձեռքով", rateFail:"Շուկայի գինը հասանելի չէ — մուտքագրեք ձեռքով",
-  search:"Որոնել կոդով կամ անունով…", quickName:"Արագ անուն"},
+  search:"Որոնել կոդով կամ անունով…", quickName:"Արագ անուն",
+  editItem:"Խմբագրել ապրանքը", delSale:"Ջնջե՞լ այս վաճառքը", all:"Բոլորը",
+  exportSales:"Վաճառքներ (CSV)", exportItems:"Ապրանքներ (CSV)",
+  margin:"Հավելագին %", marginHint:"Ավելացվում է շուկայական գնի վրա (%)"},
  en:{tagline:"Jeweler's tool", setupHint:"First run: paste your Supabase credentials (from the SETUP file).",
   continue:"Continue", login:"Log in", signup:"Sign up", email:"Email", password:"Password",
   shopName:"Shop name", haveAcc:"Have an account — Log in", noAcc:"No account — Sign up",
@@ -309,7 +330,10 @@ const STR = {
   needCodeWeight:"Fill in code and weight", sold:"sold", uploading:"Uploading…",
   delConfirm:"Delete this item? (Sales history is kept)", checkEmail:"Check your email to confirm",
   g:"g", live:"market", manual:"manual", rateFail:"Market price unavailable — enter manually",
-  search:"Search by code or name…", quickName:"Quick name"}
+  search:"Search by code or name…", quickName:"Quick name",
+  editItem:"Edit item", delSale:"Delete this sale?", all:"All",
+  exportSales:"Sales (CSV)", exportItems:"Items (CSV)",
+  margin:"Margin %", marginHint:"Added on top of market price (%)"}
 };
 let lang = localStorage.getItem('assay_lang') || 'hy';
 const t = k => (STR[lang][k] ?? k);
@@ -328,7 +352,10 @@ const FINENESS=[375,585,750,916,999];
 const CATS={hy:['Մատանի','Շղթա','Ապարանջան','Ականջօղ','Կախազարդ','Խաչ','Ժամացույց'],
             en:['Ring','Chain','Bracelet','Earrings','Pendant','Cross','Watch']};
 let addFine=585, calcFine=585, editPhotoBlob=null, aPriceTouched=false;
-let goldRate=0, rateAt=0, rateSource='';  // AMD per gram, 999
+let goldRate=0, rateAt=0, rateSource='';  // AMD per gram, 999 (market)
+let editingId=null, catSel=null;
+/* effective rate = market + jeweler's margin % */
+function effRate(){ return Math.round(goldRate*(1+((profile&&+profile.margin_pct)||0)/100)); }
 
 function getCfg(){ try{return JSON.parse(localStorage.getItem('assay_cfg'));}catch(e){return null;} }
 function saveConfig(){
@@ -367,15 +394,32 @@ async function refreshRate(force){
 }
 function renderRate(){
   const el=document.getElementById('rateVal');
-  el.textContent = goldRate ? new Intl.NumberFormat('hy-AM').format(goldRate)+' ֏' : t('rateFail');
+  const m=(profile&&+profile.margin_pct)||0;
+  el.textContent = goldRate ? new Intl.NumberFormat('hy-AM').format(effRate())+' ֏' : t('rateFail');
   document.getElementById('rateTime').textContent =
-    goldRate ? (rateSource==='live' ? t('live')+' · '+new Date(rateAt).toLocaleTimeString('hy-AM',{hour:'2-digit',minute:'2-digit'}) : t('manual')) : '';
+    goldRate ? (rateSource==='live' ? t('live')+(m?` +${m}%`:'')+' · '+new Date(rateAt).toLocaleTimeString('hy-AM',{hour:'2-digit',minute:'2-digit'}) : t('manual')) : '';
 }
 function syncRateFields(){
   const c=document.getElementById('calcRate');
-  if(c && !c.matches(':focus') && goldRate) c.value=goldRate;
+  if(c && !c.matches(':focus') && goldRate) c.value=effRate();
   recalc(); recalcAdd();
   if(items.length) renderItems(); // reprice catalog with the fresh rate
+}
+/* ---- margin setting ---- */
+function openMargin(){
+  document.getElementById('marginInput').value=(profile&&+profile.margin_pct)||'';
+  document.getElementById('marginMsg').textContent='';
+  document.getElementById('marginModal').classList.remove('hidden');
+}
+function closeMargin(){ document.getElementById('marginModal').classList.add('hidden'); }
+async function saveMargin(){
+  const v=parseFloat(document.getElementById('marginInput').value)||0;
+  const m=document.getElementById('marginMsg'); m.innerHTML='<span class="spin"></span>';
+  try{
+    const {error}=await sb.from('profiles').update({margin_pct:v}).eq('id',user.id);
+    if(error) throw error;
+    profile.margin_pct=v; closeMargin(); renderRate(); syncRateFields();
+  }catch(e){ m.textContent=e.message; }
 }
 
 /* ================= auth ================= */
@@ -438,15 +482,19 @@ function soldCountOf(id){ return sales.filter(s=>s.item_id===id).length; }
 function livePriceOf(i){
   if(i.price_manual) return +i.price_amd||0;
   if(goldRate>0 && +i.weight_g>0)
-    return Math.round(i.weight_g*goldRate*(i.fineness/999) + (+i.stones_amd||0) + (+i.labor_amd||0));
+    return Math.round(i.weight_g*effRate()*(i.fineness/999) + (+i.stones_amd||0) + (+i.labor_amd||0));
   return +i.price_amd||0;
 }
 function renderItems(){
   const q=((document.getElementById('searchBox')||{}).value||'').trim().toLowerCase();
-  const list=q ? items.filter(i=>
+  let list=q ? items.filter(i=>
       (i.code||'').toLowerCase().includes(q) ||
       (i.title||'').toLowerCase().includes(q) ||
       String(i.fineness).includes(q)) : items;
+  if(catSel!==null){
+    const names=[CATS.hy[catSel],CATS.en[catSel]].map(s=>s.toLowerCase());
+    list=list.filter(i=> names.some(n=>(i.title||'').toLowerCase().includes(n)));
+  }
   document.getElementById('itemCount').textContent = q ? list.length+' / '+items.length : items.length;
   document.getElementById('itemsEmpty').classList.toggle('hidden', list.length>0);
   document.getElementById('itemGrid').innerHTML=list.map(i=>{
@@ -461,6 +509,7 @@ function renderItems(){
         ${n?`<div class="soldn num">${n}× ${t('sold')}</div>`:''}
         <div class="actions">
           <button class="sellbtn" onclick="openSell('${i.id}')">${t('sell')}</button>
+          <button class="delbtn" onclick="openEdit('${i.id}')">✎</button>
           <button class="delbtn" onclick="delItem('${i.id}')">✕</button>
         </div>
       </div>
@@ -479,6 +528,15 @@ function buildChips(){
   mk('addChips', addFine, 'setAddFine'); mk('calcChips', calcFine, 'setCalcFine');
   document.getElementById('catChips').innerHTML = CATS[lang].map(c=>
     `<button class="chip" onclick="setCat(this)">${c}</button>`).join('');
+  document.getElementById('catFilterRow').innerHTML =
+    `<button class="chip ${catSel===null?'on':''}" onclick="setCatFilter(null,this)">${t('all')}</button>`+
+    CATS[lang].map((c,i)=>`<button class="chip ${catSel===i?'on':''}" onclick="setCatFilter(${i},this)">${c}</button>`).join('');
+}
+function setCatFilter(i,el){
+  catSel = (i===catSel)?null:i;   // tap again = back to all
+  [...el.parentNode.children].forEach((c,idx)=>c.classList.toggle('on', catSel===null?idx===0:idx===catSel+1));
+  if(catSel===null) el.parentNode.children[0].classList.add('on');
+  renderItems();
 }
 function setCat(el){
   document.getElementById('aTitle').value = el.textContent;
@@ -488,7 +546,8 @@ function setAddFine(f,el){ addFine=f; [...el.parentNode.children].forEach(c=>c.c
 function setCalcFine(f,el){ calcFine=f; [...el.parentNode.children].forEach(c=>c.classList.toggle('on',+c.textContent===f)); recalc(); }
 
 function openAdd(prefill){
-  editPhotoBlob=null; aPriceTouched=false;
+  editingId=null; editPhotoBlob=null; aPriceTouched=false;
+  document.querySelector('#addModal h3').textContent=t('addItem');
   document.getElementById('photoBox').innerHTML=`<span id="photoHint">${t('tapPhoto')}</span>`;
   ['aCode','aTitle','aWeight','aStones','aLabor','aPrice'].forEach(id=>document.getElementById(id).value='');
   [...document.getElementById('catChips').children].forEach(c=>c.classList.remove('on'));
@@ -497,13 +556,23 @@ function openAdd(prefill){
   document.getElementById('addModal').classList.remove('hidden');
   recalcAdd();
 }
+function openEdit(id){
+  const it=items.find(i=>i.id===id); if(!it) return;
+  openAdd({aCode:it.code, aTitle:it.title||'', aWeight:it.weight_g,
+           aStones:it.stones_amd||'', aLabor:it.labor_amd||'', aPrice:it.price_amd});
+  editingId=id; addFine=it.fineness; buildChips();
+  document.querySelector('#addModal h3').textContent=t('editItem');
+  if(it.photo_url) document.getElementById('photoBox').innerHTML=`<img src="${it.photo_url}">`;
+  aPriceTouched=!!it.price_manual;   // manual price stays as typed; auto re-follows the rate
+  recalcAdd();
+}
 function closeAdd(){ document.getElementById('addModal').classList.add('hidden'); }
 
 function computeAddTotal(){
   const w=parseFloat(document.getElementById('aWeight').value)||0;
   const st=parseFloat(document.getElementById('aStones').value)||0;
   const lb=parseFloat(document.getElementById('aLabor').value)||0;
-  return Math.round(w*goldRate*(addFine/999)+st+lb);
+  return Math.round(w*effRate()*(addFine/999)+st+lb);
 }
 /* manual only if the user edited the price AND it differs from the auto formula */
 function priceIsManual(){
@@ -518,7 +587,7 @@ function recalcAdd(){
   const total=computeAddTotal();
   if(!aPriceTouched) box.value = total||'';
   document.getElementById('aBreak').textContent = (w&&goldRate)
-    ? `${w}${t('g')} × ${new Intl.NumberFormat('hy-AM').format(goldRate)} × ${addFine}/999  +  ${new Intl.NumberFormat('hy-AM').format(st)}  +  ${new Intl.NumberFormat('hy-AM').format(lb)}`
+    ? `${w}${t('g')} × ${new Intl.NumberFormat('hy-AM').format(effRate())} × ${addFine}/999  +  ${new Intl.NumberFormat('hy-AM').format(st)}  +  ${new Intl.NumberFormat('hy-AM').format(lb)}`
     : '';
 }
 
@@ -550,14 +619,18 @@ async function saveItem(){
       if(error) throw error;
       photo_url = sb.storage.from('photos').getPublicUrl(path).data.publicUrl;
     }
-    const {error:e2}=await sb.from('items').insert({
-      user_id:user.id, code, title:document.getElementById('aTitle').value.trim()||null,
-      photo_url, weight_g:weight, fineness:addFine,
+    const rec={
+      code, title:document.getElementById('aTitle').value.trim()||null,
+      weight_g:weight, fineness:addFine,
       stones_amd:parseFloat(document.getElementById('aStones').value)||0,
       labor_amd:parseFloat(document.getElementById('aLabor').value)||0,
       price_amd:parseFloat(document.getElementById('aPrice').value)||0,
       price_manual: priceIsManual()
-    });
+    };
+    if(photo_url) rec.photo_url=photo_url;   // keep old photo if none picked
+    let e2;
+    if(editingId){ ({error:e2}=await sb.from('items').update(rec).eq('id',editingId)); }
+    else { rec.user_id=user.id; rec.photo_url=photo_url; ({error:e2}=await sb.from('items').insert(rec)); }
     if(e2) throw e2;
     closeAdd(); loadItems();
   }catch(e){ m.textContent=e.message; }
@@ -633,9 +706,33 @@ function renderStats(){
   document.getElementById('bars').innerHTML=cols.map(c=>`
     <div class="barcol"><div class="bar" style="height:${max?Math.round(c.v/max*100):0}%"></div><div class="barlbl num">${c.l}</div></div>`).join('');
   document.getElementById('saleList').innerHTML=sales.slice(0,30).map(s=>`
-    <li><span>${esc(s.code||'—')}</span>
-        <span style="text-align:right"><span class="num" style="color:var(--gold2);font-weight:600">${fmt(s.sold_price_amd)}</span><br>
-        <span class="d">${new Date(s.sold_at).toLocaleDateString('hy-AM')}</span></span></li>`).join('');
+    <li style="align-items:center"><span>${esc(s.code||'—')}</span>
+        <span style="text-align:right;margin-left:auto"><span class="num" style="color:var(--gold2);font-weight:600">${fmt(s.sold_price_amd)}</span><br>
+        <span class="d">${new Date(s.sold_at).toLocaleDateString('hy-AM')}</span></span>
+        <button class="delbtn" style="border:1px solid var(--line);background:none;color:var(--dim);border-radius:8px;padding:6px 10px;margin-left:10px;cursor:pointer" onclick="delSale('${s.id}')">✕</button></li>`).join('');
+}
+/* ---- undo a sale ---- */
+async function delSale(id){
+  if(!confirm(t('delSale'))) return;
+  await sb.from('sales').delete().eq('id',id);
+  await loadSales(); renderItems();
+}
+/* ---- CSV export (also the backup) ---- */
+function dlCSV(name, rows){
+  const csv='\ufeff'+rows.map(r=>r.map(x=>{x=(x==null?'':String(x)); return /[",\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x;}).join(',')).join('\r\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download=name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}
+function exportSales(){
+  dlCSV('assay-sales.csv', [['date','code','price_amd'],
+    ...sales.map(s=>[new Date(s.sold_at).toISOString().replace('T',' ').slice(0,16), s.code||'', Math.round(s.sold_price_amd)])]);
+}
+function exportItems(){
+  dlCSV('assay-items.csv', [['code','name','fineness','weight_g','stones_amd','labor_amd','price_amd','manual_price','times_sold','created'],
+    ...items.map(i=>[i.code, i.title||'', i.fineness, i.weight_g, i.stones_amd||0, i.labor_amd||0,
+      livePriceOf(i), i.price_manual?'yes':'no', soldCountOf(i.id), (i.created_at||'').slice(0,10)])]);
 }
 
 /* ================= views ================= */
