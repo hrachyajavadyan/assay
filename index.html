@@ -303,7 +303,7 @@ const STR = {
   logout:"Ելք", items:"Ապրանքներ", calc:"Հաշվիչ", stats:"Հաշվետվություն",
   noItems:"Դեռ ապրանք չկա", addItem:"Ավելացնել ապրանք",
   tapPhoto:"Սեղմեք՝ նկար ավելացնելու համար", code:"Կոդ", titleOpt:"Անուն (ոչ պարտադիր)",
-  fineness:"Հարգ", weight:"Քաշ (գ)", stones:"Քարեր (֏)", job:"Աշխատանք (֏)",
+  fineness:"Հարգ", weight:"Քաշ (գ)", stones:"Քարեր (֏)", job:"Աշխատանք (֏/գ)",
   priceAuto:"Գին ֏ (ավտոմատ, կարող եք փոխել)", save:"Պահպանել", cancel:"Չեղարկել",
   sell:"Վաճառել", confirmSale:"Վաճառքի հաստատում", soldPrice:"Վաճառքի գին (֏)",
   ratePerG:"1 գրամի գին, 999 (֏)", goldRateShort:"Ոսկի 999 · ֏/գ", total:"Ընդհանուր գին",
@@ -322,7 +322,7 @@ const STR = {
   logout:"Exit", items:"Items", calc:"Calculator", stats:"Reports",
   noItems:"No items yet", addItem:"Add item",
   tapPhoto:"Tap to add a photo", code:"Code", titleOpt:"Name (optional)",
-  fineness:"Fineness", weight:"Weight (g)", stones:"Stones (֏)", job:"Job (֏)",
+  fineness:"Fineness", weight:"Weight (g)", stones:"Stones (֏)", job:"Job (֏/g)",
   priceAuto:"Price ֏ (auto — you can edit)", save:"Save", cancel:"Cancel",
   sell:"Sell", confirmSale:"Confirm sale", soldPrice:"Sold price (֏)",
   ratePerG:"Rate per gram, 999 (֏)", goldRateShort:"Gold 999 · ֏/g", total:"Total price",
@@ -490,7 +490,7 @@ function soldCountOf(id){ return sales.filter(s=>s.item_id===id).length; }
 function livePriceOf(i){
   if(i.price_manual) return +i.price_amd||0;
   if(goldRate>0 && +i.weight_g>0)
-    return Math.round(i.weight_g*effRate()*(i.fineness/999) + (+i.stones_amd||0) + (+i.labor_amd||0));
+    return Math.round(i.weight_g*effRate()*(i.fineness/999) + (+i.stones_amd||0) + (+i.labor_amd||0)*i.weight_g);
   return +i.price_amd||0;
 }
 function renderItems(){
@@ -588,7 +588,7 @@ function computeAddTotal(){
   const w=parseFloat(document.getElementById('aWeight').value)||0;
   const st=parseFloat(document.getElementById('aStones').value)||0;
   const lb=parseFloat(document.getElementById('aLabor').value)||0;
-  return Math.round(w*effRate()*(addFine/999)+st+lb);
+  return Math.round(w*effRate()*(addFine/999)+st+lb*w);   // job is per gram
 }
 /* manual only if the user edited the price AND it differs from the auto formula */
 function priceIsManual(){
@@ -603,7 +603,7 @@ function recalcAdd(){
   const total=computeAddTotal();
   if(!aPriceTouched) box.value = total||'';
   document.getElementById('aBreak').textContent = (w&&goldRate)
-    ? `${w}${t('g')} × ${new Intl.NumberFormat('hy-AM').format(effRate())} × ${addFine}/999  +  ${new Intl.NumberFormat('hy-AM').format(st)}  +  ${new Intl.NumberFormat('hy-AM').format(lb)}`
+    ? `${w}${t('g')} × ${new Intl.NumberFormat('hy-AM').format(effRate())} × ${addFine}/999  +  ${new Intl.NumberFormat('hy-AM').format(st)}  +  ${new Intl.NumberFormat('hy-AM').format(lb)}×${w}${t('g')}`
     : '';
 }
 
@@ -681,10 +681,10 @@ function recalc(){
   const w=parseFloat(document.getElementById('calcWeight').value)||0;
   const st=parseFloat(document.getElementById('calcStones').value)||0;
   const labor=parseFloat(document.getElementById('calcLabor').value)||0;
-  const total = w*rate*(calcFine/999)+st+labor;
+  const total = w*rate*(calcFine/999)+st+labor*w;   // job is per gram
   box.textContent=fmt(total);
   document.getElementById('calcBreak').textContent =
-    w&&rate ? `${w} × ${new Intl.NumberFormat('hy-AM').format(rate)} × ${calcFine}/999 + ${new Intl.NumberFormat('hy-AM').format(st)} + ${new Intl.NumberFormat('hy-AM').format(labor)}` : '';
+    w&&rate ? `${w} × ${new Intl.NumberFormat('hy-AM').format(rate)} × ${calcFine}/999 + ${new Intl.NumberFormat('hy-AM').format(st)} + ${new Intl.NumberFormat('hy-AM').format(labor)}×${w}` : '';
 }
 function useCalcInItem(){
   addFine=calcFine; buildChips(); showView('Items');
@@ -747,7 +747,7 @@ function exportSales(){
     ...sales.map(s=>[new Date(s.sold_at).toISOString().replace('T',' ').slice(0,16), s.code||'', Math.round(s.sold_price_amd)])]);
 }
 function exportItems(){
-  dlCSV('assay-items.csv', [['code','name','fineness','weight_g','stones_amd','labor_amd','price_amd','manual_price','times_sold','created'],
+  dlCSV('assay-items.csv', [['code','name','fineness','weight_g','stones_amd','labor_amd_per_g','price_amd','manual_price','times_sold','created'],
     ...items.map(i=>[i.code, i.title||'', i.fineness, i.weight_g, i.stones_amd||0, i.labor_amd||0,
       livePriceOf(i), i.price_manual?'yes':'no', soldCountOf(i.id), (i.created_at||'').slice(0,10)])]);
 }
