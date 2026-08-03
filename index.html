@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#131110">
+<link rel="manifest" href="manifest.json">
+<title>ASSAY — Ոսկերչի գործիք</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#131110; --panel:#1d1916; --panel2:#242019;
+  --line:#352c24; --text:#f2ead9; --muted:#9c8f7c; --dim:#6b6154;
+  --gold:#d4a93c; --gold2:#f0ce6e; --danger:#c96a5a;
+  --r:10px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0; background:var(--bg); color:var(--text);
+  font-family:'Noto Sans Armenian', system-ui, -apple-system, sans-serif;
+  font-size:16px; min-height:100%;}
+body{padding-bottom:env(safe-area-inset-bottom);}
+input,select,button,textarea{font-family:inherit; font-size:16px;}
+.num{font-variant-numeric:tabular-nums;}
+.hidden{display:none !important;}
+
+.screen{max-width:520px; margin:0 auto; padding:20px 16px 96px;}
+.center-screen{min-height:100dvh; display:flex; flex-direction:column; justify-content:center; padding-bottom:20px;}
+
+.brand{display:flex; align-items:baseline; gap:10px; margin-bottom:6px;}
+.brand h1{font-size:22px; letter-spacing:.22em; margin:0; color:var(--gold2); font-weight:700;}
+.brand span{font-size:12px; color:var(--muted); letter-spacing:.06em;}
+.eyebrow{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin:22px 0 10px;}
+
+.field{margin-bottom:12px;}
+.field label{display:block; font-size:12px; color:var(--muted); margin-bottom:5px; letter-spacing:.04em;}
+.field input, .field select{width:100%; background:var(--panel); border:1px solid var(--line);
+  color:var(--text); border-radius:var(--r); padding:12px 14px; outline:none;}
+.field input:focus{border-color:var(--gold);}
+.btn{display:block; width:100%; background:var(--gold); color:#191307; border:none;
+  border-radius:var(--r); padding:14px; font-weight:700; letter-spacing:.03em; cursor:pointer;}
+.btn:active{transform:translateY(1px);}
+.btn.ghost{background:transparent; color:var(--gold2); border:1px solid var(--line);}
+.link{background:none; border:none; color:var(--muted); text-decoration:underline; padding:10px; width:100%; cursor:pointer;}
+.msg{font-size:13px; color:var(--gold2); min-height:18px; margin-top:8px; text-align:center;}
+
+.chips{display:flex; gap:8px; flex-wrap:wrap;}
+.chip{border:1.5px solid var(--dim); color:var(--muted); border-radius:6px;
+  padding:7px 13px; font-weight:600; background:transparent; cursor:pointer;
+  font-variant-numeric:tabular-nums; letter-spacing:.05em;}
+.chip.on{border-color:var(--gold2); color:var(--gold2);
+  box-shadow:inset 0 0 0 1px var(--gold2); background:rgba(212,169,60,.07);}
+.hallmark{display:inline-block; border:1px solid var(--gold); color:var(--gold2);
+  border-radius:4px; padding:1px 6px; font-size:11.5px; font-weight:600; letter-spacing:.05em;}
+
+.apphead{display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;}
+.apphead .shop{font-size:13px; color:var(--muted); max-width:45%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.iconbtn{background:none; border:1px solid var(--line); color:var(--muted); border-radius:8px; padding:6px 10px; font-size:13px; cursor:pointer;}
+
+/* live rate strip */
+.ratestrip{display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--line);
+  border-radius:var(--r); padding:9px 12px; margin:10px 0 4px; font-size:13px;}
+.ratestrip .rv{color:var(--gold2); font-weight:700;}
+.ratestrip .rt{color:var(--dim); font-size:11.5px; margin-left:auto;}
+.ratestrip .rb{background:none; border:none; color:var(--gold2); font-size:16px; cursor:pointer; padding:0 2px;}
+
+.tabbar{position:fixed; bottom:0; left:0; right:0; background:rgba(19,17,16,.96);
+  border-top:1px solid var(--line); display:flex; padding-bottom:env(safe-area-inset-bottom);
+  backdrop-filter:blur(8px); z-index:40;}
+.tabbar button{flex:1; background:none; border:none; color:var(--dim); padding:12px 4px 10px;
+  font-size:11.5px; cursor:pointer; letter-spacing:.02em;}
+.tabbar button.on{color:var(--gold2);}
+.tabbar .glyph{display:block; font-size:18px; margin-bottom:3px;}
+
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.card{background:var(--panel); border:1px solid var(--line); border-radius:var(--r); overflow:hidden;}
+.card .ph{width:100%; aspect-ratio:1; object-fit:cover; display:block; background:var(--panel2);}
+.card .noph{width:100%; aspect-ratio:1; display:flex; align-items:center; justify-content:center; color:var(--dim); font-size:30px; background:var(--panel2);}
+.card .body{padding:10px;}
+.card .code{font-weight:700; letter-spacing:.04em;}
+.card .meta{font-size:12.5px; color:var(--muted); margin:3px 0 6px;}
+.card .price{color:var(--gold2); font-weight:700;}
+.card .soldn{font-size:11.5px; color:var(--dim); margin-top:2px;}
+.card .actions{display:flex; gap:6px; margin-top:8px;}
+.card .actions button{flex:1; font-size:13px; padding:8px 4px; border-radius:8px; cursor:pointer;}
+.sellbtn{background:var(--gold); border:none; color:#191307; font-weight:700;}
+.delbtn{background:none; border:1px solid var(--line); color:var(--dim); flex:0 0 40px !important;}
+.filterrow{display:flex; gap:8px; align-items:center; margin:10px 0 14px;}
+.count{margin-left:auto; font-size:12.5px; color:var(--muted);}
+
+.result{background:var(--panel); border:1px solid var(--gold); border-radius:var(--r);
+  padding:18px; text-align:center; margin-top:16px;}
+.result .lbl{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted);}
+.result .val{font-size:34px; font-weight:700; color:var(--gold2); margin-top:4px;}
+.breakdown{font-size:12.5px; color:var(--muted); margin-top:8px;}
+
+/* auto price box inside add form */
+.autoprice{background:var(--panel2); border:1px solid var(--gold); border-radius:var(--r);
+  padding:12px 14px; margin-bottom:12px;}
+.autoprice .lbl{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);}
+.autoprice input{width:100%; background:transparent; border:none; outline:none;
+  color:var(--gold2); font-size:26px; font-weight:700; padding:2px 0; font-variant-numeric:tabular-nums;}
+.autoprice .breakdown{margin-top:2px;}
+
+.statrow{display:flex; gap:10px; margin-bottom:12px;}
+.stat{flex:1; background:var(--panel); border:1px solid var(--line); border-radius:var(--r); padding:12px;}
+.stat .k{font-size:11.5px; color:var(--muted);}
+.stat .v{font-size:19px; font-weight:700; color:var(--gold2); margin-top:3px;}
+.bars{display:flex; align-items:flex-end; gap:6px; height:120px; margin-top:10px;}
+.barcol{flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:4px;}
+.bar{width:100%; background:linear-gradient(180deg,var(--gold2),var(--gold)); border-radius:3px 3px 0 0; min-height:2px;}
+.barlbl{font-size:10px; color:var(--dim);}
+.salelist{list-style:none; margin:0; padding:0;}
+.salelist li{display:flex; justify-content:space-between; padding:11px 2px; border-bottom:1px solid var(--line); font-size:14.5px;}
+.salelist .d{color:var(--muted); font-size:12.5px;}
+
+.modal{position:fixed; inset:0; background:rgba(0,0,0,.6); display:flex; align-items:flex-end; z-index:50;}
+.sheet{background:var(--bg); border-top:1px solid var(--line); border-radius:16px 16px 0 0;
+  width:100%; max-width:520px; margin:0 auto; padding:18px 16px calc(20px + env(safe-area-inset-bottom));
+  max-height:92dvh; overflow-y:auto;}
+.sheet h3{margin:0 0 14px; font-size:17px;}
+.photobox{width:100%; aspect-ratio:2.2; border:1px dashed var(--dim); border-radius:var(--r);
+  display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:14px;
+  overflow:hidden; margin-bottom:12px; background:var(--panel);}
+.photobox img{width:100%; height:100%; object-fit:cover;}
+.row2{display:flex; gap:10px;} .row2 .field{flex:1;}
+.spin{border:2px solid var(--dim); border-top-color:var(--gold2); border-radius:50%;
+  width:16px; height:16px; animation:sp .7s linear infinite; display:inline-block; vertical-align:-3px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<!-- ======== SETUP ======== -->
+<div id="setupScreen" class="screen center-screen hidden">
+  <div class="brand"><h1>ASSAY</h1><span data-i18n="tagline"></span></div>
+  <p style="color:var(--muted); font-size:14px;" data-i18n="setupHint"></p>
+  <div class="field"><label>Supabase URL</label><input id="cfgUrl" placeholder="https://xxxx.supabase.co" autocapitalize="off"></div>
+  <div class="field"><label>Supabase anon key</label><input id="cfgKey" placeholder="eyJ..." autocapitalize="off"></div>
+  <button class="btn" onclick="saveConfig()" data-i18n="continue"></button>
+  <div class="msg" id="setupMsg"></div>
+</div>
+
+<!-- ======== AUTH ======== -->
+<div id="authScreen" class="screen center-screen hidden">
+  <div class="brand"><h1>ASSAY</h1><span data-i18n="tagline"></span></div>
+  <div class="eyebrow" id="authTitle"></div>
+  <div class="field" id="shopField" style="display:none"><label data-i18n="shopName"></label><input id="shopName"></div>
+  <div class="field"><label data-i18n="email"></label><input id="email" type="email" autocapitalize="off"></div>
+  <div class="field"><label data-i18n="password"></label><input id="password" type="password"></div>
+  <button class="btn" id="authBtn" onclick="doAuth()"></button>
+  <button class="link" id="authSwitch" onclick="toggleAuthMode()"></button>
+  <div class="msg" id="authMsg"></div>
+</div>
+
+<!-- ======== APP ======== -->
+<div id="appScreen" class="screen hidden">
+  <div class="apphead">
+    <div class="brand" style="margin:0"><h1 style="font-size:17px">ASSAY</h1></div>
+    <div class="shop" id="shopLabel"></div>
+    <div style="display:flex; gap:6px;">
+      <button class="iconbtn" onclick="toggleLang()" id="langBtn">EN</button>
+      <button class="iconbtn" onclick="logout()" data-i18n="logout"></button>
+    </div>
+  </div>
+
+  <!-- live world gold price strip -->
+  <div class="ratestrip">
+    <span data-i18n="goldRateShort"></span>
+    <span class="rv num" id="rateVal">—</span>
+    <span class="rt" id="rateTime"></span>
+    <button class="rb" onclick="refreshRate(true)" title="refresh">↻</button>
+  </div>
+
+  <!-- Items view -->
+  <div id="viewItems">
+    <div class="field" style="margin:12px 0 8px">
+      <input id="searchBox" type="search" data-i18n-ph="search" oninput="renderItems()" autocapitalize="off">
+    </div>
+    <div class="filterrow">
+      <span class="eyebrow" style="margin:0" data-i18n="items"></span>
+      <span class="count" id="itemCount"></span>
+    </div>
+    <div class="grid" id="itemGrid"></div>
+    <p id="itemsEmpty" style="color:var(--muted); text-align:center; margin-top:40px;" class="hidden" data-i18n="noItems"></p>
+    <div style="margin-top:16px"><button class="btn" onclick="openAdd()" data-i18n="addItem"></button></div>
+  </div>
+
+  <!-- Calculator view -->
+  <div id="viewCalc" class="hidden">
+    <div class="eyebrow" data-i18n="calc"></div>
+    <div class="field"><label data-i18n="ratePerG"></label><input id="calcRate" type="number" inputmode="decimal" oninput="recalc()"></div>
+    <div class="field"><label data-i18n="fineness"></label>
+      <div class="chips" id="calcChips"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label data-i18n="weight"></label><input id="calcWeight" type="number" inputmode="decimal" oninput="recalc()"></div>
+      <div class="field"><label data-i18n="stones"></label><input id="calcStones" type="number" inputmode="decimal" value="0" oninput="recalc()"></div>
+    </div>
+    <div class="field"><label data-i18n="job"></label><input id="calcLabor" type="number" inputmode="decimal" value="0" oninput="recalc()"></div>
+    <div class="result">
+      <div class="lbl" data-i18n="total"></div>
+      <div class="val num" id="calcOut">0 ֏</div>
+      <div class="breakdown num" id="calcBreak"></div>
+    </div>
+    <div style="margin-top:14px"><button class="btn ghost" onclick="useCalcInItem()" data-i18n="useInItem"></button></div>
+  </div>
+
+  <!-- Stats view -->
+  <div id="viewStats" class="hidden">
+    <div class="eyebrow" data-i18n="stats"></div>
+    <div class="statrow">
+      <div class="stat"><div class="k" data-i18n="thisMonth"></div><div class="v num" id="stMonth">—</div></div>
+      <div class="stat"><div class="k" data-i18n="thisYear"></div><div class="v num" id="stYear">—</div></div>
+    </div>
+    <div class="statrow">
+      <div class="stat"><div class="k" data-i18n="allTime"></div><div class="v num" id="stAll">—</div></div>
+      <div class="stat"><div class="k" data-i18n="soldCount"></div><div class="v num" id="stCount">—</div></div>
+    </div>
+    <div class="eyebrow" data-i18n="last12"></div>
+    <div class="bars" id="bars"></div>
+    <div class="eyebrow" data-i18n="recentSales"></div>
+    <ul class="salelist" id="saleList"></ul>
+  </div>
+
+  <nav class="tabbar">
+    <button id="tabItems" class="on" onclick="showView('Items')"><span class="glyph">◆</span><span data-i18n="items"></span></button>
+    <button id="tabCalc" onclick="showView('Calc')"><span class="glyph">✚</span><span data-i18n="calc"></span></button>
+    <button id="tabStats" onclick="showView('Stats')"><span class="glyph">▤</span><span data-i18n="stats"></span></button>
+  </nav>
+</div>
+
+<!-- ======== ADD ITEM MODAL (with built-in calculator) ======== -->
+<div id="addModal" class="modal hidden" onclick="if(event.target===this)closeAdd()">
+  <div class="sheet">
+    <h3 data-i18n="addItem"></h3>
+    <div class="photobox" id="photoBox" onclick="document.getElementById('photoInput').click()">
+      <span id="photoHint" data-i18n="tapPhoto"></span>
+    </div>
+    <input type="file" id="photoInput" accept="image/*" capture="environment" class="hidden" onchange="photoPicked(this)">
+    <div class="row2">
+      <div class="field"><label data-i18n="code"></label><input id="aCode" autocapitalize="characters"></div>
+      <div class="field"><label data-i18n="titleOpt"></label><input id="aTitle"></div>
+    </div>
+    <div class="field"><label data-i18n="quickName"></label><div class="chips" id="catChips"></div></div>
+    <div class="field"><label data-i18n="fineness"></label><div class="chips" id="addChips"></div></div>
+    <div class="row2">
+      <div class="field"><label data-i18n="weight"></label><input id="aWeight" type="number" inputmode="decimal" oninput="recalcAdd()"></div>
+      <div class="field"><label data-i18n="stones"></label><input id="aStones" type="number" inputmode="decimal" placeholder="0" oninput="recalcAdd()"></div>
+    </div>
+    <div class="field"><label data-i18n="job"></label><input id="aLabor" type="number" inputmode="decimal" placeholder="0" oninput="recalcAdd()"></div>
+    <div class="autoprice">
+      <div class="lbl" data-i18n="priceAuto"></div>
+      <input id="aPrice" type="number" inputmode="decimal" oninput="aPriceTouched=true">
+      <div class="breakdown num" id="aBreak"></div>
+    </div>
+    <button class="btn" id="saveItemBtn" onclick="saveItem()" data-i18n="save"></button>
+    <button class="link" onclick="closeAdd()" data-i18n="cancel"></button>
+    <div class="msg" id="addMsg"></div>
+  </div>
+</div>
+
+<!-- ======== SELL MODAL ======== -->
+<div id="sellModal" class="modal hidden" onclick="if(event.target===this)closeSell()">
+  <div class="sheet">
+    <h3 data-i18n="confirmSale"></h3>
+    <p id="sellInfo" style="color:var(--muted); font-size:14px;"></p>
+    <div class="field"><label data-i18n="soldPrice"></label><input id="sellPrice" type="number" inputmode="decimal"></div>
+    <button class="btn" onclick="confirmSell()" data-i18n="sell"></button>
+    <button class="link" onclick="closeSell()" data-i18n="cancel"></button>
+    <div class="msg" id="sellMsg"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+/* ================= i18n ================= */
+const STR = {
+ hy:{tagline:"Ոսկերչի գործիք", setupHint:"Առաջին գործարկում․ տեղադրեք ձեր Supabase տվյալները (SETUP ֆայլից)։",
+  continue:"Շարունակել", login:"Մուտք", signup:"Գրանցվել", email:"Էլ. փոստ", password:"Գաղտնաբառ",
+  shopName:"Խանութի անուն", haveAcc:"Ունե՞ք հաշիվ — Մուտք", noAcc:"Չունե՞ք հաշիվ — Գրանցվել",
+  logout:"Ելք", items:"Ապրանքներ", calc:"Հաշվիչ", stats:"Հաշվետվություն",
+  noItems:"Դեռ ապրանք չկա", addItem:"Ավելացնել ապրանք",
+  tapPhoto:"Սեղմեք՝ նկար ավելացնելու համար", code:"Կոդ", titleOpt:"Անուն (ոչ պարտադիր)",
+  fineness:"Հարգ", weight:"Քաշ (գ)", stones:"Քարեր (֏)", job:"Աշխատանք (֏)",
+  priceAuto:"Գին ֏ (ավտոմատ, կարող եք փոխել)", save:"Պահպանել", cancel:"Չեղարկել",
+  sell:"Վաճառել", confirmSale:"Վաճառքի հաստատում", soldPrice:"Վաճառքի գին (֏)",
+  ratePerG:"1 գրամի գին, 999 (֏)", goldRateShort:"Ոսկի 999 · ֏/գ", total:"Ընդհանուր գին",
+  useInItem:"Օգտագործել նոր ապրանքի մեջ", thisMonth:"Այս ամիս", thisYear:"Այս տարի",
+  allTime:"Ընդամենը", soldCount:"Վաճառքների քանակ", last12:"Վերջին 12 ամիս", recentSales:"Վերջին վաճառքներ",
+  needCodeWeight:"Լրացրեք կոդը և քաշը", sold:"վաճառք", uploading:"Բեռնում…",
+  delConfirm:"Ջնջե՞լ այս ապրանքը (վաճառքների պատմությունը կմնա)", checkEmail:"Ստուգեք էլ. փոստը՝ հաստատման համար",
+  g:"գ", live:"շուկա", manual:"ձեռքով", rateFail:"Շուկայի գինը հասանելի չէ — մուտքագրեք ձեռքով",
+  search:"Որոնել կոդով կամ անունով…", quickName:"Արագ անուն"},
+ en:{tagline:"Jeweler's tool", setupHint:"First run: paste your Supabase credentials (from the SETUP file).",
+  continue:"Continue", login:"Log in", signup:"Sign up", email:"Email", password:"Password",
+  shopName:"Shop name", haveAcc:"Have an account — Log in", noAcc:"No account — Sign up",
+  logout:"Exit", items:"Items", calc:"Calculator", stats:"Reports",
+  noItems:"No items yet", addItem:"Add item",
+  tapPhoto:"Tap to add a photo", code:"Code", titleOpt:"Name (optional)",
+  fineness:"Fineness", weight:"Weight (g)", stones:"Stones (֏)", job:"Job (֏)",
+  priceAuto:"Price ֏ (auto — you can edit)", save:"Save", cancel:"Cancel",
+  sell:"Sell", confirmSale:"Confirm sale", soldPrice:"Sold price (֏)",
+  ratePerG:"Rate per gram, 999 (֏)", goldRateShort:"Gold 999 · ֏/g", total:"Total price",
+  useInItem:"Use in new item", thisMonth:"This month", thisYear:"This year",
+  allTime:"All time", soldCount:"Sales count", last12:"Last 12 months", recentSales:"Recent sales",
+  needCodeWeight:"Fill in code and weight", sold:"sold", uploading:"Uploading…",
+  delConfirm:"Delete this item? (Sales history is kept)", checkEmail:"Check your email to confirm",
+  g:"g", live:"market", manual:"manual", rateFail:"Market price unavailable — enter manually",
+  search:"Search by code or name…", quickName:"Quick name"}
+};
+let lang = localStorage.getItem('assay_lang') || 'hy';
+const t = k => (STR[lang][k] ?? k);
+function applyI18n(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPh); });
+  document.getElementById('langBtn').textContent = lang==='hy' ? 'EN' : 'ՀՅ';
+  refreshAuthTexts();
+}
+function toggleLang(){ lang = lang==='hy'?'en':'hy'; localStorage.setItem('assay_lang',lang); applyI18n(); buildChips(); renderItems(); renderRate(); }
+
+/* ================= state ================= */
+let sb=null, user=null, items=[], sales=[], profile=null;
+const FINENESS=[375,585,750,916,999];
+const CATS={hy:['Մատանի','Շղթա','Ապարանջան','Ականջօղ','Կախազարդ','Խաչ','Ժամացույց'],
+            en:['Ring','Chain','Bracelet','Earrings','Pendant','Cross','Watch']};
+let addFine=585, calcFine=585, editPhotoBlob=null, aPriceTouched=false;
+let goldRate=0, rateAt=0, rateSource='';  // AMD per gram, 999
+
+function getCfg(){ try{return JSON.parse(localStorage.getItem('assay_cfg'));}catch(e){return null;} }
+function saveConfig(){
+  const url=document.getElementById('cfgUrl').value.trim(), key=document.getElementById('cfgKey').value.trim();
+  if(!url.startsWith('https://')||key.length<20){ document.getElementById('setupMsg').textContent='URL / key ?'; return; }
+  localStorage.setItem('assay_cfg', JSON.stringify({url,key})); location.reload();
+}
+
+/* ================= live world gold price ================= */
+/* XAU (USD/troy oz) from gold-api.com + USD→AMD from open.er-api.com → ֏ per gram 999 */
+async function fetchLiveRate(){
+  const [g,fx]=await Promise.all([
+    fetch('https://api.gold-api.com/price/XAU').then(r=>r.json()),
+    fetch('https://open.er-api.com/v6/latest/USD').then(r=>r.json())
+  ]);
+  const usdOz=+g.price, amdUsd=+fx.rates.AMD;
+  if(!usdOz||!amdUsd) throw new Error('bad rate data');
+  return usdOz/31.1035*amdUsd;
+}
+async function refreshRate(force){
+  const cached=JSON.parse(localStorage.getItem('assay_rate')||'null');
+  if(!force && cached && Date.now()-cached.at < 30*60*1000){ // fresh within 30 min
+    goldRate=cached.v; rateAt=cached.at; rateSource='live'; renderRate(); syncRateFields(); return;
+  }
+  document.getElementById('rateVal').innerHTML='<span class="spin"></span>';
+  try{
+    goldRate=Math.round(await fetchLiveRate()); rateAt=Date.now(); rateSource='live';
+    localStorage.setItem('assay_rate', JSON.stringify({v:goldRate, at:rateAt}));
+    if(sb&&user) sb.from('profiles').update({gold_rate_amd:goldRate}).eq('id',user.id);
+  }catch(e){
+    // fallback: last saved rate from profile / cache
+    goldRate=(cached&&cached.v)||(profile&&+profile.gold_rate_amd)||0;
+    rateAt=(cached&&cached.at)||0; rateSource='manual';
+  }
+  renderRate(); syncRateFields();
+}
+function renderRate(){
+  const el=document.getElementById('rateVal');
+  el.textContent = goldRate ? new Intl.NumberFormat('hy-AM').format(goldRate)+' ֏' : t('rateFail');
+  document.getElementById('rateTime').textContent =
+    goldRate ? (rateSource==='live' ? t('live')+' · '+new Date(rateAt).toLocaleTimeString('hy-AM',{hour:'2-digit',minute:'2-digit'}) : t('manual')) : '';
+}
+function syncRateFields(){
+  const c=document.getElementById('calcRate');
+  if(c && !c.matches(':focus') && goldRate) c.value=goldRate;
+  recalc(); recalcAdd();
+}
+
+/* ================= auth ================= */
+let authMode='login';
+function refreshAuthTexts(){
+  document.getElementById('authTitle').textContent = t(authMode);
+  document.getElementById('authBtn').textContent = t(authMode);
+  document.getElementById('authSwitch').textContent = authMode==='login'?t('noAcc'):t('haveAcc');
+  document.getElementById('shopField').style.display = authMode==='signup'?'block':'none';
+}
+function toggleAuthMode(){ authMode = authMode==='login'?'signup':'login'; refreshAuthTexts(); }
+async function doAuth(){
+  const email=document.getElementById('email').value.trim(), pw=document.getElementById('password').value;
+  const m=document.getElementById('authMsg'); m.textContent='…';
+  try{
+    if(authMode==='signup'){
+      const {data,error}=await sb.auth.signUp({email,password:pw});
+      if(error) throw error;
+      if(data.session){ const shop=document.getElementById('shopName').value.trim();
+        if(shop) await sb.from('profiles').update({shop_name:shop}).eq('id',data.session.user.id);
+        enterApp(data.session.user);
+      } else m.textContent=t('checkEmail');
+    }else{
+      const {data,error}=await sb.auth.signInWithPassword({email,password:pw});
+      if(error) throw error;
+      enterApp(data.user);
+    }
+  }catch(e){ m.textContent=e.message; }
+}
+async function logout(){ await sb.auth.signOut(); location.reload(); }
+
+/* ================= boot ================= */
+window.addEventListener('load', async ()=>{
+  applyI18n();
+  const cfg=getCfg();
+  if(!cfg){ show('setupScreen'); return; }
+  sb = supabase.createClient(cfg.url, cfg.key);
+  const {data:{session}} = await sb.auth.getSession();
+  if(session) enterApp(session.user); else { show('authScreen'); refreshAuthTexts(); }
+});
+function show(id){ ['setupScreen','authScreen','appScreen'].forEach(s=>document.getElementById(s).classList.toggle('hidden', s!==id)); }
+
+async function enterApp(u){
+  user=u; show('appScreen'); buildChips();
+  const {data:p}=await sb.from('profiles').select('*').eq('id',user.id).single();
+  profile=p||{};
+  document.getElementById('shopLabel').textContent = profile.shop_name || user.email;
+  await refreshRate(false);
+  await loadItems(); await loadSales(); applyI18n();
+}
+
+/* ================= items ================= */
+async function loadItems(){
+  const {data}=await sb.from('items').select('*').order('created_at',{ascending:false});
+  items=data||[]; renderItems();
+}
+function fmt(n){ return new Intl.NumberFormat('hy-AM').format(Math.round(n||0))+' ֏'; }
+function soldCountOf(id){ return sales.filter(s=>s.item_id===id).length; }
+function renderItems(){
+  const q=((document.getElementById('searchBox')||{}).value||'').trim().toLowerCase();
+  const list=q ? items.filter(i=>
+      (i.code||'').toLowerCase().includes(q) ||
+      (i.title||'').toLowerCase().includes(q) ||
+      String(i.fineness).includes(q)) : items;
+  document.getElementById('itemCount').textContent = q ? list.length+' / '+items.length : items.length;
+  document.getElementById('itemsEmpty').classList.toggle('hidden', list.length>0);
+  document.getElementById('itemGrid').innerHTML=list.map(i=>{
+    const n=soldCountOf(i.id);
+    return `
+    <div class="card">
+      ${i.photo_url?`<img class="ph" src="${i.photo_url}" loading="lazy">`:`<div class="noph">◆</div>`}
+      <div class="body">
+        <div class="code">${esc(i.code)} <span class="hallmark num">${i.fineness}</span></div>
+        <div class="meta num">${i.weight_g} ${t('g')}${i.title?' · '+esc(i.title):''}</div>
+        <div class="price num">${fmt(i.price_amd)}</div>
+        ${n?`<div class="soldn num">${n}× ${t('sold')}</div>`:''}
+        <div class="actions">
+          <button class="sellbtn" onclick="openSell('${i.id}')">${t('sell')}</button>
+          <button class="delbtn" onclick="delItem('${i.id}')">✕</button>
+        </div>
+      </div>
+    </div>`;}).join('');
+}
+function esc(s){ return (s||'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+async function delItem(id){ if(!confirm(t('delConfirm'))) return;
+  await sb.from('items').delete().eq('id',id); loadItems(); }
+
+/* ---- add item (with built-in calculator) ---- */
+function buildChips(){
+  const mk=(elId, sel, setter)=>{
+    document.getElementById(elId).innerHTML = FINENESS.map(f=>
+      `<button class="chip num ${f===sel?'on':''}" onclick="${setter}(${f},this)">${f}</button>`).join('');
+  };
+  mk('addChips', addFine, 'setAddFine'); mk('calcChips', calcFine, 'setCalcFine');
+  document.getElementById('catChips').innerHTML = CATS[lang].map(c=>
+    `<button class="chip" onclick="setCat(this)">${c}</button>`).join('');
+}
+function setCat(el){
+  document.getElementById('aTitle').value = el.textContent;
+  [...el.parentNode.children].forEach(c=>c.classList.toggle('on', c===el));
+}
+function setAddFine(f,el){ addFine=f; [...el.parentNode.children].forEach(c=>c.classList.toggle('on',+c.textContent===f)); recalcAdd(); }
+function setCalcFine(f,el){ calcFine=f; [...el.parentNode.children].forEach(c=>c.classList.toggle('on',+c.textContent===f)); recalc(); }
+
+function openAdd(prefill){
+  editPhotoBlob=null; aPriceTouched=false;
+  document.getElementById('photoBox').innerHTML=`<span id="photoHint">${t('tapPhoto')}</span>`;
+  ['aCode','aTitle','aWeight','aStones','aLabor','aPrice'].forEach(id=>document.getElementById(id).value='');
+  [...document.getElementById('catChips').children].forEach(c=>c.classList.remove('on'));
+  if(prefill){ for(const k in prefill){ const el=document.getElementById(k); if(el) el.value=prefill[k]; } }
+  document.getElementById('addMsg').textContent='';
+  document.getElementById('addModal').classList.remove('hidden');
+  recalcAdd();
+}
+function closeAdd(){ document.getElementById('addModal').classList.add('hidden'); }
+
+function recalcAdd(){
+  const box=document.getElementById('aPrice'); if(!box) return;
+  const w=parseFloat(document.getElementById('aWeight').value)||0;
+  const st=parseFloat(document.getElementById('aStones').value)||0;
+  const lb=parseFloat(document.getElementById('aLabor').value)||0;
+  const goldCost=w*goldRate*(addFine/999);
+  const total=Math.round(goldCost+st+lb);
+  if(!aPriceTouched) box.value = total||'';
+  document.getElementById('aBreak').textContent = (w&&goldRate)
+    ? `${w}${t('g')} × ${new Intl.NumberFormat('hy-AM').format(goldRate)} × ${addFine}/999  +  ${new Intl.NumberFormat('hy-AM').format(st)}  +  ${new Intl.NumberFormat('hy-AM').format(lb)}`
+    : '';
+}
+
+function photoPicked(inp){
+  const f=inp.files[0]; if(!f) return;
+  const img=new Image(); const url=URL.createObjectURL(f);
+  img.onload=()=>{
+    const max=1200, s=Math.min(1, max/Math.max(img.width,img.height));
+    const cv=document.createElement('canvas'); cv.width=img.width*s; cv.height=img.height*s;
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+    cv.toBlob(b=>{ editPhotoBlob=b;
+      document.getElementById('photoBox').innerHTML=`<img src="${cv.toDataURL('image/jpeg',.8)}">`;
+      URL.revokeObjectURL(url);
+    },'image/jpeg',.82);
+  };
+  img.src=url;
+}
+async function saveItem(){
+  const code=document.getElementById('aCode').value.trim();
+  const weight=parseFloat(document.getElementById('aWeight').value);
+  const m=document.getElementById('addMsg');
+  if(!code||!weight){ m.textContent=t('needCodeWeight'); return; }
+  m.innerHTML='<span class="spin"></span>';
+  let photo_url=null;
+  try{
+    if(editPhotoBlob){
+      const path=`${user.id}/${Date.now()}.jpg`;
+      const {error}=await sb.storage.from('photos').upload(path, editPhotoBlob, {contentType:'image/jpeg'});
+      if(error) throw error;
+      photo_url = sb.storage.from('photos').getPublicUrl(path).data.publicUrl;
+    }
+    const {error:e2}=await sb.from('items').insert({
+      user_id:user.id, code, title:document.getElementById('aTitle').value.trim()||null,
+      photo_url, weight_g:weight, fineness:addFine,
+      stones_amd:parseFloat(document.getElementById('aStones').value)||0,
+      labor_amd:parseFloat(document.getElementById('aLabor').value)||0,
+      price_amd:parseFloat(document.getElementById('aPrice').value)||0
+    });
+    if(e2) throw e2;
+    closeAdd(); loadItems();
+  }catch(e){ m.textContent=e.message; }
+}
+
+/* ---- sell (repeatable — item never disappears) ---- */
+let sellId=null;
+function openSell(id){
+  sellId=id; const it=items.find(i=>i.id===id);
+  document.getElementById('sellInfo').textContent=`${it.code} · ${it.weight_g} ${t('g')} · ${it.fineness}`;
+  document.getElementById('sellPrice').value=it.price_amd||'';
+  document.getElementById('sellMsg').textContent='';
+  document.getElementById('sellModal').classList.remove('hidden');
+}
+function closeSell(){ document.getElementById('sellModal').classList.add('hidden'); }
+async function confirmSell(){
+  const it=items.find(i=>i.id===sellId);
+  const price=parseFloat(document.getElementById('sellPrice').value)||0;
+  const m=document.getElementById('sellMsg'); m.innerHTML='<span class="spin"></span>';
+  try{
+    const {error}=await sb.from('sales').insert({user_id:user.id,item_id:it.id,code:it.code,sold_price_amd:price});
+    if(error) throw error;
+    closeSell(); await loadSales(); renderItems();
+  }catch(e){ m.textContent=e.message; }
+}
+
+/* ================= calculator tab ================= */
+function recalc(){
+  const box=document.getElementById('calcOut'); if(!box) return;
+  const rate=parseFloat(document.getElementById('calcRate').value)||0;
+  const w=parseFloat(document.getElementById('calcWeight').value)||0;
+  const st=parseFloat(document.getElementById('calcStones').value)||0;
+  const labor=parseFloat(document.getElementById('calcLabor').value)||0;
+  const total = w*rate*(calcFine/999)+st+labor;
+  box.textContent=fmt(total);
+  document.getElementById('calcBreak').textContent =
+    w&&rate ? `${w} × ${new Intl.NumberFormat('hy-AM').format(rate)} × ${calcFine}/999 + ${new Intl.NumberFormat('hy-AM').format(st)} + ${new Intl.NumberFormat('hy-AM').format(labor)}` : '';
+}
+function useCalcInItem(){
+  addFine=calcFine; buildChips(); showView('Items');
+  openAdd({
+    aWeight: document.getElementById('calcWeight').value,
+    aStones: document.getElementById('calcStones').value,
+    aLabor: document.getElementById('calcLabor').value
+  });
+}
+
+/* ================= stats ================= */
+async function loadSales(){
+  const {data}=await sb.from('sales').select('*').order('sold_at',{ascending:false});
+  sales=data||[]; renderStats();
+}
+function renderStats(){
+  const now=new Date(), ym=d=>d.getFullYear()+'-'+d.getMonth();
+  let month=0,year=0,all=0;
+  const byMonth={};
+  sales.forEach(s=>{
+    const d=new Date(s.sold_at), p=+s.sold_price_amd;
+    all+=p;
+    if(d.getFullYear()===now.getFullYear()){ year+=p; if(d.getMonth()===now.getMonth()) month+=p; }
+    byMonth[ym(d)]=(byMonth[ym(d)]||0)+p;
+  });
+  document.getElementById('stMonth').textContent=fmt(month);
+  document.getElementById('stYear').textContent=fmt(year);
+  document.getElementById('stAll').textContent=fmt(all);
+  document.getElementById('stCount').textContent=sales.length;
+  const cols=[]; let max=0;
+  for(let i=11;i>=0;i--){
+    const d=new Date(now.getFullYear(), now.getMonth()-i, 1);
+    const v=byMonth[ym(d)]||0; max=Math.max(max,v);
+    cols.push({v, l:(d.getMonth()+1)});
+  }
+  document.getElementById('bars').innerHTML=cols.map(c=>`
+    <div class="barcol"><div class="bar" style="height:${max?Math.round(c.v/max*100):0}%"></div><div class="barlbl num">${c.l}</div></div>`).join('');
+  document.getElementById('saleList').innerHTML=sales.slice(0,30).map(s=>`
+    <li><span>${esc(s.code||'—')}</span>
+        <span style="text-align:right"><span class="num" style="color:var(--gold2);font-weight:600">${fmt(s.sold_price_amd)}</span><br>
+        <span class="d">${new Date(s.sold_at).toLocaleDateString('hy-AM')}</span></span></li>`).join('');
+}
+
+/* ================= views ================= */
+function showView(v){
+  ['Items','Calc','Stats'].forEach(x=>{
+    document.getElementById('view'+x).classList.toggle('hidden', x!==v);
+    document.getElementById('tab'+x).classList.toggle('on', x===v);
+  });
+}
+</script>
+</body>
+</html>
