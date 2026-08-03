@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#131110">
 <link rel="manifest" href="manifest.json">
-<title>ASSAY — Ոսկերչի գործիք</title>
+<title>ARMGOLD — Ոսկերչի գործիք</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -136,7 +136,7 @@ body.modal-open{overflow:hidden; position:fixed; left:0; right:0; width:100%;}
 
 <!-- ======== SETUP ======== -->
 <div id="setupScreen" class="screen center-screen hidden">
-  <div class="brand"><h1>ASSAY</h1><span data-i18n="tagline"></span></div>
+  <div class="brand"><h1>ARMGOLD</h1><span data-i18n="tagline"></span></div>
   <p style="color:var(--muted); font-size:14px;" data-i18n="setupHint"></p>
   <div class="field"><label>Supabase URL</label><input id="cfgUrl" placeholder="https://xxxx.supabase.co" autocapitalize="off"></div>
   <div class="field"><label>Supabase anon key</label><input id="cfgKey" placeholder="eyJ..." autocapitalize="off"></div>
@@ -146,7 +146,7 @@ body.modal-open{overflow:hidden; position:fixed; left:0; right:0; width:100%;}
 
 <!-- ======== AUTH ======== -->
 <div id="authScreen" class="screen center-screen hidden">
-  <div class="brand"><h1>ASSAY</h1><span data-i18n="tagline"></span></div>
+  <div class="brand"><h1>ARMGOLD</h1><span data-i18n="tagline"></span></div>
   <div class="eyebrow" id="authTitle"></div>
   <div class="field" id="shopField" style="display:none"><label data-i18n="shopName"></label><input id="shopName"></div>
   <div class="field"><label data-i18n="email"></label><input id="email" type="email" autocapitalize="off"></div>
@@ -159,7 +159,7 @@ body.modal-open{overflow:hidden; position:fixed; left:0; right:0; width:100%;}
 <!-- ======== APP ======== -->
 <div id="appScreen" class="screen hidden">
   <div class="apphead">
-    <div class="brand" style="margin:0"><h1 style="font-size:17px">ASSAY</h1></div>
+    <div class="brand" style="margin:0"><h1 style="font-size:17px">ARMGOLD</h1></div>
     <div class="shop" id="shopLabel"></div>
     <div style="display:flex; gap:6px;">
       <button class="iconbtn" onclick="toggleLang()" id="langBtn">EN</button>
@@ -762,11 +762,11 @@ function dlCSV(name, rows){
   setTimeout(()=>URL.revokeObjectURL(a.href),5000);
 }
 function exportSales(){
-  dlCSV('assay-sales.csv', [['date','code','price_amd'],
+  dlCSV('armgold-sales.csv', [['date','code','price_amd'],
     ...sales.map(s=>[new Date(s.sold_at).toISOString().replace('T',' ').slice(0,16), s.code||'', Math.round(s.sold_price_amd)])]);
 }
 function exportItems(){
-  dlCSV('assay-items.csv', [['code','name','fineness','weight_g','stones_amd','labor_amd_per_g','price_amd','manual_price','times_sold','created'],
+  dlCSV('armgold-items.csv', [['code','name','fineness','weight_g','stones_amd','labor_amd_per_g','price_amd','manual_price','times_sold','created'],
     ...items.map(i=>[i.code, i.title||'', i.fineness, i.weight_g, i.stones_amd||0, i.labor_amd||0,
       livePriceOf(i), i.price_manual?'yes':'no', soldCountOf(i.id), (i.created_at||'').slice(0,10)])]);
 }
