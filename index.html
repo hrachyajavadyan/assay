@@ -375,6 +375,7 @@ function syncRateFields(){
   const c=document.getElementById('calcRate');
   if(c && !c.matches(':focus') && goldRate) c.value=goldRate;
   recalc(); recalcAdd();
+  if(items.length) renderItems(); // reprice catalog with the fresh rate
 }
 
 /* ================= auth ================= */
@@ -433,6 +434,13 @@ async function loadItems(){
 }
 function fmt(n){ return new Intl.NumberFormat('hy-AM').format(Math.round(n||0))+' ֏'; }
 function soldCountOf(id){ return sales.filter(s=>s.item_id===id).length; }
+/* live price: auto-priced items follow the current gold rate; manual prices stay fixed */
+function livePriceOf(i){
+  if(i.price_manual) return +i.price_amd||0;
+  if(goldRate>0 && +i.weight_g>0)
+    return Math.round(i.weight_g*goldRate*(i.fineness/999) + (+i.stones_amd||0) + (+i.labor_amd||0));
+  return +i.price_amd||0;
+}
 function renderItems(){
   const q=((document.getElementById('searchBox')||{}).value||'').trim().toLowerCase();
   const list=q ? items.filter(i=>
@@ -449,7 +457,7 @@ function renderItems(){
       <div class="body">
         <div class="code">${esc(i.code)} <span class="hallmark num">${i.fineness}</span></div>
         <div class="meta num">${i.weight_g} ${t('g')}${i.title?' · '+esc(i.title):''}</div>
-        <div class="price num">${fmt(i.price_amd)}</div>
+        <div class="price num">${fmt(livePriceOf(i))}${i.price_manual?'':' <span style="font-size:10px;color:var(--dim)">↻</span>'}</div>
         ${n?`<div class="soldn num">${n}× ${t('sold')}</div>`:''}
         <div class="actions">
           <button class="sellbtn" onclick="openSell('${i.id}')">${t('sell')}</button>
@@ -491,13 +499,23 @@ function openAdd(prefill){
 }
 function closeAdd(){ document.getElementById('addModal').classList.add('hidden'); }
 
+function computeAddTotal(){
+  const w=parseFloat(document.getElementById('aWeight').value)||0;
+  const st=parseFloat(document.getElementById('aStones').value)||0;
+  const lb=parseFloat(document.getElementById('aLabor').value)||0;
+  return Math.round(w*goldRate*(addFine/999)+st+lb);
+}
+/* manual only if the user edited the price AND it differs from the auto formula */
+function priceIsManual(){
+  const p=Math.round(parseFloat(document.getElementById('aPrice').value)||0);
+  return aPriceTouched && p!==computeAddTotal();
+}
 function recalcAdd(){
   const box=document.getElementById('aPrice'); if(!box) return;
   const w=parseFloat(document.getElementById('aWeight').value)||0;
   const st=parseFloat(document.getElementById('aStones').value)||0;
   const lb=parseFloat(document.getElementById('aLabor').value)||0;
-  const goldCost=w*goldRate*(addFine/999);
-  const total=Math.round(goldCost+st+lb);
+  const total=computeAddTotal();
   if(!aPriceTouched) box.value = total||'';
   document.getElementById('aBreak').textContent = (w&&goldRate)
     ? `${w}${t('g')} × ${new Intl.NumberFormat('hy-AM').format(goldRate)} × ${addFine}/999  +  ${new Intl.NumberFormat('hy-AM').format(st)}  +  ${new Intl.NumberFormat('hy-AM').format(lb)}`
@@ -537,7 +555,8 @@ async function saveItem(){
       photo_url, weight_g:weight, fineness:addFine,
       stones_amd:parseFloat(document.getElementById('aStones').value)||0,
       labor_amd:parseFloat(document.getElementById('aLabor').value)||0,
-      price_amd:parseFloat(document.getElementById('aPrice').value)||0
+      price_amd:parseFloat(document.getElementById('aPrice').value)||0,
+      price_manual: priceIsManual()
     });
     if(e2) throw e2;
     closeAdd(); loadItems();
@@ -549,7 +568,7 @@ let sellId=null;
 function openSell(id){
   sellId=id; const it=items.find(i=>i.id===id);
   document.getElementById('sellInfo').textContent=`${it.code} · ${it.weight_g} ${t('g')} · ${it.fineness}`;
-  document.getElementById('sellPrice').value=it.price_amd||'';
+  document.getElementById('sellPrice').value=livePriceOf(it)||'';
   document.getElementById('sellMsg').textContent='';
   document.getElementById('sellModal').classList.remove('hidden');
 }
