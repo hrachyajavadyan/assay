@@ -194,15 +194,15 @@ body.modal-open{overflow:hidden; position:fixed; left:0; right:0; width:100%;}
   <!-- Calculator view -->
   <div id="viewCalc" class="hidden">
     <div class="eyebrow" data-i18n="calc"></div>
-    <div class="field"><label data-i18n="ratePerG"></label><input id="calcRate" type="number" inputmode="decimal" oninput="recalc()"></div>
+    <div class="field"><label data-i18n="ratePerG"></label><input id="calcRate" type="text" inputmode="decimal" oninput="recalc()"></div>
     <div class="field"><label data-i18n="fineness"></label>
       <div class="chips" id="calcChips"></div>
     </div>
     <div class="row2">
-      <div class="field"><label data-i18n="weight"></label><input id="calcWeight" type="number" inputmode="decimal" oninput="recalc()"></div>
-      <div class="field"><label data-i18n="stones"></label><input id="calcStones" type="number" inputmode="decimal" value="0" oninput="recalc()"></div>
+      <div class="field"><label data-i18n="weight"></label><input id="calcWeight" type="text" inputmode="decimal" oninput="recalc()"></div>
+      <div class="field"><label data-i18n="stones"></label><input id="calcStones" type="text" inputmode="decimal" value="0" oninput="recalc()"></div>
     </div>
-    <div class="field"><label data-i18n="job"></label><input id="calcLabor" type="number" inputmode="decimal" value="0" oninput="recalc()"></div>
+    <div class="field"><label data-i18n="job"></label><input id="calcLabor" type="text" inputmode="decimal" value="0" oninput="recalc()"></div>
     <div class="result">
       <div class="lbl" data-i18n="total"></div>
       <div class="val num" id="calcOut">0 ֏</div>
@@ -254,13 +254,13 @@ body.modal-open{overflow:hidden; position:fixed; left:0; right:0; width:100%;}
     <div class="field"><label data-i18n="quickName"></label><div class="chips" id="catChips"></div></div>
     <div class="field"><label data-i18n="fineness"></label><div class="chips" id="addChips"></div></div>
     <div class="row2">
-      <div class="field"><label data-i18n="weight"></label><input id="aWeight" type="number" inputmode="decimal" oninput="recalcAdd()"></div>
-      <div class="field"><label data-i18n="stones"></label><input id="aStones" type="number" inputmode="decimal" placeholder="0" oninput="recalcAdd()"></div>
+      <div class="field"><label data-i18n="weight"></label><input id="aWeight" type="text" inputmode="decimal" oninput="recalcAdd()"></div>
+      <div class="field"><label data-i18n="stones"></label><input id="aStones" type="text" inputmode="decimal" placeholder="0" oninput="recalcAdd()"></div>
     </div>
-    <div class="field"><label data-i18n="job"></label><input id="aLabor" type="number" inputmode="decimal" placeholder="0" oninput="recalcAdd()"></div>
+    <div class="field"><label data-i18n="job"></label><input id="aLabor" type="text" inputmode="decimal" placeholder="0" oninput="recalcAdd()"></div>
     <div class="autoprice">
       <div class="lbl" data-i18n="priceAuto"></div>
-      <input id="aPrice" type="number" inputmode="decimal" oninput="aPriceTouched=true">
+      <input id="aPrice" type="text" inputmode="decimal" oninput="aPriceTouched=true">
       <div class="breakdown num" id="aBreak"></div>
     </div>
     <button class="btn" id="saveItemBtn" onclick="saveItem()" data-i18n="save"></button>
@@ -274,7 +274,7 @@ body.modal-open{overflow:hidden; position:fixed; left:0; right:0; width:100%;}
   <div class="sheet">
     <h3 data-i18n="margin"></h3>
     <div class="field"><label data-i18n="marginHint"></label>
-      <input id="marginInput" type="number" inputmode="decimal" step="0.1" placeholder="0"></div>
+      <input id="marginInput" type="text" inputmode="decimal" step="0.1" placeholder="0"></div>
     <button class="btn" onclick="saveMargin()" data-i18n="save"></button>
     <button class="link" onclick="closeMargin()" data-i18n="cancel"></button>
     <div class="msg" id="marginMsg"></div>
@@ -286,7 +286,7 @@ body.modal-open{overflow:hidden; position:fixed; left:0; right:0; width:100%;}
   <div class="sheet">
     <h3 data-i18n="confirmSale"></h3>
     <p id="sellInfo" style="color:var(--muted); font-size:14px;"></p>
-    <div class="field"><label data-i18n="soldPrice"></label><input id="sellPrice" type="number" inputmode="decimal"></div>
+    <div class="field"><label data-i18n="soldPrice"></label><input id="sellPrice" type="text" inputmode="decimal"></div>
     <button class="btn" onclick="confirmSell()" data-i18n="sell"></button>
     <button class="link" onclick="closeSell()" data-i18n="cancel"></button>
     <div class="msg" id="sellMsg"></div>
@@ -364,6 +364,8 @@ function lockBody(on){
   if(on){ b.dataset.sy=window.scrollY||0; b.style.top=(-(window.scrollY||0))+'px'; b.classList.add('modal-open'); }
   else{ b.classList.remove('modal-open'); b.style.top=''; window.scrollTo(0,+b.dataset.sy||0); }
 }
+/* parse numbers typed with comma OR dot decimal separator (iPhone keypad shows comma) */
+function num(v){ return parseFloat(String(v==null?'':v).replace(/\s/g,'').replace(',','.'))||0; }
 function getCfg(){ try{return JSON.parse(localStorage.getItem('assay_cfg'));}catch(e){return null;} }
 function saveConfig(){
   const url=document.getElementById('cfgUrl').value.trim(), key=document.getElementById('cfgKey').value.trim();
@@ -421,7 +423,7 @@ function openMargin(){
 }
 function closeMargin(){ document.getElementById('marginModal').classList.add('hidden'); lockBody(false); }
 async function saveMargin(){
-  const v=parseFloat(document.getElementById('marginInput').value)||0;
+  const v=num(document.getElementById('marginInput').value)||0;
   const m=document.getElementById('marginMsg'); m.innerHTML='<span class="spin"></span>';
   try{
     const {error}=await sb.from('profiles').update({margin_pct:v}).eq('id',user.id);
@@ -585,21 +587,21 @@ function openEdit(id){
 function closeAdd(){ document.getElementById('addModal').classList.add('hidden'); lockBody(false); }
 
 function computeAddTotal(){
-  const w=parseFloat(document.getElementById('aWeight').value)||0;
-  const st=parseFloat(document.getElementById('aStones').value)||0;
-  const lb=parseFloat(document.getElementById('aLabor').value)||0;
+  const w=num(document.getElementById('aWeight').value)||0;
+  const st=num(document.getElementById('aStones').value)||0;
+  const lb=num(document.getElementById('aLabor').value)||0;
   return Math.round(w*effRate()*(addFine/999)+st+lb*w);   // job is per gram
 }
 /* manual only if the user edited the price AND it differs from the auto formula */
 function priceIsManual(){
-  const p=Math.round(parseFloat(document.getElementById('aPrice').value)||0);
+  const p=Math.round(num(document.getElementById('aPrice').value)||0);
   return aPriceTouched && p!==computeAddTotal();
 }
 function recalcAdd(){
   const box=document.getElementById('aPrice'); if(!box) return;
-  const w=parseFloat(document.getElementById('aWeight').value)||0;
-  const st=parseFloat(document.getElementById('aStones').value)||0;
-  const lb=parseFloat(document.getElementById('aLabor').value)||0;
+  const w=num(document.getElementById('aWeight').value)||0;
+  const st=num(document.getElementById('aStones').value)||0;
+  const lb=num(document.getElementById('aLabor').value)||0;
   const total=computeAddTotal();
   if(!aPriceTouched) box.value = total||'';
   document.getElementById('aBreak').textContent = (w&&goldRate)
@@ -623,7 +625,7 @@ function photoPicked(inp){
 }
 async function saveItem(){
   const code=document.getElementById('aCode').value.trim();
-  const weight=parseFloat(document.getElementById('aWeight').value);
+  const weight=num(document.getElementById('aWeight').value);
   const m=document.getElementById('addMsg');
   if(!code||!weight){ m.textContent=t('needCodeWeight'); return; }
   m.innerHTML='<span class="spin"></span>';
@@ -638,9 +640,9 @@ async function saveItem(){
     const rec={
       code, title:document.getElementById('aTitle').value.trim()||null,
       weight_g:weight, fineness:addFine,
-      stones_amd:parseFloat(document.getElementById('aStones').value)||0,
-      labor_amd:parseFloat(document.getElementById('aLabor').value)||0,
-      price_amd:parseFloat(document.getElementById('aPrice').value)||0,
+      stones_amd:num(document.getElementById('aStones').value)||0,
+      labor_amd:num(document.getElementById('aLabor').value)||0,
+      price_amd:num(document.getElementById('aPrice').value)||0,
       price_manual: priceIsManual()
     };
     if(photo_url) rec.photo_url=photo_url;   // keep old photo if none picked
@@ -665,7 +667,7 @@ function openSell(id){
 function closeSell(){ document.getElementById('sellModal').classList.add('hidden'); lockBody(false); }
 async function confirmSell(){
   const it=items.find(i=>i.id===sellId);
-  const price=parseFloat(document.getElementById('sellPrice').value)||0;
+  const price=num(document.getElementById('sellPrice').value)||0;
   const m=document.getElementById('sellMsg'); m.innerHTML='<span class="spin"></span>';
   try{
     const {error}=await sb.from('sales').insert({user_id:user.id,item_id:it.id,code:it.code,sold_price_amd:price});
@@ -677,10 +679,10 @@ async function confirmSell(){
 /* ================= calculator tab ================= */
 function recalc(){
   const box=document.getElementById('calcOut'); if(!box) return;
-  const rate=parseFloat(document.getElementById('calcRate').value)||0;
-  const w=parseFloat(document.getElementById('calcWeight').value)||0;
-  const st=parseFloat(document.getElementById('calcStones').value)||0;
-  const labor=parseFloat(document.getElementById('calcLabor').value)||0;
+  const rate=num(document.getElementById('calcRate').value)||0;
+  const w=num(document.getElementById('calcWeight').value)||0;
+  const st=num(document.getElementById('calcStones').value)||0;
+  const labor=num(document.getElementById('calcLabor').value)||0;
   const total = w*rate*(calcFine/999)+st+labor*w;   // job is per gram
   box.textContent=fmt(total);
   document.getElementById('calcBreak').textContent =
