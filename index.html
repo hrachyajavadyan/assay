@@ -116,7 +116,8 @@ input,select,button,textarea{font-family:inherit; font-size:16px;}
 .salelist li{display:flex; justify-content:space-between; padding:11px 2px; border-bottom:1px solid var(--line); font-size:14.5px;}
 .salelist .d{color:var(--muted); font-size:12.5px;}
 
-.modal{position:fixed; inset:0; background:rgba(0,0,0,.6); display:flex; align-items:flex-end; z-index:50;}
+.modal{position:fixed; inset:0; background:rgba(0,0,0,.6); display:flex; align-items:flex-end; z-index:50; overscroll-behavior:contain;}
+body.modal-open{overflow:hidden; position:fixed; left:0; right:0; width:100%;}
 .sheet{background:var(--bg); border-top:1px solid var(--line); border-radius:16px 16px 0 0;
   width:100%; max-width:520px; margin:0 auto; padding:18px 16px calc(20px + env(safe-area-inset-bottom));
   max-height:92dvh; overflow-y:auto;}
@@ -357,6 +358,12 @@ let editingId=null, catSel=null;
 /* effective rate = market + jeweler's margin % */
 function effRate(){ return Math.round(goldRate*(1+((profile&&+profile.margin_pct)||0)/100)); }
 
+/* lock the page behind an open modal so taps/typing never reach it (iOS Safari) */
+function lockBody(on){
+  const b=document.body;
+  if(on){ b.dataset.sy=window.scrollY||0; b.style.top=(-(window.scrollY||0))+'px'; b.classList.add('modal-open'); }
+  else{ b.classList.remove('modal-open'); b.style.top=''; window.scrollTo(0,+b.dataset.sy||0); }
+}
 function getCfg(){ try{return JSON.parse(localStorage.getItem('assay_cfg'));}catch(e){return null;} }
 function saveConfig(){
   const url=document.getElementById('cfgUrl').value.trim(), key=document.getElementById('cfgKey').value.trim();
@@ -410,8 +417,9 @@ function openMargin(){
   document.getElementById('marginInput').value=(profile&&+profile.margin_pct)||'';
   document.getElementById('marginMsg').textContent='';
   document.getElementById('marginModal').classList.remove('hidden');
+  lockBody(true);
 }
-function closeMargin(){ document.getElementById('marginModal').classList.add('hidden'); }
+function closeMargin(){ document.getElementById('marginModal').classList.add('hidden'); lockBody(false); }
 async function saveMargin(){
   const v=parseFloat(document.getElementById('marginInput').value)||0;
   const m=document.getElementById('marginMsg'); m.innerHTML='<span class="spin"></span>';
@@ -561,6 +569,7 @@ function openAdd(prefill){
   if(prefill){ for(const k in prefill){ const el=document.getElementById(k); if(el) el.value=prefill[k]; } }
   document.getElementById('addMsg').textContent='';
   document.getElementById('addModal').classList.remove('hidden');
+  lockBody(true);
   recalcAdd();
 }
 function openEdit(id){
@@ -573,7 +582,7 @@ function openEdit(id){
   aPriceTouched=!!it.price_manual;   // manual price stays as typed; auto re-follows the rate
   recalcAdd();
 }
-function closeAdd(){ document.getElementById('addModal').classList.add('hidden'); }
+function closeAdd(){ document.getElementById('addModal').classList.add('hidden'); lockBody(false); }
 
 function computeAddTotal(){
   const w=parseFloat(document.getElementById('aWeight').value)||0;
@@ -651,8 +660,9 @@ function openSell(id){
   document.getElementById('sellPrice').value=livePriceOf(it)||'';
   document.getElementById('sellMsg').textContent='';
   document.getElementById('sellModal').classList.remove('hidden');
+  lockBody(true);
 }
-function closeSell(){ document.getElementById('sellModal').classList.add('hidden'); }
+function closeSell(){ document.getElementById('sellModal').classList.add('hidden'); lockBody(false); }
 async function confirmSell(){
   const it=items.find(i=>i.id===sellId);
   const price=parseFloat(document.getElementById('sellPrice').value)||0;
