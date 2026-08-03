@@ -545,12 +545,19 @@ function setCat(el){
 function setAddFine(f,el){ addFine=f; [...el.parentNode.children].forEach(c=>c.classList.toggle('on',+c.textContent===f)); recalcAdd(); }
 function setCalcFine(f,el){ calcFine=f; [...el.parentNode.children].forEach(c=>c.classList.toggle('on',+c.textContent===f)); recalc(); }
 
+/* next free product code: highest numeric code + 1, padded (0001, 0002, …) */
+function nextCode(){
+  let mx=0;
+  items.forEach(i=>{ const m=String(i.code||'').trim().match(/^0*(\d+)$/); if(m) mx=Math.max(mx,+m[1]); });
+  return String(mx+1).padStart(4,'0');
+}
 function openAdd(prefill){
   editingId=null; editPhotoBlob=null; aPriceTouched=false;
   document.querySelector('#addModal h3').textContent=t('addItem');
   document.getElementById('photoBox').innerHTML=`<span id="photoHint">${t('tapPhoto')}</span>`;
   ['aCode','aTitle','aWeight','aStones','aLabor','aPrice'].forEach(id=>document.getElementById(id).value='');
   [...document.getElementById('catChips').children].forEach(c=>c.classList.remove('on'));
+  document.getElementById('aCode').value=nextCode();   // auto code, editable
   if(prefill){ for(const k in prefill){ const el=document.getElementById(k); if(el) el.value=prefill[k]; } }
   document.getElementById('addMsg').textContent='';
   document.getElementById('addModal').classList.remove('hidden');
