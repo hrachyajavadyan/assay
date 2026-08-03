@@ -362,7 +362,24 @@ function effRate(){ return Math.round(goldRate*(1+((profile&&+profile.margin_pct
 function lockBody(on){
   const b=document.body;
   if(on){ b.dataset.sy=window.scrollY||0; b.style.top=(-(window.scrollY||0))+'px'; b.classList.add('modal-open'); }
-  else{ b.classList.remove('modal-open'); b.style.top=''; window.scrollTo(0,+b.dataset.sy||0); }
+  else{
+    if(document.activeElement && document.activeElement.blur) document.activeElement.blur(); // close keyboard first
+    b.classList.remove('modal-open'); b.style.top='';
+    const y=+b.dataset.sy||0;
+    requestAnimationFrame(()=>{ window.scrollTo(0,y); requestAnimationFrame(()=>window.scrollTo(0,y)); });
+  }
+}
+/* keep the focused field and Save button reachable above the iOS keyboard */
+document.addEventListener('focusin', e=>{
+  if(e.target.closest('.sheet') && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)){
+    setTimeout(()=>{ try{ e.target.scrollIntoView({block:'center', behavior:'smooth'}); }catch(_){} }, 350);
+  }
+});
+if(window.visualViewport){
+  visualViewport.addEventListener('resize', ()=>{
+    const kb=Math.max(0, window.innerHeight - visualViewport.height);
+    document.querySelectorAll('.sheet').forEach(s=>{ s.style.paddingBottom = kb ? (kb+24)+'px' : ''; });
+  });
 }
 /* parse numbers typed with comma OR dot decimal separator (iPhone keypad shows comma) */
 function num(v){ return parseFloat(String(v==null?'':v).replace(/\s/g,'').replace(',','.'))||0; }
