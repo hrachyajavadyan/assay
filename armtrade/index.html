@@ -5,109 +5,106 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0B1220">
+<meta name="theme-color" content="#0A0F1E">
 <title>ArmTrade — Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Armenian:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Armenian:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0B1220; --panel:#111A2C; --panel2:#0E1626; --line:#1E2A40; --line2:#273550;
-  --ink:#EAF0F8; --muted:#8FA0B8; --dim:#5B6B85;
-  --gold:#D98A2B; --gold2:#F0B45D; --gold-soft:rgba(217,138,43,.14);
-  --ok:#3DD68C; --ok-soft:rgba(61,214,140,.12); --warn:#F0B45D; --warn-soft:rgba(240,180,93,.12);
-  --bad:#F26D6D; --bad-soft:rgba(242,109,109,.12); --info:#5CA8FF; --info-soft:rgba(92,168,255,.12);
-  --r:16px;
+  --bg:#080C18; --ink:#EDF1FA; --muted:#93A0BD; --dim:#5E6D8C;
+  --gold:#E39A3B; --gold2:#F7C572;
+  --cyan:#22D3EE; --green:#34D399; --rose:#FB7185; --violet:#A78BFA; --blue:#60A5FA;
+  --glass:rgba(255,255,255,.055); --glass2:rgba(255,255,255,.09);
+  --stroke:rgba(255,255,255,.11); --stroke2:rgba(255,255,255,.18);
+  --r:18px;
   --font:'Inter','Noto Sans Armenian',-apple-system,sans-serif;
   --display:'Space Grotesk','Noto Sans Armenian',sans-serif;
   --mono:'IBM Plex Mono',menlo,monospace;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;-webkit-font-smoothing:antialiased}
-body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+/* bright ambient glows */
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:
+  radial-gradient(60vw 50vh at 12% -8%, rgba(227,154,59,.22), transparent 60%),
+  radial-gradient(55vw 50vh at 96% 4%, rgba(167,139,250,.20), transparent 60%),
+  radial-gradient(70vw 60vh at 50% 118%, rgba(34,211,238,.16), transparent 60%),
+  #080C18;}
+body::after{content:"";position:fixed;inset:0;z-index:-1;background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);background-size:26px 26px;opacity:.5}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+button{font-family:var(--font)}
 
-/* ---------- header (mobile top bar) ---------- */
-header{position:sticky;top:0;z-index:50;background:rgba(11,18,32,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:calc(10px + env(safe-area-inset-top)) 16px 12px}
-.hrow{display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:680px;margin:0 auto}
-.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:.4px}
-.logomark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#B06E1B);display:flex;align-items:center;justify-content:center;color:#0B1220;font-size:16px;box-shadow:0 4px 18px rgba(217,138,43,.35)}
-.logo small{display:block;font-family:var(--font);font-weight:500;font-size:11px;color:var(--muted);letter-spacing:0;margin-top:1px}
-.hbtns{display:flex;gap:8px;align-items:center}
-.langsw{font-size:12px;font-weight:700;background:transparent;border:1px solid var(--line2);color:var(--muted);border-radius:10px;padding:7px 10px;cursor:pointer}
-.daybtn{background:linear-gradient(135deg,var(--gold),#B06E1B);border:none;color:#0B1220;border-radius:11px;padding:8px 14px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(217,138,43,.35);transition:transform .15s}
-.daybtn:active{transform:scale(.94)}
-.subrow{max-width:680px;margin:10px auto 0;display:flex;align-items:center;gap:10px}
-.datechip{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--muted);white-space:nowrap}
-.roleswitch{flex:1;display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:3px}
-.roleswitch button{flex:1;border:none;background:transparent;color:var(--muted);padding:9px 6px;border-radius:9px;font-family:var(--font);font-size:13.5px;font-weight:700;cursor:pointer;transition:.18s}
-.roleswitch button.active{background:var(--gold-soft);color:var(--gold2);box-shadow:inset 0 0 0 1px rgba(217,138,43,.4)}
-
-/* ---------- sidebar (desktop) ---------- */
-aside{display:none}
-
-/* ---------- layout ---------- */
-main{padding:16px;max-width:680px;margin:0 auto;animation:fadeUp .28s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
-.card h3{margin:0 0 10px;font-family:var(--display);font-size:15px;letter-spacing:.2px}
-.sec{margin:22px 4px 10px;font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:1.6px}
-.sec:first-child{margin-top:4px}
+/* ---------- glass primitives ---------- */
+.glass{background:var(--glass);backdrop-filter:blur(18px) saturate(135%);-webkit-backdrop-filter:blur(18px) saturate(135%);border:1px solid var(--stroke);border-radius:var(--r)}
+.card{background:var(--glass);backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);border:1px solid var(--stroke);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:0 8px 30px rgba(0,0,0,.22)}
+.card h3{margin:0 0 12px;font-family:var(--display);font-size:15px;letter-spacing:.2px;display:flex;align-items:center;gap:8px}
+.sec{margin:20px 4px 11px;font-size:11px;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:1.7px}
+.sec:first-child{margin-top:2px}
 .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .muted{color:var(--muted);font-size:12.5px;line-height:1.55}
 .big{font-family:var(--mono);font-size:24px;font-weight:600;letter-spacing:-.5px}
-.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:7px;font-size:10.5px;font-weight:700;letter-spacing:.3px}
-.b-ok{background:var(--ok-soft);color:var(--ok)} .b-warn{background:var(--warn-soft);color:var(--warn)}
-.b-bad{background:var(--bad-soft);color:var(--bad)} .b-info{background:var(--info-soft);color:var(--info)}
-.b-neutral{background:rgba(143,160,184,.12);color:var(--muted)}
-button.primary{width:100%;background:linear-gradient(135deg,var(--gold),#B06E1B);color:#0B1220;border:none;border-radius:13px;padding:16px;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 24px rgba(217,138,43,.3);transition:transform .15s}
-button.primary:active{transform:scale(.98)}
-button.ghost{background:var(--gold-soft);color:var(--gold2);border:1px solid rgba(217,138,43,.35);border-radius:11px;padding:11px 14px;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s}
-button.ghost:active{transform:scale(.96)}
-button.small{background:var(--panel2);color:var(--ink);border:1px solid var(--line2);border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer}
-button.danger{background:var(--bad-soft);color:var(--bad);border-color:rgba(242,109,109,.3)}
-.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:6px}
-.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+
+/* glassy buttons */
+.btn{position:relative;border:1px solid var(--stroke2);border-radius:13px;background:linear-gradient(180deg,var(--glass2),rgba(255,255,255,.03));color:var(--ink);font-weight:700;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:hidden;transition:transform .14s,box-shadow .2s;padding:11px 15px;font-size:13.5px}
+.btn::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.22),transparent 42%);opacity:.7;pointer-events:none}
+.btn:active{transform:scale(.96)}
+.btn.primary{width:100%;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1205;border-color:rgba(255,255,255,.25);padding:16px;font-size:16px;font-weight:800;box-shadow:0 10px 34px rgba(227,154,59,.4)}
+.btn.cyan{background:linear-gradient(135deg,#67E8F9,var(--cyan));color:#062a30;border-color:transparent;box-shadow:0 8px 26px rgba(34,211,238,.32)}
+.btn.green{background:linear-gradient(135deg,#6EE7B7,var(--green));color:#052e1c;border-color:transparent;box-shadow:0 8px 26px rgba(52,211,153,.30)}
+.btn.violet{background:linear-gradient(135deg,#C4B5FD,var(--violet));color:#1e1146;border-color:transparent;box-shadow:0 8px 26px rgba(167,139,250,.30)}
+.btn.ghost{background:var(--glass);color:var(--ink)}
+.btn.small{padding:8px 12px;font-size:12.5px;border-radius:10px}
+.btn.danger{background:linear-gradient(180deg,rgba(251,113,133,.18),rgba(251,113,133,.06));color:var(--rose);border-color:rgba(251,113,133,.35)}
+.btn.full{width:100%}
+
+/* badges / pills */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:8px;font-size:10.5px;font-weight:800;letter-spacing:.3px;border:1px solid transparent}
+.b-cyan{background:rgba(34,211,238,.14);color:#7DE9F7;border-color:rgba(34,211,238,.3)}
+.b-gold{background:rgba(247,197,114,.14);color:var(--gold2);border-color:rgba(247,197,114,.3)}
+.b-green{background:rgba(52,211,153,.14);color:#6EE7B7;border-color:rgba(52,211,153,.3)}
+.b-rose{background:rgba(251,113,133,.15);color:#FDA4B4;border-color:rgba(251,113,133,.32)}
+.b-violet{background:rgba(167,139,250,.15);color:#C4B5FD;border-color:rgba(167,139,250,.32)}
+.b-neutral{background:rgba(147,160,189,.13);color:var(--muted);border-color:rgba(147,160,189,.22)}
+.dot{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;padding:0 5px;border-radius:99px;background:var(--rose);color:#2a0710;font-size:10px;font-weight:800}
+
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-bottom:6px}
+.kpi{background:var(--glass);border:1px solid var(--stroke);border-radius:15px;padding:14px;position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;top:-30px;right:-30px;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.09),transparent 70%)}
 .kpi .v{font-family:var(--mono);font-size:22px;font-weight:600;margin-top:6px}
-.kpi .l{font-size:10.5px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.kpi .l{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:5px}
 
-/* ---------- bottom nav (mobile) ---------- */
-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(11,18,32,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;z-index:60;padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
-nav button{flex:1;border:none;background:none;padding:7px 2px;font-size:10px;color:var(--dim);cursor:pointer;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;font-family:var(--font)}
-nav button.active{color:var(--gold2)}
-nav button.active .icw{background:var(--gold-soft)}
-nav .icw{width:44px;height:28px;border-radius:99px;display:flex;align-items:center;justify-content:center;font-size:18px;transition:.15s}
-.navbadge{position:absolute;top:0;left:calc(50% + 6px);background:var(--bad);color:#fff;font-size:9.5px;font-weight:800;border-radius:99px;padding:1.5px 6px}
-
-/* ---------- product rows ---------- */
-.sug{display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}
-.sug:last-child{border-bottom:none;padding-bottom:4px}
+/* product rows */
+.sug{display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.sug:last-child{border-bottom:none;padding-bottom:2px}
 .sug:first-child{padding-top:2px}
-.pav{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0;background:var(--panel2);border:1px solid var(--line2)}
+.pav{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0;background:var(--glass2);border:1px solid var(--stroke2)}
 .sug .info{flex:1;min-width:0}
 .sug .nm{font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sug .sub{font-size:11.5px;color:var(--muted);margin-top:4px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
 .sug .sub b{font-family:var(--mono);color:var(--gold2);font-weight:600}
-.qtyctl{display:flex;align-items:center;gap:2px;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:3px}
-.qtyctl button{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--gold2);font-size:18px;font-weight:800;cursor:pointer}
-.qtyctl button:active{background:var(--gold-soft)}
-.qtyctl span{min-width:28px;text-align:center;font-family:var(--mono);font-weight:600;font-size:15px}
-.addbtn{background:var(--gold);color:#0B1220;border:none;border-radius:10px;padding:9px 13px;font-weight:800;font-size:12.5px;cursor:pointer;transition:.15s;width:100%}
+.qtyctl{display:flex;align-items:center;gap:2px;background:var(--glass2);border:1px solid var(--stroke2);border-radius:11px;padding:3px}
+.qtyctl button{width:30px;height:30px;border-radius:9px;border:none;background:transparent;color:var(--gold2);font-size:18px;font-weight:800;cursor:pointer}
+.qtyctl button:active{background:rgba(247,197,114,.18)}
+.qtyctl span{min-width:26px;text-align:center;font-family:var(--mono);font-weight:600;font-size:15px}
+.addbtn{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1205;border:none;border-radius:11px;padding:9px 13px;font-weight:800;font-size:12.5px;cursor:pointer;transition:.15s;width:100%;box-shadow:0 5px 16px rgba(227,154,59,.3)}
 .addbtn:active{transform:scale(.95)}
-.addbtn.added{background:var(--ok);color:#06251733}
-.addbtn.added{color:#052e1c}
+.addbtn.added{background:linear-gradient(135deg,#6EE7B7,var(--green));color:#052e1c;box-shadow:0 5px 16px rgba(52,211,153,.3)}
 
-/* ---------- search & chips ---------- */
-.search{width:100%;padding:13px 16px;border:1px solid var(--line2);border-radius:13px;font-size:15px;font-family:var(--font);background:var(--panel);color:var(--ink);margin-bottom:12px;outline:none;transition:.15s}
+/* search & chips */
+.search{width:100%;padding:13px 16px;border:1px solid var(--stroke2);border-radius:13px;font-size:15px;font-family:var(--font);background:var(--glass);color:var(--ink);margin-bottom:12px;outline:none;transition:.15s;backdrop-filter:blur(10px)}
 .search::placeholder{color:var(--dim)}
-.search:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+.search:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(227,154,59,.18)}
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
-.chips button{white-space:nowrap;background:var(--panel);border:1px solid var(--line2);border-radius:99px;padding:8px 15px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:var(--font)}
-.chips button.active{background:var(--gold-soft);color:var(--gold2);border-color:var(--gold)}
+.chips button{white-space:nowrap;background:var(--glass);border:1px solid var(--stroke2);border-radius:99px;padding:8px 14px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px}
+.chips button.active{background:linear-gradient(135deg,rgba(247,197,114,.22),rgba(227,154,59,.12));color:var(--gold2);border-color:rgba(247,197,114,.5)}
 
-/* ---------- orders ---------- */
-.order{border:1px solid var(--line);border-radius:var(--r);padding:15px;margin-bottom:12px;background:var(--panel)}
-.order .oh{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+/* orders */
+.order{border:1px solid var(--stroke);border-radius:15px;padding:15px;margin-bottom:12px;background:var(--glass);position:relative;overflow:hidden}
+.order.st-new{border-color:rgba(34,211,238,.28)}
+.order.st-new::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan)}
+.order.st-confirmed::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold)}
+.order.st-delivered::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green)}
+.order .oh{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;gap:8px}
 .order .oh b{font-size:14px}
 .oid{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
 .oitems{font-size:12.5px;color:var(--muted);line-height:1.75;margin-top:7px}
@@ -115,103 +112,110 @@ nav .icw{width:44px;height:28px;border-radius:99px;display:flex;align-items:cent
 .obtns{display:flex;gap:10px;margin-top:12px}
 .obtns button{flex:1}
 
-/* ---------- supplier shop list ---------- */
-.shoprow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);cursor:pointer}
+/* supplier shop list */
+.shoprow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer}
 .shoprow:last-child{border-bottom:none}
-.shopav{width:42px;height:42px;border-radius:12px;background:var(--gold-soft);border:1px solid rgba(217,138,43,.3);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--gold2);font-size:15px;flex-shrink:0}
+.shopav{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,rgba(247,197,114,.22),rgba(167,139,250,.16));border:1px solid var(--stroke2);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold2);font-size:15px;flex-shrink:0}
 
-/* ---------- alerts ---------- */
-.alert{border:1px solid rgba(240,180,93,.35);background:linear-gradient(180deg,rgba(240,180,93,.10),rgba(240,180,93,.04));border-radius:var(--r);padding:14px 15px;margin-bottom:11px}
-.alert.bad{border-color:rgba(242,109,109,.4);background:linear-gradient(180deg,rgba(242,109,109,.12),rgba(242,109,109,.04))}
+/* alerts */
+.alert{border:1px solid rgba(247,197,114,.3);background:linear-gradient(180deg,rgba(247,197,114,.10),rgba(247,197,114,.03));border-radius:15px;padding:14px 15px;margin-bottom:11px}
+.alert.bad{border-color:rgba(251,113,133,.38);background:linear-gradient(180deg,rgba(251,113,133,.12),rgba(251,113,133,.03))}
 .alert .t{font-weight:600;font-size:13.5px;line-height:1.5}
 .alert .d{font-size:12px;color:var(--muted);margin-top:5px}
 .alert .act{margin-top:10px;display:flex;gap:8px}
 
-/* ---------- toast & modal ---------- */
-#toast{position:fixed;left:50%;transform:translateX(-50%) translateY(8px);bottom:calc(100px + env(safe-area-inset-bottom));background:var(--gold);color:#0B1220;padding:12px 20px;border-radius:12px;font-size:13.5px;font-weight:700;z-index:100;opacity:0;transition:.28s;pointer-events:none;max-width:88%;text-align:center;box-shadow:0 8px 30px rgba(217,138,43,.4)}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.modal{position:fixed;inset:0;background:rgba(4,8,16,.7);z-index:90;display:flex;align-items:flex-end;justify-content:center;animation:fade .2s ease}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-.mbody{background:var(--panel);border:1px solid var(--line2);width:100%;max-width:680px;border-radius:22px 22px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom));max-height:84vh;overflow-y:auto;animation:slideUp .28s cubic-bezier(.2,.9,.3,1)}
-@keyframes slideUp{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}
-.grabber{width:40px;height:4px;border-radius:99px;background:var(--line2);margin:6px auto 14px}
-.mbody h3{margin:0 0 4px;font-family:var(--display);font-size:18px}
-.tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
-.tbl th{text-align:left;color:var(--dim);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:7px 5px;border-bottom:1px solid var(--line2)}
-.tbl td{padding:9px 5px;border-bottom:1px solid var(--line)}
-.footer-note{text-align:center;color:var(--dim);font-size:11px;margin:20px 0 6px}
-.empty{color:var(--muted);text-align:center;padding:32px 12px;font-size:13.5px}
+.empty{color:var(--muted);text-align:center;padding:30px 12px;font-size:13.5px}
 .empty .em{font-size:34px;display:block;margin-bottom:8px}
-.notice{background:var(--gold-soft);border:1px solid rgba(217,138,43,.3);border-radius:var(--r);padding:13px 15px;margin-bottom:14px;font-size:12.5px;color:var(--gold2);line-height:1.6}
-hr.sep{border:none;border-top:1px solid var(--line);margin:12px 0}
+.notice{background:linear-gradient(135deg,rgba(34,211,238,.12),rgba(167,139,250,.10));border:1px solid var(--stroke2);border-radius:15px;padding:13px 15px;margin-bottom:14px;font-size:12.5px;color:#CDE9F5;line-height:1.6}
+.footer-note{text-align:center;color:var(--dim);font-size:11px;margin:18px 0 4px}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
+.tbl th{text-align:left;color:var(--dim);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:7px 5px;border-bottom:1px solid var(--stroke2)}
+.tbl td{padding:9px 5px;border-bottom:1px solid rgba(255,255,255,.07)}
+
+/* ---------- TOP BAR (global controls) ---------- */
+#top{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:10px;padding:calc(9px + env(safe-area-inset-top)) 14px 9px;background:rgba(9,13,26,.72);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid var(--stroke)}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.3px}
+.logomark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--gold2),var(--gold));display:flex;align-items:center;justify-content:center;color:#1a1205;font-size:16px;box-shadow:0 5px 18px rgba(227,154,59,.45)}
+.logo small{display:block;font-family:var(--font);font-weight:500;font-size:10.5px;color:var(--muted);margin-top:1px}
+#top .spacer{flex:1}
+.tbtn{border:1px solid var(--stroke2);background:var(--glass);color:var(--ink);border-radius:11px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;backdrop-filter:blur(10px)}
+.tbtn:active{transform:scale(.95)}
+.tbtn.on{background:linear-gradient(135deg,rgba(247,197,114,.24),rgba(227,154,59,.12));color:var(--gold2);border-color:rgba(247,197,114,.5)}
+.tbtn.day{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1205;border-color:transparent;box-shadow:0 5px 16px rgba(227,154,59,.35)}
+.datechip{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
+
+/* ---------- SPLIT layout ---------- */
+#app{position:relative}
+.split{display:grid;grid-template-columns:1fr;gap:14px;padding:14px;max-width:720px;margin:0 auto}
+.pane{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.panehead{position:sticky;top:0;z-index:5;padding:12px 14px 8px;background:rgba(255,255,255,.04);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+.panetitle{font-family:var(--display);font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.panetitle .tag{margin-left:auto;font-family:var(--font);font-weight:700;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.panetabs{margin-bottom:0}
+.panetabs button{padding:7px 12px}
+.panetabs button.active .dot,.chips button.active .dot{background:var(--gold2);color:#1a1205}
+.panebody{padding:14px}
+.pane.flash{animation:flashPane .9s ease}
+@keyframes flashPane{0%{box-shadow:0 0 0 0 rgba(34,211,238,.0)}25%{box-shadow:0 0 0 3px rgba(34,211,238,.6),0 0 40px rgba(34,211,238,.35)}100%{box-shadow:0 0 0 0 rgba(34,211,238,0)}}
+.flowmark{display:none}
+
+/* ---------- SINGLE layout (mobile bottom nav) ---------- */
+main{padding:14px;max-width:680px;margin:0 auto;animation:fadeUp .28s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.roleswitch{display:flex;background:var(--glass);border:1px solid var(--stroke);border-radius:13px;padding:3px;margin:0 auto 4px;max-width:680px}
+.roleswitch button{flex:1;border:none;background:transparent;color:var(--muted);padding:9px 6px;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;transition:.18s}
+.roleswitch button.active{background:linear-gradient(135deg,rgba(247,197,114,.24),rgba(227,154,59,.12));color:var(--gold2)}
+nav{position:fixed;bottom:0;left:0;right:0;background:rgba(9,13,26,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--stroke);display:flex;z-index:60;padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+nav button{flex:1;border:none;background:none;padding:7px 2px;font-size:10px;color:var(--dim);cursor:pointer;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative}
+nav button.active{color:var(--gold2)}
+nav button.active .icw{background:rgba(247,197,114,.18)}
+nav .icw{width:44px;height:28px;border-radius:99px;display:flex;align-items:center;justify-content:center;font-size:18px;transition:.15s}
+.navbadge{position:absolute;top:0;left:calc(50% + 6px);background:var(--rose);color:#2a0710;font-size:9.5px;font-weight:800;border-radius:99px;padding:1.5px 6px}
+body.single-mobile{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+
+/* toast & modal */
+#toast{position:fixed;left:50%;transform:translateX(-50%) translateY(8px);bottom:calc(96px + env(safe-area-inset-bottom));background:linear-gradient(135deg,#67E8F9,var(--cyan));color:#062a30;padding:12px 20px;border-radius:13px;font-size:13.5px;font-weight:800;z-index:100;opacity:0;transition:.28s;pointer-events:none;max-width:88%;text-align:center;box-shadow:0 10px 34px rgba(34,211,238,.45)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.modal{position:fixed;inset:0;background:rgba(4,7,14,.72);backdrop-filter:blur(6px);z-index:90;display:flex;align-items:flex-end;justify-content:center;animation:fade .2s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.mbody{background:rgba(20,26,44,.92);backdrop-filter:blur(24px);border:1px solid var(--stroke2);width:100%;max-width:680px;border-radius:24px 24px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom));max-height:84vh;overflow-y:auto;animation:slideUp .28s cubic-bezier(.2,.9,.3,1)}
+@keyframes slideUp{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}
+.grabber{width:40px;height:4px;border-radius:99px;background:var(--stroke2);margin:6px auto 14px}
+.mbody h3{margin:0 0 4px;font-family:var(--display);font-size:18px}
+
+/* grid inside single desktop */
+.grid2{display:block}
 
 /* ================= DESKTOP ================= */
-@media (min-width: 980px){
-  body{padding-bottom:20px}
-  nav{display:none}
-  header{display:none}
-  aside{display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:250px;background:var(--panel2);border-right:1px solid var(--line);padding:22px 16px;z-index:70}
-  aside .logo{margin-bottom:6px}
-  aside .datechip{margin:2px 0 18px;padding-left:2px}
-  aside .roleswitch{margin-bottom:18px;flex:0 0 auto}
-  #sideNav{display:flex;flex-direction:column;gap:4px}
-  #sideNav button{display:flex;align-items:center;gap:11px;border:none;background:none;color:var(--muted);font-family:var(--font);font-size:14px;font-weight:600;padding:11px 12px;border-radius:11px;cursor:pointer;text-align:left;position:relative;transition:.15s}
-  #sideNav button:hover{background:rgba(143,160,184,.07);color:var(--ink)}
-  #sideNav button.active{background:var(--gold-soft);color:var(--gold2)}
-  #sideNav .icw{font-size:17px;width:auto;height:auto;background:none !important}
-  #sideNav .navbadge{position:static;margin-left:auto}
-  aside .bottom{margin-top:auto;display:flex;flex-direction:column;gap:10px}
-  aside .daybtn{width:100%;padding:12px}
-  aside .langsw{width:100%;padding:9px}
-  main{margin-left:250px;max-width:1160px;padding:28px 34px}
-  .kpis{grid-template-columns:repeat(4,1fr)}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 34px;align-items:start}
-  .mbody{border-radius:20px;max-width:560px;align-self:center}
+@media (min-width:980px){
+  .split{max-width:1320px;grid-template-columns:1fr 1fr;gap:18px;height:calc(100vh - 60px);padding:18px;align-items:stretch}
+  .pane{height:100%}
+  .panebody{overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--stroke2) transparent}
+  .panebody::-webkit-scrollbar{width:8px}
+  .panebody::-webkit-scrollbar-thumb{background:var(--stroke2);border-radius:99px}
+  .split.is-two .flowmark{display:flex;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:8;width:46px;height:46px;border-radius:50%;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,rgba(34,211,238,.9),rgba(167,139,250,.9));color:#04121a;box-shadow:0 8px 30px rgba(34,211,238,.5);border:2px solid rgba(255,255,255,.3);animation:pulseFlow 2.6s ease-in-out infinite}
+  @keyframes pulseFlow{0%,100%{box-shadow:0 8px 30px rgba(34,211,238,.5)}50%{box-shadow:0 8px 44px rgba(167,139,250,.7)}}
+  /* single desktop */
+  main.single-desk{max-width:1160px}
+  .single-desk .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 30px;align-items:start}
+  .single-desk .kpis{grid-template-columns:repeat(4,1fr)}
   .modal{align-items:center}
-  .sug .nm{font-size:15px}
-  button.primary{max-width:420px}
+  .mbody{border-radius:20px;max-width:560px}
+}
+@media (min-width:980px) and (max-width:1200px){
+  .panetabs button{padding:6px 9px;font-size:11.5px}
 }
 </style>
 </head>
 <body>
-<aside>
-  <div class="logo"><div class="logomark">⇄</div><div>ArmTrade<small id="roleTagD"></small></div></div>
-  <div class="datechip" id="dateChipD"></div>
-  <div class="roleswitch">
-    <button id="rshopD" onclick="setRole('shop')"></button>
-    <button id="rsupD" onclick="setRole('supplier')"></button>
-  </div>
-  <div id="sideNav"></div>
-  <div class="bottom">
-    <button class="daybtn" onclick="advanceDay()">⏭ <span id="dayLblD"></span></button>
-    <button class="langsw" id="langBtnD" onclick="toggleLang()">EN</button>
-  </div>
-</aside>
-
-<header>
-  <div class="hrow">
-    <div class="logo"><div class="logomark">⇄</div><div>ArmTrade<small id="roleTag"></small></div></div>
-    <div class="hbtns">
-      <button class="langsw" id="langBtn" onclick="toggleLang()">EN</button>
-      <button class="daybtn" onclick="advanceDay()">⏭</button>
-    </div>
-  </div>
-  <div class="subrow">
-    <div class="roleswitch">
-      <button id="rshop" onclick="setRole('shop')"></button>
-      <button id="rsup" onclick="setRole('supplier')"></button>
-    </div>
-    <div class="datechip" id="dateChip"></div>
-  </div>
-</header>
-
-<main id="main"></main>
-<nav id="nav"></nav>
+<div id="top"></div>
+<div id="app"></div>
+<nav id="nav" style="display:none"></nav>
 <div id="toast"></div>
 <div id="modalRoot"></div>
 
 <script>
-/* ArmTrade prototype v3 — ARMX design language (ink navy + apricot gold), responsive desktop/mobile */
+/* ArmTrade prototype v4 — live split view + cross-tab sync + glassmorphism */
 
 const T = {
   hy: {
@@ -238,10 +242,11 @@ const T = {
     view_history:'Պատմություն', order_history:'Պատվերների պատմություն', date:'Ամսաթիվ', qty:'Քնկ', product:'Ապրանք',
     cycle:'Ցիկլ', avg_qty:'Միջին քնկ', next_due:'Հաջորդը',
     shop_detail:'Խանութի տվյալներ', close:'Փակել', pay:'Վճարել (դեմո)', paid:'Վճարումը գրանցվեց (դեմո)',
-    suggested:'Առաջարկվում է', pcs:'հատ', reset:'Վերսկսել դեմոն', reset_done:'Դեմոն վերսկսվեց',
+    suggested:'Առաջարկվում է', pcs:'հատ', reset:'Վերսկսել', reset_done:'Դեմոն վերսկսվեց',
     delivered_msg:'Նշվեց առաքված — կմտնի պատմության մեջ',
-    demo_note:'Դեմո տարբերակ՝ պայմանական տվյալներով։ «⏭» կոճակը անցնում է հաջորդ օրը՝ տեսնելու ինչպես են աշխատում հիշեցումներն ու ազդանշանները։',
-    inbox_new:'նոր', sup_orders_today:'Այսօրվա պատվերներ', next_day:'Հաջորդ օրը'
+    demo_note:'Դեմո՝ պայմանական տվյալներով։ Ձախում պատվիրիր, աջում՝ մատակարարը միանգամից կտեսնի այն։ «⏭» կոճակն անցնում է հաջորդ օրը։',
+    inbox_new:'նոր', sup_orders_today:'Այսօրվա պատվերներ', next_day:'Հաջորդ օրը',
+    split_on:'Երկու կողմ', split_off:'Մեկ կողմ', new_order_in:'Նոր պատվեր ստացվեց 🔔'
   },
   en: {
     shop:'Shop', supplier:'Supplier',
@@ -267,14 +272,13 @@ const T = {
     view_history:'History', order_history:'Order history', date:'Date', qty:'Qty', product:'Product',
     cycle:'Cycle', avg_qty:'Avg qty', next_due:'Next due',
     shop_detail:'Shop details', close:'Close', pay:'Pay (demo)', paid:'Payment recorded (demo)',
-    suggested:'Suggested', pcs:'pcs', reset:'Reset demo', reset_done:'Demo reset',
+    suggested:'Suggested', pcs:'pcs', reset:'Reset', reset_done:'Demo reset',
     delivered_msg:'Marked delivered — added to history',
-    demo_note:'Demo version with sample data. The "⏭" button advances one day so you can watch reminders and alerts fire.',
-    inbox_new:'new', sup_orders_today:"Today's orders", next_day:'Next day'
+    demo_note:'Demo with sample data. Order on the left, and the supplier sees it instantly on the right. The "⏭" button advances a day.',
+    inbox_new:'new', sup_orders_today:"Today's orders", next_day:'Next day',
+    split_on:'Two sides', split_off:'One side', new_order_in:'New order received 🔔'
   }
 };
-let lang = 'hy';
-const t = k => T[lang][k];
 
 const DAY = 86400000;
 const START = new Date('2026-08-05T09:00:00').getTime();
@@ -304,9 +308,10 @@ const OTHER_SHOPS = [
 ];
 const MY_SHOP = {id:'me', name:'Խանութ «Նռան այգի»', nameEn:'Shop "Nran Aygi"'};
 
-let S = null;
+/* ---------- state: S = shared data (localStorage), U = per-tab UI (sessionStorage) ---------- */
+let S = null, U = null;
 function freshState(){
-  const st = {today: START, role:'shop', tab:'home', basket:{}, orders:[], history:[], debts:{}, reminded:{}, dismissed:{}, otherLast:{}, seq:1};
+  const st = {today: START, basket:{}, orders:[], history:[], debts:{}, reminded:{}, dismissed:{}, otherLast:{}, seq:1};
   PRODUCTS.forEach(p=>{
     let d = START - 62*DAY + Math.floor(Math.random()*p.cycle)*DAY;
     while(d < START - p.cycle*DAY*0.3){
@@ -320,10 +325,22 @@ function freshState(){
   OTHER_SHOPS.forEach((o,i)=>{ st.otherLast[o.id] = START - (i===2? 12 : (1+i%4))*DAY; });
   return st;
 }
-function save(){ try{ localStorage.setItem('armtrade_proto_v3', JSON.stringify(S)); }catch(e){} }
-function load(){ try{ const x = localStorage.getItem('armtrade_proto_v3'); if(x) return JSON.parse(x); }catch(e){} return null; }
-S = load() || freshState();
+const DKEY='armtrade_v4_data', UKEY='armtrade_v4_ui';
+function loadD(){ try{ const x=localStorage.getItem(DKEY); if(x) return JSON.parse(x); }catch(e){} return null; }
+function freshU(){ return {split:true, role:'shop', tab:{shop:'home', supplier:'dash'}, lang:'hy'}; }
+function loadU(){ try{ const x=sessionStorage.getItem(UKEY); if(x) return Object.assign(freshU(), JSON.parse(x)); }catch(e){} return freshU(); }
+let bc=null; try{ bc=new BroadcastChannel('armtrade_v4'); }catch(e){}
+function saveD(){ try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} try{ bc && bc.postMessage('sync'); }catch(e){} }
+function saveU(){ try{ sessionStorage.setItem(UKEY, JSON.stringify(U)); }catch(e){} }
+S = loadD() || freshState();
+U = loadU();
+let lang = U.lang;
+const t = k => T[lang][k];
 
+if(bc) bc.onmessage = ()=>{ const d=loadD(); if(d){ S=d; renderAll(true); } };
+window.addEventListener('storage', e=>{ if(e.key===DKEY){ const d=loadD(); if(d){ S=d; renderAll(true); } } });
+
+/* ---------- helpers ---------- */
 const P = id => PRODUCTS.find(p=>p.id===id);
 const SUP = id => SUPPLIERS.find(s=>s.id===id);
 const nm = o => lang==='hy' ? o.name : o.nameEn;
@@ -365,13 +382,14 @@ function supAlerts(){
 }
 const alertKey = a => a.shop.id + '_' + a.p.id + '_' + a.type;
 
-function setRole(r){ S.role = r; S.tab = r==='shop' ? 'home' : 'dash'; save(); render(); }
-function setTab(tb){ S.tab = tb; save(); render(); window.scrollTo(0,0); }
-function toggleLang(){ lang = lang==='hy' ? 'en' : 'hy'; const l = lang==='hy' ? 'EN' : 'ՀԱՅ';
-  document.getElementById('langBtn').textContent = l; document.getElementById('langBtnD').textContent = l; render(); }
-function addToBasket(pid, qty){ S.basket[pid] = (S.basket[pid]||0) + qty; save(); render(); }
-function setBasketQty(pid, qty){ if(qty<=0) delete S.basket[pid]; else S.basket[pid]=qty; save(); render(); }
-function dismissSug(pid){ S.dismissed[pid] = true; save(); render(); }
+/* ---------- actions ---------- */
+function paneTab(role, tb){ U.tab[role]=tb; saveU(); renderAll(); }
+function setRole(r){ U.role=r; saveU(); renderAll(); }
+function toggleSplit(){ U.split=!U.split; saveU(); renderAll(); }
+function toggleLang(){ U.lang = lang = (lang==='hy'?'en':'hy'); saveU(); renderAll(); }
+function addToBasket(pid, qty){ S.basket[pid] = (S.basket[pid]||0) + qty; saveD(); renderAll(); }
+function setBasketQty(pid, qty){ if(qty<=0) delete S.basket[pid]; else S.basket[pid]=qty; saveD(); renderAll(); }
+function dismissSug(pid){ S.dismissed[pid] = true; saveD(); renderAll(); }
 
 function submitBasket(){
   const bySup = {};
@@ -381,9 +399,10 @@ function submitBasket(){
     S.orders.unshift({id:'ORD-'+(S.seq++), date:S.today, shop:MY_SHOP, sup, items, status:'new'});
   });
   S.basket = {}; S.dismissed = {};
-  save(); toast(n + ' ' + t('order_placed')); setTab('orders');
+  U.tab.shop='orders'; if(!U.split) U.tab.supplier='inbox';
+  saveD(); saveU(); toast(n + ' ' + t('order_placed')); renderAll();
 }
-function confirmOrder(oid){ const o = S.orders.find(x=>x.id===oid); if(o){ o.status='confirmed'; save(); toast(t('confirmed_msg')); render(); } }
+function confirmOrder(oid){ const o = S.orders.find(x=>x.id===oid); if(o){ o.status='confirmed'; saveD(); toast(t('confirmed_msg')); renderAll(); } }
 function deliverOrder(oid){
   const o = S.orders.find(x=>x.id===oid); if(!o) return;
   o.status='delivered';
@@ -392,11 +411,11 @@ function deliverOrder(oid){
     const sum = o.items.reduce((a,x)=>a+x.qty*x.price,0);
     S.debts[o.sup] = (S.debts[o.sup]||0) + sum;
   }
-  save(); toast(t('delivered_msg')); render();
+  saveD(); toast(t('delivered_msg')); renderAll();
 }
-function remindFix(k){ S.reminded[k]=true; save(); toast(t('reminded')); render(); }
-function payDebt(sup){ S.debts[sup] = 0; save(); toast(t('paid')); render(); }
-function resetDemo(){ S = freshState(); save(); toast(t('reset_done')); render(); }
+function remindFix(k){ S.reminded[k]=true; saveD(); toast(t('reminded')); renderAll(); }
+function payDebt(sup){ S.debts[sup] = 0; saveD(); toast(t('paid')); renderAll(); }
+function resetDemo(){ S = freshState(); saveD(); toast(t('reset_done')); renderAll(); }
 
 function advanceDay(){
   S.today += DAY;
@@ -410,58 +429,103 @@ function advanceDay(){
       S.otherLast[shop.id] = S.today;
     }
   }
-  save(); toast(t('day_advanced') + ' ' + fdate(S.today)); render();
+  saveD(); toast(t('day_advanced') + ' ' + fdate(S.today)); renderAll();
 }
 
-function statusBadge(st){ const m = {new:['b-info',t('st_new')], confirmed:['b-warn',t('st_confirmed')], delivered:['b-ok',t('st_delivered')]}; return `<span class="badge ${m[st][0]}">${m[st][1]}</span>`; }
+function statusBadge(st){ const m = {new:['b-cyan',t('st_new')], confirmed:['b-gold',t('st_confirmed')], delivered:['b-green',t('st_delivered')]}; return `<span class="badge ${m[st][0]}">${m[st][1]}</span>`; }
 
-function render(){
-  const roleTxt = S.role==='shop' ? nm(MY_SHOP) : nm(SUPPLIERS[0]) + ' + 2';
-  const dateTxt = fdate(S.today) + ' 2026';
-  document.getElementById('roleTag').textContent = roleTxt;
-  document.getElementById('roleTagD').textContent = roleTxt;
-  document.getElementById('dateChip').textContent = dateTxt;
-  document.getElementById('dateChipD').textContent = dateTxt;
-  document.getElementById('dayLblD').textContent = t('next_day');
-  [['rshop','shop'],['rsup','supplier'],['rshopD','shop'],['rsupD','supplier']].forEach(([id,role])=>{
-    const el = document.getElementById(id);
-    el.textContent = (role==='shop'?'🏪 ':'🚚 ') + t(role);
-    el.className = S.role===role ? 'active' : '';
-  });
-  renderNav();
-  const el = document.getElementById('main');
-  const views = S.role==='shop'
+/* ---------- RENDER ---------- */
+let curRole='shop';
+function viewFor(role, tab){
+  curRole = role;
+  const views = role==='shop'
     ? {home:vShopHome, catalog:vShopCatalog, basket:vShopBasket, orders:vShopOrders, debts:vShopDebts}
     : {dash:vSupDash, inbox:vSupInbox, shops:vSupShops, alerts:vSupAlerts, catalog:vSupCatalog};
-  el.style.animation='none'; void el.offsetWidth; el.style.animation='';
-  el.innerHTML = (views[S.tab] || views[Object.keys(views)[0]])();
+  return (views[tab] || views[Object.keys(views)[0]])();
+}
+function topBar(){
+  const dateTxt = fdate(S.today)+' 2026';
+  return `<div class="logo"><div class="logomark">⇄</div><div>ArmTrade<small>${lang==='hy'?'դեմո':'demo'}</small></div></div>
+    <span class="datechip">📅 ${dateTxt}</span>
+    <div class="spacer"></div>
+    <button class="tbtn ${U.split?'on':''}" onclick="toggleSplit()">${U.split?'▚ '+t('split_on'):'▙ '+t('split_off')}</button>
+    <button class="tbtn" onclick="toggleLang()">${lang==='hy'?'EN':'ՀԱՅ'}</button>
+    <button class="tbtn day" onclick="advanceDay()">⏭</button>`;
+}
+function paneHead(role){
+  const labels = role==='shop'?T[lang].tabs_shop:T[lang].tabs_sup;
+  const tabs = role==='shop'?['home','catalog','basket','orders','debts']:['dash','inbox','shops','alerts','catalog'];
+  const icons = role==='shop'?{home:'📋',catalog:'🛒',basket:'🧺',orders:'📦',debts:'💳'}:{dash:'📊',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷'};
+  const cur=U.tab[role];
+  const badges = role==='shop'
+    ? {basket:Object.keys(S.basket).length}
+    : {inbox:S.orders.filter(o=>o.status==='new').length, alerts:supAlerts().length};
+  return `<div class="panehead">
+    <div class="panetitle">${role==='shop'?'🏪 '+t('shop'):'🚚 '+t('supplier')}<span class="tag">${role==='shop'?nm(MY_SHOP).replace(/[«»]/g,''):nm(SUPPLIERS[0])+' +2'}</span></div>
+    <div class="chips panetabs">${tabs.map(tb=>`<button class="${cur===tb?'active':''}" onclick="paneTab('${role}','${tb}')">${icons[tb]} ${labels[tb]}${badges[tb]?` <span class="dot">${badges[tb]}</span>`:''}</button>`).join('')}</div>
+  </div>`;
 }
 
-function renderNav(){
+let prevInboxN = null;
+function renderAll(fromSync){
+  lang = U.lang;
+  document.getElementById('top').innerHTML = topBar();
+  const desktop = window.innerWidth>=980;
+  document.body.classList.toggle('single-mobile', !U.split && !desktop);
+  const app = document.getElementById('app');
+  const nav = document.getElementById('nav');
+
+  if(U.split){
+    nav.style.display='none';
+    app.innerHTML = `<div class="split is-two">
+      <section class="pane glass" data-role="shop">${paneHead('shop')}<div class="panebody">${viewFor('shop',U.tab.shop)}</div></section>
+      <div class="flowmark">⇄</div>
+      <section class="pane glass" data-role="supplier">${paneHead('supplier')}<div class="panebody">${viewFor('supplier',U.tab.supplier)}</div></section>
+    </div>`;
+  } else {
+    const role=U.role;
+    const cls = desktop ? 'single-desk' : '';
+    app.innerHTML = `<div class="roleswitch" style="margin-top:14px">
+        <button class="${role==='shop'?'active':''}" onclick="setRole('shop')">🏪 ${t('shop')}</button>
+        <button class="${role==='supplier'?'active':''}" onclick="setRole('supplier')">🚚 ${t('supplier')}</button>
+      </div>
+      <main class="${cls}">${viewFor(role,U.tab[role])}</main>`;
+    renderNav(role);
+    nav.style.display = desktop ? 'none' : 'flex';
+  }
+
+  // flash supplier pane when a new order arrives (the "flow")
+  const inboxN = S.orders.filter(o=>o.status==='new').length;
+  if(prevInboxN!==null && inboxN>prevInboxN){
+    const sp=document.querySelector('[data-role="supplier"]');
+    if(sp){ sp.classList.remove('flash'); void sp.offsetWidth; sp.classList.add('flash'); }
+    if(fromSync) toast(t('new_order_in'));
+  }
+  prevInboxN = inboxN;
+}
+function renderNav(role){
   const basketN = Object.keys(S.basket).length;
   const inboxN = S.orders.filter(o=>o.status==='new').length;
   const alertsN = supAlerts().length;
-  const items = S.role==='shop'
+  const items = role==='shop'
     ? [['home','📋'],['catalog','🛒'],['basket','🧺',basketN],['orders','📦'],['debts','💳']]
     : [['dash','📊'],['inbox','📥',inboxN],['shops','🏪'],['alerts','🔔',alertsN],['catalog','🏷']];
-  const labels = S.role==='shop' ? T[lang].tabs_shop : T[lang].tabs_sup;
-  const html = items.map(([k,ic,badge])=>`
-    <button class="${S.tab===k?'active':''}" onclick="setTab('${k}')">
+  const labels = role==='shop' ? T[lang].tabs_shop : T[lang].tabs_sup;
+  document.getElementById('nav').innerHTML = items.map(([k,ic,badge])=>`
+    <button class="${U.tab[role]===k?'active':''}" onclick="paneTab('${role}','${k}')">
       ${badge?`<span class="navbadge">${badge}</span>`:''}
       <span class="icw">${ic}</span>${labels[k]}
     </button>`).join('');
-  document.getElementById('nav').innerHTML = html;
-  document.getElementById('sideNav').innerHTML = html;
 }
 
-// ----- SHOP views -----
+/* ----- SHOP views ----- */
 function sugCard(x){
   const {p, st} = x;
   const inB = S.basket[p.id];
   let badge = '';
   if(st){
-    if(st.dueIn < 0) badge = `<span class="badge b-bad">${t('overdue')} ${-st.dueIn} ${lang==='hy'?'օր':'d'}</span>`;
-    else if(st.dueIn === 0) badge = `<span class="badge b-warn">${t('due_today')}</span>`;
+    if(st.dueIn < 0) badge = `<span class="badge b-rose">${t('overdue')} ${-st.dueIn} ${lang==='hy'?'օր':'d'}</span>`;
+    else if(st.dueIn === 0) badge = `<span class="badge b-gold">${t('due_today')}</span>`;
     else badge = `<span class="badge b-neutral">${st.dueIn} ${t('due_in')}</span>`;
   }
   const qty = inB || (st ? st.avgQty : p.qty);
@@ -470,10 +534,10 @@ function sugCard(x){
     <div class="pav">${p.em}</div>
     <div class="info">
       <div class="nm">${nm(p)}</div>
-      <div class="sub">${sup.em} ${nm(sup)} · <b>${p.price.toLocaleString('en-US')} ֏</b>${p.promo?` <span class="badge b-warn">${t('promo')} −10%</span>`:''}</div>
+      <div class="sub">${sup.em} ${nm(sup)} · <b>${p.price.toLocaleString('en-US')} ֏</b>${p.promo?` <span class="badge b-violet">${t('promo')} −10%</span>`:''}</div>
       <div class="sub">${st?`${t('every')} ${st.cycle} ${t('days')} · ${t('last_order')}՝ ${fdate(st.last)}`:''} ${badge}</div>
     </div>
-    <div style="text-align:right;min-width:98px">
+    <div style="text-align:right;min-width:100px">
       <div class="qtyctl">
         <button onclick="setBasketQty('${p.id}', ${Math.max(0,qty-1)})">−</button><span>${qty}</span>
         <button onclick="setBasketQty('${p.id}', ${qty+1})">+</button>
@@ -482,7 +546,6 @@ function sugCard(x){
     </div>
   </div>`;
 }
-
 function vShopHome(){
   const sugs = suggestions();
   const basketN = Object.keys(S.basket).length;
@@ -492,22 +555,20 @@ function vShopHome(){
   <div class="card">
     ${sugs.length ? sugs.map(x=>sugCard(x)).join('') : `<div class="empty"><span class="em">✅</span>${t('all_ok')}</div>`}
   </div>
-  ${basketN?`<button class="primary" onclick="setTab('basket')">${t('basket')} (${basketN}) →</button>`:''}
-  <div class="footer-note">ArmTrade prototype · ${lang==='hy'?'ցուցադրական տվյալներ':'demo data'}</div>`;
+  ${basketN?`<button class="btn primary" onclick="paneTab('${curRole}','basket')">${t('basket')} (${basketN}) →</button>`:''}
+  <div class="footer-note">ArmTrade · ${lang==='hy'?'ցուցադրական տվյալներ':'demo data'}</div>`;
 }
-
 let catFilter = 'all', catQ = '';
 function vShopCatalog(){
   const list = PRODUCTS.filter(p=>(catFilter==='all'||p.sup===catFilter) && (nm(p).toLowerCase().includes(catQ.toLowerCase())));
   return `
-  <input class="search" placeholder="${t('search')}" value="${catQ}" oninput="catQ=this.value;render()">
+  <input class="search" placeholder="${t('search')}" value="${catQ}" oninput="catQ=this.value;renderAll()">
   <div class="chips">
-    <button class="${catFilter==='all'?'active':''}" onclick="catFilter='all';render()">${t('all')}</button>
-    ${SUPPLIERS.map(s=>`<button class="${catFilter===s.id?'active':''}" onclick="catFilter='${s.id}';render()">${s.em} ${nm(s)}</button>`).join('')}
+    <button class="${catFilter==='all'?'active':''}" onclick="catFilter='all';renderAll()">${t('all')}</button>
+    ${SUPPLIERS.map(s=>`<button class="${catFilter===s.id?'active':''}" onclick="catFilter='${s.id}';renderAll()">${s.em} ${nm(s)}</button>`).join('')}
   </div>
   <div class="card">${list.map(p=>sugCard({p, st:stats(p.id)})).join('') || `<div class="empty">—</div>`}</div>`;
 }
-
 function vShopBasket(){
   const ids = Object.keys(S.basket);
   if(!ids.length) return `<div class="empty"><span class="em">🧺</span>${t('basket_empty')}</div>`;
@@ -528,15 +589,14 @@ function vShopBasket(){
       <div class="osum">${t('sum')}՝ ${amd(sum)}</div>
     </div>`;
   }).join('');
-  return `<div class="grid2"><div>${html}</div><div>
+  return `${html}
     <div class="card"><div class="row"><b>${t('sum')}</b><span class="big" style="color:var(--gold2)">${amd(total)}</span></div>
     <div class="muted" style="margin-top:5px">${Object.keys(bySup).length} ${t('orders_split')}</div></div>
-    <button class="primary" onclick="submitBasket()">${t('submit_orders')}</button></div></div>`;
+    <button class="btn primary" onclick="submitBasket()">${t('submit_orders')} →</button>`;
 }
-
 function orderCard(o, side){
   const sum = o.items.reduce((a,x)=>a+x.qty*x.price,0);
-  return `<div class="order">
+  return `<div class="order st-${o.status}">
     <div class="oh">
       <b>${side==='shop' ? SUP(o.sup).em+' '+nm(SUP(o.sup)) : '🏪 '+nm(o.shop)}</b>
       ${statusBadge(o.status)}
@@ -544,28 +604,26 @@ function orderCard(o, side){
     <div class="oid">${o.id} · ${fdate(o.date)}</div>
     <div class="oitems">${o.items.map(it=>`${nm(P(it.productId))} <span class="num">× ${it.qty}</span>`).join('<br>')}</div>
     <div class="osum">${amd(sum)}</div>
-    ${side==='sup' && o.status==='new' ? `<div class="obtns"><button class="ghost" onclick="confirmOrder('${o.id}')">✓ ${t('confirm')}</button></div>`:''}
-    ${side==='sup' && o.status==='confirmed' ? `<div class="obtns"><button class="ghost" onclick="deliverOrder('${o.id}')">🚚 ${t('deliver')}</button></div>`:''}
+    ${side==='sup' && o.status==='new' ? `<div class="obtns"><button class="btn cyan" onclick="confirmOrder('${o.id}')">✓ ${t('confirm')}</button></div>`:''}
+    ${side==='sup' && o.status==='confirmed' ? `<div class="obtns"><button class="btn green" onclick="deliverOrder('${o.id}')">🚚 ${t('deliver')}</button></div>`:''}
   </div>`;
 }
-
 function vShopOrders(){
   const mine = S.orders.filter(o=>o.shop.id==='me');
-  return `<div class="sec">${t('my_orders')}</div>` + (mine.length ? `<div class="grid2">`+mine.map(o=>orderCard(o,'shop')).join('')+`</div>` : `<div class="empty"><span class="em">📦</span>${t('no_orders')}</div>`);
+  return `<div class="sec">${t('my_orders')}</div>` + (mine.length ? mine.map(o=>orderCard(o,'shop')).join('') : `<div class="empty"><span class="em">📦</span>${t('no_orders')}</div>`);
 }
-
 function vShopDebts(){
   const total = Object.values(S.debts).reduce((a,b)=>a+b,0);
   return `
-  <div class="card"><div class="muted">${t('total_debt')}</div><div class="big" style="color:${total?'var(--bad)':'var(--ok)'};margin-top:6px">${amd(total)}</div></div>
-  <div class="grid2">${SUPPLIERS.map(s=>`<div class="card"><div class="row">
+  <div class="card"><div class="muted">${t('total_debt')}</div><div class="big" style="color:${total?'var(--rose)':'var(--green)'};margin-top:6px">${amd(total)}</div></div>
+  ${SUPPLIERS.map(s=>`<div class="card"><div class="row">
     <div><b>${s.em} ${nm(s)}</b><div class="muted" style="margin-top:3px">${t('debts')}</div></div>
     <div style="text-align:right"><div class="num" style="font-weight:600;font-size:15px">${amd(S.debts[s.id]||0)}</div>
-    ${S.debts[s.id]?`<button class="small" style="margin-top:7px" onclick="payDebt('${s.id}')">${t('pay')}</button>`:''}</div>
-  </div></div>`).join('')}</div>`;
+    ${S.debts[s.id]?`<button class="btn small" style="margin-top:7px" onclick="payDebt('${s.id}')">${t('pay')}</button>`:''}</div>
+  </div></div>`).join('')}`;
 }
 
-// ----- SUPPLIER views -----
+/* ----- SUPPLIER views ----- */
 function vSupDash(){
   const todayOrders = S.orders.filter(o=>o.date===S.today);
   const rev = todayOrders.reduce((a,o)=>a+o.items.reduce((x,i)=>x+i.qty*i.price,0),0);
@@ -574,27 +632,22 @@ function vSupDash(){
   <div class="sec">${t('dash')}</div>
   <div class="kpis">
     <div class="kpi"><div class="l">📥 ${t('orders_today')}</div><div class="v">${todayOrders.length}</div></div>
-    <div class="kpi"><div class="l">💰 ${t('revenue_today')}</div><div class="v" style="font-size:17px;color:var(--gold2)">${amd(rev)}</div></div>
+    <div class="kpi"><div class="l">💰 ${t('revenue_today')}</div><div class="v" style="font-size:16px;color:var(--gold2)">${amd(rev)}</div></div>
     <div class="kpi"><div class="l">🏪 ${t('active_shops')}</div><div class="v">${OTHER_SHOPS.length+1}</div></div>
-    <div class="kpi"><div class="l">🔔 ${t('alerts_n')}</div><div class="v" style="color:${alerts.length?'var(--bad)':'var(--ok)'}">${alerts.length}</div></div>
+    <div class="kpi"><div class="l">🔔 ${t('alerts_n')}</div><div class="v" style="color:${alerts.length?'var(--rose)':'var(--green)'}">${alerts.length}</div></div>
   </div>
-  <div class="grid2"><div>
   <div class="sec">${t('sup_orders_today')}</div>
   ${todayOrders.length ? todayOrders.map(o=>orderCard(o,'sup')).join('') : `<div class="card"><div class="empty">${t('inbox_empty')}</div></div>`}
-  </div><div>
-  ${alerts.length?`<div class="sec">${t('alerts')}</div>`+alerts.slice(0,3).map(alertCard).join('')+`<button class="ghost" style="width:100%" onclick="setTab('alerts')">${t('alerts')} →</button>`:''}
-  </div></div>
-  <div style="margin-top:22px;text-align:center"><button class="small danger" onclick="resetDemo()">↺ ${t('reset')}</button></div>`;
+  ${alerts.length?`<div class="sec">${t('alerts')}</div>`+alerts.slice(0,2).map(alertCard).join('')+`<button class="btn ghost full" onclick="paneTab('${curRole}','alerts')">${t('alerts')} →</button>`:''}
+  <div style="margin-top:20px;text-align:center"><button class="btn small danger" onclick="resetDemo()">↺ ${t('reset')}</button></div>`;
 }
-
 function vSupInbox(){
   const list = S.orders.filter(o=>o.status!=='delivered');
   const done = S.orders.filter(o=>o.status==='delivered');
   return `<div class="sec">${t('inbox')} (${list.length})</div>`
-    + (list.length ? `<div class="grid2">`+list.map(o=>orderCard(o,'sup')).join('')+`</div>` : `<div class="card"><div class="empty">${t('inbox_empty')}</div></div>`)
-    + (done.length?`<div class="sec">${t('st_delivered')}</div><div class="grid2">`+done.slice(0,6).map(o=>orderCard(o,'sup')).join('')+`</div>`:'');
+    + (list.length ? list.map(o=>orderCard(o,'sup')).join('') : `<div class="card"><div class="empty">${t('inbox_empty')}</div></div>`)
+    + (done.length?`<div class="sec">${t('st_delivered')}</div>`+done.slice(0,6).map(o=>orderCard(o,'sup')).join(''):'');
 }
-
 function shopRow(shop, sub, badge){
   return `<div class="shoprow" onclick="openShop('${shop.id}')">
     <div class="shopav">${nm(shop).replace(/[«»]/g,'').trim()[0]}</div>
@@ -605,17 +658,16 @@ function shopRow(shop, sub, badge){
 function vSupShops(){
   const myLast = Math.max(...S.history.map(h=>h.date), 0);
   const rows = [
-    shopRow(MY_SHOP, `${t('last_order')}՝ ${fdate(myLast)}`, `<span class="badge b-ok">${t('ok_status')}</span>`),
-    ...OTHER_SHOPS.map((o,i)=>{
+    shopRow(MY_SHOP, `${t('last_order')}՝ ${fdate(myLast)}`, `<span class="badge b-green">${t('ok_status')}</span>`),
+    ...OTHER_SHOPS.map((o)=>{
       const last = S.otherLast[o.id]; const ago = daysAgo(last);
-      const b = o.id==='o3' ? `<span class="badge b-bad">${ago} ${lang==='hy'?'օր լռություն':'days silent'}</span>`
-        : ago>3 ? `<span class="badge b-warn">${ago} ${lang==='hy'?'օր':'d'}</span>` : `<span class="badge b-ok">${t('ok_status')}</span>`;
+      const b = o.id==='o3' ? `<span class="badge b-rose">${ago} ${lang==='hy'?'օր լռություն':'days silent'}</span>`
+        : ago>3 ? `<span class="badge b-gold">${ago} ${lang==='hy'?'օր':'d'}</span>` : `<span class="badge b-green">${t('ok_status')}</span>`;
       return shopRow(o, `${t('last_order')}՝ ${fdate(last)}`, b);
     })
   ].join('');
   return `<div class="sec">${t('shops')} (${OTHER_SHOPS.length+1})</div><div class="card">${rows}</div>`;
 }
-
 function alertCard(a){
   const isChurn = a.type==='churn';
   const txt = isChurn
@@ -624,34 +676,31 @@ function alertCard(a){
   return `<div class="alert ${isChurn?'bad':''}">
     <div class="t">${isChurn?'🚨':'⏰'} ${txt}</div>
     <div class="d">${t('cycle')}՝ ${t('every')} ${a.st.cycle} ${t('days')} · ${t('avg_qty')}՝ ${a.st.avgQty}</div>
-    <div class="act"><button class="small" onclick='remind(${JSON.stringify({shop:{id:a.shop.id},p:{id:a.p.id},type:a.type}).replace(/'/g,"&#39;")})'>📨 ${t('remind')}</button></div>
+    <div class="act"><button class="btn small violet" onclick="remind('${a.shop.id}','${a.p.id}','${a.type}')">📨 ${t('remind')}</button></div>
   </div>`;
 }
-
 function vSupAlerts(){
   const alerts = supAlerts();
   return `<div class="sec">${t('alerts')} (${alerts.length})</div>` +
-    (alerts.length ? `<div class="grid2">`+alerts.map(alertCard).join('')+`</div>` : `<div class="card"><div class="empty"><span class="em">✅</span>${t('all_ok')}</div></div>`);
+    (alerts.length ? alerts.map(alertCard).join('') : `<div class="card"><div class="empty"><span class="em">✅</span>${t('all_ok')}</div></div>`);
 }
-
 function vSupCatalog(){
-  return `<div class="sec">${t('catalog_sup')}</div><div class="grid2">` +
+  return `<div class="sec">${t('catalog_sup')}</div>` +
     SUPPLIERS.map(s=>`<div class="card"><h3>${s.em} ${nm(s)}</h3>` +
       PRODUCTS.filter(p=>p.sup===s.id).map(p=>`<div class="sug">
         <div class="pav">${p.em}</div>
-        <div class="info"><div class="nm">${nm(p)}</div><div class="sub">${p.promo?`<span class="badge b-warn">${t('promo')}</span>`:''}</div></div>
+        <div class="info"><div class="nm">${nm(p)}</div><div class="sub">${p.promo?`<span class="badge b-violet">${t('promo')}</span>`:''}</div></div>
         <b class="num" style="color:var(--gold2)">${p.price.toLocaleString('en-US')} ֏</b>
       </div>`).join('') + `</div>`
-    ).join('') + `</div>`;
+    ).join('');
 }
-
 function openShop(id){
   const shop = id==='me' ? MY_SHOP : OTHER_SHOPS.find(o=>o.id===id);
   let body = '';
   if(id==='me'){
     body = `<table class="tbl"><tr><th>${t('product')}</th><th>${t('cycle')}</th><th>${t('avg_qty')}</th><th>${t('next_due')}</th></tr>` +
       PRODUCTS.map(p=>{const st=stats(p.id); if(!st) return '';
-        const cls = st.dueIn<0?'style="color:var(--bad);font-weight:700"':'';
+        const cls = st.dueIn<0?'style="color:var(--rose);font-weight:700"':'';
         return `<tr><td>${nm(p)}</td><td class="num">${st.cycle} ${lang==='hy'?'օր':'d'}</td><td class="num">${st.avgQty}</td><td ${cls}>${st.dueIn<0?(t('overdue')+' '+(-st.dueIn)+(lang==='hy'?' օր':'d')):fdate(st.due)}</td></tr>`;}).join('') + '</table>';
   } else {
     body = `<div class="muted">${t('last_order')}՝ ${fdate(S.otherLast[id])} (${daysAgo(S.otherLast[id])} ${lang==='hy'?'օր առաջ':'days ago'})</div>
@@ -659,13 +708,14 @@ function openShop(id){
   }
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody"><div class="grabber"></div><h3>${nm(shop)}</h3><div class="muted">${t('shop_detail')}</div>${body}
-    <button class="primary" style="margin-top:16px" onclick="closeModal()">${t('close')}</button></div></div>`;
+    <button class="btn primary" style="margin-top:16px" onclick="closeModal()">${t('close')}</button></div></div>`;
 }
 function closeModal(){ document.getElementById('modalRoot').innerHTML=''; }
+window.remind = function(shopId, pId, type){ remindFix(shopId + '_' + pId + '_' + type); };
 
-window.remind = function(a){ remindFix(a.shop.id + '_' + a.p.id + '_' + a.type); };
-
-render();
+let rt=null;
+window.addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(renderAll,150); });
+renderAll();
 </script>
 </body>
 </html>
