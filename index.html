@@ -3,32 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0B1220">
+<meta name="theme-color" content="#080C18">
 <title>Hrachya's Apps</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Noto+Sans+Armenian:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&family=Noto+Sans+Armenian:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0B1220;--panel:#111A2C;--line:#1E2A40;--ink:#EAF0F8;--muted:#8FA0B8;--dim:#5B6B85;--gold:#D98A2B;--gold2:#F0B45D}
+:root{--bg:#080C18;--ink:#EDF1FA;--muted:#93A0BD;--dim:#5E6D8C;--gold:#E39A3B;--gold2:#F7C572;--cyan:#22D3EE;--violet:#A78BFA;--green:#34D399;
+  --glass:rgba(255,255,255,.055);--stroke:rgba(255,255,255,.12);--stroke2:rgba(255,255,255,.2)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Inter','Noto Sans Armenian',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
-.wrap{max-width:520px;margin:0 auto;padding:12vh 20px 40px;animation:up .4s ease both}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:
+  radial-gradient(55vw 45vh at 10% -6%, rgba(227,154,59,.24), transparent 60%),
+  radial-gradient(55vw 45vh at 95% 2%, rgba(167,139,250,.22), transparent 60%),
+  radial-gradient(70vw 55vh at 50% 116%, rgba(34,211,238,.18), transparent 60%),
+  #080C18;}
+body::after{content:"";position:fixed;inset:0;z-index:-1;background-image:radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);background-size:26px 26px;opacity:.5}
+.wrap{max-width:540px;margin:0 auto;padding:11vh 20px 40px;animation:up .4s ease both}
 @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-h1{font-family:'Space Grotesk','Noto Sans Armenian',sans-serif;font-size:27px;letter-spacing:.3px;margin:0 0 6px}
-.sub{color:var(--dim);font-size:13px;margin:0 0 32px;text-transform:uppercase;letter-spacing:2px;font-weight:600}
-a.app{display:flex;align-items:center;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:16px;text-decoration:none;color:var(--ink);transition:transform .18s,border-color .18s}
-a.app:hover{border-color:rgba(217,138,43,.5)}
+h1{font-family:'Space Grotesk','Noto Sans Armenian',sans-serif;font-size:28px;letter-spacing:.3px;margin:0 0 6px}
+.sub{color:var(--dim);font-size:12.5px;margin:0 0 32px;text-transform:uppercase;letter-spacing:2.4px;font-weight:700}
+a.app{position:relative;display:flex;align-items:center;gap:16px;background:var(--glass);backdrop-filter:blur(18px) saturate(135%);-webkit-backdrop-filter:blur(18px) saturate(135%);border:1px solid var(--stroke);border-radius:22px;padding:20px;margin-bottom:16px;text-decoration:none;color:var(--ink);transition:transform .18s,border-color .18s,box-shadow .2s;overflow:hidden;box-shadow:0 10px 34px rgba(0,0,0,.25)}
+a.app::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.10),transparent 40%);pointer-events:none}
+a.app:hover{border-color:var(--stroke2);box-shadow:0 14px 44px rgba(0,0,0,.35)}
 a.app:active{transform:scale(.98)}
-.icon{width:58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
-.gold{background:linear-gradient(135deg,#D9A441,#B06E1B);box-shadow:0 8px 26px rgba(217,138,43,.35)}
-.trade{background:linear-gradient(135deg,#1E2A40,#0E1626);border:1px solid rgba(217,138,43,.5);box-shadow:0 8px 26px rgba(217,138,43,.15)}
+.icon{width:60px;height:60px;border-radius:17px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;border:1px solid rgba(255,255,255,.2)}
+.gold{background:linear-gradient(135deg,var(--gold2),var(--gold));box-shadow:0 8px 26px rgba(227,154,59,.4)}
+.trade{background:linear-gradient(135deg,rgba(34,211,238,.9),rgba(167,139,250,.9));box-shadow:0 8px 26px rgba(34,211,238,.35);color:#04121a}
 .info{flex:1;min-width:0}
 .nm{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:.3px}
 .ds{color:var(--muted);font-size:12.5px;margin-top:4px;line-height:1.55}
-.tag{display:inline-block;margin-top:8px;font-size:9.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:3px 10px;border-radius:7px}
-.t-live{background:rgba(61,214,140,.12);color:#3DD68C}
-.t-demo{background:rgba(217,138,43,.14);color:var(--gold2)}
-.arrow{color:var(--dim);font-size:20px;flex-shrink:0}
-.foot{text-align:center;color:var(--dim);font-size:11px;margin-top:36px;font-family:'IBM Plex Mono',monospace}
+.tag{display:inline-block;margin-top:9px;font-size:9.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;padding:3px 10px;border-radius:8px;border:1px solid transparent}
+.t-live{background:rgba(52,211,153,.14);color:#6EE7B7;border-color:rgba(52,211,153,.3)}
+.t-demo{background:rgba(247,197,114,.14);color:var(--gold2);border-color:rgba(247,197,114,.3)}
+.arrow{color:var(--dim);font-size:22px;flex-shrink:0}
+.foot{text-align:center;color:var(--dim);font-size:11px;margin-top:34px;font-family:'IBM Plex Mono',monospace}
 </style>
 </head>
 <body>
@@ -40,7 +48,7 @@ a.app:active{transform:scale(.98)}
     <div class="icon gold">💍</div>
     <div class="info">
       <div class="nm">ARMGOLD</div>
-      <div class="ds">Ոսկերիչների գնի հաշվիչ և վաճառքի հաշվառում · Jewelry price calculator & sales</div>
+      <div class="ds">Ոսկերիչների գնի հաշվիչ և վաճառքի հաշվառում · Jewelry price calculator &amp; sales</div>
       <span class="tag t-live">Live</span>
     </div>
     <div class="arrow">›</div>
@@ -50,7 +58,7 @@ a.app:active{transform:scale(.98)}
     <div class="icon trade">⇄</div>
     <div class="info">
       <div class="nm">ArmTrade</div>
-      <div class="ds">Խանութ–մատակարար պատվերների հարթակ · Shop–supplier ordering & replenishment</div>
+      <div class="ds">Խանութ–մատակարար պատվերների հարթակ · Shop–supplier ordering &amp; replenishment</div>
       <span class="tag t-demo">Prototype</span>
     </div>
     <div class="arrow">›</div>
