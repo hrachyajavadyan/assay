@@ -111,6 +111,16 @@ button{font-family:var(--font)}
 .osum{font-family:var(--mono);font-weight:600;margin-top:8px;font-size:15px;color:var(--gold2)}
 .obtns{display:flex;gap:10px;margin-top:12px}
 .obtns button{flex:1}
+/* order progress tracker (shop side) */
+.otrack{display:flex;align-items:center;margin-top:13px;padding:0 2px}
+.onode{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;background:var(--glass2);border:1px solid var(--stroke2);color:var(--dim)}
+.onode.done{background:linear-gradient(135deg,#6EE7B7,var(--green));border-color:transparent;color:#052e1c;box-shadow:0 0 12px rgba(52,211,153,.45)}
+.onode.now{background:linear-gradient(135deg,#67E8F9,var(--cyan));border-color:transparent;color:#062a30;box-shadow:0 0 14px rgba(34,211,238,.55);animation:nowPulse 1.6s ease-in-out infinite}
+@keyframes nowPulse{0%,100%{box-shadow:0 0 8px rgba(34,211,238,.35)}50%{box-shadow:0 0 18px rgba(34,211,238,.75)}}
+.oline{flex:1;height:3px;border-radius:99px;background:var(--stroke);margin:0 5px}
+.oline.done{background:linear-gradient(90deg,var(--green),var(--cyan))}
+.olabels{display:flex;justify-content:space-between;margin-top:6px;font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--dim)}
+.olabels span.on{color:var(--ink)}
 
 /* supplier shop list */
 .shoprow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer}
@@ -188,15 +198,18 @@ body.single-mobile{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 
 /* ================= DESKTOP ================= */
 @media (min-width:980px){
-  .split{max-width:1320px;grid-template-columns:1fr 1fr;gap:18px;height:calc(100vh - 60px);padding:18px;align-items:stretch}
+  .split{max-width:none;grid-template-columns:1fr 1fr;gap:20px;height:calc(100vh - 60px);padding:18px 24px;align-items:stretch}
   .pane{height:100%}
   .panebody{overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--stroke2) transparent}
   .panebody::-webkit-scrollbar{width:8px}
   .panebody::-webkit-scrollbar-thumb{background:var(--stroke2);border-radius:99px}
   .split.is-two .flowmark{display:flex;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:8;width:46px;height:46px;border-radius:50%;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,rgba(34,211,238,.9),rgba(167,139,250,.9));color:#04121a;box-shadow:0 8px 30px rgba(34,211,238,.5);border:2px solid rgba(255,255,255,.3);animation:pulseFlow 2.6s ease-in-out infinite}
   @keyframes pulseFlow{0%,100%{box-shadow:0 8px 30px rgba(34,211,238,.5)}50%{box-shadow:0 8px 44px rgba(167,139,250,.7)}}
+  /* wider details on big screens */
+  .sug .nm{white-space:normal;overflow:visible;text-overflow:clip;font-size:15px;line-height:1.4}
+  .panebody{padding:16px 20px}
   /* single desktop */
-  main.single-desk{max-width:1160px}
+  main.single-desk{max-width:1400px}
   .single-desk .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 30px;align-items:start}
   .single-desk .kpis{grid-template-columns:repeat(4,1fr)}
   .modal{align-items:center}
@@ -204,6 +217,10 @@ body.single-mobile{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 }
 @media (min-width:980px) and (max-width:1200px){
   .panetabs button{padding:6px 9px;font-size:11.5px}
+}
+@media (min-width:1500px){
+  .kpis{grid-template-columns:repeat(4,1fr)}
+  .split{gap:26px;padding:20px 32px}
 }
 </style>
 </head>
@@ -246,7 +263,8 @@ const T = {
     delivered_msg:'Նշվեց առաքված — կմտնի պատմության մեջ',
     demo_note:'Դեմո՝ պայմանական տվյալներով։ Ձախում պատվիրիր, աջում՝ մատակարարը միանգամից կտեսնի այն։ «⏭» կոճակն անցնում է հաջորդ օրը։',
     inbox_new:'նոր', sup_orders_today:'Այսօրվա պատվերներ', next_day:'Հաջորդ օրը',
-    split_on:'Երկու կողմ', split_off:'Մեկ կողմ', new_order_in:'Նոր պատվեր ստացվեց 🔔'
+    split_on:'Երկու կողմ', split_off:'Մեկ կողմ', new_order_in:'Նոր պատվեր ստացվեց 🔔',
+    you_confirmed:'Պատվերդ հաստատվեց ✓', you_delivered:'Պատվերդ առաքվեց 🚚'
   },
   en: {
     shop:'Shop', supplier:'Supplier',
@@ -276,7 +294,8 @@ const T = {
     delivered_msg:'Marked delivered — added to history',
     demo_note:'Demo with sample data. Order on the left, and the supplier sees it instantly on the right. The "⏭" button advances a day.',
     inbox_new:'new', sup_orders_today:"Today's orders", next_day:'Next day',
-    split_on:'Two sides', split_off:'One side', new_order_in:'New order received 🔔'
+    split_on:'Two sides', split_off:'One side', new_order_in:'New order received 🔔',
+    you_confirmed:'Your order was confirmed ✓', you_delivered:'Your order was delivered 🚚'
   }
 };
 
@@ -458,7 +477,7 @@ function paneHead(role){
   const icons = role==='shop'?{home:'📋',catalog:'🛒',basket:'🧺',orders:'📦',debts:'💳'}:{dash:'📊',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷'};
   const cur=U.tab[role];
   const badges = role==='shop'
-    ? {basket:Object.keys(S.basket).length}
+    ? {basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
     : {inbox:S.orders.filter(o=>o.status==='new').length, alerts:supAlerts().length};
   return `<div class="panehead">
     <div class="panetitle">${role==='shop'?'🏪 '+t('shop'):'🚚 '+t('supplier')}<span class="tag">${role==='shop'?nm(MY_SHOP).replace(/[«»]/g,''):nm(SUPPLIERS[0])+' +2'}</span></div>
@@ -502,13 +521,28 @@ function renderAll(fromSync){
     if(fromSync) toast(t('new_order_in'));
   }
   prevInboxN = inboxN;
+  // flash shop pane + notify when MY order gets confirmed/delivered
+  const myConf = S.orders.filter(o=>o.shop.id==='me'&&o.status==='confirmed').length;
+  const myDel  = S.orders.filter(o=>o.shop.id==='me'&&o.status==='delivered').length;
+  if(prevMy){
+    if(myDel>prevMy.del) notifyShop(t('you_delivered'));
+    else if(myConf>prevMy.conf) notifyShop(t('you_confirmed'));
+  }
+  prevMy = {conf:myConf, del:myDel};
+}
+let prevMy = null;
+function notifyShop(msg){
+  const sp=document.querySelector('[data-role="shop"]');
+  if(sp){ sp.classList.remove('flash'); void sp.offsetWidth; sp.classList.add('flash'); }
+  toast(msg);
 }
 function renderNav(role){
   const basketN = Object.keys(S.basket).length;
   const inboxN = S.orders.filter(o=>o.status==='new').length;
   const alertsN = supAlerts().length;
+  const myActiveN = S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length;
   const items = role==='shop'
-    ? [['home','📋'],['catalog','🛒'],['basket','🧺',basketN],['orders','📦'],['debts','💳']]
+    ? [['home','📋'],['catalog','🛒'],['basket','🧺',basketN],['orders','📦',myActiveN],['debts','💳']]
     : [['dash','📊'],['inbox','📥',inboxN],['shops','🏪'],['alerts','🔔',alertsN],['catalog','🏷']];
   const labels = role==='shop' ? T[lang].tabs_shop : T[lang].tabs_sup;
   document.getElementById('nav').innerHTML = items.map(([k,ic,badge])=>`
@@ -594,6 +628,18 @@ function vShopBasket(){
     <div class="muted" style="margin-top:5px">${Object.keys(bySup).length} ${t('orders_split')}</div></div>
     <button class="btn primary" onclick="submitBasket()">${t('submit_orders')} →</button>`;
 }
+function orderTracker(status){
+  const steps=['new','confirmed','delivered'];
+  const idx=steps.indexOf(status);
+  const node=i=> i<idx ? 'done' : (i===idx ? (idx===2?'done':'now') : '');
+  const icons=['📝','✓','🚚'];
+  return `<div class="otrack">
+    <div class="onode ${node(0)}">${idx>0?'✓':icons[0]}</div><div class="oline ${idx>=1?'done':''}"></div>
+    <div class="onode ${node(1)}">${idx>1?'✓':icons[1]}</div><div class="oline ${idx>=2?'done':''}"></div>
+    <div class="onode ${node(2)}">${icons[2]}</div>
+  </div>
+  <div class="olabels"><span class="${idx>=0?'on':''}">${t('st_new')}</span><span class="${idx>=1?'on':''}">${t('st_confirmed')}</span><span class="${idx>=2?'on':''}">${t('st_delivered')}</span></div>`;
+}
 function orderCard(o, side){
   const sum = o.items.reduce((a,x)=>a+x.qty*x.price,0);
   return `<div class="order st-${o.status}">
@@ -604,6 +650,7 @@ function orderCard(o, side){
     <div class="oid">${o.id} · ${fdate(o.date)}</div>
     <div class="oitems">${o.items.map(it=>`${nm(P(it.productId))} <span class="num">× ${it.qty}</span>`).join('<br>')}</div>
     <div class="osum">${amd(sum)}</div>
+    ${side==='shop' ? orderTracker(o.status) : ''}
     ${side==='sup' && o.status==='new' ? `<div class="obtns"><button class="btn cyan" onclick="confirmOrder('${o.id}')">✓ ${t('confirm')}</button></div>`:''}
     ${side==='sup' && o.status==='confirmed' ? `<div class="obtns"><button class="btn green" onclick="deliverOrder('${o.id}')">🚚 ${t('deliver')}</button></div>`:''}
   </div>`;
