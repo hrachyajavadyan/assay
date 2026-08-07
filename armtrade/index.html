@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ArmTrade — Prototype</title>
+<style>
+:root{
+  --bg:#F4F6F8; --card:#FFFFFF; --ink:#1A2530; --muted:#6B7A88; --line:#E3E8ED;
+  --brand:#1F4E5F; --brand2:#2E86AB; --accent:#E8734A; --ok:#2E7D32; --warn:#B7791F; --bad:#B23B3B;
+  --chip:#EAF1F5; --radius:14px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Armenian",sans-serif;font-size:16px}
+body{padding-bottom:calc(74px + env(safe-area-inset-bottom))}
+.hidden{display:none !important}
+
+/* header */
+header{position:sticky;top:0;z-index:50;background:var(--brand);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 10px}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.logo{font-weight:800;font-size:18px;letter-spacing:.3px}
+.logo small{font-weight:400;opacity:.75;font-size:11px;display:block;letter-spacing:0}
+.hbtns{display:flex;gap:6px;align-items:center}
+.hbtn{background:rgba(255,255,255,.14);border:none;color:#fff;border-radius:10px;padding:7px 10px;font-size:12.5px;font-weight:600;cursor:pointer}
+.hbtn.accent{background:var(--accent)}
+.datechip{font-size:11.5px;opacity:.85;margin-top:4px}
+
+/* role switch */
+.roleswitch{display:flex;background:rgba(255,255,255,.12);border-radius:11px;padding:3px;margin-top:10px}
+.roleswitch button{flex:1;border:none;background:transparent;color:#fff;padding:8px 6px;border-radius:9px;font-size:13.5px;font-weight:700;cursor:pointer;opacity:.75}
+.roleswitch button.active{background:#fff;color:var(--brand);opacity:1}
+
+/* layout */
+main{padding:14px;max-width:640px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.card h3{margin:0 0 8px;font-size:15px}
+.sec{margin:18px 0 8px;font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.muted{color:var(--muted);font-size:12.5px}
+.big{font-size:22px;font-weight:800}
+.badge{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
+.b-ok{background:#E5F2E6;color:var(--ok)} .b-warn{background:#F9EFDD;color:var(--warn)} .b-bad{background:#F7E4E4;color:var(--bad)} .b-info{background:#E3EEF5;color:var(--brand2)} .b-neutral{background:var(--chip);color:var(--muted)}
+button.primary{width:100%;background:var(--brand);color:#fff;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:700;cursor:pointer}
+button.primary:disabled{opacity:.45}
+button.ghost{background:var(--chip);color:var(--brand);border:none;border-radius:10px;padding:9px 12px;font-size:13px;font-weight:700;cursor:pointer}
+button.small{background:var(--chip);color:var(--brand);border:none;border-radius:9px;padding:7px 10px;font-size:12.5px;font-weight:700;cursor:pointer}
+button.danger{background:#F7E4E4;color:var(--bad)}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px}
+.kpi .v{font-size:21px;font-weight:800;margin-top:2px}
+.kpi .l{font-size:11.5px;color:var(--muted);font-weight:600}
+
+/* tabs bottom */
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:60;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border:none;background:none;padding:9px 2px 8px;font-size:10.5px;color:var(--muted);cursor:pointer;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button.active{color:var(--brand)}
+nav .ic{font-size:20px;line-height:1}
+.navbadge{position:absolute;margin-left:26px;margin-top:-4px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;border-radius:99px;padding:1px 6px}
+
+/* suggestion / product cards */
+.sug{display:flex;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.sug:last-child{border-bottom:none}
+.pav{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;background:var(--chip)}
+.sug .info{flex:1;min-width:0}
+.sug .nm{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sug .sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+.qtyctl{display:flex;align-items:center;gap:6px}
+.qtyctl button{width:30px;height:30px;border-radius:8px;border:none;background:var(--chip);color:var(--brand);font-size:17px;font-weight:800;cursor:pointer}
+.qtyctl span{min-width:26px;text-align:center;font-weight:800;font-size:15px}
+.addbtn{background:var(--brand);color:#fff;border:none;border-radius:9px;padding:8px 11px;font-weight:700;font-size:12.5px;cursor:pointer}
+.addbtn.added{background:var(--ok)}
+
+/* search */
+.search{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:11px;font-size:15px;background:#fff;margin-bottom:10px}
+.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px}
+.chips button{white-space:nowrap;background:#fff;border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer}
+.chips button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* orders */
+.order{border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:10px;background:#fff}
+.order .oh{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.oitems{font-size:12.5px;color:var(--muted);line-height:1.55}
+.osum{font-weight:800;margin-top:6px;font-size:14px}
+.obtns{display:flex;gap:8px;margin-top:10px}
+.obtns button{flex:1}
+
+/* supplier shop list */
+.shoprow{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.shoprow:last-child{border-bottom:none}
+.shopav{width:40px;height:40px;border-radius:99px;background:var(--chip);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--brand);font-size:15px;flex-shrink:0}
+
+/* alert */
+.alert{border-left:4px solid var(--warn);background:#FCF7EC;border-radius:10px;padding:11px 12px;margin-bottom:9px}
+.alert.bad{border-left-color:var(--bad);background:#FBF0F0}
+.alert .t{font-weight:700;font-size:13.5px}
+.alert .d{font-size:12px;color:var(--muted);margin-top:3px}
+.alert .act{margin-top:8px;display:flex;gap:8px}
+
+/* toast + modal */
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom));background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;font-size:13.5px;font-weight:600;z-index:100;opacity:0;transition:opacity .25s;pointer-events:none;max-width:88%;text-align:center}
+#toast.show{opacity:1}
+.modal{position:fixed;inset:0;background:rgba(20,30,40,.5);z-index:90;display:flex;align-items:flex-end;justify-content:center}
+.mbody{background:#fff;width:100%;max-width:640px;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));max-height:82vh;overflow-y:auto}
+.mbody h3{margin:0 0 4px}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+.tbl th{text-align:left;color:var(--muted);font-size:11px;font-weight:700;padding:5px 4px;border-bottom:1px solid var(--line)}
+.tbl td{padding:6px 4px;border-bottom:1px solid var(--line)}
+.cyclebar{display:flex;gap:2px;margin-top:4px}
+.cyclebar i{height:6px;flex:1;border-radius:3px;background:var(--line)}
+.cyclebar i.f{background:var(--brand2)}
+.footer-note{text-align:center;color:var(--muted);font-size:11px;margin:18px 0 4px}
+.empty{color:var(--muted);text-align:center;padding:26px 10px;font-size:13.5px}
+.langsw{font-size:12px;font-weight:700;background:none;border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:8px;padding:5px 8px;cursor:pointer}
+</style>
+</head>
+<body>
+<header>
+  <div class="hrow">
+    <div class="logo">ArmTrade <small id="roleTag"></small></div>
+    <div class="hbtns">
+      <button class="langsw" id="langBtn" onclick="toggleLang()">EN</button>
+      <button class="hbtn accent" id="dayBtn" onclick="advanceDay()">⏭</button>
+    </div>
+  </div>
+  <div class="datechip" id="dateChip"></div>
+  <div class="roleswitch">
+    <button id="rshop" onclick="setRole('shop')"></button>
+    <button id="rsup" onclick="setRole('supplier')"></button>
+  </div>
+</header>
+
+<main id="main"></main>
+<nav id="nav"></nav>
+<div id="toast"></div>
+<div id="modalRoot"></div>
+
+<script>
+/* =========================================================
+   ArmTrade prototype — two-sided replenishment demo
+   Shop side: suggestions -> basket -> orders -> debts
+   Supplier side: dashboard, inbox, shops, alerts, catalog
+   All data in memory (+ storage if available). Demo only.
+========================================================= */
+
+// ---------- i18n ----------
+const T = {
+  hy: {
+    shop:'Խանութ', supplier:'Մատակարար',
+    tabs_shop:{home:'Այսօր',catalog:'Ապրանքներ',basket:'Զամբյուղ',orders:'Պատվերներ',debts:'Պարտքեր'},
+    tabs_sup:{dash:'Վահանակ',inbox:'Պատվերներ',shops:'Խանութներ',alerts:'Ազդանշաններ',catalog:'Գնացուցակ'},
+    today_sug:'Առաջարկվող պատվերներ', all_ok:'Ամեն ինչ համալրված է ✅', add:'Ավելացնել', added:'Ավելացված ✓',
+    due_today:'Այսօր է ժամկետը', overdue:'Ուշացած', due_in:'օրից', last_order:'Վերջին պատվերը',
+    every:'ամեն', days:'օրը', basket:'Զամբյուղ', basket_empty:'Զամբյուղը դատարկ է',
+    submit_orders:'Ուղարկել պատվերները', orders_split:'պատվեր կուղարկվի ըստ մատակարարների',
+    my_orders:'Իմ պատվերները', no_orders:'Դեռ պատվերներ չկան',
+    st_new:'Նոր', st_confirmed:'Հաստատված', st_delivered:'Առաքված',
+    debts:'Պարտքեր մատակարարներին', total_debt:'Ընդհանուր պարտք',
+    search:'Որոնել ապրանք…', all:'Բոլորը',
+    dash:'Օրվա պատկերը', orders_today:'Պատվեր այսօր', revenue_today:'Շրջանառություն', active_shops:'Ակտիվ խանութ', alerts_n:'Ազդանշան',
+    inbox:'Ստացված պատվերներ', inbox_empty:'Նոր պատվերներ չկան',
+    confirm:'Հաստատել', deliver:'Նշել առաքված', confirmed_msg:'Պատվերը հաստատվեց',
+    shops:'Իմ խանութները', alerts:'Ուշադրություն պահանջող',
+    churn:'դադարել է պատվիրել', overdue_alert:'ցիկլն անցել է', ok_status:'Կանոնավոր',
+    remind:'Հիշեցնել', reminded:'Հիշեցումն ուղարկվեց (դեմո)', dismiss:'Փակել',
+    catalog_sup:'Իմ գնացուցակը', promo:'Ակցիա', price:'Գին',
+    order_from:'Պատվեր', items:'ապր.', sum:'Գումար',
+    day_advanced:'Նոր օր՝', order_placed:'պատվեր ուղարկվեց', order_sim:'նոր պատվեր խանութից',
+    view_history:'Պատմություն', order_history:'Պատվերների պատմություն', date:'Ամսաթիվ', qty:'Քնկ', product:'Ապրանք',
+    cycle:'Ցիկլ', avg_qty:'Միջին քնկ', next_due:'Հաջորդը',
+    shop_detail:'Խանութի տվյալներ', close:'Փակել', pay:'Վճարել (դեմո)', paid:'Վճարումը գրանցվեց (դեմո)',
+    suggested:'Առաջարկվում է', pcs:'հատ', reset:'Վերսկսել դեմոն', reset_done:'Դեմոն վերսկսվեց',
+    delivered_msg:'Նշվեց առաքված — կմտնի պատմության մեջ',
+    demo_note:'Դեմո տարբերակ. տվյալները պայմանական են։ «⏭» կոճակը անցնում է հաջորդ օրը՝ տեսնելու ինչպես են աշխատում հիշեցումներն ու ազդանշանները։',
+    inbox_new:'նոր', sup_orders_today:'Այսօրվա պատվերներ'
+  },
+  en: {
+    shop:'Shop', supplier:'Supplier',
+    tabs_shop:{home:'Today',catalog:'Products',basket:'Basket',orders:'Orders',debts:'Debts'},
+    tabs_sup:{dash:'Dashboard',inbox:'Orders',shops:'Shops',alerts:'Alerts',catalog:'Price list'},
+    today_sug:'Suggested reorders', all_ok:'Everything is stocked ✅', add:'Add', added:'Added ✓',
+    due_today:'Due today', overdue:'Overdue', due_in:'days left', last_order:'Last order',
+    every:'every', days:'days', basket:'Basket', basket_empty:'Basket is empty',
+    submit_orders:'Send orders', orders_split:'order(s) will be sent, split by supplier',
+    my_orders:'My orders', no_orders:'No orders yet',
+    st_new:'New', st_confirmed:'Confirmed', st_delivered:'Delivered',
+    debts:'Debts to suppliers', total_debt:'Total debt',
+    search:'Search products…', all:'All',
+    dash:'Today at a glance', orders_today:'Orders today', revenue_today:'Revenue', active_shops:'Active shops', alerts_n:'Alerts',
+    inbox:'Incoming orders', inbox_empty:'No new orders',
+    confirm:'Confirm', deliver:'Mark delivered', confirmed_msg:'Order confirmed',
+    shops:'My shops', alerts:'Needs attention',
+    churn:'stopped ordering', overdue_alert:'past usual cycle', ok_status:'Regular',
+    remind:'Send reminder', reminded:'Reminder sent (demo)', dismiss:'Dismiss',
+    catalog_sup:'My price list', promo:'Promo', price:'Price',
+    order_from:'Order', items:'items', sum:'Total',
+    day_advanced:'New day:', order_placed:'order(s) sent', order_sim:'new order from shop',
+    view_history:'History', order_history:'Order history', date:'Date', qty:'Qty', product:'Product',
+    cycle:'Cycle', avg_qty:'Avg qty', next_due:'Next due',
+    shop_detail:'Shop details', close:'Close', pay:'Pay (demo)', paid:'Payment recorded (demo)',
+    suggested:'Suggested', pcs:'pcs', reset:'Reset demo', reset_done:'Demo reset',
+    delivered_msg:'Marked delivered — added to history',
+    demo_note:'Demo version with sample data. The "⏭" button advances one day so you can watch reminders and alerts fire.',
+    inbox_new:'new', sup_orders_today:"Today's orders"
+  }
+};
+let lang = 'hy';
+const t = k => T[lang][k];
+
+// ---------- demo data ----------
+const DAY = 86400000;
+const START = new Date('2026-08-05T09:00:00').getTime();
+
+const SUPPLIERS = [
+  {id:'s1', name:'Ակվա Դիստրիբյուշն', nameEn:'Aqua Distribution', em:'💧'},
+  {id:'s2', name:'Կաթնաղբյուր', nameEn:'Katnaghbyur Dairy', em:'🥛'},
+  {id:'s3', name:'Շանթ Թրեյդ', nameEn:'Shant Trade', em:'🍫'},
+];
+const PRODUCTS = [
+  {id:'p1', sup:'s1', name:'Ջերմուկ 0.5լ (12 հատ)', nameEn:'Jermuk 0.5L (12-pack)', price:1450, em:'💧', cycle:6,  qty:4},
+  {id:'p2', sup:'s1', name:'Կոկա-Կոլա 1.5լ (6 հատ)', nameEn:'Coca-Cola 1.5L (6-pack)', price:3200, em:'🥤', cycle:5,  qty:3},
+  {id:'p3', sup:'s1', name:'Հյութ Yan 1լ (8 հատ)', nameEn:'Yan Juice 1L (8-pack)', price:4800, em:'🧃', cycle:9,  qty:2},
+  {id:'p4', sup:'s2', name:'Մածուն 1կգ', nameEn:'Matsun 1kg', price:750, em:'🥛', cycle:3,  qty:10, promo:true},
+  {id:'p5', sup:'s2', name:'Պանիր Լոռի 1կգ', nameEn:'Lori Cheese 1kg', price:2900, em:'🧀', cycle:5,  qty:4},
+  {id:'p6', sup:'s2', name:'Կարագ 82% 200գ', nameEn:'Butter 82% 200g', price:1350, em:'🧈', cycle:7,  qty:6},
+  {id:'p7', sup:'s3', name:'Շոկոլադ Grand Candy', nameEn:'Grand Candy chocolate', price:520, em:'🍫', cycle:8,  qty:20},
+  {id:'p8', sup:'s3', name:'Չիպս 90գ (բլոկ)', nameEn:'Chips 90g (block)', price:5400, em:'🍟', cycle:10, qty:2},
+  {id:'p9', sup:'s3', name:'Լվացող միջոց 1լ', nameEn:'Detergent 1L', price:1800, em:'🧴', cycle:14, qty:3},
+];
+const OTHER_SHOPS = [
+  {id:'o1', name:'Մինի Մարկետ Կոմիտաս', nameEn:'Mini Market Komitas'},
+  {id:'o2', name:'Խանութ Արաբկիր 23', nameEn:'Shop Arabkir 23'},
+  {id:'o3', name:'Նուռ Մարկետ', nameEn:'Nur Market'},
+  {id:'o4', name:'Սուպերմարկետ Էրեբունի', nameEn:'Supermarket Erebuni'},
+  {id:'o5', name:'Խանութ Դավթաշեն', nameEn:'Shop Davtashen'},
+];
+const MY_SHOP = {id:'me', name:'Խանութ «Նռան այգի»', nameEn:'Shop "Nran Aygi"'};
+
+// ---------- state ----------
+let S = null;
+function freshState(){
+  const st = {today: START, role:'shop', tab:'home', basket:{}, orders:[], history:[], debts:{}, reminded:{}, dismissed:{}, otherLast:{}, seq:1};
+  // generate ~60 days of order history for my shop with per-product cycles (+/- jitter)
+  PRODUCTS.forEach(p=>{
+    let d = START - 62*DAY + Math.floor(Math.random()*p.cycle)*DAY;
+    while(d < START - p.cycle*DAY*0.3){
+      const qty = Math.max(1, p.qty + Math.floor(Math.random()*3)-1);
+      st.history.push({date:d, productId:p.id, sup:p.sup, qty, price:p.price});
+      d += (p.cycle + Math.floor(Math.random()*3)-1)*DAY;
+    }
+  });
+  // force a churn case: p7 (chocolate) last ordered long ago
+  st.history = st.history.filter(h=>!(h.productId==='p7' && h.date > START-19*DAY));
+  // debts
+  st.debts = {s1: 78500, s2: 42300, s3: 0};
+  // other shops last-order offsets (days ago) per supplier s1 (used in supplier views)
+  OTHER_SHOPS.forEach((o,i)=>{ st.otherLast[o.id] = START - (i===2? 12 : (1+i%4))*DAY; });
+  return st;
+}
+// storage (works on deployed site; falls back to memory elsewhere)
+function save(){ try{ localStorage.setItem('armtrade_proto', JSON.stringify(S)); }catch(e){} }
+function load(){ try{ const x = localStorage.getItem('armtrade_proto'); if(x) return JSON.parse(x); }catch(e){} return null; }
+S = load() || freshState();
+
+// ---------- helpers ----------
+const P = id => PRODUCTS.find(p=>p.id===id);
+const SUP = id => SUPPLIERS.find(s=>s.id===id);
+const nm = o => lang==='hy' ? o.name : o.nameEn;
+const amd = n => n.toLocaleString('en-US') + ' ֏';
+function fdate(ts){ const d = new Date(ts); const m = lang==='hy'
+  ? ['հնվ','փտվ','մրտ','ապր','մյս','հնս','հլս','օգս','սեպ','հոկ','նոյ','դեկ']
+  : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return d.getDate() + ' ' + m[d.getMonth()]; }
+function daysAgo(ts){ return Math.round((S.today - ts)/DAY); }
+function toast(msg){ const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('show'), 2200); }
+
+// replenishment engine: per product — last order + observed cycle
+function stats(pid){
+  const h = S.history.filter(x=>x.productId===pid).sort((a,b)=>a.date-b.date);
+  if(!h.length) return null;
+  const gaps = []; for(let i=1;i<h.length;i++) gaps.push((h[i].date-h[i-1].date)/DAY);
+  gaps.sort((a,b)=>a-b);
+  const cycle = gaps.length ? Math.max(2, Math.round(gaps[Math.floor(gaps.length/2)])) : P(pid).cycle;
+  const avgQty = Math.round(h.slice(-5).reduce((a,x)=>a+x.qty,0)/Math.min(5,h.length));
+  const last = h[h.length-1].date;
+  const due = last + cycle*DAY;
+  const dueIn = Math.ceil((due - S.today)/DAY);
+  return {cycle, avgQty, last, due, dueIn, count:h.length};
+}
+function suggestions(){
+  return PRODUCTS.map(p=>({p, st:stats(p.id)}))
+    .filter(x=>x.st && x.st.dueIn <= 1 && !S.dismissed[x.p.id])
+    .sort((a,b)=>a.st.dueIn - b.st.dueIn);
+}
+// supplier-side alerts: my shop products overdue > 60% past cycle, or churn (>2 cycles)
+function supAlerts(){
+  const out = [];
+  PRODUCTS.forEach(p=>{
+    const st = stats(p.id); if(!st) return;
+    const overdueDays = -st.dueIn;
+    if(overdueDays >= st.cycle*2) out.push({type:'churn', p, st, shop:MY_SHOP});
+    else if(overdueDays >= Math.max(2, Math.round(st.cycle*0.6))) out.push({type:'overdue', p, st, shop:MY_SHOP});
+  });
+  // one static other-shop churn example
+  out.push({type:'churn', p:P('p2'), st:{cycle:4, dueIn:-9, avgQty:5, last:S.otherLast['o3']}, shop:OTHER_SHOPS[2], other:true});
+  return out.filter(a=>!S.reminded[alertKey(a)]);
+}
+const alertKey = a => a.shop.id + '_' + a.p.id + '_' + a.type;
+
+// ---------- actions ----------
+function setRole(r){ S.role = r; S.tab = r==='shop' ? 'home' : 'dash'; save(); render(); }
+function setTab(tb){ S.tab = tb; save(); render(); window.scrollTo(0,0); }
+function toggleLang(){ lang = lang==='hy' ? 'en' : 'hy'; document.getElementById('langBtn').textContent = lang==='hy' ? 'EN' : 'ՀԱՅ'; render(); }
+function addToBasket(pid, qty){ S.basket[pid] = (S.basket[pid]||0) + qty; save(); render(); }
+function setBasketQty(pid, qty){ if(qty<=0) delete S.basket[pid]; else S.basket[pid]=qty; save(); render(); }
+function dismissSug(pid){ S.dismissed[pid] = true; save(); render(); }
+
+function submitBasket(){
+  const bySup = {};
+  Object.entries(S.basket).forEach(([pid,qty])=>{ const p = P(pid); (bySup[p.sup] = bySup[p.sup]||[]).push({productId:pid, qty, price:p.price}); });
+  const n = Object.keys(bySup).length; if(!n) return;
+  Object.entries(bySup).forEach(([sup,items])=>{
+    S.orders.unshift({id:'ORD-'+(S.seq++), date:S.today, shop:MY_SHOP, sup, items, status:'new'});
+  });
+  S.basket = {}; S.dismissed = {};
+  save(); toast(n + ' ' + t('order_placed')); setTab('orders');
+}
+function confirmOrder(oid){ const o = S.orders.find(x=>x.id===oid); if(o){ o.status='confirmed'; save(); toast(t('confirmed_msg')); render(); } }
+function deliverOrder(oid){
+  const o = S.orders.find(x=>x.id===oid); if(!o) return;
+  o.status='delivered';
+  if(o.shop.id==='me'){
+    o.items.forEach(it=>S.history.push({date:S.today, productId:it.productId, sup:o.sup, qty:it.qty, price:it.price}));
+    const sum = o.items.reduce((a,x)=>a+x.qty*x.price,0);
+    S.debts[o.sup] = (S.debts[o.sup]||0) + sum;
+  }
+  save(); toast(t('delivered_msg')); render();
+}
+function remind(a){ S.reminded[alertKey(a)] = true; save(); toast(t('reminded')); render(); }
+function payDebt(sup){ S.debts[sup] = 0; save(); toast(t('paid')); render(); }
+function resetDemo(){ S = freshState(); save(); toast(t('reset_done')); render(); }
+
+function advanceDay(){
+  S.today += DAY;
+  // simulate: sometimes another shop sends an order to supplier s1/s3
+  if(Math.random() < 0.75){
+    const shop = OTHER_SHOPS[Math.floor(Math.random()*OTHER_SHOPS.length)];
+    if(shop.id!=='o3'){
+      const sup = ['s1','s2','s3'][Math.floor(Math.random()*3)];
+      const pool = PRODUCTS.filter(p=>p.sup===sup);
+      const items = pool.slice(0, 1+Math.floor(Math.random()*pool.length)).map(p=>({productId:p.id, qty:Math.max(1,p.qty+Math.floor(Math.random()*3)-1), price:p.price}));
+      S.orders.unshift({id:'ORD-'+(S.seq++), date:S.today, shop, sup, items, status:'new'});
+      S.otherLast[shop.id] = S.today;
+    }
+  }
+  save(); toast(t('day_advanced') + ' ' + fdate(S.today)); render();
+}
+
+// ---------- rendering ----------
+function statusBadge(st){ const m = {new:['b-info',t('st_new')], confirmed:['b-warn',t('st_confirmed')], delivered:['b-ok',t('st_delivered')]}; return `<span class="badge ${m[st][0]}">${m[st][1]}</span>`; }
+
+function render(){
+  document.getElementById('roleTag').textContent = S.role==='shop' ? nm(MY_SHOP) : nm(SUPPLIERS[0]) + ' + 2';
+  document.getElementById('dateChip').textContent = (lang==='hy'?'Այսօր՝ ':'Today: ') + fdate(S.today) + ' 2026';
+  document.getElementById('rshop').textContent = '🏪 ' + t('shop');
+  document.getElementById('rsup').textContent = '🚚 ' + t('supplier');
+  document.getElementById('rshop').className = S.role==='shop'?'active':'';
+  document.getElementById('rsup').className = S.role==='supplier'?'active':'';
+  renderNav();
+  const el = document.getElementById('main');
+  const views = S.role==='shop'
+    ? {home:vShopHome, catalog:vShopCatalog, basket:vShopBasket, orders:vShopOrders, debts:vShopDebts}
+    : {dash:vSupDash, inbox:vSupInbox, shops:vSupShops, alerts:vSupAlerts, catalog:vSupCatalog};
+  el.innerHTML = (views[S.tab] || views[Object.keys(views)[0]])();
+}
+
+function renderNav(){
+  const nav = document.getElementById('nav');
+  const basketN = Object.keys(S.basket).length;
+  const inboxN = S.orders.filter(o=>o.status==='new').length;
+  const alertsN = supAlerts().length;
+  const items = S.role==='shop'
+    ? [['home','📋'],['catalog','🛒'],['basket','🧺',basketN],['orders','📦'],['debts','💳']]
+    : [['dash','📊'],['inbox','📥',inboxN],['shops','🏪'],['alerts','🔔',alertsN],['catalog','🏷']];
+  const labels = S.role==='shop' ? T[lang].tabs_shop : T[lang].tabs_sup;
+  nav.innerHTML = items.map(([k,ic,badge])=>`
+    <button class="${S.tab===k?'active':''}" onclick="setTab('${k}')">
+      ${badge?`<span class="navbadge">${badge}</span>`:''}
+      <span class="ic">${ic}</span>${labels[k]}
+    </button>`).join('');
+}
+
+// ----- SHOP views -----
+function sugCard(x, inCatalog){
+  const {p, st} = x;
+  const inB = S.basket[p.id];
+  let badge = '';
+  if(st){
+    if(st.dueIn < 0) badge = `<span class="badge b-bad">${t('overdue')} ${-st.dueIn} ${lang==='hy'?'օր':'d'}</span>`;
+    else if(st.dueIn === 0) badge = `<span class="badge b-warn">${t('due_today')}</span>`;
+    else badge = `<span class="badge b-neutral">${st.dueIn} ${t('due_in')}</span>`;
+  }
+  const qty = inB || (st ? st.avgQty : p.qty);
+  return `<div class="sug">
+    <div class="pav">${p.em}</div>
+    <div class="info">
+      <div class="nm">${nm(p)}</div>
+      <div class="sub">${SUP(p.sup).em} ${nm(SUP(p.sup))} · ${amd(p.price)}${p.promo?` · <span class="badge b-warn">${t('promo')} −10%</span>`:''}</div>
+      <div class="sub">${st?`${t('every')} ${st.cycle} ${t('days')} · ${t('last_order')}՝ ${fdate(st.last)}`:''} ${badge}</div>
+    </div>
+    <div style="text-align:right">
+      <div class="qtyctl">
+        <button onclick="setBasketQty('${p.id}', ${Math.max(0,qty-1)})">−</button><span>${qty}</span>
+        <button onclick="setBasketQty('${p.id}', ${qty+1})">+</button>
+      </div>
+      <button class="addbtn ${inB?'added':''}" style="margin-top:6px;width:100%" onclick="addToBasket('${p.id}', ${inB?0:qty})">${inB?t('added'):t('add')}</button>
+    </div>
+  </div>`;
+}
+
+function vShopHome(){
+  const sugs = suggestions();
+  const basketN = Object.keys(S.basket).length;
+  return `
+  <div class="card" style="background:#EAF3F7;border-color:#CFE3EC"><div class="muted">${t('demo_note')}</div></div>
+  <div class="sec">${t('today_sug')} (${sugs.length})</div>
+  <div class="card">
+    ${sugs.length ? sugs.map(x=>sugCard(x)).join('') : `<div class="empty">${t('all_ok')}</div>`}
+  </div>
+  ${basketN?`<button class="primary" onclick="setTab('basket')">${t('basket')} (${basketN}) →</button>`:''}
+  <div class="footer-note">ArmTrade prototype · ${lang==='hy'?'ցուցադրական տվյալներ':'demo data'}</div>`;
+}
+
+let catFilter = 'all', catQ = '';
+function vShopCatalog(){
+  const list = PRODUCTS.filter(p=>(catFilter==='all'||p.sup===catFilter) && (nm(p).toLowerCase().includes(catQ.toLowerCase())));
+  return `
+  <input class="search" placeholder="${t('search')}" value="${catQ}" oninput="catQ=this.value;render()">
+  <div class="chips">
+    <button class="${catFilter==='all'?'active':''}" onclick="catFilter='all';render()">${t('all')}</button>
+    ${SUPPLIERS.map(s=>`<button class="${catFilter===s.id?'active':''}" onclick="catFilter='${s.id}';render()">${s.em} ${nm(s)}</button>`).join('')}
+  </div>
+  <div class="card">${list.map(p=>sugCard({p, st:stats(p.id)}, true)).join('') || `<div class="empty">—</div>`}</div>`;
+}
+
+function vShopBasket(){
+  const ids = Object.keys(S.basket);
+  if(!ids.length) return `<div class="empty">${t('basket_empty')}</div>`;
+  const bySup = {};
+  ids.forEach(pid=>{ (bySup[P(pid).sup] = bySup[P(pid).sup]||[]).push(pid); });
+  let total = 0;
+  const html = Object.entries(bySup).map(([sup, pids])=>{
+    const sum = pids.reduce((a,pid)=>a + S.basket[pid]*P(pid).price, 0); total += sum;
+    return `<div class="card">
+      <h3>${SUP(sup).em} ${nm(SUP(sup))}</h3>
+      ${pids.map(pid=>{const p=P(pid);return `<div class="sug">
+        <div class="pav">${p.em}</div>
+        <div class="info"><div class="nm">${nm(p)}</div><div class="sub">${amd(p.price)}</div></div>
+        <div class="qtyctl">
+          <button onclick="setBasketQty('${pid}', ${S.basket[pid]-1})">−</button><span>${S.basket[pid]}</span>
+          <button onclick="setBasketQty('${pid}', ${S.basket[pid]+1})">+</button>
+        </div></div>`;}).join('')}
+      <div class="osum">${t('sum')}՝ ${amd(sum)}</div>
+    </div>`;
+  }).join('');
+  return html + `
+    <div class="card"><div class="row"><b>${t('sum')}</b><span class="big">${amd(total)}</span></div>
+    <div class="muted" style="margin-top:4px">${Object.keys(bySup).length} ${t('orders_split')}</div></div>
+    <button class="primary" onclick="submitBasket()">${t('submit_orders')}</button>`;
+}
+
+function orderCard(o, side){
+  const sum = o.items.reduce((a,x)=>a+x.qty*x.price,0);
+  return `<div class="order">
+    <div class="oh">
+      <b>${side==='shop' ? SUP(o.sup).em+' '+nm(SUP(o.sup)) : '🏪 '+nm(o.shop)}</b>
+      ${statusBadge(o.status)}
+    </div>
+    <div class="muted">${o.id} · ${fdate(o.date)}</div>
+    <div class="oitems" style="margin-top:6px">${o.items.map(it=>`${nm(P(it.productId))} × ${it.qty}`).join('<br>')}</div>
+    <div class="osum">${amd(sum)}</div>
+    ${side==='sup' && o.status==='new' ? `<div class="obtns"><button class="ghost" onclick="confirmOrder('${o.id}')">✓ ${t('confirm')}</button></div>`:''}
+    ${side==='sup' && o.status==='confirmed' ? `<div class="obtns"><button class="ghost" onclick="deliverOrder('${o.id}')">🚚 ${t('deliver')}</button></div>`:''}
+  </div>`;
+}
+
+function vShopOrders(){
+  const mine = S.orders.filter(o=>o.shop.id==='me');
+  return `<div class="sec">${t('my_orders')}</div>` + (mine.length ? mine.map(o=>orderCard(o,'shop')).join('') : `<div class="empty">${t('no_orders')}</div>`);
+}
+
+function vShopDebts(){
+  const total = Object.values(S.debts).reduce((a,b)=>a+b,0);
+  return `
+  <div class="card"><div class="muted">${t('total_debt')}</div><div class="big" style="color:${total?'var(--bad)':'var(--ok)'}">${amd(total)}</div></div>
+  ${SUPPLIERS.map(s=>`<div class="card"><div class="row">
+    <div><b>${s.em} ${nm(s)}</b><div class="muted">${t('debts')}</div></div>
+    <div style="text-align:right"><div style="font-weight:800">${amd(S.debts[s.id]||0)}</div>
+    ${S.debts[s.id]?`<button class="small" style="margin-top:6px" onclick="payDebt('${s.id}')">${t('pay')}</button>`:''}</div>
+  </div></div>`).join('')}`;
+}
+
+// ----- SUPPLIER views -----
+function vSupDash(){
+  const todayOrders = S.orders.filter(o=>o.date===S.today);
+  const rev = todayOrders.reduce((a,o)=>a+o.items.reduce((x,i)=>x+i.qty*i.price,0),0);
+  const alerts = supAlerts();
+  return `
+  <div class="sec">${t('dash')}</div>
+  <div class="kpis">
+    <div class="kpi"><div class="l">📥 ${t('orders_today')}</div><div class="v">${todayOrders.length}</div></div>
+    <div class="kpi"><div class="l">💰 ${t('revenue_today')}</div><div class="v" style="font-size:17px">${amd(rev)}</div></div>
+    <div class="kpi"><div class="l">🏪 ${t('active_shops')}</div><div class="v">${OTHER_SHOPS.length+1}</div></div>
+    <div class="kpi"><div class="l">🔔 ${t('alerts_n')}</div><div class="v" style="color:${alerts.length?'var(--bad)':'var(--ok)'}">${alerts.length}</div></div>
+  </div>
+  <div class="sec">${t('sup_orders_today')}</div>
+  ${todayOrders.length ? todayOrders.map(o=>orderCard(o,'sup')).join('') : `<div class="card"><div class="empty">${t('inbox_empty')}</div></div>`}
+  ${alerts.length?`<div class="sec">${t('alerts')}</div>`+alerts.slice(0,2).map(alertCard).join('')+`<button class="ghost" style="width:100%" onclick="setTab('alerts')">${t('alerts')} →</button>`:''}
+  <div style="margin-top:20px"><button class="small danger" onclick="resetDemo()">↺ ${t('reset')}</button></div>`;
+}
+
+function vSupInbox(){
+  const list = S.orders.filter(o=>o.status!=='delivered');
+  const done = S.orders.filter(o=>o.status==='delivered');
+  return `<div class="sec">${t('inbox')} (${list.length})</div>`
+    + (list.length ? list.map(o=>orderCard(o,'sup')).join('') : `<div class="card"><div class="empty">${t('inbox_empty')}</div></div>`)
+    + (done.length?`<div class="sec">${t('st_delivered')}</div>`+done.slice(0,5).map(o=>orderCard(o,'sup')).join(''):'');
+}
+
+function shopRow(shop, sub, badge){
+  return `<div class="shoprow" onclick="openShop('${shop.id}')">
+    <div class="shopav">${nm(shop).replace(/[«»]/g,'').trim()[0]}</div>
+    <div class="info" style="flex:1"><div style="font-weight:700;font-size:14px">${nm(shop)}</div><div class="muted">${sub}</div></div>
+    ${badge}
+  </div>`;
+}
+function vSupShops(){
+  const myLast = Math.max(...S.history.map(h=>h.date), 0);
+  const rows = [
+    shopRow(MY_SHOP, `${t('last_order')}՝ ${fdate(myLast)}`, `<span class="badge b-ok">${t('ok_status')}</span>`),
+    ...OTHER_SHOPS.map((o,i)=>{
+      const last = S.otherLast[o.id]; const ago = daysAgo(last);
+      const b = o.id==='o3' ? `<span class="badge b-bad">${ago} ${lang==='hy'?'օր լռություն':'days silent'}</span>`
+        : ago>3 ? `<span class="badge b-warn">${ago} ${lang==='hy'?'օր':'d'}</span>` : `<span class="badge b-ok">${t('ok_status')}</span>`;
+      return shopRow(o, `${t('last_order')}՝ ${fdate(last)}`, b);
+    })
+  ].join('');
+  return `<div class="sec">${t('shops')} (${OTHER_SHOPS.length+1})</div><div class="card">${rows}</div>`;
+}
+
+function alertCard(a){
+  const isChurn = a.type==='churn';
+  const txt = isChurn
+    ? `${nm(a.shop)} — ${nm(a.p)} · ${t('churn')} (${daysAgo(a.st.last)} ${lang==='hy'?'օր':'days'})`
+    : `${nm(a.shop)} — ${nm(a.p)} · ${t('overdue_alert')} (${-a.st.dueIn} ${lang==='hy'?'օր':'days'})`;
+  return `<div class="alert ${isChurn?'bad':''}">
+    <div class="t">${isChurn?'🚨':'⏰'} ${txt}</div>
+    <div class="d">${t('cycle')}՝ ${t('every')} ${a.st.cycle} ${t('days')} · ${t('avg_qty')}՝ ${a.st.avgQty}</div>
+    <div class="act"><button class="small" onclick='remind(${JSON.stringify({shop:{id:a.shop.id},p:{id:a.p.id},type:a.type}).replace(/'/g,"&#39;")})'>📨 ${t('remind')}</button></div>
+  </div>`;
+}
+// remind needs full alert reconstruction
+function remindFix(k){ S.reminded[k]=true; save(); toast(t('reminded')); render(); }
+
+function vSupAlerts(){
+  const alerts = supAlerts();
+  return `<div class="sec">${t('alerts')} (${alerts.length})</div>` +
+    (alerts.length ? alerts.map(alertCard).join('') : `<div class="card"><div class="empty">${t('all_ok')}</div></div>`);
+}
+
+function vSupCatalog(){
+  return `<div class="sec">${t('catalog_sup')}</div><div class="card">` +
+    SUPPLIERS.map(s=>`<div style="margin-bottom:8px"><b>${s.em} ${nm(s)}</b></div>` +
+      PRODUCTS.filter(p=>p.sup===s.id).map(p=>`<div class="sug">
+        <div class="pav">${p.em}</div>
+        <div class="info"><div class="nm">${nm(p)}</div><div class="sub">${p.promo?`<span class="badge b-warn">${t('promo')}</span>`:''}</div></div>
+        <b>${amd(p.price)}</b>
+      </div>`).join('')
+    ).join('<hr style="border:none;border-top:1px solid var(--line);margin:10px 0">') + `</div>`;
+}
+
+// shop detail modal (supplier side)
+function openShop(id){
+  const shop = id==='me' ? MY_SHOP : OTHER_SHOPS.find(o=>o.id===id);
+  let body = '';
+  if(id==='me'){
+    body = `<table class="tbl"><tr><th>${t('product')}</th><th>${t('cycle')}</th><th>${t('avg_qty')}</th><th>${t('next_due')}</th></tr>` +
+      PRODUCTS.map(p=>{const st=stats(p.id); if(!st) return '';
+        const cls = st.dueIn<0?'style="color:var(--bad);font-weight:700"':'';
+        return `<tr><td>${nm(p)}</td><td>${st.cycle} ${lang==='hy'?'օր':'d'}</td><td>${st.avgQty}</td><td ${cls}>${st.dueIn<0?(t('overdue')+' '+(-st.dueIn)+(lang==='hy'?' օր':'d')):fdate(st.due)}</td></tr>`;}).join('') + '</table>';
+  } else {
+    body = `<div class="muted">${t('last_order')}՝ ${fdate(S.otherLast[id])} (${daysAgo(S.otherLast[id])} ${lang==='hy'?'օր առաջ':'days ago'})</div>
+    <div class="muted" style="margin-top:8px">${lang==='hy'?'Դեմո խանութ — մանրամասն պատմությունը հասանելի է միայն ձեր խանութի համար։':'Demo shop — detailed history is available for your own shop only.'}</div>`;
+  }
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="mbody"><h3>${nm(shop)}</h3><div class="muted">${t('shop_detail')}</div>${body}
+    <button class="primary" style="margin-top:14px" onclick="closeModal()">${t('close')}</button></div></div>`;
+}
+function closeModal(){ document.getElementById('modalRoot').innerHTML=''; }
+
+// patch remind to use key directly
+window.remind = function(a){ remindFix(a.shop.id + '_' + a.p.id + '_' + a.type); };
+
+render();
+</script>
+</body>
+</html>
