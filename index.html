@@ -3,37 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F6F7F9">
+<meta name="theme-color" content="#0B1220">
 <title>Hrachya's Apps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Noto+Sans+Armenian:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#F6F7F9; --ink:#0F172A; --muted:#64748B; --line:#EAECF0;
-  --sh:0 1px 2px rgba(15,23,42,.04), 0 6px 24px rgba(15,23,42,.07);
-}
+:root{--bg:#0B1220;--panel:#111A2C;--line:#1E2A40;--ink:#EAF0F8;--muted:#8FA0B8;--dim:#5B6B85;--gold:#D98A2B;--gold2:#F0B45D}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
-  font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,"Noto Sans Armenian",sans-serif;
-  -webkit-font-smoothing:antialiased;min-height:100vh}
-.wrap{max-width:480px;margin:0 auto;padding:12vh 20px 40px;animation:fadeUp .4s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-h1{font-size:26px;letter-spacing:-.6px;margin:0 0 6px}
-.sub{color:var(--muted);font-size:14px;margin:0 0 30px;line-height:1.5}
-a.app{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid var(--line);
-  border-radius:22px;padding:20px;margin-bottom:16px;text-decoration:none;color:var(--ink);
-  box-shadow:var(--sh);transition:transform .18s, box-shadow .18s}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Inter','Noto Sans Armenian',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+.wrap{max-width:520px;margin:0 auto;padding:12vh 20px 40px;animation:up .4s ease both}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+h1{font-family:'Space Grotesk','Noto Sans Armenian',sans-serif;font-size:27px;letter-spacing:.3px;margin:0 0 6px}
+.sub{color:var(--dim);font-size:13px;margin:0 0 32px;text-transform:uppercase;letter-spacing:2px;font-weight:600}
+a.app{display:flex;align-items:center;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:16px;text-decoration:none;color:var(--ink);transition:transform .18s,border-color .18s}
+a.app:hover{border-color:rgba(217,138,43,.5)}
 a.app:active{transform:scale(.98)}
-.icon{width:58px;height:58px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;color:#fff}
-.gold{background:linear-gradient(135deg,#D9A441,#B8811F);box-shadow:0 8px 24px rgba(217,164,65,.35)}
-.trade{background:linear-gradient(135deg,#4F46E5,#7C6FF2);box-shadow:0 8px 24px rgba(79,70,229,.3)}
+.icon{width:58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.gold{background:linear-gradient(135deg,#D9A441,#B06E1B);box-shadow:0 8px 26px rgba(217,138,43,.35)}
+.trade{background:linear-gradient(135deg,#1E2A40,#0E1626);border:1px solid rgba(217,138,43,.5);box-shadow:0 8px 26px rgba(217,138,43,.15)}
 .info{flex:1;min-width:0}
-.nm{font-weight:800;font-size:17px;letter-spacing:-.3px}
-.ds{color:var(--muted);font-size:12.5px;margin-top:3px;line-height:1.5}
-.tag{display:inline-block;margin-top:7px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
-  padding:3px 9px;border-radius:99px}
-.t-live{background:#E9F9EF;color:#16A34A}
-.t-demo{background:#EEF0FE;color:#4F46E5}
-.arrow{color:#C3CAD4;font-size:20px;flex-shrink:0}
-.foot{text-align:center;color:#A6AFBB;font-size:11px;margin-top:34px}
+.nm{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:.3px}
+.ds{color:var(--muted);font-size:12.5px;margin-top:4px;line-height:1.55}
+.tag{display:inline-block;margin-top:8px;font-size:9.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:3px 10px;border-radius:7px}
+.t-live{background:rgba(61,214,140,.12);color:#3DD68C}
+.t-demo{background:rgba(217,138,43,.14);color:var(--gold2)}
+.arrow{color:var(--dim);font-size:20px;flex-shrink:0}
+.foot{text-align:center;color:var(--dim);font-size:11px;margin-top:36px;font-family:'IBM Plex Mono',monospace}
 </style>
 </head>
 <body>
@@ -52,7 +47,7 @@ a.app:active{transform:scale(.98)}
   </a>
 
   <a class="app" href="/armtrade/">
-    <div class="icon trade">🔄</div>
+    <div class="icon trade">⇄</div>
     <div class="info">
       <div class="nm">ArmTrade</div>
       <div class="ds">Խանութ–մատակարար պատվերների հարթակ · Shop–supplier ordering & replenishment</div>
