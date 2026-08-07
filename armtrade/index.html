@@ -6,6 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0A0F1E">
+<link rel="manifest" href="manifest.json">
 <title>ArmTrade — Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Armenian:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -131,6 +132,18 @@ button{font-family:var(--font)}
 .tblwrap{max-height:330px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--stroke2) transparent}
 .tblwrap::-webkit-scrollbar{width:7px}
 .tblwrap::-webkit-scrollbar-thumb{background:var(--stroke2);border-radius:99px}
+@media print{
+  body{background:#fff !important}
+  body::before,body::after{display:none !important}
+  #top,#app,nav,#toast,.noprint,.grabber{display:none !important}
+  .modal{position:static;background:#fff;display:block;animation:none}
+  .mbody{background:#fff;color:#111;border:none;box-shadow:none;max-height:none;border-radius:0;max-width:none;animation:none}
+  .mbody .muted{color:#555}
+  .mbody .big,.mbody .osum{color:#111 !important}
+  .tbl th{color:#555;border-color:#ccc}
+  .tbl td{border-color:#ddd;color:#111}
+  .badge{border:1px solid #999;color:#111 !important;background:none !important}
+}
 
 /* supplier shop list */
 .shoprow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer}
@@ -280,7 +293,13 @@ const T = {
     dc_spend_m:'Ծախս այս ամիս', dc_rev_m:'Հասույթ այս ամիս', dc_deliv_all:'Ընդհ. առաքում', dc_paid_all:'Վճարված ընդհ.', dc_out:'Չվճարված մնացորդ',
     dc_by_month:'Ծախսն ըստ ամիսների', dc_rev_by_month:'Հասույթն ըստ ամիսների',
     status_col:'Կարգավիճակ', supplier_col:'Մատակարար', shop_col:'Խանութ', amount_col:'Գումար', bill_col:'Հաշիվ',
-    dc_receiv:'Ստացվելիք գումարներ', paid_on:'վճ.', show_more:'Ավելին'
+    dc_receiv:'Ստացվելիք գումարներ', paid_on:'վճ.', show_more:'Ավելին',
+    prop_title:'Առաջարկ մատակարարից', prop_order:'Պատվիրել', prop_dismiss:'Մերժել', prop_new:'Նոր առաջարկ մատակարարից 📨',
+    promo_start:'Սկսել ակցիա −10%', promo_stop:'Դադարեցնել ակցիան', promo_new:'Նոր ակցիա 🎉',
+    credit_limit:'Կրեդիտ լիմիտ', over_limit:'Լիմիտից դուրս', over_warn:'⚠ Այս պատվերով պարտքը կգերազանցի կրեդիտ լիմիտը',
+    deliver_partial:'Մասնակի', partial_title:'Մասնակի առաքում', confirm_deliv:'Հաստատել առաքումը', short_lbl:'պակաս',
+    forecast:'Կանխատեսում · առաջիկա 7 օր', expected_qty:'Սպասվող քնկ', forecast_total:'Ընդամենը պատրաստել',
+    invoice:'Հաշիվ-ապրանքագիր', print:'Տպել', total_lbl:'Ընդամենը', buyer:'Գնորդ', seller:'Վաճառող', tap_bill:'Սեղմեք հաշվի վրա՝ տպելու համար'
   },
   en: {
     shop:'Shop', supplier:'Supplier',
@@ -317,7 +336,56 @@ const T = {
     dc_spend_m:'Spend this month', dc_rev_m:'Revenue this month', dc_deliv_all:'Total deliveries', dc_paid_all:'Total paid', dc_out:'Outstanding',
     dc_by_month:'Spend by month', dc_rev_by_month:'Revenue by month',
     status_col:'Status', supplier_col:'Supplier', shop_col:'Shop', amount_col:'Amount', bill_col:'Bill',
-    dc_receiv:'Receivables', paid_on:'paid', show_more:'More'
+    dc_receiv:'Receivables', paid_on:'paid', show_more:'More',
+    prop_title:'Offer from supplier', prop_order:'Order now', prop_dismiss:'Dismiss', prop_new:'New offer from supplier 📨',
+    promo_start:'Start promo −10%', promo_stop:'Stop promo', promo_new:'New promo 🎉',
+    credit_limit:'Credit limit', over_limit:'Over limit', over_warn:'⚠ This order will push your debt over the credit limit',
+    deliver_partial:'Partial', partial_title:'Partial delivery', confirm_deliv:'Confirm delivery', short_lbl:'short',
+    forecast:'Forecast · next 7 days', expected_qty:'Expected qty', forecast_total:'Total to prepare',
+    invoice:'Invoice', print:'Print', total_lbl:'Total', buyer:'Buyer', seller:'Seller', tap_bill:'Tap a bill to print it'
+  },
+  ru: {
+    shop:'Магазин', supplier:'Поставщик',
+    tabs_shop:{home:'Сегодня',catalog:'Товары',basket:'Корзина',orders:'Заказы',debts:'Долги',data:'Данные'},
+    tabs_sup:{dash:'Панель',inbox:'Заказы',shops:'Магазины',alerts:'Сигналы',catalog:'Прайс',data:'Данные'},
+    today_sug:'Рекомендуемые заказы', all_ok:'Всё в наличии', add:'Добавить', added:'Добавлено ✓',
+    due_today:'Срок сегодня', overdue:'Просрочено', due_in:'дн. осталось', last_order:'Последний заказ',
+    every:'каждые', days:'дн.', basket:'Корзина', basket_empty:'Корзина пуста',
+    submit_orders:'Отправить заказы', orders_split:'заказ(а) будут отправлены по поставщикам',
+    my_orders:'Мои заказы', no_orders:'Заказов пока нет',
+    st_new:'Новый', st_confirmed:'Подтверждён', st_delivered:'Доставлен',
+    debts:'Долги поставщикам', total_debt:'Общий долг',
+    search:'Поиск товара…', all:'Все',
+    dash:'Картина дня', orders_today:'Заказов сегодня', revenue_today:'Оборот', active_shops:'Активных магазинов', alerts_n:'Сигналов',
+    inbox:'Входящие заказы', inbox_empty:'Новых заказов нет',
+    confirm:'Подтвердить', deliver:'Отметить доставку', confirmed_msg:'Заказ подтверждён',
+    shops:'Мои магазины', alerts:'Требует внимания',
+    churn:'перестал заказывать', overdue_alert:'цикл превышен', ok_status:'Регулярный',
+    remind:'Напомнить', reminded:'Напоминание отправлено (демо)', dismiss:'Закрыть',
+    catalog_sup:'Мой прайс-лист', promo:'Акция', price:'Цена',
+    order_from:'Заказ', items:'поз.', sum:'Сумма',
+    day_advanced:'Новый день:', order_placed:'заказ(а) отправлено', order_sim:'новый заказ от магазина',
+    view_history:'История', order_history:'История заказов', date:'Дата', qty:'Кол.', product:'Товар',
+    cycle:'Цикл', avg_qty:'Средн. кол.', next_due:'Следующий',
+    shop_detail:'Данные магазина', close:'Закрыть', pay:'Оплатить (демо)', paid:'Платёж записан (демо)',
+    suggested:'Рекомендуется', pcs:'шт', reset:'Сброс', reset_done:'Демо сброшено',
+    delivered_msg:'Доставка отмечена — записано в историю',
+    demo_note:'Демо с условными данными. Закажите слева — поставщик справа увидит это мгновенно. Кнопка «⏭» переводит на следующий день.',
+    inbox_new:'нов.', sup_orders_today:'Заказы за сегодня', next_day:'Следующий день',
+    split_on:'Две стороны', split_off:'Одна сторона', new_order_in:'Получен новый заказ 🔔',
+    you_confirmed:'Ваш заказ подтверждён ✓', you_delivered:'Ваш заказ доставлен 🚚',
+    dc_title:'Центр данных', dc_bills:'Счета', dc_history:'История закупок', dc_sales:'История продаж',
+    dc_payments:'Платежи', paid_st:'Оплачен', unpaid_st:'Не оплачен',
+    dc_spend_m:'Расход за месяц', dc_rev_m:'Выручка за месяц', dc_deliv_all:'Всего поставок', dc_paid_all:'Оплачено всего', dc_out:'Не оплачено',
+    dc_by_month:'Расходы по месяцам', dc_rev_by_month:'Выручка по месяцам',
+    status_col:'Статус', supplier_col:'Поставщик', shop_col:'Магазин', amount_col:'Сумма', bill_col:'Счёт',
+    dc_receiv:'Дебиторка', paid_on:'опл.', show_more:'Ещё',
+    prop_title:'Предложение от поставщика', prop_order:'Заказать', prop_dismiss:'Отклонить', prop_new:'Новое предложение от поставщика 📨',
+    promo_start:'Запустить акцию −10%', promo_stop:'Остановить акцию', promo_new:'Новая акция 🎉',
+    credit_limit:'Кредитный лимит', over_limit:'Сверх лимита', over_warn:'⚠ Этот заказ превысит кредитный лимит',
+    deliver_partial:'Частично', partial_title:'Частичная доставка', confirm_deliv:'Подтвердить доставку', short_lbl:'недопоставка',
+    forecast:'Прогноз · ближайшие 7 дней', expected_qty:'Ожид. кол.', forecast_total:'Всего подготовить',
+    invoice:'Счёт-фактура', print:'Печать', total_lbl:'Итого', buyer:'Покупатель', seller:'Продавец', tap_bill:'Нажмите на счёт, чтобы распечатать'
   }
 };
 
@@ -373,6 +441,9 @@ function freshState(){
     {date:START-25*DAY, sup:'s1', amount:56000},
     {date:START-12*DAY, sup:'s3', amount:31200},
   ];
+  st.proposals = [];
+  st.promos = {p4:true};
+  st.creditLimit = {s1:100000, s2:80000, s3:60000};
   OTHER_SHOPS.forEach((o,i)=>{ st.otherLast[o.id] = START - (i===2? 12 : (1+i%4))*DAY; });
   return st;
 }
@@ -387,6 +458,9 @@ S = loadD() || freshState();
 // migrate older saved states to the data-centre model
 if(!S.bills){ S.bills=[]; Object.entries(S.debts||{}).forEach(([sup,amt])=>{ if(amt>0) S.bills.push({id:'INV-'+sup.toUpperCase(), sup, date:S.today-14*DAY, amount:amt, paid:false}); }); }
 if(!S.payments) S.payments=[];
+if(!S.proposals) S.proposals=[];
+if(!S.promos) S.promos={p4:true};
+if(!S.creditLimit) S.creditLimit={s1:100000, s2:80000, s3:60000};
 U = loadU();
 let lang = U.lang;
 const t = k => T[lang][k];
@@ -398,9 +472,14 @@ window.addEventListener('storage', e=>{ if(e.key===DKEY){ const d=loadD(); if(d)
 const P = id => PRODUCTS.find(p=>p.id===id);
 const SUP = id => SUPPLIERS.find(s=>s.id===id);
 const nm = o => lang==='hy' ? o.name : o.nameEn;
+const isPromo = p => !!S.promos[p.id];
+const effPrice = p => isPromo(p) ? Math.round(p.price*0.9) : p.price;
+function togglePromo(pid){ if(S.promos[pid]) delete S.promos[pid]; else S.promos[pid]=true; saveD(); renderAll(); }
 const amd = n => `<span class="num">${n.toLocaleString('en-US')}</span> ֏`;
 function fdate(ts){ const d = new Date(ts); const m = lang==='hy'
   ? ['հնվ','փտվ','մրտ','ապր','մյս','հնս','հլս','օգս','սեպ','հոկ','նոյ','դեկ']
+  : lang==='ru'
+  ? ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек']
   : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return d.getDate() + ' ' + m[d.getMonth()]; }
 function daysAgo(ts){ return Math.round((S.today - ts)/DAY); }
@@ -440,34 +519,70 @@ const alertKey = a => a.shop.id + '_' + a.p.id + '_' + a.type;
 function paneTab(role, tb){ U.tab[role]=tb; saveU(); renderAll(); }
 function setRole(r){ U.role=r; saveU(); renderAll(); }
 function toggleSplit(){ U.split=!U.split; saveU(); renderAll(); }
-function toggleLang(){ U.lang = lang = (lang==='hy'?'en':'hy'); saveU(); renderAll(); }
+function toggleLang(){ U.lang = lang = ({hy:'en',en:'ru',ru:'hy'})[lang]||'hy'; saveU(); renderAll(); }
+const dayW = ()=> lang==='hy'?'օր':(lang==='ru'?'дн.':'d');
 function addToBasket(pid, qty){ S.basket[pid] = (S.basket[pid]||0) + qty; saveD(); renderAll(); }
 function setBasketQty(pid, qty){ if(qty<=0) delete S.basket[pid]; else S.basket[pid]=qty; saveD(); renderAll(); }
 function dismissSug(pid){ S.dismissed[pid] = true; saveD(); renderAll(); }
 
 function submitBasket(){
   const bySup = {};
-  Object.entries(S.basket).forEach(([pid,qty])=>{ const p = P(pid); (bySup[p.sup] = bySup[p.sup]||[]).push({productId:pid, qty, price:p.price}); });
+  Object.entries(S.basket).forEach(([pid,qty])=>{ const p = P(pid); (bySup[p.sup] = bySup[p.sup]||[]).push({productId:pid, qty, price:effPrice(p)}); });
   const n = Object.keys(bySup).length; if(!n) return;
   Object.entries(bySup).forEach(([sup,items])=>{
-    S.orders.unshift({id:'ORD-'+(S.seq++), date:S.today, shop:MY_SHOP, sup, items, status:'new'});
+    const sum = items.reduce((a,x)=>a+x.qty*x.price,0);
+    const over = (S.debts[sup]||0)+sum > (S.creditLimit[sup]||Infinity);
+    S.orders.unshift({id:'ORD-'+(S.seq++), date:S.today, shop:MY_SHOP, sup, items, status:'new', overLimit:over});
   });
   S.basket = {}; S.dismissed = {};
   U.tab.shop='orders'; if(!U.split) U.tab.supplier='inbox';
   saveD(); saveU(); toast(n + ' ' + t('order_placed')); renderAll();
 }
 function confirmOrder(oid){ const o = S.orders.find(x=>x.id===oid); if(o){ o.status='confirmed'; saveD(); toast(t('confirmed_msg')); renderAll(); } }
-function deliverOrder(oid){
+function deliverOrder(oid, qtyMap){
   const o = S.orders.find(x=>x.id===oid); if(!o) return;
   o.status='delivered';
+  o.items.forEach(it=>{ it.delivered = qtyMap ? Math.max(0, Math.min(it.qty, qtyMap[it.productId]??it.qty)) : it.qty; });
   if(o.shop.id==='me'){
-    o.items.forEach(it=>S.history.push({date:S.today, productId:it.productId, sup:o.sup, qty:it.qty, price:it.price}));
-    const sum = o.items.reduce((a,x)=>a+x.qty*x.price,0);
-    S.debts[o.sup] = (S.debts[o.sup]||0) + sum;
-    S.bills.push({id:o.id.replace('ORD','INV'), sup:o.sup, date:S.today, amount:sum, paid:false});
+    o.items.forEach(it=>{ if(it.delivered>0) S.history.push({date:S.today, productId:it.productId, sup:o.sup, qty:it.delivered, price:it.price}); });
+    const sum = o.items.reduce((a,x)=>a+x.delivered*x.price,0);
+    if(sum>0){
+      S.debts[o.sup] = (S.debts[o.sup]||0) + sum;
+      S.bills.push({id:o.id.replace('ORD','INV'), sup:o.sup, date:S.today, amount:sum, paid:false,
+        items:o.items.filter(x=>x.delivered>0).map(x=>({productId:x.productId, qty:x.delivered, price:x.price}))});
+    }
   }
   saveD(); toast(t('delivered_msg')); renderAll();
 }
+let PARTIAL = null;
+function openPartial(oid){
+  const o = S.orders.find(x=>x.id===oid); if(!o) return;
+  PARTIAL = {oid, q:{}}; o.items.forEach(it=>PARTIAL.q[it.productId]=it.qty);
+  renderPartial();
+}
+function renderPartial(){
+  const o = S.orders.find(x=>x.id===PARTIAL.oid); if(!o) return;
+  const sum = o.items.reduce((a,it)=>a+(PARTIAL.q[it.productId]||0)*it.price,0);
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="mbody"><div class="grabber"></div><h3>✂ ${t('partial_title')}</h3><div class="muted">${o.id} · 🏪 ${nm(o.shop)}</div>
+    ${o.items.map(it=>{const p=P(it.productId);const q=PARTIAL.q[it.productId];return `<div class="sug">
+      <div class="pav">${p.em}</div>
+      <div class="info"><div class="nm">${nm(p)}</div><div class="sub">${t('qty')}՝ ${it.qty} · ${amd(it.price)}</div></div>
+      <div class="qtyctl">
+        <button onclick="partQty('${it.productId}',-1)">−</button><span style="${q<it.qty?'color:var(--rose)':''}">${q}</span>
+        <button onclick="partQty('${it.productId}',1)">+</button>
+      </div></div>`;}).join('')}
+    <div class="osum">${t('sum')}՝ ${amd(sum)}</div>
+    <button class="btn green full" style="margin-top:14px" onclick="confirmPartial()">🚚 ${t('confirm_deliv')}</button>
+    <button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">${t('close')}</button></div></div>`;
+}
+function partQty(pid, d){
+  const o = S.orders.find(x=>x.id===PARTIAL.oid);
+  const it = o.items.find(x=>x.productId===pid);
+  PARTIAL.q[pid] = Math.max(0, Math.min(it.qty, (PARTIAL.q[pid]||0)+d));
+  renderPartial();
+}
+function confirmPartial(){ const p=PARTIAL; PARTIAL=null; closeModal(); deliverOrder(p.oid, p.q); }
 function remindFix(k){ S.reminded[k]=true; saveD(); toast(t('reminded')); renderAll(); }
 function payDebt(sup){
   const amt = S.debts[sup]||0;
@@ -506,11 +621,11 @@ function viewFor(role, tab){
 }
 function topBar(){
   const dateTxt = fdate(S.today)+' 2026';
-  return `<div class="logo"><div class="logomark">⇄</div><div>ArmTrade<small>${lang==='hy'?'դեմո':'demo'}</small></div></div>
+  return `<div class="logo"><div class="logomark">⇄</div><div>ArmTrade<small>${lang==='hy'?'դեմո':(lang==='ru'?'демо':'demo')}</small></div></div>
     <span class="datechip">📅 ${dateTxt}</span>
     <div class="spacer"></div>
     <button class="tbtn ${U.split?'on':''}" onclick="toggleSplit()">${U.split?'▚ '+t('split_on'):'▙ '+t('split_off')}</button>
-    <button class="tbtn" onclick="toggleLang()">${lang==='hy'?'EN':'ՀԱՅ'}</button>
+    <button class="tbtn" onclick="toggleLang()">${({hy:'EN',en:'РУ',ru:'ՀԱՅ'})[lang]}</button>
     <button class="tbtn day" onclick="advanceDay()">⏭</button>`;
 }
 function paneHead(role){
@@ -519,7 +634,7 @@ function paneHead(role){
   const icons = role==='shop'?{home:'📋',catalog:'🛒',basket:'🧺',orders:'📦',debts:'💳',data:'📈'}:{dash:'📊',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷',data:'📈'};
   const cur=U.tab[role];
   const badges = role==='shop'
-    ? {basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
+    ? {home:S.proposals.length, basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
     : {inbox:S.orders.filter(o=>o.status==='new').length, alerts:supAlerts().length};
   return `<div class="panehead">
     <div class="panetitle">${role==='shop'?'🏪 '+t('shop'):'🚚 '+t('supplier')}<span class="tag">${role==='shop'?nm(MY_SHOP).replace(/[«»]/g,''):nm(SUPPLIERS[0])+' +2'}</span></div>
@@ -571,7 +686,16 @@ function renderAll(fromSync){
     else if(myConf>prevMy.conf) notifyShop(t('you_confirmed'));
   }
   prevMy = {conf:myConf, del:myDel};
+  // shop-side: new proposal or new promo arrived
+  const propN = S.proposals.length;
+  const promoN = Object.keys(S.promos).length;
+  if(prevPP){
+    if(propN>prevPP.prop) notifyShop(t('prop_new'));
+    else if(promoN>prevPP.promo) notifyShop(t('promo_new'));
+  }
+  prevPP = {prop:propN, promo:promoN};
 }
+let prevPP = null;
 let prevMy = null;
 function notifyShop(msg){
   const sp=document.querySelector('[data-role="shop"]');
@@ -584,7 +708,7 @@ function renderNav(role){
   const alertsN = supAlerts().length;
   const myActiveN = S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length;
   const items = role==='shop'
-    ? [['home','📋'],['catalog','🛒'],['basket','🧺',basketN],['orders','📦',myActiveN],['debts','💳'],['data','📈']]
+    ? [['home','📋',S.proposals.length],['catalog','🛒'],['basket','🧺',basketN],['orders','📦',myActiveN],['debts','💳'],['data','📈']]
     : [['dash','📊'],['inbox','📥',inboxN],['shops','🏪'],['alerts','🔔',alertsN],['catalog','🏷'],['data','📈']];
   const labels = role==='shop' ? T[lang].tabs_shop : T[lang].tabs_sup;
   document.getElementById('nav').innerHTML = items.map(([k,ic,badge])=>`
@@ -600,7 +724,7 @@ function sugCard(x){
   const inB = S.basket[p.id];
   let badge = '';
   if(st){
-    if(st.dueIn < 0) badge = `<span class="badge b-rose">${t('overdue')} ${-st.dueIn} ${lang==='hy'?'օր':'d'}</span>`;
+    if(st.dueIn < 0) badge = `<span class="badge b-rose">${t('overdue')} ${-st.dueIn} ${dayW()}</span>`;
     else if(st.dueIn === 0) badge = `<span class="badge b-gold">${t('due_today')}</span>`;
     else badge = `<span class="badge b-neutral">${st.dueIn} ${t('due_in')}</span>`;
   }
@@ -610,7 +734,7 @@ function sugCard(x){
     <div class="pav">${p.em}</div>
     <div class="info">
       <div class="nm">${nm(p)}</div>
-      <div class="sub">${sup.em} ${nm(sup)} · <b>${p.price.toLocaleString('en-US')} ֏</b>${p.promo?` <span class="badge b-violet">${t('promo')} −10%</span>`:''}</div>
+      <div class="sub">${sup.em} ${nm(sup)} · <b>${effPrice(p).toLocaleString('en-US')} ֏</b>${isPromo(p)?` <s style="color:var(--dim)">${p.price.toLocaleString('en-US')}</s> <span class="badge b-violet">${t('promo')} −10%</span>`:''}</div>
       <div class="sub">${st?`${t('every')} ${st.cycle} ${t('days')} · ${t('last_order')}՝ ${fdate(st.last)}`:''} ${badge}</div>
     </div>
     <div style="text-align:right;min-width:100px">
@@ -622,17 +746,39 @@ function sugCard(x){
     </div>
   </div>`;
 }
+function propCard(pr){
+  const p = P(pr.productId); const sup = SUP(pr.sup);
+  const sum = pr.qty * effPrice(p);
+  return `<div class="card" style="border-color:rgba(167,139,250,.4);background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(255,255,255,.04))">
+    <div class="sug" style="border:none;padding:2px 0">
+      <div class="pav">${p.em}</div>
+      <div class="info">
+        <div class="nm">📨 ${nm(p)}</div>
+        <div class="sub">${sup.em} ${nm(sup)} · <b>${effPrice(p).toLocaleString('en-US')} ֏</b> · ${t('sum')}՝ <b>${sum.toLocaleString('en-US')} ֏</b></div>
+      </div>
+      <div class="qtyctl">
+        <button onclick="setPropQty('${pr.id}', ${pr.qty-1})">−</button><span>${pr.qty}</span>
+        <button onclick="setPropQty('${pr.id}', ${pr.qty+1})">+</button>
+      </div>
+    </div>
+    <div class="obtns" style="margin-top:10px">
+      <button class="btn violet" onclick="acceptProposal('${pr.id}')">✓ ${t('prop_order')}</button>
+      <button class="btn ghost" onclick="dismissProposal('${pr.id}')" style="flex:0 0 auto">✕</button>
+    </div>
+  </div>`;
+}
 function vShopHome(){
   const sugs = suggestions();
   const basketN = Object.keys(S.basket).length;
   return `
   <div class="notice">${t('demo_note')}</div>
+  ${S.proposals.length?`<div class="sec">📨 ${t('prop_title')} (${S.proposals.length})</div>`+S.proposals.map(propCard).join(''):''}
   <div class="sec">${t('today_sug')} (${sugs.length})</div>
   <div class="card">
     ${sugs.length ? sugs.map(x=>sugCard(x)).join('') : `<div class="empty"><span class="em">✅</span>${t('all_ok')}</div>`}
   </div>
   ${basketN?`<button class="btn primary" onclick="paneTab('${curRole}','basket')">${t('basket')} (${basketN}) →</button>`:''}
-  <div class="footer-note">ArmTrade · ${lang==='hy'?'ցուցադրական տվյալներ':'demo data'}</div>`;
+  <div class="footer-note">ArmTrade · ${lang==='hy'?'ցուցադրական տվյալներ':(lang==='ru'?'демо-данные':'demo data')}</div>`;
 }
 let catFilter = 'all', catQ = '';
 function vShopCatalog(){
@@ -652,17 +798,18 @@ function vShopBasket(){
   ids.forEach(pid=>{ (bySup[P(pid).sup] = bySup[P(pid).sup]||[]).push(pid); });
   let total = 0;
   const html = Object.entries(bySup).map(([sup, pids])=>{
-    const sum = pids.reduce((a,pid)=>a + S.basket[pid]*P(pid).price, 0); total += sum;
+    const sum = pids.reduce((a,pid)=>a + S.basket[pid]*effPrice(P(pid)), 0); total += sum;
     return `<div class="card">
       <h3>${SUP(sup).em} ${nm(SUP(sup))}</h3>
       ${pids.map(pid=>{const p=P(pid);return `<div class="sug">
         <div class="pav">${p.em}</div>
-        <div class="info"><div class="nm">${nm(p)}</div><div class="sub">${amd(p.price)}</div></div>
+        <div class="info"><div class="nm">${nm(p)}</div><div class="sub">${amd(effPrice(p))}${isPromo(p)?` <span class="badge b-violet">−10%</span>`:''}</div></div>
         <div class="qtyctl">
           <button onclick="setBasketQty('${pid}', ${S.basket[pid]-1})">−</button><span>${S.basket[pid]}</span>
           <button onclick="setBasketQty('${pid}', ${S.basket[pid]+1})">+</button>
         </div></div>`;}).join('')}
       <div class="osum">${t('sum')}՝ ${amd(sum)}</div>
+      ${(S.debts[sup]||0)+sum > (S.creditLimit[sup]||Infinity) ? `<div style="margin-top:9px;font-size:12px;color:var(--rose);font-weight:700">${t('over_warn')} (${t('credit_limit')}՝ ${(S.creditLimit[sup]).toLocaleString('en-US')} ֏)</div>`:''}
     </div>`;
   }).join('');
   return `${html}
@@ -683,18 +830,22 @@ function orderTracker(status){
   <div class="olabels"><span class="${idx>=0?'on':''}">${t('st_new')}</span><span class="${idx>=1?'on':''}">${t('st_confirmed')}</span><span class="${idx>=2?'on':''}">${t('st_delivered')}</span></div>`;
 }
 function orderCard(o, side){
-  const sum = o.items.reduce((a,x)=>a+x.qty*x.price,0);
+  const dq = it => it.delivered!=null ? it.delivered : it.qty;
+  const sum = o.items.reduce((a,x)=>a+dq(x)*x.price,0);
   return `<div class="order st-${o.status}">
     <div class="oh">
       <b>${side==='shop' ? SUP(o.sup).em+' '+nm(SUP(o.sup)) : '🏪 '+nm(o.shop)}</b>
-      ${statusBadge(o.status)}
+      <span>${o.overLimit?`<span class="badge b-rose">⚠ ${t('over_limit')}</span> `:''}${statusBadge(o.status)}</span>
     </div>
     <div class="oid">${o.id} · ${fdate(o.date)}</div>
-    <div class="oitems">${o.items.map(it=>`${nm(P(it.productId))} <span class="num">× ${it.qty}</span>`).join('<br>')}</div>
+    <div class="oitems">${o.items.map(it=>{
+      const shorted = it.delivered!=null && it.delivered<it.qty;
+      return `${nm(P(it.productId))} <span class="num" ${shorted?'style="color:var(--rose);font-weight:700"':''}>× ${shorted?it.delivered+'/'+it.qty:it.qty}</span>${shorted?` <span class="badge b-rose">${t('short_lbl')}</span>`:''}`;
+    }).join('<br>')}</div>
     <div class="osum">${amd(sum)}</div>
     ${side==='shop' ? orderTracker(o.status) : ''}
     ${side==='sup' && o.status==='new' ? `<div class="obtns"><button class="btn cyan" onclick="confirmOrder('${o.id}')">✓ ${t('confirm')}</button></div>`:''}
-    ${side==='sup' && o.status==='confirmed' ? `<div class="obtns"><button class="btn green" onclick="deliverOrder('${o.id}')">🚚 ${t('deliver')}</button></div>`:''}
+    ${side==='sup' && o.status==='confirmed' ? `<div class="obtns"><button class="btn green" onclick="deliverOrder('${o.id}')">🚚 ${t('deliver')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openPartial('${o.id}')">✂ ${t('deliver_partial')}</button></div>`:''}
   </div>`;
 }
 function vShopOrders(){
@@ -705,14 +856,35 @@ function vShopDebts(){
   const total = Object.values(S.debts).reduce((a,b)=>a+b,0);
   return `
   <div class="card"><div class="muted">${t('total_debt')}</div><div class="big" style="color:${total?'var(--rose)':'var(--green)'};margin-top:6px">${amd(total)}</div></div>
-  ${SUPPLIERS.map(s=>`<div class="card"><div class="row">
-    <div><b>${s.em} ${nm(s)}</b><div class="muted" style="margin-top:3px">${t('debts')}</div></div>
-    <div style="text-align:right"><div class="num" style="font-weight:600;font-size:15px">${amd(S.debts[s.id]||0)}</div>
-    ${S.debts[s.id]?`<button class="btn small" style="margin-top:7px" onclick="payDebt('${s.id}')">${t('pay')}</button>`:''}</div>
-  </div></div>`).join('')}`;
+  ${SUPPLIERS.map(s=>{
+    const debt=S.debts[s.id]||0, lim=S.creditLimit[s.id]||0;
+    const pct=lim?Math.min(100,Math.round(debt/lim*100)):0;
+    return `<div class="card"><div class="row">
+    <div><b>${s.em} ${nm(s)}</b><div class="muted" style="margin-top:3px">${t('credit_limit')}՝ <span class="num">${lim.toLocaleString('en-US')} ֏</span></div></div>
+    <div style="text-align:right"><div class="num" style="font-weight:600;font-size:15px;color:${debt>lim?'var(--rose)':'var(--ink)'}">${amd(debt)}</div>
+    ${debt?`<button class="btn small" style="margin-top:7px" onclick="payDebt('${s.id}')">${t('pay')}</button>`:''}</div>
+  </div>
+  <div class="hbar" style="margin:10px 0 0"><div class="track"><div class="fill" style="width:${pct}%;${pct>=90?'background:linear-gradient(90deg,#FDA4B4,var(--rose));box-shadow:0 0 14px rgba(251,113,133,.45)':''}"></div></div></div>
+  </div>`;}).join('')}`;
 }
 
 /* ----- SUPPLIER views ----- */
+function forecastCard(){
+  const rows = PRODUCTS.map(p=>({p, st:stats(p.id)}))
+    .filter(x=>x.st && x.st.dueIn<=7)
+    .sort((a,b)=>a.st.dueIn-b.st.dueIn);
+  if(!rows.length) return '';
+  const total = rows.reduce((a,x)=>a+x.st.avgQty*effPrice(x.p),0);
+  return `<div class="card" style="border-color:rgba(34,211,238,.3)"><h3>🔮 ${t('forecast')}</h3>
+    ${rows.map(x=>{
+      const due = x.st.dueIn<=0 ? `<span class="badge b-rose">${t('due_today')}</span>` : `<span class="badge b-cyan">+${x.st.dueIn} ${dayW()}</span>`;
+      return `<div class="row" style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07)">
+        <span style="font-size:13px">${x.p.em} ${nm(x.p)} <span class="muted">· ${nm(MY_SHOP)}</span></span>
+        <span style="display:flex;gap:8px;align-items:center">${due}<b class="num">${x.st.avgQty} ${t('pcs')}</b></span>
+      </div>`;}).join('')}
+    <div class="row" style="margin-top:10px"><span class="muted">${t('forecast_total')}</span><b class="num" style="color:#7DE9F7">${amd(total)}</b></div>
+  </div>`;
+}
 function vSupDash(){
   const todayOrders = S.orders.filter(o=>o.date===S.today);
   const rev = todayOrders.reduce((a,o)=>a+o.items.reduce((x,i)=>x+i.qty*i.price,0),0);
@@ -725,6 +897,7 @@ function vSupDash(){
     <div class="kpi"><div class="l">🏪 ${t('active_shops')}</div><div class="v">${OTHER_SHOPS.length+1}</div></div>
     <div class="kpi"><div class="l">🔔 ${t('alerts_n')}</div><div class="v" style="color:${alerts.length?'var(--rose)':'var(--green)'}">${alerts.length}</div></div>
   </div>
+  ${forecastCard()}
   <div class="sec">${t('sup_orders_today')}</div>
   ${todayOrders.length ? todayOrders.map(o=>orderCard(o,'sup')).join('') : `<div class="card"><div class="empty">${t('inbox_empty')}</div></div>`}
   ${alerts.length?`<div class="sec">${t('alerts')}</div>`+alerts.slice(0,2).map(alertCard).join('')+`<button class="btn ghost full" onclick="paneTab('${curRole}','alerts')">${t('alerts')} →</button>`:''}
@@ -750,8 +923,8 @@ function vSupShops(){
     shopRow(MY_SHOP, `${t('last_order')}՝ ${fdate(myLast)}`, `<span class="badge b-green">${t('ok_status')}</span>`),
     ...OTHER_SHOPS.map((o)=>{
       const last = S.otherLast[o.id]; const ago = daysAgo(last);
-      const b = o.id==='o3' ? `<span class="badge b-rose">${ago} ${lang==='hy'?'օր լռություն':'days silent'}</span>`
-        : ago>3 ? `<span class="badge b-gold">${ago} ${lang==='hy'?'օր':'d'}</span>` : `<span class="badge b-green">${t('ok_status')}</span>`;
+      const b = o.id==='o3' ? `<span class="badge b-rose">${ago} ${lang==='hy'?'օր լռություն':(lang==='ru'?'дн. молчания':'days silent')}</span>`
+        : ago>3 ? `<span class="badge b-gold">${ago} ${dayW()}</span>` : `<span class="badge b-green">${t('ok_status')}</span>`;
       return shopRow(o, `${t('last_order')}՝ ${fdate(last)}`, b);
     })
   ].join('');
@@ -760,8 +933,8 @@ function vSupShops(){
 function alertCard(a){
   const isChurn = a.type==='churn';
   const txt = isChurn
-    ? `${nm(a.shop)} — ${nm(a.p)} · ${t('churn')} (${daysAgo(a.st.last)} ${lang==='hy'?'օր':'days'})`
-    : `${nm(a.shop)} — ${nm(a.p)} · ${t('overdue_alert')} (${-a.st.dueIn} ${lang==='hy'?'օր':'days'})`;
+    ? `${nm(a.shop)} — ${nm(a.p)} · ${t('churn')} (${daysAgo(a.st.last)} ${dayW()})`
+    : `${nm(a.shop)} — ${nm(a.p)} · ${t('overdue_alert')} (${-a.st.dueIn} ${dayW()})`;
   return `<div class="alert ${isChurn?'bad':''}">
     <div class="t">${isChurn?'🚨':'⏰'} ${txt}</div>
     <div class="d">${t('cycle')}՝ ${t('every')} ${a.st.cycle} ${t('days')} · ${t('avg_qty')}՝ ${a.st.avgQty}</div>
@@ -778,8 +951,11 @@ function vSupCatalog(){
     SUPPLIERS.map(s=>`<div class="card"><h3>${s.em} ${nm(s)}</h3>` +
       PRODUCTS.filter(p=>p.sup===s.id).map(p=>`<div class="sug">
         <div class="pav">${p.em}</div>
-        <div class="info"><div class="nm">${nm(p)}</div><div class="sub">${p.promo?`<span class="badge b-violet">${t('promo')}</span>`:''}</div></div>
-        <b class="num" style="color:var(--gold2)">${p.price.toLocaleString('en-US')} ֏</b>
+        <div class="info"><div class="nm">${nm(p)}</div>
+          <div class="sub"><b>${effPrice(p).toLocaleString('en-US')} ֏</b>${isPromo(p)?` <s style="color:var(--dim)">${p.price.toLocaleString('en-US')}</s> <span class="badge b-violet">${t('promo')} −10%</span>`:''}</div></div>
+        <div style="min-width:120px;text-align:right">
+          <button class="btn small ${isPromo(p)?'danger':'violet'}" onclick="togglePromo('${p.id}')">${isPromo(p)?t('promo_stop'):t('promo_start')}</button>
+        </div>
       </div>`).join('') + `</div>`
     ).join('');
 }
@@ -787,6 +963,7 @@ function vSupCatalog(){
 function monthKey(ts){ const d=new Date(ts); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
 function monthLabel(k){ const [y,mo]=k.split('-');
   const names = lang==='hy' ? ['Հնվ','Փտվ','Մրտ','Ապր','Մյս','Հնս','Հլս','Օգս','Սեպ','Հոկ','Նոյ','Դեկ']
+              : lang==='ru' ? ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек']
                             : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return names[+mo-1]+' '+y; }
 function monthAgg(){
@@ -803,8 +980,8 @@ function monthBars(cls){
 }
 function billRows(withShop){
   const bills=[...S.bills].sort((a,b)=>b.date-a.date);
-  return bills.map(b=>`<tr>
-    <td class="num">${b.id}</td><td>${fdate(b.date)}</td>
+  return bills.map(b=>`<tr style="cursor:pointer" onclick="openInvoice('${b.id}')">
+    <td class="num" style="color:var(--cyan)">${b.id}</td><td>${fdate(b.date)}</td>
     <td>${withShop ? nm(MY_SHOP) : SUP(b.sup).em+' '+nm(SUP(b.sup))}</td>
     <td class="num">${b.amount.toLocaleString('en-US')} ֏</td>
     <td>${b.paid?`<span class="badge b-green">${t('paid_st')}${b.paidDate?' · '+fdate(b.paidDate):''}</span>`:`<span class="badge b-rose">${t('unpaid_st')}</span>`}</td>
@@ -840,7 +1017,7 @@ function vShopData(){
     <div class="kpi"><div class="l">⏳ ${t('dc_out')}</div><div class="v" style="font-size:16px;color:${st.out?'var(--rose)':'var(--green)'}">${amd(st.out)}</div></div>
   </div>
   <div class="card"><h3>📊 ${t('dc_by_month')}</h3>${monthBars('')}</div>
-  <div class="card"><h3>🧾 ${t('dc_bills')}</h3><div class="tblwrap"><table class="tbl">
+  <div class="card"><h3>🧾 ${t('dc_bills')}</h3><div class="muted" style="margin:-6px 0 8px">${t('tap_bill')}</div><div class="tblwrap"><table class="tbl">
     <tr><th>${t('bill_col')}</th><th>${t('date')}</th><th>${t('supplier_col')}</th><th>${t('amount_col')}</th><th>${t('status_col')}</th></tr>
     ${billRows(false)}</table></div></div>
   <div class="card"><h3>💸 ${t('dc_payments')}</h3><div class="tblwrap"><table class="tbl">
@@ -866,7 +1043,7 @@ function vSupData(){
       <span>${s.em} ${nm(s)} ← ${nm(MY_SHOP)}</span>
       <b class="num" style="color:${S.debts[s.id]?'var(--rose)':'var(--green)'}">${(S.debts[s.id]||0).toLocaleString('en-US')} ֏</b>
     </div>`).join('')}</div>
-  <div class="card"><h3>🧾 ${t('dc_bills')}</h3><div class="tblwrap"><table class="tbl">
+  <div class="card"><h3>🧾 ${t('dc_bills')}</h3><div class="muted" style="margin:-6px 0 8px">${t('tap_bill')}</div><div class="tblwrap"><table class="tbl">
     <tr><th>${t('bill_col')}</th><th>${t('date')}</th><th>${t('shop_col')}</th><th>${t('amount_col')}</th><th>${t('status_col')}</th></tr>
     ${billRows(true)}</table></div></div>
   <div class="card"><h3>🕘 ${t('dc_sales')}</h3><div class="tblwrap"><table class="tbl">
@@ -881,17 +1058,60 @@ function openShop(id){
     body = `<table class="tbl"><tr><th>${t('product')}</th><th>${t('cycle')}</th><th>${t('avg_qty')}</th><th>${t('next_due')}</th></tr>` +
       PRODUCTS.map(p=>{const st=stats(p.id); if(!st) return '';
         const cls = st.dueIn<0?'style="color:var(--rose);font-weight:700"':'';
-        return `<tr><td>${nm(p)}</td><td class="num">${st.cycle} ${lang==='hy'?'օր':'d'}</td><td class="num">${st.avgQty}</td><td ${cls}>${st.dueIn<0?(t('overdue')+' '+(-st.dueIn)+(lang==='hy'?' օր':'d')):fdate(st.due)}</td></tr>`;}).join('') + '</table>';
+        return `<tr><td>${nm(p)}</td><td class="num">${st.cycle} ${dayW()}</td><td class="num">${st.avgQty}</td><td ${cls}>${st.dueIn<0?(t('overdue')+' '+(-st.dueIn)+(' '+dayW())):fdate(st.due)}</td></tr>`;}).join('') + '</table>';
   } else {
-    body = `<div class="muted">${t('last_order')}՝ ${fdate(S.otherLast[id])} (${daysAgo(S.otherLast[id])} ${lang==='hy'?'օր առաջ':'days ago'})</div>
-    <div class="muted" style="margin-top:8px">${lang==='hy'?'Դեմո խանութ — մանրամասն պատմությունը հասանելի է միայն ձեր խանութի համար։':'Demo shop — detailed history is available for your own shop only.'}</div>`;
+    body = `<div class="muted">${t('last_order')}՝ ${fdate(S.otherLast[id])} (${daysAgo(S.otherLast[id])} ${lang==='hy'?'օր առաջ':(lang==='ru'?'дн. назад':'days ago')})</div>
+    <div class="muted" style="margin-top:8px">${lang==='hy'?'Դեմո խանութ — մանրամասն պատմությունը հասանելի է միայն ձեր խանութի համար։':(lang==='ru'?'Демо-магазин — подробная история доступна только для вашего магазина.':'Demo shop — detailed history is available for your own shop only.')}</div>`;
   }
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody"><div class="grabber"></div><h3>${nm(shop)}</h3><div class="muted">${t('shop_detail')}</div>${body}
     <button class="btn primary" style="margin-top:16px" onclick="closeModal()">${t('close')}</button></div></div>`;
 }
 function closeModal(){ document.getElementById('modalRoot').innerHTML=''; }
-window.remind = function(shopId, pId, type){ remindFix(shopId + '_' + pId + '_' + type); };
+function openInvoice(bid){
+  const b = S.bills.find(x=>x.id===bid); if(!b) return;
+  const sup = SUP(b.sup);
+  const itemRows = b.items && b.items.length
+    ? `<table class="tbl"><tr><th>${t('product')}</th><th>${t('qty')}</th><th>${t('price')}</th><th>${t('amount_col')}</th></tr>` +
+      b.items.map(it=>`<tr><td>${nm(P(it.productId))}</td><td class="num">${it.qty}</td><td class="num">${it.price.toLocaleString('en-US')}</td><td class="num">${(it.qty*it.price).toLocaleString('en-US')}</td></tr>`).join('') + `</table>`
+    : `<div class="muted" style="margin-top:10px">${t('amount_col')}՝ <b class="num">${b.amount.toLocaleString('en-US')} ֏</b></div>`;
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="mbody" id="invoiceBody"><div class="grabber noprint"></div>
+    <h3>🧾 ${t('invoice')} ${b.id}</h3>
+    <div class="muted">${fdate(b.date)} 2026</div>
+    <hr class="sep" style="border:none;border-top:1px solid var(--stroke2);margin:12px 0">
+    <div class="row" style="align-items:flex-start"><div>
+      <div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:1px">${t('seller')}</div>
+      <b>${sup.em} ${nm(sup)}</b>
+    </div><div style="text-align:right">
+      <div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:1px">${t('buyer')}</div>
+      <b>🏪 ${nm(MY_SHOP)}</b>
+    </div></div>
+    ${itemRows}
+    <div class="row" style="margin-top:14px"><b>${t('total_lbl')}</b><span class="big" style="color:var(--gold2)">${amd(b.amount)}</span></div>
+    <div style="margin-top:8px">${b.paid?`<span class="badge b-green">${t('paid_st')}${b.paidDate?' · '+fdate(b.paidDate):''}</span>`:`<span class="badge b-rose">${t('unpaid_st')}</span>`}</div>
+    <button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">🖨 ${t('print')}</button>
+    <button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">${t('close')}</button></div></div>`;
+}
+window.remind = function(shopId, pId, type){
+  if(shopId==='me'){
+    const st = stats(pId); const p = P(pId);
+    if(!S.proposals.some(x=>x.productId===pId)){
+      S.proposals.push({id:'PRP-'+(S.seq++), productId:pId, qty:(st?st.avgQty:p.qty), sup:p.sup, date:S.today});
+    }
+  }
+  remindFix(shopId + '_' + pId + '_' + type);
+};
+function acceptProposal(prid){
+  const pr = S.proposals.find(x=>x.id===prid); if(!pr) return;
+  const p = P(pr.productId);
+  S.orders.unshift({id:'ORD-'+(S.seq++), date:S.today, shop:MY_SHOP, sup:pr.sup, items:[{productId:pr.productId, qty:pr.qty, price:effPrice(p)}], status:'new', fromProposal:true});
+  S.proposals = S.proposals.filter(x=>x.id!==prid);
+  U.tab.shop='orders'; saveU();
+  saveD(); toast('1 ' + t('order_placed')); renderAll();
+}
+function dismissProposal(prid){ S.proposals = S.proposals.filter(x=>x.id!==prid); saveD(); renderAll(); }
+function setPropQty(prid, q){ const pr=S.proposals.find(x=>x.id===prid); if(pr && q>0){ pr.qty=q; saveD(); renderAll(); } }
 
 let rt=null;
 window.addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(renderAll,150); });
