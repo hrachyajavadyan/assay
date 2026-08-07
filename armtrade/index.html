@@ -121,6 +121,16 @@ button{font-family:var(--font)}
 .oline.done{background:linear-gradient(90deg,var(--green),var(--cyan))}
 .olabels{display:flex;justify-content:space-between;margin-top:6px;font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--dim)}
 .olabels span.on{color:var(--ink)}
+/* data centre */
+.hbar{margin-bottom:11px}
+.hbar .hl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-bottom:5px}
+.hbar .hl b{font-family:var(--mono);color:var(--gold2);font-weight:600}
+.hbar .track{height:11px;border-radius:99px;background:var(--glass2);overflow:hidden;border:1px solid var(--stroke)}
+.hbar .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold2),var(--gold));box-shadow:0 0 14px rgba(227,154,59,.45)}
+.hbar .fill.cy{background:linear-gradient(90deg,#67E8F9,var(--violet));box-shadow:0 0 14px rgba(34,211,238,.4)}
+.tblwrap{max-height:330px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--stroke2) transparent}
+.tblwrap::-webkit-scrollbar{width:7px}
+.tblwrap::-webkit-scrollbar-thumb{background:var(--stroke2);border-radius:99px}
 
 /* supplier shop list */
 .shoprow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer}
@@ -237,8 +247,8 @@ body.single-mobile{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 const T = {
   hy: {
     shop:'Խանութ', supplier:'Մատակարար',
-    tabs_shop:{home:'Այսօր',catalog:'Ապրանքներ',basket:'Զամբյուղ',orders:'Պատվերներ',debts:'Պարտքեր'},
-    tabs_sup:{dash:'Վահանակ',inbox:'Պատվերներ',shops:'Խանութներ',alerts:'Ազդանշաններ',catalog:'Գնացուցակ'},
+    tabs_shop:{home:'Այսօր',catalog:'Ապրանքներ',basket:'Զամբյուղ',orders:'Պատվերներ',debts:'Պարտքեր',data:'Տվյալներ'},
+    tabs_sup:{dash:'Վահանակ',inbox:'Պատվերներ',shops:'Խանութներ',alerts:'Ազդանշաններ',catalog:'Գնացուցակ',data:'Տվյալներ'},
     today_sug:'Առաջարկվող պատվերներ', all_ok:'Ամեն ինչ համալրված է', add:'Ավելացնել', added:'Ավելացված ✓',
     due_today:'Այսօր է ժամկետը', overdue:'Ուշացած', due_in:'օրից', last_order:'Վերջին պատվերը',
     every:'ամեն', days:'օրը', basket:'Զամբյուղ', basket_empty:'Զամբյուղը դատարկ է',
@@ -264,12 +274,18 @@ const T = {
     demo_note:'Դեմո՝ պայմանական տվյալներով։ Ձախում պատվիրիր, աջում՝ մատակարարը միանգամից կտեսնի այն։ «⏭» կոճակն անցնում է հաջորդ օրը։',
     inbox_new:'նոր', sup_orders_today:'Այսօրվա պատվերներ', next_day:'Հաջորդ օրը',
     split_on:'Երկու կողմ', split_off:'Մեկ կողմ', new_order_in:'Նոր պատվեր ստացվեց 🔔',
-    you_confirmed:'Պատվերդ հաստատվեց ✓', you_delivered:'Պատվերդ առաքվեց 🚚'
+    you_confirmed:'Պատվերդ հաստատվեց ✓', you_delivered:'Պատվերդ առաքվեց 🚚',
+    dc_title:'Տվյալների կենտրոն', dc_bills:'Հաշիվներ', dc_history:'Գնումների պատմություն', dc_sales:'Վաճառքի պատմություն',
+    dc_payments:'Վճարումներ', paid_st:'Վճարված', unpaid_st:'Չվճարված',
+    dc_spend_m:'Ծախս այս ամիս', dc_rev_m:'Հասույթ այս ամիս', dc_deliv_all:'Ընդհ. առաքում', dc_paid_all:'Վճարված ընդհ.', dc_out:'Չվճարված մնացորդ',
+    dc_by_month:'Ծախսն ըստ ամիսների', dc_rev_by_month:'Հասույթն ըստ ամիսների',
+    status_col:'Կարգավիճակ', supplier_col:'Մատակարար', shop_col:'Խանութ', amount_col:'Գումար', bill_col:'Հաշիվ',
+    dc_receiv:'Ստացվելիք գումարներ', paid_on:'վճ.', show_more:'Ավելին'
   },
   en: {
     shop:'Shop', supplier:'Supplier',
-    tabs_shop:{home:'Today',catalog:'Products',basket:'Basket',orders:'Orders',debts:'Debts'},
-    tabs_sup:{dash:'Dashboard',inbox:'Orders',shops:'Shops',alerts:'Alerts',catalog:'Price list'},
+    tabs_shop:{home:'Today',catalog:'Products',basket:'Basket',orders:'Orders',debts:'Debts',data:'Data'},
+    tabs_sup:{dash:'Dashboard',inbox:'Orders',shops:'Shops',alerts:'Alerts',catalog:'Price list',data:'Data'},
     today_sug:'Suggested reorders', all_ok:'Everything is stocked', add:'Add', added:'Added ✓',
     due_today:'Due today', overdue:'Overdue', due_in:'days left', last_order:'Last order',
     every:'every', days:'days', basket:'Basket', basket_empty:'Basket is empty',
@@ -295,7 +311,13 @@ const T = {
     demo_note:'Demo with sample data. Order on the left, and the supplier sees it instantly on the right. The "⏭" button advances a day.',
     inbox_new:'new', sup_orders_today:"Today's orders", next_day:'Next day',
     split_on:'Two sides', split_off:'One side', new_order_in:'New order received 🔔',
-    you_confirmed:'Your order was confirmed ✓', you_delivered:'Your order was delivered 🚚'
+    you_confirmed:'Your order was confirmed ✓', you_delivered:'Your order was delivered 🚚',
+    dc_title:'Data centre', dc_bills:'Bills', dc_history:'Purchase history', dc_sales:'Sales history',
+    dc_payments:'Payments', paid_st:'Paid', unpaid_st:'Unpaid',
+    dc_spend_m:'Spend this month', dc_rev_m:'Revenue this month', dc_deliv_all:'Total deliveries', dc_paid_all:'Total paid', dc_out:'Outstanding',
+    dc_by_month:'Spend by month', dc_rev_by_month:'Revenue by month',
+    status_col:'Status', supplier_col:'Supplier', shop_col:'Shop', amount_col:'Amount', bill_col:'Bill',
+    dc_receiv:'Receivables', paid_on:'paid', show_more:'More'
   }
 };
 
@@ -341,6 +363,16 @@ function freshState(){
   });
   st.history = st.history.filter(h=>!(h.productId==='p7' && h.date > START-19*DAY));
   st.debts = {s1: 78500, s2: 42300, s3: 0};
+  st.bills = [
+    {id:'INV-1035', sup:'s1', date:START-30*DAY, amount:56000, paid:true,  paidDate:START-25*DAY},
+    {id:'INV-1038', sup:'s3', date:START-16*DAY, amount:31200, paid:true,  paidDate:START-12*DAY},
+    {id:'INV-1041', sup:'s1', date:START-18*DAY, amount:78500, paid:false},
+    {id:'INV-1042', sup:'s2', date:START-7*DAY,  amount:42300, paid:false},
+  ];
+  st.payments = [
+    {date:START-25*DAY, sup:'s1', amount:56000},
+    {date:START-12*DAY, sup:'s3', amount:31200},
+  ];
   OTHER_SHOPS.forEach((o,i)=>{ st.otherLast[o.id] = START - (i===2? 12 : (1+i%4))*DAY; });
   return st;
 }
@@ -352,6 +384,9 @@ let bc=null; try{ bc=new BroadcastChannel('armtrade_v4'); }catch(e){}
 function saveD(){ try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} try{ bc && bc.postMessage('sync'); }catch(e){} }
 function saveU(){ try{ sessionStorage.setItem(UKEY, JSON.stringify(U)); }catch(e){} }
 S = loadD() || freshState();
+// migrate older saved states to the data-centre model
+if(!S.bills){ S.bills=[]; Object.entries(S.debts||{}).forEach(([sup,amt])=>{ if(amt>0) S.bills.push({id:'INV-'+sup.toUpperCase(), sup, date:S.today-14*DAY, amount:amt, paid:false}); }); }
+if(!S.payments) S.payments=[];
 U = loadU();
 let lang = U.lang;
 const t = k => T[lang][k];
@@ -429,11 +464,18 @@ function deliverOrder(oid){
     o.items.forEach(it=>S.history.push({date:S.today, productId:it.productId, sup:o.sup, qty:it.qty, price:it.price}));
     const sum = o.items.reduce((a,x)=>a+x.qty*x.price,0);
     S.debts[o.sup] = (S.debts[o.sup]||0) + sum;
+    S.bills.push({id:o.id.replace('ORD','INV'), sup:o.sup, date:S.today, amount:sum, paid:false});
   }
   saveD(); toast(t('delivered_msg')); renderAll();
 }
 function remindFix(k){ S.reminded[k]=true; saveD(); toast(t('reminded')); renderAll(); }
-function payDebt(sup){ S.debts[sup] = 0; saveD(); toast(t('paid')); renderAll(); }
+function payDebt(sup){
+  const amt = S.debts[sup]||0;
+  S.debts[sup] = 0;
+  S.bills.forEach(b=>{ if(b.sup===sup && !b.paid){ b.paid=true; b.paidDate=S.today; } });
+  if(amt>0) S.payments.push({date:S.today, sup, amount:amt});
+  saveD(); toast(t('paid')); renderAll();
+}
 function resetDemo(){ S = freshState(); saveD(); toast(t('reset_done')); renderAll(); }
 
 function advanceDay(){
@@ -458,8 +500,8 @@ let curRole='shop';
 function viewFor(role, tab){
   curRole = role;
   const views = role==='shop'
-    ? {home:vShopHome, catalog:vShopCatalog, basket:vShopBasket, orders:vShopOrders, debts:vShopDebts}
-    : {dash:vSupDash, inbox:vSupInbox, shops:vSupShops, alerts:vSupAlerts, catalog:vSupCatalog};
+    ? {home:vShopHome, catalog:vShopCatalog, basket:vShopBasket, orders:vShopOrders, debts:vShopDebts, data:vShopData}
+    : {dash:vSupDash, inbox:vSupInbox, shops:vSupShops, alerts:vSupAlerts, catalog:vSupCatalog, data:vSupData};
   return (views[tab] || views[Object.keys(views)[0]])();
 }
 function topBar(){
@@ -473,8 +515,8 @@ function topBar(){
 }
 function paneHead(role){
   const labels = role==='shop'?T[lang].tabs_shop:T[lang].tabs_sup;
-  const tabs = role==='shop'?['home','catalog','basket','orders','debts']:['dash','inbox','shops','alerts','catalog'];
-  const icons = role==='shop'?{home:'📋',catalog:'🛒',basket:'🧺',orders:'📦',debts:'💳'}:{dash:'📊',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷'};
+  const tabs = role==='shop'?['home','catalog','basket','orders','debts','data']:['dash','inbox','shops','alerts','catalog','data'];
+  const icons = role==='shop'?{home:'📋',catalog:'🛒',basket:'🧺',orders:'📦',debts:'💳',data:'📈'}:{dash:'📊',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷',data:'📈'};
   const cur=U.tab[role];
   const badges = role==='shop'
     ? {basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
@@ -542,8 +584,8 @@ function renderNav(role){
   const alertsN = supAlerts().length;
   const myActiveN = S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length;
   const items = role==='shop'
-    ? [['home','📋'],['catalog','🛒'],['basket','🧺',basketN],['orders','📦',myActiveN],['debts','💳']]
-    : [['dash','📊'],['inbox','📥',inboxN],['shops','🏪'],['alerts','🔔',alertsN],['catalog','🏷']];
+    ? [['home','📋'],['catalog','🛒'],['basket','🧺',basketN],['orders','📦',myActiveN],['debts','💳'],['data','📈']]
+    : [['dash','📊'],['inbox','📥',inboxN],['shops','🏪'],['alerts','🔔',alertsN],['catalog','🏷'],['data','📈']];
   const labels = role==='shop' ? T[lang].tabs_shop : T[lang].tabs_sup;
   document.getElementById('nav').innerHTML = items.map(([k,ic,badge])=>`
     <button class="${U.tab[role]===k?'active':''}" onclick="paneTab('${role}','${k}')">
@@ -741,6 +783,97 @@ function vSupCatalog(){
       </div>`).join('') + `</div>`
     ).join('');
 }
+/* ----- DATA CENTRE ----- */
+function monthKey(ts){ const d=new Date(ts); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function monthLabel(k){ const [y,mo]=k.split('-');
+  const names = lang==='hy' ? ['Հնվ','Փտվ','Մրտ','Ապր','Մյս','Հնս','Հլս','Օգս','Սեպ','Հոկ','Նոյ','Դեկ']
+                            : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return names[+mo-1]+' '+y; }
+function monthAgg(){
+  const m={};
+  S.history.forEach(h=>{ const k=monthKey(h.date); m[k]=(m[k]||0)+h.qty*h.price; });
+  return Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0])).slice(-4);
+}
+function monthBars(cls){
+  const rows=monthAgg(); const max=Math.max(...rows.map(r=>r[1]),1);
+  return rows.map(([k,v])=>`<div class="hbar">
+    <div class="hl"><span>${monthLabel(k)}</span><b>${v.toLocaleString('en-US')} ֏</b></div>
+    <div class="track"><div class="fill ${cls||''}" style="width:${Math.round(v/max*100)}%"></div></div>
+  </div>`).join('');
+}
+function billRows(withShop){
+  const bills=[...S.bills].sort((a,b)=>b.date-a.date);
+  return bills.map(b=>`<tr>
+    <td class="num">${b.id}</td><td>${fdate(b.date)}</td>
+    <td>${withShop ? nm(MY_SHOP) : SUP(b.sup).em+' '+nm(SUP(b.sup))}</td>
+    <td class="num">${b.amount.toLocaleString('en-US')} ֏</td>
+    <td>${b.paid?`<span class="badge b-green">${t('paid_st')}${b.paidDate?' · '+fdate(b.paidDate):''}</span>`:`<span class="badge b-rose">${t('unpaid_st')}</span>`}</td>
+  </tr>`).join('');
+}
+function payRows(){
+  return [...S.payments].sort((a,b)=>b.date-a.date).map(p=>`<tr>
+    <td>${fdate(p.date)}</td><td>${SUP(p.sup).em+' '+nm(SUP(p.sup))}</td>
+    <td class="num" style="color:var(--green)">${p.amount.toLocaleString('en-US')} ֏</td>
+  </tr>`).join('');
+}
+function histRows(limit){
+  return [...S.history].sort((a,b)=>b.date-a.date).slice(0,limit).map(h=>`<tr>
+    <td>${fdate(h.date)}</td><td>${P(h.productId).em} ${nm(P(h.productId))}</td>
+    <td class="num">${h.qty}</td><td class="num">${(h.qty*h.price).toLocaleString('en-US')} ֏</td>
+  </tr>`).join('');
+}
+function dcStats(){
+  const mk=monthKey(S.today);
+  const spendM = S.history.filter(h=>monthKey(h.date)===mk).reduce((a,h)=>a+h.qty*h.price,0);
+  const paidAll = S.payments.reduce((a,p)=>a+p.amount,0);
+  const out = Object.values(S.debts).reduce((a,b)=>a+b,0);
+  const deliv = S.history.length;
+  return {spendM, paidAll, out, deliv};
+}
+function vShopData(){
+  const st=dcStats();
+  return `<div class="sec">${t('dc_title')}</div>
+  <div class="kpis">
+    <div class="kpi"><div class="l">🛒 ${t('dc_spend_m')}</div><div class="v" style="font-size:16px;color:var(--gold2)">${amd(st.spendM)}</div></div>
+    <div class="kpi"><div class="l">📦 ${t('dc_deliv_all')}</div><div class="v">${st.deliv}</div></div>
+    <div class="kpi"><div class="l">✅ ${t('dc_paid_all')}</div><div class="v" style="font-size:16px;color:var(--green)">${amd(st.paidAll)}</div></div>
+    <div class="kpi"><div class="l">⏳ ${t('dc_out')}</div><div class="v" style="font-size:16px;color:${st.out?'var(--rose)':'var(--green)'}">${amd(st.out)}</div></div>
+  </div>
+  <div class="card"><h3>📊 ${t('dc_by_month')}</h3>${monthBars('')}</div>
+  <div class="card"><h3>🧾 ${t('dc_bills')}</h3><div class="tblwrap"><table class="tbl">
+    <tr><th>${t('bill_col')}</th><th>${t('date')}</th><th>${t('supplier_col')}</th><th>${t('amount_col')}</th><th>${t('status_col')}</th></tr>
+    ${billRows(false)}</table></div></div>
+  <div class="card"><h3>💸 ${t('dc_payments')}</h3><div class="tblwrap"><table class="tbl">
+    <tr><th>${t('date')}</th><th>${t('supplier_col')}</th><th>${t('amount_col')}</th></tr>
+    ${payRows() || `<tr><td colspan="3" class="muted">—</td></tr>`}</table></div></div>
+  <div class="card"><h3>🕘 ${t('dc_history')}</h3><div class="tblwrap"><table class="tbl">
+    <tr><th>${t('date')}</th><th>${t('product')}</th><th>${t('qty')}</th><th>${t('amount_col')}</th></tr>
+    ${histRows(40)}</table></div></div>`;
+}
+function vSupData(){
+  const st=dcStats();
+  const revAll = S.history.reduce((a,h)=>a+h.qty*h.price,0);
+  return `<div class="sec">${t('dc_title')}</div>
+  <div class="kpis">
+    <div class="kpi"><div class="l">💰 ${t('dc_rev_m')}</div><div class="v" style="font-size:16px;color:var(--gold2)">${amd(st.spendM)}</div></div>
+    <div class="kpi"><div class="l">📦 ${t('dc_deliv_all')}</div><div class="v">${st.deliv}</div></div>
+    <div class="kpi"><div class="l">✅ ${t('dc_payments')}</div><div class="v" style="font-size:16px;color:var(--green)">${amd(st.paidAll)}</div></div>
+    <div class="kpi"><div class="l">⏳ ${t('dc_receiv')}</div><div class="v" style="font-size:16px;color:${st.out?'var(--rose)':'var(--green)'}">${amd(st.out)}</div></div>
+  </div>
+  <div class="card"><h3>📊 ${t('dc_rev_by_month')}</h3>${monthBars('cy')}</div>
+  <div class="card"><h3>⏳ ${t('dc_receiv')}</h3>
+    ${SUPPLIERS.map(s=>`<div class="row" style="padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)">
+      <span>${s.em} ${nm(s)} ← ${nm(MY_SHOP)}</span>
+      <b class="num" style="color:${S.debts[s.id]?'var(--rose)':'var(--green)'}">${(S.debts[s.id]||0).toLocaleString('en-US')} ֏</b>
+    </div>`).join('')}</div>
+  <div class="card"><h3>🧾 ${t('dc_bills')}</h3><div class="tblwrap"><table class="tbl">
+    <tr><th>${t('bill_col')}</th><th>${t('date')}</th><th>${t('shop_col')}</th><th>${t('amount_col')}</th><th>${t('status_col')}</th></tr>
+    ${billRows(true)}</table></div></div>
+  <div class="card"><h3>🕘 ${t('dc_sales')}</h3><div class="tblwrap"><table class="tbl">
+    <tr><th>${t('date')}</th><th>${t('product')}</th><th>${t('qty')}</th><th>${t('amount_col')}</th></tr>
+    ${histRows(40)}</table></div></div>`;
+}
+
 function openShop(id){
   const shop = id==='me' ? MY_SHOP : OTHER_SHOPS.find(o=>o.id===id);
   let body = '';
