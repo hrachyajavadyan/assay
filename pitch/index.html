@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080C18">
+<title>ArmTrade — Պատվերներ առանց զանգերի</title>
+<meta property="og:title" content="ArmTrade — Պատվերներ առանց զանգերի">
+<meta property="og:description" content="Խանութ–մատակարար կապի թվային հարթակ. ավտոմատ համալրում, պատվերներ, պարտքեր, կանխատեսում">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&family=Noto+Sans+Armenian:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080C18;--ink:#EDF1FA;--muted:#93A0BD;--dim:#5E6D8C;--gold:#E39A3B;--gold2:#F7C572;--cyan:#22D3EE;--violet:#A78BFA;--green:#34D399;
+  --glass:rgba(255,255,255,.055);--stroke:rgba(255,255,255,.12);--stroke2:rgba(255,255,255,.2)}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Inter','Noto Sans Armenian',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:
+  radial-gradient(55vw 45vh at 10% -6%, rgba(227,154,59,.22), transparent 60%),
+  radial-gradient(55vw 45vh at 95% 2%, rgba(167,139,250,.2), transparent 60%),
+  radial-gradient(70vw 55vh at 50% 116%, rgba(34,211,238,.16), transparent 60%), #080C18;}
+body::after{content:"";position:fixed;inset:0;z-index:-1;background-image:radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);background-size:26px 26px;opacity:.5}
+.wrap{max-width:860px;margin:0 auto;padding:9vh 22px 60px}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:34px}
+.logomark{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--gold2),var(--gold));display:flex;align-items:center;justify-content:center;color:#1a1205;font-size:21px;font-weight:800;box-shadow:0 6px 22px rgba(227,154,59,.45)}
+.logo b{font-family:'Space Grotesk',sans-serif;font-size:22px;letter-spacing:.4px}
+h1{font-family:'Space Grotesk','Noto Sans Armenian',sans-serif;font-size:clamp(30px,5.4vw,46px);line-height:1.18;letter-spacing:.2px;margin:0 0 14px}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--gold2),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--muted);font-size:17px;max-width:640px;margin:0 0 30px}
+.sec{font-size:11px;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:2px;margin:44px 0 14px}
+.card{background:var(--glass);backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);border:1px solid var(--stroke);border-radius:20px;padding:22px;margin-bottom:14px;box-shadow:0 10px 34px rgba(0,0,0,.25)}
+.grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
+.f{display:flex;gap:14px;align-items:flex-start}
+.f .ic{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;background:rgba(255,255,255,.09);border:1px solid var(--stroke2)}
+.f b{font-size:15px;display:block;margin-bottom:3px}
+.f p{margin:0;color:var(--muted);font-size:13.5px}
+img.shot{width:100%;border-radius:16px;border:1px solid var(--stroke2);display:block;box-shadow:0 14px 44px rgba(0,0,0,.4)}
+.shots{display:grid;grid-template-columns:1fr;gap:14px;margin-top:6px}
+@media(min-width:700px){.shots{grid-template-columns:2.4fr 1fr;align-items:start}}
+.cta{display:inline-block;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1205;text-decoration:none;font-weight:800;font-size:17px;padding:16px 30px;border-radius:15px;box-shadow:0 10px 34px rgba(227,154,59,.4);margin-top:8px}
+.cta2{display:inline-block;background:var(--glass);border:1px solid var(--stroke2);color:var(--ink);text-decoration:none;font-weight:700;font-size:14px;padding:13px 22px;border-radius:13px;margin:8px 0 0 10px}
+.pill{display:inline-block;background:rgba(34,211,238,.14);border:1px solid rgba(34,211,238,.3);color:#7DE9F7;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;padding:5px 13px;border-radius:99px;margin-bottom:18px}
+.foot{margin-top:54px;color:var(--dim);font-size:12.5px;border-top:1px solid var(--stroke);padding-top:22px}
+.foot a{color:var(--gold2);text-decoration:none}
+.prob{color:var(--muted);font-size:14.5px}
+.prob b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo"><div class="logomark">⇄</div><b>ArmTrade</b></div>
+  <div class="pill">Աշխատող դեմո · Live demo</div>
+  <h1>Պատվերներ <em>առանց զանգերի</em></h1>
+  <p class="lead">Խանութ–մատակարար կապի թվային հարթակ։ Համակարգն ինքն է հիշեցնում, թե երբ և ինչ պատվիրել — խանութը հաստատում է մեկ հպումով, մատակարարը տեսնում է ակնթարթորեն։</p>
+  <a class="cta" href="/armtrade/">▶ Փորձել դեմոն</a>
+
+  <div class="sec">Խնդիրը</div>
+  <div class="card prob">
+    Այսօր մատակարարման պատվերները Հայաստանում հավաքվում են <b>զանգերով և գործակալների այցերով</b>․ ապրանքը վերջանում է աննկատ, պատվերները մոռացվում են, պարտքերը հաշվվում են թղթի վրա։ Խանութը կորցնում է վաճառք, մատակարարը՝ հաճախորդ։
+  </div>
+
+  <div class="sec">Լուծումը</div>
+  <div class="grid">
+    <div class="card f"><div class="ic">🔮</div><div><b>Ավտոմատ համալրում</b><p>Համակարգը սովորում է յուրաքանչյուր ապրանքի պատվերի ցիկլը և ինքն է առաջարկում՝ ինչ և երբ պատվիրել։</p></div></div>
+    <div class="card f"><div class="ic">📨</div><div><b>Մեկ հպումով պատվեր</b><p>Մատակարարի հիշեցումը խանութի մոտ դառնում է պատրաստի պատվեր՝ հաստատվում է մեկ կոճակով։</p></div></div>
+    <div class="card f"><div class="ic">⚡</div><div><b>Իրական ժամանակ</b><p>Պատվերը, հաստատումը, առաքումը երևում են երկու կողմում ակնթարթորեն՝ առանց զանգի։</p></div></div>
+    <div class="card f"><div class="ic">💳</div><div><b>Պարտքեր և հաշիվներ</b><p>Կրեդիտ լիմիտներ, վճարված/չվճարված հաշիվներ, տպվող հաշիվ-ապրանքագրեր։</p></div></div>
+    <div class="card f"><div class="ic">📊</div><div><b>Կանխատեսում</b><p>Մատակարարը նախապես տեսնում է առաջիկա 7 օրվա սպասվող պատվերները՝ ըստ խանութների։</p></div></div>
+    <div class="card f"><div class="ic">🚨</div><div><b>Կորուստների ազդանշան</b><p>Երբ խանութը դադարում է պատվիրել, մատակարարը ստանում է ազդանշան՝ նախքան հաճախորդին կորցնելը։</p></div></div>
+  </div>
+
+  <div class="sec">Ինչպես է աշխատում</div>
+  <div class="shots">
+    <img class="shot" src="pitch_desktop.jpg" alt="ArmTrade — մատակարարի վահանակ">
+    <img class="shot" src="pitch_mobile.jpg" alt="ArmTrade — բջջային տարբերակ">
+  </div>
+
+  <div class="sec">Ում համար է</div>
+  <div class="card prob">
+    <b>Դիստրիբյուտորների համար</b> — ավելի շատ պատվեր՝ առանց ավելացնելու գործակալներ, հաճախորդների կորստի կանխարգելում, դեբիտորական պարտքի հսկողություն։<br><br>
+    <b>Խանութների համար</b> — ապրանքը երբեք չի վերջանում, բոլոր մատակարարները՝ մեկ հավելվածում, պարտքերը՝ թափանցիկ։
+  </div>
+
+  <a class="cta" href="/armtrade/">▶ Փորձել դեմոն հիմա</a>
+  <a class="cta2" href="mailto:hrachya.javadyan@gmail.com">✉ Կապ հեղինակի հետ</a>
+
+  <div class="foot">
+    ArmTrade · նախատիպ / prototype · Դեմոն աշխատում է պայմանական տվյալներով, գրանցում չի պահանջվում։<br>
+    <a href="/armtrade/">assay-9e6.pages.dev/armtrade</a> · <a href="mailto:hrachya.javadyan@gmail.com">hrachya.javadyan@gmail.com</a>
+  </div>
+</div>
+</body>
+</html>

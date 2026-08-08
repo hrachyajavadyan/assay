@@ -299,7 +299,18 @@ const T = {
     credit_limit:'Կրեդիտ լիմիտ', over_limit:'Լիմիտից դուրս', over_warn:'⚠ Այս պատվերով պարտքը կգերազանցի կրեդիտ լիմիտը',
     deliver_partial:'Մասնակի', partial_title:'Մասնակի առաքում', confirm_deliv:'Հաստատել առաքումը', short_lbl:'պակաս',
     forecast:'Կանխատեսում · առաջիկա 7 օր', expected_qty:'Սպասվող քնկ', forecast_total:'Ընդամենը պատրաստել',
-    invoice:'Հաշիվ-ապրանքագիր', print:'Տպել', total_lbl:'Ընդամենը', buyer:'Գնորդ', seller:'Վաճառող', tap_bill:'Սեղմեք հաշվի վրա՝ տպելու համար'
+    invoice:'Հաշիվ-ապրանքագիր', print:'Տպել', total_lbl:'Ընդամենը', buyer:'Գնորդ', seller:'Վաճառող', tap_bill:'Սեղմեք հաշվի վրա՝ տպելու համար',
+    ev_title:'Ծանուցումներ', ev_empty:'Դեռ ծանուցումներ չկան',
+    ev_order:'Նոր պատվեր', ev_confirmed:'Պատվերը հաստատվեց', ev_delivered:'Պատվերն առաքվեց',
+    ev_promo_on:'Ակցիա սկսվեց', ev_promo_off:'Ակցիան դադարեց', ev_proposal:'Առաջարկ ուղարկվեց',
+    ev_payment:'Վճարում', ev_return:'Վերադարձ', ev_chat:'Նոր հաղորդագրություն',
+    deliv_day:'Առաքման օր', today_w:'Այսօր', tomorrow_w:'Վաղը', route:'Առաքումների պլան',
+    ret_btn:'Վերադարձ', ret_title:'Ապրանքի վերադարձ', ret_confirm:'Հաստատել վերադարձը', ret_done:'Վերադարձը գրանցվեց', returned:'Վերադարձված',
+    chat:'Չատ', chat_ph:'Գրել հաղորդագրություն…', send:'Ուղարկել',
+    sync:'Համաժամացում', sync_room:'Սենյակի կոդ', sync_join:'Միանալ', sync_leave:'Անջատել',
+    sync_on:'Միացված է', sync_off:'Միայն այս սարքը', gen_code:'Ստեղծել կոդ',
+    sync_hint:'Նույն կոդը մուտքագրեք երկու սարքի վրա (օր․ ձեր հեռախոսը՝ խանութ, համակարգիչը՝ մատակարար) — և նրանք կտեսնեն միմյանց իրական ժամանակում։',
+    sync_err:'Սերվերը հասանելի չէ — համաժամացումն անջատված է'
   },
   en: {
     shop:'Shop', supplier:'Supplier',
@@ -342,7 +353,18 @@ const T = {
     credit_limit:'Credit limit', over_limit:'Over limit', over_warn:'⚠ This order will push your debt over the credit limit',
     deliver_partial:'Partial', partial_title:'Partial delivery', confirm_deliv:'Confirm delivery', short_lbl:'short',
     forecast:'Forecast · next 7 days', expected_qty:'Expected qty', forecast_total:'Total to prepare',
-    invoice:'Invoice', print:'Print', total_lbl:'Total', buyer:'Buyer', seller:'Seller', tap_bill:'Tap a bill to print it'
+    invoice:'Invoice', print:'Print', total_lbl:'Total', buyer:'Buyer', seller:'Seller', tap_bill:'Tap a bill to print it',
+    ev_title:'Notifications', ev_empty:'No notifications yet',
+    ev_order:'New order', ev_confirmed:'Order confirmed', ev_delivered:'Order delivered',
+    ev_promo_on:'Promo started', ev_promo_off:'Promo ended', ev_proposal:'Offer sent',
+    ev_payment:'Payment', ev_return:'Return', ev_chat:'New message',
+    deliv_day:'Delivery day', today_w:'Today', tomorrow_w:'Tomorrow', route:'Delivery plan',
+    ret_btn:'Return', ret_title:'Return items', ret_confirm:'Confirm return', ret_done:'Return recorded', returned:'Returned',
+    chat:'Chat', chat_ph:'Type a message…', send:'Send',
+    sync:'Sync', sync_room:'Room code', sync_join:'Join', sync_leave:'Disconnect',
+    sync_on:'Connected', sync_off:'This device only', gen_code:'Generate code',
+    sync_hint:'Enter the same code on two devices (e.g. your phone as shop, computer as supplier) — they will see each other in real time.',
+    sync_err:'Server unavailable — sync is off'
   },
   ru: {
     shop:'Магазин', supplier:'Поставщик',
@@ -385,7 +407,18 @@ const T = {
     credit_limit:'Кредитный лимит', over_limit:'Сверх лимита', over_warn:'⚠ Этот заказ превысит кредитный лимит',
     deliver_partial:'Частично', partial_title:'Частичная доставка', confirm_deliv:'Подтвердить доставку', short_lbl:'недопоставка',
     forecast:'Прогноз · ближайшие 7 дней', expected_qty:'Ожид. кол.', forecast_total:'Всего подготовить',
-    invoice:'Счёт-фактура', print:'Печать', total_lbl:'Итого', buyer:'Покупатель', seller:'Продавец', tap_bill:'Нажмите на счёт, чтобы распечатать'
+    invoice:'Счёт-фактура', print:'Печать', total_lbl:'Итого', buyer:'Покупатель', seller:'Продавец', tap_bill:'Нажмите на счёт, чтобы распечатать',
+    ev_title:'Уведомления', ev_empty:'Пока нет уведомлений',
+    ev_order:'Новый заказ', ev_confirmed:'Заказ подтверждён', ev_delivered:'Заказ доставлен',
+    ev_promo_on:'Акция началась', ev_promo_off:'Акция закончилась', ev_proposal:'Отправлено предложение',
+    ev_payment:'Платёж', ev_return:'Возврат', ev_chat:'Новое сообщение',
+    deliv_day:'День доставки', today_w:'Сегодня', tomorrow_w:'Завтра', route:'План доставок',
+    ret_btn:'Возврат', ret_title:'Возврат товара', ret_confirm:'Подтвердить возврат', ret_done:'Возврат оформлен', returned:'Возвращено',
+    chat:'Чат', chat_ph:'Напишите сообщение…', send:'Отправить',
+    sync:'Синхронизация', sync_room:'Код комнаты', sync_join:'Подключиться', sync_leave:'Отключить',
+    sync_on:'Подключено', sync_off:'Только это устройство', gen_code:'Создать код',
+    sync_hint:'Введите один и тот же код на двух устройствах (напр. телефон — магазин, компьютер — поставщик) — и они будут видеть друг друга в реальном времени.',
+    sync_err:'Сервер недоступен — синхронизация отключена'
   }
 };
 
@@ -444,6 +477,19 @@ function freshState(){
   st.proposals = [];
   st.promos = {p4:true};
   st.creditLimit = {s1:100000, s2:80000, s3:60000};
+  st.events = []; st.evCounter = 0;
+  // richer multi-shop history: past orders from other shops
+  OTHER_SHOPS.forEach((o,i)=>{
+    if(o.id==='o3') return; // the churned shop stays silent
+    const n = 2 + (i%3);
+    for(let k=0;k<n;k++){
+      const sup = ['s1','s2','s3'][(i+k)%3];
+      const pool = PRODUCTS.filter(p=>p.sup===sup);
+      const items = pool.slice(0, 1+((i+k)%pool.length)).map(p=>({productId:p.id, qty:Math.max(1,p.qty+((k+i)%3)-1), price:p.price, delivered:Math.max(1,p.qty+((k+i)%3)-1)}));
+      const d = START - (3 + k*6 + i)*DAY;
+      st.orders.push({id:'ORD-'+(st.seq++), date:d, shop:o, sup, items, status:'delivered', deliveryDate:d+DAY});
+    }
+  });
   OTHER_SHOPS.forEach((o,i)=>{ st.otherLast[o.id] = START - (i===2? 12 : (1+i%4))*DAY; });
   return st;
 }
@@ -452,7 +498,7 @@ function loadD(){ try{ const x=localStorage.getItem(DKEY); if(x) return JSON.par
 function freshU(){ return {split:true, role:'shop', tab:{shop:'home', supplier:'dash'}, lang:'hy'}; }
 function loadU(){ try{ const x=sessionStorage.getItem(UKEY); if(x) return Object.assign(freshU(), JSON.parse(x)); }catch(e){} return freshU(); }
 let bc=null; try{ bc=new BroadcastChannel('armtrade_v4'); }catch(e){}
-function saveD(){ try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} try{ bc && bc.postMessage('sync'); }catch(e){} }
+function saveD(){ try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} try{ bc && bc.postMessage('sync'); }catch(e){} schedulePush(); }
 function saveU(){ try{ sessionStorage.setItem(UKEY, JSON.stringify(U)); }catch(e){} }
 S = loadD() || freshState();
 // migrate older saved states to the data-centre model
@@ -461,12 +507,88 @@ if(!S.payments) S.payments=[];
 if(!S.proposals) S.proposals=[];
 if(!S.promos) S.promos={p4:true};
 if(!S.creditLimit) S.creditLimit={s1:100000, s2:80000, s3:60000};
+if(!S.events){ S.events=[]; S.evCounter=0; }
 U = loadU();
+if(U.lastSeenEv==null) U.lastSeenEv = 0;
 let lang = U.lang;
 const t = k => T[lang][k];
 
 if(bc) bc.onmessage = ()=>{ const d=loadD(); if(d){ S=d; renderAll(true); } };
 window.addEventListener('storage', e=>{ if(e.key===DKEY){ const d=loadD(); if(d){ S=d; renderAll(true); } } });
+
+/* ---------- cross-device sync via room codes (Cloudflare Pages Functions + D1) ---------- */
+let ROOM = '';
+try{ ROOM = localStorage.getItem('armtrade_room') || ''; }catch(e){}
+let syncPushTimer = null, syncErrShown = false, syncBusy = false;
+function schedulePush(){
+  if(!ROOM) return;
+  clearTimeout(syncPushTimer);
+  syncPushTimer = setTimeout(pushState, 400);
+}
+async function pushState(){
+  if(!ROOM || syncBusy) return;
+  syncBusy = true;
+  try{
+    const r = await fetch('/api/room/'+encodeURIComponent(ROOM), {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({data:S})});
+    if(r.ok){ const j = await r.json(); S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} syncErrShown = false; }
+    else throw new Error('http '+r.status);
+  }catch(e){ if(!syncErrShown){ syncErrShown = true; toast(t('sync_err')); } }
+  syncBusy = false;
+}
+async function pollSync(){
+  if(!ROOM || syncBusy) return;
+  try{
+    const r = await fetch('/api/room/'+encodeURIComponent(ROOM)+'?probe=1');
+    if(!r.ok) return;
+    const j = await r.json();
+    if(j.v > (S.v||0)){
+      const r2 = await fetch('/api/room/'+encodeURIComponent(ROOM));
+      if(!r2.ok) return;
+      const full = await r2.json();
+      if(full.data){ S = full.data; S.v = full.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} renderAll(true); }
+    }
+  }catch(e){}
+}
+setInterval(pollSync, 4000);
+function openSync(){
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="mbody"><div class="grabber"></div><h3>🔗 ${t('sync')}</h3>
+    <div class="muted" style="margin-bottom:12px">${ROOM?`<span class="badge b-green">● ${t('sync_on')}</span> <b class="num">${ROOM}</b>`:`<span class="badge b-neutral">${t('sync_off')}</span>`}</div>
+    <div class="notice">${t('sync_hint')}</div>
+    <input class="search" id="roomInput" placeholder="${t('sync_room')}" value="${ROOM}" style="text-transform:uppercase;font-family:var(--mono);letter-spacing:2px">
+    <div class="obtns">
+      <button class="btn cyan" onclick="joinRoom()">🔗 ${t('sync_join')}</button>
+      <button class="btn ghost" style="flex:0 0 auto" onclick="genRoom()">🎲 ${t('gen_code')}</button>
+    </div>
+    ${ROOM?`<button class="btn danger full" style="margin-top:10px" onclick="leaveRoom()">✕ ${t('sync_leave')}</button>`:''}
+    <button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">${t('close')}</button></div></div>`;
+}
+function genRoom(){
+  const abc = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  let c = ''; for(let i=0;i<6;i++) c += abc[Math.floor(Math.random()*abc.length)];
+  document.getElementById('roomInput').value = c;
+}
+async function joinRoom(){
+  const code = (document.getElementById('roomInput').value||'').trim().toUpperCase();
+  if(code.length < 4) return;
+  ROOM = code;
+  try{ localStorage.setItem('armtrade_room', ROOM); }catch(e){}
+  try{
+    const r = await fetch('/api/room/'+encodeURIComponent(ROOM));
+    if(r.ok){
+      const j = await r.json();
+      if(j.v > 0 && j.data){ S = j.data; S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} }
+      else await pushState();
+      toast('🔗 ' + t('sync_on') + ' · ' + ROOM);
+    } else throw new Error('http '+r.status);
+  }catch(e){ toast(t('sync_err')); }
+  closeModal(); renderAll();
+}
+function leaveRoom(){
+  ROOM = '';
+  try{ localStorage.removeItem('armtrade_room'); }catch(e){}
+  closeModal(); renderAll();
+}
 
 /* ---------- helpers ---------- */
 const P = id => PRODUCTS.find(p=>p.id===id);
@@ -474,7 +596,48 @@ const SUP = id => SUPPLIERS.find(s=>s.id===id);
 const nm = o => lang==='hy' ? o.name : o.nameEn;
 const isPromo = p => !!S.promos[p.id];
 const effPrice = p => isPromo(p) ? Math.round(p.price*0.9) : p.price;
-function togglePromo(pid){ if(S.promos[pid]) delete S.promos[pid]; else S.promos[pid]=true; saveD(); renderAll(); }
+function togglePromo(pid){
+  const turningOn = !S.promos[pid];
+  if(S.promos[pid]) delete S.promos[pid]; else S.promos[pid]=true;
+  logEv(turningOn?'promo_on':'promo_off', {pid});
+  saveD(); renderAll();
+}
+function logEv(type, data){
+  S.evCounter = (S.evCounter||0)+1;
+  S.events.unshift({n:S.evCounter, type, data:data||{}, date:S.today});
+  if(S.events.length>100) S.events.length = 100;
+}
+function evText(e){
+  const d = e.data||{};
+  const pn = d.pid ? nm(P(d.pid)) : '';
+  const sn = d.sup ? nm(SUP(d.sup)) : '';
+  const shn = d.shop ? (d.shop==='me' ? nm(MY_SHOP) : nm(OTHER_SHOPS.find(o=>o.id===d.shop)||MY_SHOP)) : '';
+  const map = {
+    order:     ['📦', `${t('ev_order')} ${d.oid||''} · ${shn}`],
+    confirmed: ['✅', `${t('ev_confirmed')} ${d.oid||''}`],
+    delivered: ['🚚', `${t('ev_delivered')} ${d.oid||''}`],
+    promo_on:  ['🎉', `${t('ev_promo_on')}՝ ${pn}`],
+    promo_off: ['🏷', `${t('ev_promo_off')}՝ ${pn}`],
+    proposal:  ['📨', `${t('ev_proposal')}՝ ${pn}`],
+    payment:   ['💸', `${t('ev_payment')}՝ ${sn} · ${(d.amount||0).toLocaleString('en-US')} ֏`],
+    ret:       ['↩', `${t('ev_return')} ${d.oid||''}`],
+    chat:      ['💬', `${t('ev_chat')} · ${d.oid||''}`],
+  };
+  return map[e.type] || ['🔔', e.type];
+}
+function openEvents(){
+  U.lastSeenEv = S.evCounter||0; saveU();
+  const list = S.events.slice(0,30).map(e=>{
+    const [ic,txt] = evText(e);
+    return `<div class="sug" style="padding:10px 0"><div class="pav" style="width:38px;height:38px;font-size:18px;border-radius:11px">${ic}</div>
+      <div class="info"><div style="font-size:13.5px;font-weight:600">${txt}</div><div class="muted" style="margin-top:2px">${fdate(e.date)}</div></div></div>`;
+  }).join('');
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="mbody"><div class="grabber"></div><h3>🔔 ${t('ev_title')}</h3>
+    ${list || `<div class="empty"><span class="em">🔕</span>${t('ev_empty')}</div>`}
+    <button class="btn ghost full" style="margin-top:12px" onclick="closeModal()">${t('close')}</button></div></div>`;
+  renderAll();
+}
 const amd = n => `<span class="num">${n.toLocaleString('en-US')}</span> ֏`;
 function fdate(ts){ const d = new Date(ts); const m = lang==='hy'
   ? ['հնվ','փտվ','մրտ','ապր','մյս','հնս','հլս','օգս','սեպ','հոկ','նոյ','դեկ']
@@ -532,13 +695,15 @@ function submitBasket(){
   Object.entries(bySup).forEach(([sup,items])=>{
     const sum = items.reduce((a,x)=>a+x.qty*x.price,0);
     const over = (S.debts[sup]||0)+sum > (S.creditLimit[sup]||Infinity);
-    S.orders.unshift({id:'ORD-'+(S.seq++), date:S.today, shop:MY_SHOP, sup, items, status:'new', overLimit:over});
+    const oid = 'ORD-'+(S.seq++);
+    S.orders.unshift({id:oid, date:S.today, shop:MY_SHOP, sup, items, status:'new', overLimit:over, deliveryDate:S.today + delivSel*DAY});
+    logEv('order', {oid, shop:'me', sup});
   });
   S.basket = {}; S.dismissed = {};
   U.tab.shop='orders'; if(!U.split) U.tab.supplier='inbox';
   saveD(); saveU(); toast(n + ' ' + t('order_placed')); renderAll();
 }
-function confirmOrder(oid){ const o = S.orders.find(x=>x.id===oid); if(o){ o.status='confirmed'; saveD(); toast(t('confirmed_msg')); renderAll(); } }
+function confirmOrder(oid){ const o = S.orders.find(x=>x.id===oid); if(o){ o.status='confirmed'; logEv('confirmed',{oid}); saveD(); toast(t('confirmed_msg')); renderAll(); } }
 function deliverOrder(oid, qtyMap){
   const o = S.orders.find(x=>x.id===oid); if(!o) return;
   o.status='delivered';
@@ -552,6 +717,7 @@ function deliverOrder(oid, qtyMap){
         items:o.items.filter(x=>x.delivered>0).map(x=>({productId:x.productId, qty:x.delivered, price:x.price}))});
     }
   }
+  logEv('delivered',{oid});
   saveD(); toast(t('delivered_msg')); renderAll();
 }
 let PARTIAL = null;
@@ -588,7 +754,7 @@ function payDebt(sup){
   const amt = S.debts[sup]||0;
   S.debts[sup] = 0;
   S.bills.forEach(b=>{ if(b.sup===sup && !b.paid){ b.paid=true; b.paidDate=S.today; } });
-  if(amt>0) S.payments.push({date:S.today, sup, amount:amt});
+  if(amt>0){ S.payments.push({date:S.today, sup, amount:amt}); logEv('payment',{sup, amount:amt}); }
   saveD(); toast(t('paid')); renderAll();
 }
 function resetDemo(){ S = freshState(); saveD(); toast(t('reset_done')); renderAll(); }
@@ -601,7 +767,9 @@ function advanceDay(){
       const sup = ['s1','s2','s3'][Math.floor(Math.random()*3)];
       const pool = PRODUCTS.filter(p=>p.sup===sup);
       const items = pool.slice(0, 1+Math.floor(Math.random()*pool.length)).map(p=>({productId:p.id, qty:Math.max(1,p.qty+Math.floor(Math.random()*3)-1), price:p.price}));
-      S.orders.unshift({id:'ORD-'+(S.seq++), date:S.today, shop, sup, items, status:'new'});
+      const oid = 'ORD-'+(S.seq++);
+      S.orders.unshift({id:oid, date:S.today, shop, sup, items, status:'new', deliveryDate:S.today + (1+Math.floor(Math.random()*3))*DAY});
+      logEv('order',{oid, shop:shop.id, sup});
       S.otherLast[shop.id] = S.today;
     }
   }
@@ -624,10 +792,13 @@ function topBar(){
   return `<div class="logo"><div class="logomark">⇄</div><div>ArmTrade<small>${lang==='hy'?'դեմո':(lang==='ru'?'демо':'demo')}</small></div></div>
     <span class="datechip">📅 ${dateTxt}</span>
     <div class="spacer"></div>
+    <button class="tbtn ${ROOM?'on':''}" onclick="openSync()" title="${t('sync')}">🔗${ROOM?` <span style="color:var(--green)">●</span>`:''}</button>
+    <button class="tbtn" onclick="openEvents()" style="position:relative">🔔${unreadEv()?` <span class="dot">${unreadEv()}</span>`:''}</button>
     <button class="tbtn ${U.split?'on':''}" onclick="toggleSplit()">${U.split?'▚ '+t('split_on'):'▙ '+t('split_off')}</button>
     <button class="tbtn" onclick="toggleLang()">${({hy:'EN',en:'РУ',ru:'ՀԱՅ'})[lang]}</button>
     <button class="tbtn day" onclick="advanceDay()">⏭</button>`;
 }
+function unreadEv(){ return S.events.filter(e=>e.n>(U.lastSeenEv||0)).length; }
 function paneHead(role){
   const labels = role==='shop'?T[lang].tabs_shop:T[lang].tabs_sup;
   const tabs = role==='shop'?['home','catalog','basket','orders','debts','data']:['dash','inbox','shops','alerts','catalog','data'];
@@ -780,7 +951,7 @@ function vShopHome(){
   ${basketN?`<button class="btn primary" onclick="paneTab('${curRole}','basket')">${t('basket')} (${basketN}) →</button>`:''}
   <div class="footer-note">ArmTrade · ${lang==='hy'?'ցուցադրական տվյալներ':(lang==='ru'?'демо-данные':'demo data')}</div>`;
 }
-let catFilter = 'all', catQ = '';
+let catFilter = 'all', catQ = '', delivSel = 1;
 function vShopCatalog(){
   const list = PRODUCTS.filter(p=>(catFilter==='all'||p.sup===catFilter) && (nm(p).toLowerCase().includes(catQ.toLowerCase())));
   return `
@@ -812,7 +983,12 @@ function vShopBasket(){
       ${(S.debts[sup]||0)+sum > (S.creditLimit[sup]||Infinity) ? `<div style="margin-top:9px;font-size:12px;color:var(--rose);font-weight:700">${t('over_warn')} (${t('credit_limit')}՝ ${(S.creditLimit[sup]).toLocaleString('en-US')} ֏)</div>`:''}
     </div>`;
   }).join('');
+  const dayChips = [0,1,2,3].map(d=>{
+    const lbl = d===0 ? t('today_w') : d===1 ? t('tomorrow_w') : fdate(S.today+d*DAY);
+    return `<button class="${delivSel===d?'active':''}" onclick="delivSel=${d};renderAll()">🚚 ${lbl}</button>`;
+  }).join('');
   return `${html}
+    <div class="card"><h3>🚚 ${t('deliv_day')}</h3><div class="chips">${dayChips}</div></div>
     <div class="card"><div class="row"><b>${t('sum')}</b><span class="big" style="color:var(--gold2)">${amd(total)}</span></div>
     <div class="muted" style="margin-top:5px">${Object.keys(bySup).length} ${t('orders_split')}</div></div>
     <button class="btn primary" onclick="submitBasket()">${t('submit_orders')} →</button>`;
@@ -837,16 +1013,92 @@ function orderCard(o, side){
       <b>${side==='shop' ? SUP(o.sup).em+' '+nm(SUP(o.sup)) : '🏪 '+nm(o.shop)}</b>
       <span>${o.overLimit?`<span class="badge b-rose">⚠ ${t('over_limit')}</span> `:''}${statusBadge(o.status)}</span>
     </div>
-    <div class="oid">${o.id} · ${fdate(o.date)}</div>
+    <div class="oid">${o.id} · ${fdate(o.date)}${o.deliveryDate?` · <span style="color:#7DE9F7">🚚 ${fdate(o.deliveryDate)}</span>`:''}</div>
     <div class="oitems">${o.items.map(it=>{
       const shorted = it.delivered!=null && it.delivered<it.qty;
       return `${nm(P(it.productId))} <span class="num" ${shorted?'style="color:var(--rose);font-weight:700"':''}>× ${shorted?it.delivered+'/'+it.qty:it.qty}</span>${shorted?` <span class="badge b-rose">${t('short_lbl')}</span>`:''}`;
     }).join('<br>')}</div>
+    ${o.returns ? `<div class="oitems" style="color:var(--rose)">↩ ${t('returned')}: ${Object.entries(o.returns).filter(([,q])=>q>0).map(([pid,q])=>`${nm(P(pid))} × ${q}`).join(', ')}</div>`:''}
     <div class="osum">${amd(sum)}</div>
     ${side==='shop' ? orderTracker(o.status) : ''}
-    ${side==='sup' && o.status==='new' ? `<div class="obtns"><button class="btn cyan" onclick="confirmOrder('${o.id}')">✓ ${t('confirm')}</button></div>`:''}
-    ${side==='sup' && o.status==='confirmed' ? `<div class="obtns"><button class="btn green" onclick="deliverOrder('${o.id}')">🚚 ${t('deliver')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openPartial('${o.id}')">✂ ${t('deliver_partial')}</button></div>`:''}
+    ${side==='sup' && o.status==='new' ? `<div class="obtns"><button class="btn cyan" onclick="confirmOrder('${o.id}')">✓ ${t('confirm')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openChat('${o.id}','${side}')">💬${o.messages&&o.messages.length?' '+o.messages.length:''}</button></div>`:''}
+    ${side==='sup' && o.status==='confirmed' ? `<div class="obtns"><button class="btn green" onclick="deliverOrder('${o.id}')">🚚 ${t('deliver')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openPartial('${o.id}')">✂ ${t('deliver_partial')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openChat('${o.id}','${side}')">💬${o.messages&&o.messages.length?' '+o.messages.length:''}</button></div>`:''}
+    ${side==='sup' && o.status==='delivered' ? `<div class="obtns"><button class="btn ghost" style="flex:0 0 auto" onclick="openChat('${o.id}','${side}')">💬${o.messages&&o.messages.length?' '+o.messages.length:''}</button></div>`:''}
+    ${side==='shop' ? `<div class="obtns"><button class="btn ghost" style="flex:1" onclick="openChat('${o.id}','${side}')">💬 ${t('chat')}${o.messages&&o.messages.length?' ('+o.messages.length+')':''}</button>${o.status==='delivered'&&!o.returns&&o.shop.id==='me'?`<button class="btn danger" style="flex:0 0 auto" onclick="openReturn('${o.id}')">↩ ${t('ret_btn')}</button>`:''}</div>`:''}
   </div>`;
+}
+/* ----- chat ----- */
+let CHAT = null;
+function openChat(oid, side){ CHAT = {oid, side}; renderChat(); }
+function renderChat(){
+  const o = S.orders.find(x=>x.id===CHAT.oid); if(!o) return;
+  const msgs = (o.messages||[]).map(m=>`
+    <div style="display:flex;justify-content:${m.from===CHAT.side?'flex-end':'flex-start'};margin-bottom:8px">
+      <div style="max-width:78%;padding:9px 13px;border-radius:${m.from===CHAT.side?'14px 14px 4px 14px':'14px 14px 14px 4px'};font-size:13.5px;line-height:1.45;
+        background:${m.from==='shop'?'linear-gradient(135deg,rgba(247,197,114,.25),rgba(227,154,59,.15))':'linear-gradient(135deg,rgba(34,211,238,.22),rgba(167,139,250,.16))'};
+        border:1px solid var(--stroke2)">
+        <div style="font-size:10px;font-weight:800;opacity:.7;margin-bottom:2px">${m.from==='shop'?'🏪 '+t('shop'):'🚚 '+t('supplier')}</div>
+        ${m.text}
+        <div class="muted" style="font-size:10px;margin-top:3px;text-align:right">${fdate(m.date)}</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this){CHAT=null;closeModal()}">
+    <div class="mbody"><div class="grabber"></div><h3>💬 ${t('chat')} · ${o.id}</h3>
+    <div class="muted">${SUP(o.sup).em} ${nm(SUP(o.sup))} ⇄ 🏪 ${nm(o.shop)}</div>
+    <div id="chatMsgs" style="margin:14px 0;max-height:44vh;overflow-y:auto">${msgs || `<div class="empty" style="padding:16px">—</div>`}</div>
+    <div style="display:flex;gap:8px">
+      <input class="search" id="chatInput" placeholder="${t('chat_ph')}" style="margin:0;flex:1" onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="btn cyan" style="flex:0 0 auto" onclick="sendChat()">${t('send')}</button>
+    </div>
+    <button class="btn ghost full noprint" style="margin-top:10px" onclick="CHAT=null;closeModal()">${t('close')}</button></div></div>`;
+  const cm = document.getElementById('chatMsgs'); if(cm) cm.scrollTop = cm.scrollHeight;
+}
+function sendChat(){
+  const inp = document.getElementById('chatInput');
+  const txt = (inp.value||'').trim(); if(!txt) return;
+  const o = S.orders.find(x=>x.id===CHAT.oid); if(!o) return;
+  (o.messages = o.messages||[]).push({from:CHAT.side==='sup'?'sup':'shop', text:txt.replace(/</g,'&lt;'), date:S.today});
+  logEv('chat',{oid:o.id});
+  saveD(); renderChat(); renderAll();
+}
+/* ----- returns ----- */
+let RET = null;
+function openReturn(oid){
+  const o = S.orders.find(x=>x.id===oid); if(!o) return;
+  RET = {oid, q:{}}; o.items.forEach(it=>RET.q[it.productId]=0);
+  renderReturn();
+}
+function renderReturn(){
+  const o = S.orders.find(x=>x.id===RET.oid); if(!o) return;
+  const sum = o.items.reduce((a,it)=>a+(RET.q[it.productId]||0)*it.price,0);
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this){RET=null;closeModal()}">
+    <div class="mbody"><div class="grabber"></div><h3>↩ ${t('ret_title')}</h3><div class="muted">${o.id}</div>
+    ${o.items.map(it=>{const p=P(it.productId);const max=it.delivered!=null?it.delivered:it.qty;const q=RET.q[it.productId];return `<div class="sug">
+      <div class="pav">${p.em}</div>
+      <div class="info"><div class="nm">${nm(p)}</div><div class="sub">${t('qty')}՝ ${max} · ${amd(it.price)}</div></div>
+      <div class="qtyctl">
+        <button onclick="retQty('${it.productId}',-1)">−</button><span style="${q>0?'color:var(--rose)':''}">${q}</span>
+        <button onclick="retQty('${it.productId}',1)">+</button>
+      </div></div>`;}).join('')}
+    <div class="osum" style="color:var(--rose)">−${amd(sum)}</div>
+    <button class="btn danger full" style="margin-top:14px" onclick="confirmReturn()">↩ ${t('ret_confirm')}</button>
+    <button class="btn ghost full" style="margin-top:9px" onclick="RET=null;closeModal()">${t('close')}</button></div></div>`;
+}
+function retQty(pid, d){
+  const o = S.orders.find(x=>x.id===RET.oid);
+  const it = o.items.find(x=>x.productId===pid);
+  const max = it.delivered!=null?it.delivered:it.qty;
+  RET.q[pid] = Math.max(0, Math.min(max, (RET.q[pid]||0)+d));
+  renderReturn();
+}
+function confirmReturn(){
+  const o = S.orders.find(x=>x.id===RET.oid); if(!o) return;
+  const sum = o.items.reduce((a,it)=>a+(RET.q[it.productId]||0)*it.price,0);
+  if(sum<=0){ RET=null; closeModal(); return; }
+  o.returns = RET.q;
+  S.debts[o.sup] = Math.max(0, (S.debts[o.sup]||0) - sum);
+  logEv('ret',{oid:o.id});
+  RET=null; closeModal(); saveD(); toast(t('ret_done')); renderAll();
 }
 function vShopOrders(){
   const mine = S.orders.filter(o=>o.shop.id==='me');
@@ -903,10 +1155,27 @@ function vSupDash(){
   ${alerts.length?`<div class="sec">${t('alerts')}</div>`+alerts.slice(0,2).map(alertCard).join('')+`<button class="btn ghost full" onclick="paneTab('${curRole}','alerts')">${t('alerts')} →</button>`:''}
   <div style="margin-top:20px;text-align:center"><button class="btn small danger" onclick="resetDemo()">↺ ${t('reset')}</button></div>`;
 }
+function routeCard(){
+  const active = S.orders.filter(o=>o.status!=='delivered' && o.deliveryDate);
+  if(!active.length) return '';
+  const byDay = {};
+  active.forEach(o=>{ (byDay[o.deliveryDate] = byDay[o.deliveryDate]||[]).push(o); });
+  const days = Object.entries(byDay).sort((a,b)=>a[0]-b[0]);
+  return `<div class="card" style="border-color:rgba(96,165,250,.3)"><h3>🗺 ${t('route')}</h3>
+    ${days.map(([d, orders])=>{
+      const sum = orders.reduce((a,o)=>a+o.items.reduce((x,i)=>x+i.qty*i.price,0),0);
+      const shops = [...new Set(orders.map(o=>nm(o.shop)))].join(', ');
+      const dn = +d===S.today ? t('today_w') : +d===S.today+DAY ? t('tomorrow_w') : fdate(+d);
+      return `<div class="row" style="padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07);align-items:flex-start">
+        <div><span class="badge b-cyan">🚚 ${dn}</span><div class="muted" style="margin-top:5px;max-width:340px">${shops}</div></div>
+        <div style="text-align:right"><b class="num">${orders.length}</b> <span class="muted">${t('items')}</span><div class="num" style="color:var(--gold2);margin-top:3px;font-weight:600">${sum.toLocaleString('en-US')} ֏</div></div>
+      </div>`;}).join('')}
+  </div>`;
+}
 function vSupInbox(){
   const list = S.orders.filter(o=>o.status!=='delivered');
   const done = S.orders.filter(o=>o.status==='delivered');
-  return `<div class="sec">${t('inbox')} (${list.length})</div>`
+  return routeCard() + `<div class="sec">${t('inbox')} (${list.length})</div>`
     + (list.length ? list.map(o=>orderCard(o,'sup')).join('') : `<div class="card"><div class="empty">${t('inbox_empty')}</div></div>`)
     + (done.length?`<div class="sec">${t('st_delivered')}</div>`+done.slice(0,6).map(o=>orderCard(o,'sup')).join(''):'');
 }
@@ -999,6 +1268,21 @@ function histRows(limit){
     <td class="num">${h.qty}</td><td class="num">${(h.qty*h.price).toLocaleString('en-US')} ֏</td>
   </tr>`).join('');
 }
+function exportCSV(kind){
+  let rows;
+  if(kind==='bills'){
+    rows = [['id','date','supplier','amount','status','paid_date']]
+      .concat(S.bills.map(b=>[b.id, new Date(b.date).toISOString().slice(0,10), SUP(b.sup).nameEn, b.amount, b.paid?'paid':'unpaid', b.paidDate?new Date(b.paidDate).toISOString().slice(0,10):'']));
+  } else {
+    rows = [['date','product','supplier','qty','price','amount']]
+      .concat([...S.history].sort((a,b)=>b.date-a.date).map(h=>[new Date(h.date).toISOString().slice(0,10), P(h.productId).nameEn, SUP(h.sup).nameEn, h.qty, h.price, h.qty*h.price]));
+  }
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = kind+'.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+}
 function dcStats(){
   const mk=monthKey(S.today);
   const spendM = S.history.filter(h=>monthKey(h.date)===mk).reduce((a,h)=>a+h.qty*h.price,0);
@@ -1017,13 +1301,13 @@ function vShopData(){
     <div class="kpi"><div class="l">⏳ ${t('dc_out')}</div><div class="v" style="font-size:16px;color:${st.out?'var(--rose)':'var(--green)'}">${amd(st.out)}</div></div>
   </div>
   <div class="card"><h3>📊 ${t('dc_by_month')}</h3>${monthBars('')}</div>
-  <div class="card"><h3>🧾 ${t('dc_bills')}</h3><div class="muted" style="margin:-6px 0 8px">${t('tap_bill')}</div><div class="tblwrap"><table class="tbl">
+  <div class="card"><h3 style="justify-content:space-between">🧾 ${t('dc_bills')} <button class="btn small ghost noprint" onclick="exportCSV('bills')">⬇ CSV</button></h3><div class="muted" style="margin:-6px 0 8px">${t('tap_bill')}</div><div class="tblwrap"><table class="tbl">
     <tr><th>${t('bill_col')}</th><th>${t('date')}</th><th>${t('supplier_col')}</th><th>${t('amount_col')}</th><th>${t('status_col')}</th></tr>
     ${billRows(false)}</table></div></div>
   <div class="card"><h3>💸 ${t('dc_payments')}</h3><div class="tblwrap"><table class="tbl">
     <tr><th>${t('date')}</th><th>${t('supplier_col')}</th><th>${t('amount_col')}</th></tr>
     ${payRows() || `<tr><td colspan="3" class="muted">—</td></tr>`}</table></div></div>
-  <div class="card"><h3>🕘 ${t('dc_history')}</h3><div class="tblwrap"><table class="tbl">
+  <div class="card"><h3 style="justify-content:space-between">🕘 ${t('dc_history')} <button class="btn small ghost noprint" onclick="exportCSV('history')">⬇ CSV</button></h3><div class="tblwrap"><table class="tbl">
     <tr><th>${t('date')}</th><th>${t('product')}</th><th>${t('qty')}</th><th>${t('amount_col')}</th></tr>
     ${histRows(40)}</table></div></div>`;
 }
@@ -1043,10 +1327,10 @@ function vSupData(){
       <span>${s.em} ${nm(s)} ← ${nm(MY_SHOP)}</span>
       <b class="num" style="color:${S.debts[s.id]?'var(--rose)':'var(--green)'}">${(S.debts[s.id]||0).toLocaleString('en-US')} ֏</b>
     </div>`).join('')}</div>
-  <div class="card"><h3>🧾 ${t('dc_bills')}</h3><div class="muted" style="margin:-6px 0 8px">${t('tap_bill')}</div><div class="tblwrap"><table class="tbl">
+  <div class="card"><h3 style="justify-content:space-between">🧾 ${t('dc_bills')} <button class="btn small ghost noprint" onclick="exportCSV('bills')">⬇ CSV</button></h3><div class="muted" style="margin:-6px 0 8px">${t('tap_bill')}</div><div class="tblwrap"><table class="tbl">
     <tr><th>${t('bill_col')}</th><th>${t('date')}</th><th>${t('shop_col')}</th><th>${t('amount_col')}</th><th>${t('status_col')}</th></tr>
     ${billRows(true)}</table></div></div>
-  <div class="card"><h3>🕘 ${t('dc_sales')}</h3><div class="tblwrap"><table class="tbl">
+  <div class="card"><h3 style="justify-content:space-between">🕘 ${t('dc_sales')} <button class="btn small ghost noprint" onclick="exportCSV('history')">⬇ CSV</button></h3><div class="tblwrap"><table class="tbl">
     <tr><th>${t('date')}</th><th>${t('product')}</th><th>${t('qty')}</th><th>${t('amount_col')}</th></tr>
     ${histRows(40)}</table></div></div>`;
 }
@@ -1098,6 +1382,7 @@ window.remind = function(shopId, pId, type){
     const st = stats(pId); const p = P(pId);
     if(!S.proposals.some(x=>x.productId===pId)){
       S.proposals.push({id:'PRP-'+(S.seq++), productId:pId, qty:(st?st.avgQty:p.qty), sup:p.sup, date:S.today});
+      logEv('proposal',{pid:pId});
     }
   }
   remindFix(shopId + '_' + pId + '_' + type);
