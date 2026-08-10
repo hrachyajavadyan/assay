@@ -1,0 +1,8 @@
+/armtrade/
+  Cache-Control: no-cache
+
+/armtrade/index.html
+  Cache-Control: no-cache
+
+/pitch/
+  Cache-Control: no-cache

@@ -604,8 +604,13 @@ async function pushState(){
   if(!ROOM || syncBusy) return;
   syncBusy = true;
   try{
-    const r = await fetch('/api/room/'+encodeURIComponent(ROOM), {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({data:S})});
+    const r = await fetch('/api/room/'+encodeURIComponent(ROOM), {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({data:S, base:S.v||0})});
     if(r.ok){ const j = await r.json(); S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} syncErrShown = false; }
+    else if(r.status===409){
+      // someone else wrote first — adopt their state instead of overwriting it
+      const j = await r.json();
+      if(looksLikeState(j.data)){ S = j.data; S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} toast('🔄'); renderAll(true); }
+    }
     else throw new Error('http '+r.status);
   }catch(e){ if(!syncErrShown){ syncErrShown = true; toast(t('sync_err')); } }
   syncBusy = false;
@@ -625,6 +630,16 @@ async function pollSync(){
   }catch(e){}
 }
 setInterval(pollSync, 4000);
+pollSync();
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') pollSync(); });
+window.addEventListener('focus', pollSync);
+window.addEventListener('pagehide', ()=>{
+  // flush a pending push so a quick app close doesn't lose the last action
+  if(ROOM && syncPushTimer){
+    clearTimeout(syncPushTimer); syncPushTimer=null;
+    try{ navigator.sendBeacon('/api/room/'+encodeURIComponent(ROOM), new Blob([JSON.stringify({data:S, base:S.v||0})], {type:'application/json'})); }catch(e){}
+  }
+});
 function openSync(){
   if(roleLocked()){
     document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
@@ -1239,8 +1254,9 @@ function vSupDash(){
     <div class="kpi"><div class="l">🔔 ${t('alerts_n')}</div><div class="v" style="color:${alerts.length?'var(--rose)':'var(--green)'}">${alerts.length}</div></div>
   </div>
   ${forecastCard()}
-  <div class="sec">${t('sup_orders_today')}</div>
-  ${todayOrders.length ? todayOrders.map(o=>orderCard(o,'sup')).join('') : `<div class="card"><div class="empty">${t('inbox_empty')}</div></div>`}
+  <div class="sec">${t('inbox')} (${S.orders.filter(o=>o.status!=='delivered').length})</div>
+  ${(()=>{const pending=S.orders.filter(o=>o.status!=='delivered').slice(0,6);
+    return pending.length ? pending.map(o=>orderCard(o,'sup')).join('') + `<button class="btn ghost full" onclick="paneTab('${curRole}','inbox')">${t('inbox')} →</button>` : `<div class="card"><div class="empty">${t('inbox_empty')}</div></div>`;})()}
   ${alerts.length?`<div class="sec">${t('alerts')}</div>`+alerts.slice(0,2).map(alertCard).join('')+`<button class="btn ghost full" onclick="paneTab('${curRole}','alerts')">${t('alerts')} →</button>`:''}
   <div style="margin-top:20px;text-align:center"><button class="btn small danger" onclick="resetDemo()">↺ ${t('reset')}</button></div>`;
 }

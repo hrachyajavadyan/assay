@@ -45,7 +45,14 @@ export async function onRequestPost({request, env, params}){
   if(payload.length > 1_000_000) return bad(413, 'state too large');
   await ensureTable(env.DB);
   const now = Date.now();
-  // last-write-wins with server-assigned version
+  // optimistic concurrency: if client sent its base version and it's stale, return 409 with current state
+  if(typeof body.base === 'number'){
+    const cur = await env.DB.prepare('SELECT v, data FROM rooms WHERE code = ?').bind(code).first();
+    if(cur && cur.v !== body.base){
+      let data = null; try{ data = JSON.parse(cur.data); }catch(e){}
+      return new Response(JSON.stringify({v: cur.v, data}), {status: 409, headers:{'Content-Type':'application/json'}});
+    }
+  }
   const res = await env.DB.prepare(
     `INSERT INTO rooms (code, v, data, updated) VALUES (?, 1, ?, ?)
      ON CONFLICT(code) DO UPDATE SET v = rooms.v + 1, data = excluded.data, updated = excluded.updated
