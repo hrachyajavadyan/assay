@@ -310,7 +310,10 @@ const T = {
     sync:'Համաժամացում', sync_room:'Սենյակի կոդ', sync_join:'Միանալ', sync_leave:'Անջատել',
     sync_on:'Միացված է', sync_off:'Միայն այս սարքը', gen_code:'Ստեղծել կոդ',
     sync_hint:'Նույն կոդը մուտքագրեք երկու սարքի վրա (օր․ ձեր հեռախոսը՝ խանութ, համակարգիչը՝ մատակարար) — և նրանք կտեսնեն միմյանց իրական ժամանակում։',
-    sync_err:'Սերվերը հասանելի չէ — համաժամացումն անջատված է'
+    sync_err:'Սերվերը հասանելի չէ — համաժամացումն անջատված է',
+    login_title:'Մուտք', login_as:'Մուտք որպես', password:'Գաղտնաբառ', login_btn:'Մուտք գործել',
+    wrong_pass:'Սխալ գաղտնաբառ', demo_mode:'Դեմո ռեժիմ՝ առանց մուտքի (երկու կողմը մեկ էկրանին)', logout:'Դուրս գալ',
+    logged_as:'Մուտք եք գործել որպես'
   },
   en: {
     shop:'Shop', supplier:'Supplier',
@@ -364,7 +367,10 @@ const T = {
     sync:'Sync', sync_room:'Room code', sync_join:'Join', sync_leave:'Disconnect',
     sync_on:'Connected', sync_off:'This device only', gen_code:'Generate code',
     sync_hint:'Enter the same code on two devices (e.g. your phone as shop, computer as supplier) — they will see each other in real time.',
-    sync_err:'Server unavailable — sync is off'
+    sync_err:'Server unavailable — sync is off',
+    login_title:'Sign in', login_as:'Sign in as', password:'Password', login_btn:'Sign in',
+    wrong_pass:'Wrong password', demo_mode:'Demo mode — no login (both sides on one screen)', logout:'Sign out',
+    logged_as:'Signed in as'
   },
   ru: {
     shop:'Магазин', supplier:'Поставщик',
@@ -418,7 +424,10 @@ const T = {
     sync:'Синхронизация', sync_room:'Код комнаты', sync_join:'Подключиться', sync_leave:'Отключить',
     sync_on:'Подключено', sync_off:'Только это устройство', gen_code:'Создать код',
     sync_hint:'Введите один и тот же код на двух устройствах (напр. телефон — магазин, компьютер — поставщик) — и они будут видеть друг друга в реальном времени.',
-    sync_err:'Сервер недоступен — синхронизация отключена'
+    sync_err:'Сервер недоступен — синхронизация отключена',
+    login_title:'Вход', login_as:'Войти как', password:'Пароль', login_btn:'Войти',
+    wrong_pass:'Неверный пароль', demo_mode:'Демо-режим без входа (обе стороны на одном экране)', logout:'Выйти',
+    logged_as:'Вы вошли как'
   }
 };
 
@@ -516,6 +525,71 @@ const t = k => T[lang][k];
 if(bc) bc.onmessage = ()=>{ const d=loadD(); if(d){ S=d; renderAll(true); } };
 window.addEventListener('storage', e=>{ if(e.key===DKEY){ const d=loadD(); if(d){ S=d; renderAll(true); } } });
 
+/* ---------- accounts (demo-grade: client-side hash check, shared sync room) ---------- */
+const AUTH_HASH = {
+  shop: '7729d2767a8c83a150dc2c98513a1b2a4439adbfa9ef25846489b2131c192bb8',
+  sup:  'a4ec2b10471974e918f23114d332bd2421244926e2a394b1bda7f9c87062b25c'
+};
+const AUTH_ROOM = 'ARM-MAIN';
+let AUTHD = null;
+try{ AUTHD = JSON.parse(localStorage.getItem('armtrade_auth')||'null'); }catch(e){}
+async function sha256hex(s){
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+let loginSel = 'shop';
+function renderLogin(err){
+  document.getElementById('nav').style.display='none';
+  document.getElementById('top').innerHTML = `<div class="logo"><div class="logomark">⇄</div><div>ArmTrade<small>${lang==='hy'?'դեմո':(lang==='ru'?'демо':'demo')}</small></div></div>
+    <div class="spacer"></div>
+    <button class="tbtn" onclick="toggleLang()">${({hy:'EN',en:'РУ',ru:'ՀԱՅ'})[lang]}</button>`;
+  document.getElementById('app').innerHTML = `
+  <div style="max-width:420px;margin:9vh auto 0;padding:0 18px">
+    <div class="card" style="padding:26px">
+      <h3 style="font-size:20px;margin-bottom:18px">🔐 ${t('login_title')}</h3>
+      <div class="sec" style="margin-top:0">${t('login_as')}</div>
+      <div class="roleswitch" style="margin:0 0 16px">
+        <button class="${loginSel==='shop'?'active':''}" onclick="loginSel='shop';renderLogin()">🏪 ${t('shop')}</button>
+        <button class="${loginSel==='sup'?'active':''}" onclick="loginSel='sup';renderLogin()">🚚 ${t('supplier')}</button>
+      </div>
+      <input class="search" type="password" id="passInput" placeholder="${t('password')}" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      ${err?`<div style="color:var(--rose);font-size:13px;font-weight:700;margin:-4px 0 10px">✕ ${t('wrong_pass')}</div>`:''}
+      <button class="btn primary" onclick="doLogin()">${t('login_btn')} →</button>
+      <button class="btn ghost full" style="margin-top:12px" onclick="demoLogin()">${t('demo_mode')}</button>
+    </div>
+  </div>`;
+}
+async function doLogin(){
+  const p = document.getElementById('passInput').value||'';
+  const h = await sha256hex(p);
+  if(h !== AUTH_HASH[loginSel]){ renderLogin(true); return; }
+  AUTHD = {role: loginSel};
+  try{ localStorage.setItem('armtrade_auth', JSON.stringify(AUTHD)); }catch(e){}
+  U.split = false; U.role = loginSel==='sup' ? 'supplier' : 'shop'; saveU();
+  ROOM = AUTH_ROOM;
+  try{ localStorage.setItem('armtrade_room', ROOM); }catch(e){}
+  try{
+    const r = await fetch('/api/room/'+encodeURIComponent(ROOM));
+    if(r.ok){
+      const j = await r.json();
+      if(j.v > 0 && looksLikeState(j.data)){ S = j.data; S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} }
+      else await pushState();
+    }
+  }catch(e){}
+  renderAll();
+}
+function demoLogin(){
+  AUTHD = {role:'demo'};
+  try{ localStorage.setItem('armtrade_auth', JSON.stringify(AUTHD)); }catch(e){}
+  renderAll();
+}
+function logout(){
+  AUTHD = null; ROOM = '';
+  try{ localStorage.removeItem('armtrade_auth'); localStorage.removeItem('armtrade_room'); }catch(e){}
+  closeModal(); renderAll();
+}
+const roleLocked = ()=> AUTHD && (AUTHD.role==='shop' || AUTHD.role==='sup');
+
 /* ---------- cross-device sync via room codes (Cloudflare Pages Functions + D1) ---------- */
 let ROOM = '';
 try{ ROOM = localStorage.getItem('armtrade_room') || ''; }catch(e){}
@@ -552,6 +626,15 @@ async function pollSync(){
 }
 setInterval(pollSync, 4000);
 function openSync(){
+  if(roleLocked()){
+    document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
+      <div class="mbody"><div class="grabber"></div><h3>🔗 ${t('sync')}</h3>
+      <div class="muted" style="margin-bottom:12px"><span class="badge b-green">● ${t('sync_on')}</span></div>
+      <div class="notice">${t('logged_as')}՝ <b>${AUTHD.role==='sup'?'🚚 '+t('supplier'):'🏪 '+t('shop')}</b></div>
+      <button class="btn danger full" style="margin-top:10px" onclick="logout()">🚪 ${t('logout')}</button>
+      <button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">${t('close')}</button></div></div>`;
+    return;
+  }
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody"><div class="grabber"></div><h3>🔗 ${t('sync')}</h3>
     <div class="muted" style="margin-bottom:12px">${ROOM?`<span class="badge b-green">● ${t('sync_on')}</span> <b class="num">${ROOM}</b>`:`<span class="badge b-neutral">${t('sync_off')}</span>`}</div>
@@ -561,7 +644,8 @@ function openSync(){
       <button class="btn cyan" onclick="joinRoom()">🔗 ${t('sync_join')}</button>
       <button class="btn ghost" style="flex:0 0 auto" onclick="genRoom()">🎲 ${t('gen_code')}</button>
     </div>
-    ${ROOM?`<button class="btn danger full" style="margin-top:10px" onclick="leaveRoom()">✕ ${t('sync_leave')}</button>`:''}
+    ${ROOM && !roleLocked()?`<button class="btn danger full" style="margin-top:10px" onclick="leaveRoom()">✕ ${t('sync_leave')}</button>`:''}
+    ${AUTHD?`<button class="btn danger full" style="margin-top:10px" onclick="logout()">🚪 ${t('logout')}${roleLocked()?` (${AUTHD.role==='sup'?t('supplier'):t('shop')})`:''}</button>`:''}
     <button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">${t('close')}</button></div></div>`;
 }
 function genRoom(){
@@ -795,7 +879,7 @@ function topBar(){
     <div class="spacer"></div>
     <button class="tbtn ${ROOM?'on':''}" onclick="openSync()" title="${t('sync')}">🔗${ROOM?` <span style="color:var(--green)">●</span>`:''}</button>
     <button class="tbtn" onclick="openEvents()" style="position:relative">🔔${unreadEv()?` <span class="dot">${unreadEv()}</span>`:''}</button>
-    <button class="tbtn ${U.split?'on':''}" onclick="toggleSplit()">${U.split?'▚ '+t('split_on'):'▙ '+t('split_off')}</button>
+    ${roleLocked()?'':`<button class="tbtn ${U.split?'on':''}" onclick="toggleSplit()">${U.split?'▚ '+t('split_on'):'▙ '+t('split_off')}</button>`}
     <button class="tbtn" onclick="toggleLang()">${({hy:'EN',en:'РУ',ru:'ՀԱՅ'})[lang]}</button>
     <button class="tbtn day" onclick="advanceDay()">⏭</button>`;
 }
@@ -817,6 +901,8 @@ function paneHead(role){
 let prevInboxN = null;
 function renderAll(fromSync){
   lang = U.lang;
+  if(!AUTHD){ renderLogin(); return; }
+  if(roleLocked()){ U.split = false; U.role = AUTHD.role==='sup' ? 'supplier' : 'shop'; }
   document.getElementById('top').innerHTML = topBar();
   const desktop = window.innerWidth>=980;
   document.body.classList.toggle('single-mobile', !U.split && !desktop);
@@ -833,11 +919,13 @@ function renderAll(fromSync){
   } else {
     const role=U.role;
     const cls = desktop ? 'single-desk' : '';
-    app.innerHTML = `<div class="roleswitch" style="margin-top:14px">
+    app.innerHTML = (roleLocked()
+      ? `<div class="roleswitch" style="margin-top:14px;pointer-events:none"><button class="active" style="flex:1">${role==='shop'?'🏪 '+t('shop')+' · '+nm(MY_SHOP):'🚚 '+t('supplier')}</button></div>`
+      : `<div class="roleswitch" style="margin-top:14px">
         <button class="${role==='shop'?'active':''}" onclick="setRole('shop')">🏪 ${t('shop')}</button>
         <button class="${role==='supplier'?'active':''}" onclick="setRole('supplier')">🚚 ${t('supplier')}</button>
-      </div>
-      <main class="${cls}">${viewFor(role,U.tab[role])}</main>`;
+      </div>`)
+      + `<main class="${cls}">${viewFor(role,U.tab[role])}</main>`;
     renderNav(role);
     nav.style.display = desktop ? 'none' : 'flex';
   }
