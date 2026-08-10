@@ -520,6 +520,7 @@ window.addEventListener('storage', e=>{ if(e.key===DKEY){ const d=loadD(); if(d)
 let ROOM = '';
 try{ ROOM = localStorage.getItem('armtrade_room') || ''; }catch(e){}
 let syncPushTimer = null, syncErrShown = false, syncBusy = false;
+function looksLikeState(d){ return d && typeof d==='object' && Array.isArray(d.orders) && Array.isArray(d.history) && Array.isArray(d.bills); }
 function schedulePush(){
   if(!ROOM) return;
   clearTimeout(syncPushTimer);
@@ -545,7 +546,7 @@ async function pollSync(){
       const r2 = await fetch('/api/room/'+encodeURIComponent(ROOM));
       if(!r2.ok) return;
       const full = await r2.json();
-      if(full.data){ S = full.data; S.v = full.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} renderAll(true); }
+      if(looksLikeState(full.data)){ S = full.data; S.v = full.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} renderAll(true); }
     }
   }catch(e){}
 }
@@ -577,7 +578,7 @@ async function joinRoom(){
     const r = await fetch('/api/room/'+encodeURIComponent(ROOM));
     if(r.ok){
       const j = await r.json();
-      if(j.v > 0 && j.data){ S = j.data; S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} }
+      if(j.v > 0 && looksLikeState(j.data)){ S = j.data; S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} }
       else await pushState();
       toast('🔗 ' + t('sync_on') + ' · ' + ROOM);
     } else throw new Error('http '+r.status);
