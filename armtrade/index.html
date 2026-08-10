@@ -132,6 +132,8 @@ button{font-family:var(--font)}
 .tblwrap{max-height:330px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--stroke2) transparent}
 .tblwrap::-webkit-scrollbar{width:7px}
 .tblwrap::-webkit-scrollbar-thumb{background:var(--stroke2);border-radius:99px}
+.spark{display:inline-flex;gap:2px;align-items:flex-end;height:22px;vertical-align:middle}
+.spark i{width:5px;background:linear-gradient(180deg,#67E8F9,var(--violet));border-radius:2px;display:block;min-height:2px}
 @media print{
   body{background:#fff !important}
   body::before,body::after{display:none !important}
@@ -260,8 +262,8 @@ body.single-mobile{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 const T = {
   hy: {
     shop:'Խանութ', supplier:'Մատակարար',
-    tabs_shop:{home:'Այսօր',catalog:'Ապրանքներ',basket:'Զամբյուղ',orders:'Պատվերներ',debts:'Պարտքեր',data:'Տվյալներ'},
-    tabs_sup:{dash:'Վահանակ',inbox:'Պատվերներ',shops:'Խանութներ',alerts:'Ազդանշաններ',catalog:'Գնացուցակ',data:'Տվյալներ'},
+    tabs_shop:{home:'Այսօր',catalog:'Ապրանքներ',pos:'Վաճառք',basket:'Զամբյուղ',orders:'Պատվերներ',debts:'Պարտքեր',data:'Տվյալներ'},
+    tabs_sup:{dash:'Վահանակ',sellout:'Պահեստ',inbox:'Պատվերներ',shops:'Խանութներ',alerts:'Ազդանշաններ',catalog:'Գնացուցակ',data:'Տվյալներ'},
     today_sug:'Առաջարկվող պատվերներ', all_ok:'Ամեն ինչ համալրված է', add:'Ավելացնել', added:'Ավելացված ✓',
     due_today:'Այսօր է ժամկետը', overdue:'Ուշացած', due_in:'օրից', last_order:'Վերջին պատվերը',
     every:'ամեն', days:'օրը', basket:'Զամբյուղ', basket_empty:'Զամբյուղը դատարկ է',
@@ -315,12 +317,17 @@ const T = {
     wrong_pass:'Սխալ գաղտնաբառ', demo_mode:'Դեմո ռեժիմ՝ առանց մուտքի (երկու կողմը մեկ էկրանին)', logout:'Դուրս գալ',
     logged_as:'Մուտք եք գործել որպես',
     receive_pay:'Ստանալ վճարում', mark_paid:'Նշել վճարված', statement:'Համեմատման ակտ', balance:'Մնացորդ',
-    days_unpaid:'օր չվճարված', doc_col:'Փաստաթուղթ', bill_doc:'Հաշիվ', pay_doc:'Վճարում'
+    days_unpaid:'օր չվճարված', doc_col:'Փաստաթուղթ', bill_doc:'Հաշիվ', pay_doc:'Վճարում',
+    pos_tab:'Վաճառք', sellout_tab:'Պահեստ', stock_lbl:'Պահեստ', sell_btn:'Վաճառել', sale_done:'Վաճառքը գրանցվեց',
+    today_sold:'Այսօր', velocity:'օր/միջին', days_left:'օր կմնա', stockout:'Վերջանում է', out_of_stock:'Սպառված է',
+    last7:'Վերջին 7 օրը', suggest_order:'Առաջարկել', ev_stockout:'Ապրանքը վերջանում է խանութում',
+    pos_hint:'Գրանցեք խանութի վաճառքները — մատակարարը կտեսնի պահեստի մնացորդն ու վաճառքի արագությունը իրական ժամանակում։',
+    sellout_hint:'Խանութի պահեստն ու վաճառքները՝ ուղիղ եթերում։ Կանխատեսեք, թե երբ ինչ կվերջանա։'
   },
   en: {
     shop:'Shop', supplier:'Supplier',
-    tabs_shop:{home:'Today',catalog:'Products',basket:'Basket',orders:'Orders',debts:'Debts',data:'Data'},
-    tabs_sup:{dash:'Dashboard',inbox:'Orders',shops:'Shops',alerts:'Alerts',catalog:'Price list',data:'Data'},
+    tabs_shop:{home:'Today',catalog:'Products',pos:'Sales',basket:'Basket',orders:'Orders',debts:'Debts',data:'Data'},
+    tabs_sup:{dash:'Dashboard',sellout:'Stock',inbox:'Orders',shops:'Shops',alerts:'Alerts',catalog:'Price list',data:'Data'},
     today_sug:'Suggested reorders', all_ok:'Everything is stocked', add:'Add', added:'Added ✓',
     due_today:'Due today', overdue:'Overdue', due_in:'days left', last_order:'Last order',
     every:'every', days:'days', basket:'Basket', basket_empty:'Basket is empty',
@@ -374,12 +381,17 @@ const T = {
     wrong_pass:'Wrong password', demo_mode:'Demo mode — no login (both sides on one screen)', logout:'Sign out',
     logged_as:'Signed in as',
     receive_pay:'Receive payment', mark_paid:'Mark paid', statement:'Statement', balance:'Balance',
-    days_unpaid:'days unpaid', doc_col:'Document', bill_doc:'Invoice', pay_doc:'Payment'
+    days_unpaid:'days unpaid', doc_col:'Document', bill_doc:'Invoice', pay_doc:'Payment',
+    pos_tab:'Sales', sellout_tab:'Stock', stock_lbl:'Stock', sell_btn:'Sell', sale_done:'Sale recorded',
+    today_sold:'Today', velocity:'per day', days_left:'days left', stockout:'Running out', out_of_stock:'Out of stock',
+    last7:'Last 7 days', suggest_order:'Suggest order', ev_stockout:'Product running out at the shop',
+    pos_hint:'Record store sales — the supplier sees stock levels and sales velocity in real time.',
+    sellout_hint:'Live store stock and sales. Forecast what runs out and when.'
   },
   ru: {
     shop:'Магазин', supplier:'Поставщик',
-    tabs_shop:{home:'Сегодня',catalog:'Товары',basket:'Корзина',orders:'Заказы',debts:'Долги',data:'Данные'},
-    tabs_sup:{dash:'Панель',inbox:'Заказы',shops:'Магазины',alerts:'Сигналы',catalog:'Прайс',data:'Данные'},
+    tabs_shop:{home:'Сегодня',catalog:'Товары',pos:'Продажи',basket:'Корзина',orders:'Заказы',debts:'Долги',data:'Данные'},
+    tabs_sup:{dash:'Панель',sellout:'Склад',inbox:'Заказы',shops:'Магазины',alerts:'Сигналы',catalog:'Прайс',data:'Данные'},
     today_sug:'Рекомендуемые заказы', all_ok:'Всё в наличии', add:'Добавить', added:'Добавлено ✓',
     due_today:'Срок сегодня', overdue:'Просрочено', due_in:'дн. осталось', last_order:'Последний заказ',
     every:'каждые', days:'дн.', basket:'Корзина', basket_empty:'Корзина пуста',
@@ -433,7 +445,12 @@ const T = {
     wrong_pass:'Неверный пароль', demo_mode:'Демо-режим без входа (обе стороны на одном экране)', logout:'Выйти',
     logged_as:'Вы вошли как',
     receive_pay:'Принять платёж', mark_paid:'Отметить оплату', statement:'Акт сверки', balance:'Сальдо',
-    days_unpaid:'дн. не оплачен', doc_col:'Документ', bill_doc:'Счёт', pay_doc:'Платёж'
+    days_unpaid:'дн. не оплачен', doc_col:'Документ', bill_doc:'Счёт', pay_doc:'Платёж',
+    pos_tab:'Продажи', sellout_tab:'Склад', stock_lbl:'Остаток', sell_btn:'Продать', sale_done:'Продажа записана',
+    today_sold:'Сегодня', velocity:'в день', days_left:'дн. осталось', stockout:'Заканчивается', out_of_stock:'Нет в наличии',
+    last7:'Последние 7 дней', suggest_order:'Предложить заказ', ev_stockout:'Товар заканчивается в магазине',
+    pos_hint:'Записывайте продажи магазина — поставщик видит остатки и скорость продаж в реальном времени.',
+    sellout_hint:'Остатки и продажи магазина в прямом эфире. Прогнозируйте, что и когда закончится.'
   }
 };
 
@@ -493,6 +510,16 @@ function freshState(){
   st.promos = {p4:true};
   st.creditLimit = {s1:100000, s2:80000, s3:60000};
   st.events = []; st.evCounter = 0;
+  // store stock + retail sell-out history (VMI core)
+  st.stock = {}; st.sales = []; st.stockoutFlag = {};
+  PRODUCTS.forEach((p,i)=>{
+    const vel = Math.max(0.5, p.qty / p.cycle);
+    st.stock[p.id] = Math.max(1, Math.round(vel * (i%3===1 ? 1.5 : 3 + (i%4))));
+    for(let d=10; d>=1; d--){
+      const q = Math.round(vel * (0.5 + Math.random()*0.9));
+      if(q>0) st.sales.push({date: START - d*DAY, productId: p.id, qty: q});
+    }
+  });
   // richer multi-shop history: past orders from other shops
   OTHER_SHOPS.forEach((o,i)=>{
     if(o.id==='o3') return; // the churned shop stays silent
@@ -523,6 +550,18 @@ if(!S.proposals) S.proposals=[];
 if(!S.promos) S.promos={p4:true};
 if(!S.creditLimit) S.creditLimit={s1:100000, s2:80000, s3:60000};
 if(!S.events){ S.events=[]; S.evCounter=0; }
+if(!S.stock){
+  S.stock={}; S.sales=S.sales||[]; S.stockoutFlag={};
+  PRODUCTS.forEach((p,i)=>{
+    const vel = Math.max(0.5, p.qty / p.cycle);
+    S.stock[p.id] = Math.max(1, Math.round(vel * (i%3===1 ? 1.5 : 3 + (i%4))));
+    for(let d=10; d>=1; d--){
+      const q = Math.round(vel * (0.5 + Math.random()*0.9));
+      if(q>0) S.sales.push({date: S.today - d*DAY, productId: p.id, qty: q});
+    }
+  });
+}
+if(!S.stockoutFlag) S.stockoutFlag={};
 U = loadU();
 if(U.lastSeenEv==null) U.lastSeenEv = 0;
 let lang = U.lang;
@@ -767,6 +806,7 @@ function evText(e){
     payment:   ['💸', `${t('ev_payment')}՝ ${sn} · ${(d.amount||0).toLocaleString('en-US')} ֏`],
     ret:       ['↩', `${t('ev_return')} ${d.oid||''}`],
     chat:      ['💬', `${t('ev_chat')} · ${d.oid||''}`],
+    stockout:  ['🚨', `${t('ev_stockout')}՝ ${pn}`],
   };
   return map[e.type] || ['🔔', e.type];
 }
@@ -794,6 +834,48 @@ function fdate(ts){ const d = new Date(ts); const m = lang==='hy'
 function daysAgo(ts){ return Math.round((S.today - ts)/DAY); }
 function toast(msg){ const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('show'), 2200); }
 
+/* ---------- VMI: store stock & sell-out ---------- */
+function velOf(pid){
+  const cut = S.today - 7*DAY;
+  const recent = S.sales.filter(s=>s.productId===pid && s.date>=cut);
+  if(recent.length){ return Math.max(0.2, recent.reduce((a,s)=>a+s.qty,0)/7); }
+  const p = P(pid); return Math.max(0.2, p.qty/p.cycle);
+}
+function stockDays(pid){ return (S.stock[pid]||0) / velOf(pid); }
+function todaySold(pid){ return S.sales.filter(s=>s.productId===pid && s.date===S.today).reduce((a,s)=>a+s.qty,0); }
+function last7Bars(pid){
+  const days = [];
+  for(let d=6; d>=0; d--){
+    const dt = S.today - d*DAY;
+    days.push(S.sales.filter(s=>s.productId===pid && s.date===dt).reduce((a,s)=>a+s.qty,0));
+  }
+  const max = Math.max(...days, 1);
+  return `<span class="spark">${days.map(q=>`<i style="height:${Math.max(2, Math.round(q/max*22))}px" title="${q}"></i>`).join('')}</span>`;
+}
+function recordSale(pid, qty){
+  qty = Math.max(1, Math.min(qty, S.stock[pid]||0));
+  if(!qty){ toast(t('out_of_stock')); return; }
+  S.stock[pid] = (S.stock[pid]||0) - qty;
+  S.sales.push({date:S.today, productId:pid, qty});
+  if(S.sales.length>600) S.sales = S.sales.slice(-500);
+  checkStockouts();
+  saveD(); toast(`💵 −${qty} · ${t('sale_done')}`); renderAll();
+}
+function checkStockouts(){
+  PRODUCTS.forEach(p=>{
+    const d = stockDays(p.id);
+    if(d <= 2 && !S.stockoutFlag[p.id]){ S.stockoutFlag[p.id]=true; logEv('stockout',{pid:p.id}); }
+    else if(d > 3 && S.stockoutFlag[p.id]){ delete S.stockoutFlag[p.id]; }
+  });
+}
+function proposeRestock(pid){
+  if(S.proposals.some(x=>x.productId===pid)){ toast('📨 ✓'); return; }
+  const p = P(pid);
+  const qty = Math.max(1, Math.round(velOf(pid) * p.cycle));
+  S.proposals.push({id:'PRP-'+(S.seq++), productId:pid, qty, sup:p.sup, date:S.today});
+  logEv('proposal',{pid});
+  saveD(); toast('📨 ' + t('ev_proposal')); renderAll();
+}
 function stats(pid){
   const h = S.history.filter(x=>x.productId===pid).sort((a,b)=>a.date-b.date);
   if(!h.length) return null;
@@ -855,7 +937,8 @@ function deliverOrder(oid, qtyMap){
   o.status='delivered';
   o.items.forEach(it=>{ it.delivered = qtyMap ? Math.max(0, Math.min(it.qty, qtyMap[it.productId]??it.qty)) : it.qty; });
   if(o.shop.id==='me'){
-    o.items.forEach(it=>{ if(it.delivered>0) S.history.push({date:S.today, productId:it.productId, sup:o.sup, qty:it.delivered, price:it.price}); });
+    o.items.forEach(it=>{ if(it.delivered>0){ S.history.push({date:S.today, productId:it.productId, sup:o.sup, qty:it.delivered, price:it.price}); S.stock[it.productId]=(S.stock[it.productId]||0)+it.delivered; } });
+    checkStockouts();
     const sum = o.items.reduce((a,x)=>a+x.delivered*x.price,0);
     if(sum>0){
       S.debts[o.sup] = (S.debts[o.sup]||0) + sum;
@@ -907,6 +990,13 @@ function resetDemo(){ S = freshState(); saveD(); toast(t('reset_done')); renderA
 
 function advanceDay(){
   S.today += DAY;
+  // simulate the store's consumer sales for the new day
+  PRODUCTS.forEach(p=>{
+    const q = Math.min(S.stock[p.id]||0, Math.round(velOf(p.id) * (0.6 + Math.random()*0.8)));
+    if(q>0){ S.stock[p.id] -= q; S.sales.push({date:S.today, productId:p.id, qty:q}); }
+  });
+  if(S.sales.length>600) S.sales = S.sales.slice(-500);
+  checkStockouts();
   if(Math.random() < 0.75){
     const shop = OTHER_SHOPS[Math.floor(Math.random()*OTHER_SHOPS.length)];
     if(shop.id!=='o3'){
@@ -929,8 +1019,8 @@ let curRole='shop';
 function viewFor(role, tab){
   curRole = role;
   const views = role==='shop'
-    ? {home:vShopHome, catalog:vShopCatalog, basket:vShopBasket, orders:vShopOrders, debts:vShopDebts, data:vShopData}
-    : {dash:vSupDash, inbox:vSupInbox, shops:vSupShops, alerts:vSupAlerts, catalog:vSupCatalog, data:vSupData};
+    ? {home:vShopHome, catalog:vShopCatalog, pos:vShopPOS, basket:vShopBasket, orders:vShopOrders, debts:vShopDebts, data:vShopData}
+    : {dash:vSupDash, sellout:vSupSellout, inbox:vSupInbox, shops:vSupShops, alerts:vSupAlerts, catalog:vSupCatalog, data:vSupData};
   return (views[tab] || views[Object.keys(views)[0]])();
 }
 function topBar(){
@@ -947,8 +1037,8 @@ function topBar(){
 function unreadEv(){ return S.events.filter(e=>e.n>(U.lastSeenEv||0)).length; }
 function paneHead(role){
   const labels = role==='shop'?T[lang].tabs_shop:T[lang].tabs_sup;
-  const tabs = role==='shop'?['home','catalog','basket','orders','debts','data']:['dash','inbox','shops','alerts','catalog','data'];
-  const icons = role==='shop'?{home:'📋',catalog:'🛒',basket:'🧺',orders:'📦',debts:'💳',data:'📈'}:{dash:'📊',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷',data:'📈'};
+  const tabs = role==='shop'?['home','catalog','pos','basket','orders','debts','data']:['dash','sellout','inbox','shops','alerts','catalog','data'];
+  const icons = role==='shop'?{home:'📋',catalog:'🛒',pos:'💵',basket:'🧺',orders:'📦',debts:'💳',data:'📈'}:{dash:'📊',sellout:'📉',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷',data:'📈'};
   const cur=U.tab[role];
   const badges = role==='shop'
     ? {home:S.proposals.length, basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
@@ -962,8 +1052,8 @@ function paneHead(role){
 function singleTabs(role){
   const r = role==='supplier' ? 'supplier' : 'shop';
   const labels = r==='shop'?T[lang].tabs_shop:T[lang].tabs_sup;
-  const tabs = r==='shop'?['home','catalog','basket','orders','debts','data']:['dash','inbox','shops','alerts','catalog','data'];
-  const icons = r==='shop'?{home:'📋',catalog:'🛒',basket:'🧺',orders:'📦',debts:'💳',data:'📈'}:{dash:'📊',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷',data:'📈'};
+  const tabs = r==='shop'?['home','catalog','pos','basket','orders','debts','data']:['dash','sellout','inbox','shops','alerts','catalog','data'];
+  const icons = r==='shop'?{home:'📋',catalog:'🛒',pos:'💵',basket:'🧺',orders:'📦',debts:'💳',data:'📈'}:{dash:'📊',sellout:'📉',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷',data:'📈'};
   const badges = r==='shop'
     ? {home:S.proposals.length, basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
     : {inbox:S.orders.filter(o=>o.status==='new').length, alerts:supAlerts().length};
@@ -1052,8 +1142,8 @@ function renderNav(role){
   const alertsN = supAlerts().length;
   const myActiveN = S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length;
   const items = role==='shop'
-    ? [['home','📋',S.proposals.length],['catalog','🛒'],['basket','🧺',basketN],['orders','📦',myActiveN],['debts','💳'],['data','📈']]
-    : [['dash','📊'],['inbox','📥',inboxN],['shops','🏪'],['alerts','🔔',alertsN],['catalog','🏷'],['data','📈']];
+    ? [['home','📋',S.proposals.length],['catalog','🛒'],['pos','💵'],['basket','🧺',basketN],['orders','📦',myActiveN],['debts','💳'],['data','📈']]
+    : [['dash','📊'],['sellout','📉',PRODUCTS.filter(p=>stockDays(p.id)<=2).length],['inbox','📥',inboxN],['shops','🏪'],['alerts','🔔',alertsN],['catalog','🏷'],['data','📈']];
   const labels = role==='shop' ? T[lang].tabs_shop : T[lang].tabs_sup;
   document.getElementById('nav').innerHTML = items.map(([k,ic,badge])=>`
     <button class="${U.tab[role]===k?'active':''}" onclick="paneTab('${role}','${k}')">
@@ -1269,6 +1359,7 @@ function confirmReturn(){
   const sum = o.items.reduce((a,it)=>a+(RET.q[it.productId]||0)*it.price,0);
   if(sum<=0){ RET=null; closeModal(); return; }
   o.returns = RET.q;
+  Object.entries(RET.q).forEach(([pid,q])=>{ if(q>0) S.stock[pid] = Math.max(0, (S.stock[pid]||0) - q); });
   S.debts[o.sup] = Math.max(0, (S.debts[o.sup]||0) - sum);
   logEv('ret',{oid:o.id});
   RET=null; closeModal(); saveD(); toast(t('ret_done')); renderAll();
@@ -1293,6 +1384,63 @@ function vShopDebts(){
   </div>`;}).join('')}`;
 }
 
+let posQty = {};
+function vShopPOS(){
+  return `<div class="notice">💵 ${t('pos_hint')}</div>
+  <div class="card">${PRODUCTS.map(p=>{
+    const st = S.stock[p.id]||0;
+    const q = Math.min(posQty[p.id]||1, Math.max(1,st));
+    const d = stockDays(p.id);
+    const badge = st===0 ? `<span class="badge b-rose">${t('out_of_stock')}</span>`
+      : d<=2 ? `<span class="badge b-rose">${t('stock_lbl')}՝ ${st} · ${t('stockout')}</span>`
+      : d<=4 ? `<span class="badge b-gold">${t('stock_lbl')}՝ ${st}</span>`
+      : `<span class="badge b-green">${t('stock_lbl')}՝ ${st}</span>`;
+    return `<div class="sug">
+      <div class="pav">${p.em}</div>
+      <div class="info">
+        <div class="nm">${nm(p)}</div>
+        <div class="sub">${badge} <span class="muted">${t('today_sold')}՝ <b>${todaySold(p.id)}</b></span></div>
+      </div>
+      <div style="text-align:right;min-width:110px">
+        <div class="qtyctl">
+          <button onclick="posQty['${p.id}']=${Math.max(1,q-1)};renderAll()">−</button><span>${q}</span>
+          <button onclick="posQty['${p.id}']=${q+1};renderAll()">+</button>
+        </div>
+        <button class="addbtn ${st===0?'':''}" style="margin-top:7px;${st===0?'opacity:.35;pointer-events:none':''}" onclick="recordSale('${p.id}', ${q})">💵 ${t('sell_btn')}</button>
+      </div>
+    </div>`;}).join('')}</div>`;
+}
+function vSupSellout(){
+  const rows = PRODUCTS.map(p=>({p, st:S.stock[p.id]||0, d:stockDays(p.id), vel:velOf(p.id)}))
+    .sort((a,b)=>a.d-b.d);
+  return `<div class="notice">📉 ${t('sellout_hint')}</div>
+  ${rows.map(x=>{
+    const badge = x.st===0 ? `<span class="badge b-rose">🚨 ${t('out_of_stock')}</span>`
+      : x.d<=2 ? `<span class="badge b-rose">🚨 ${Math.max(0,Math.floor(x.d))} ${t('days_left')}</span>`
+      : x.d<=4 ? `<span class="badge b-gold">~${Math.floor(x.d)} ${t('days_left')}</span>`
+      : `<span class="badge b-green">~${Math.floor(x.d)} ${t('days_left')}</span>`;
+    const pct = Math.min(100, Math.round(x.d/7*100));
+    return `<div class="card" ${x.d<=2?'style="border-color:rgba(251,113,133,.4)"':''}>
+      <div class="row" style="align-items:flex-start">
+        <div style="display:flex;gap:12px;align-items:center;min-width:0">
+          <div class="pav">${x.p.em}</div>
+          <div>
+            <div class="nm" style="font-weight:600">${nm(x.p)}</div>
+            <div class="sub muted" style="margin-top:4px">🏪 ${nm(MY_SHOP)} · ${t('today_sold')}՝ <b class="num">${todaySold(x.p.id)}</b> · ${x.vel.toFixed(1)} ${t('velocity')}</div>
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="num" style="font-size:22px;font-weight:600">${x.st} <span class="muted" style="font-size:11px">${t('pcs')}</span></div>
+          ${badge}
+        </div>
+      </div>
+      <div class="row" style="margin-top:11px;gap:14px">
+        <div class="hbar" style="flex:1;margin:0"><div class="track"><div class="fill" style="width:${pct}%;${x.d<=2?'background:linear-gradient(90deg,#FDA4B4,var(--rose));box-shadow:0 0 12px rgba(251,113,133,.5)':x.d<=4?'':'background:linear-gradient(90deg,#6EE7B7,var(--green));box-shadow:0 0 12px rgba(52,211,153,.4)'}"></div></div></div>
+        <span class="muted" style="font-size:10.5px">${t('last7')}</span> ${last7Bars(x.p.id)}
+        <button class="btn small violet" style="flex-shrink:0" onclick="proposeRestock('${x.p.id}')">📨 ${t('suggest_order')}</button>
+      </div>
+    </div>`;}).join('')}`;
+}
 /* ----- SUPPLIER views ----- */
 function forecastCard(){
   const rows = PRODUCTS.map(p=>({p, st:stats(p.id)}))
