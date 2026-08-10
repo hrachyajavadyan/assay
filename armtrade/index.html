@@ -313,7 +313,9 @@ const T = {
     sync_err:'Սերվերը հասանելի չէ — համաժամացումն անջատված է',
     login_title:'Մուտք', login_as:'Մուտք որպես', password:'Գաղտնաբառ', login_btn:'Մուտք գործել',
     wrong_pass:'Սխալ գաղտնաբառ', demo_mode:'Դեմո ռեժիմ՝ առանց մուտքի (երկու կողմը մեկ էկրանին)', logout:'Դուրս գալ',
-    logged_as:'Մուտք եք գործել որպես'
+    logged_as:'Մուտք եք գործել որպես',
+    receive_pay:'Ստանալ վճարում', mark_paid:'Նշել վճարված', statement:'Համեմատման ակտ', balance:'Մնացորդ',
+    days_unpaid:'օր չվճարված', doc_col:'Փաստաթուղթ', bill_doc:'Հաշիվ', pay_doc:'Վճարում'
   },
   en: {
     shop:'Shop', supplier:'Supplier',
@@ -370,7 +372,9 @@ const T = {
     sync_err:'Server unavailable — sync is off',
     login_title:'Sign in', login_as:'Sign in as', password:'Password', login_btn:'Sign in',
     wrong_pass:'Wrong password', demo_mode:'Demo mode — no login (both sides on one screen)', logout:'Sign out',
-    logged_as:'Signed in as'
+    logged_as:'Signed in as',
+    receive_pay:'Receive payment', mark_paid:'Mark paid', statement:'Statement', balance:'Balance',
+    days_unpaid:'days unpaid', doc_col:'Document', bill_doc:'Invoice', pay_doc:'Payment'
   },
   ru: {
     shop:'Магазин', supplier:'Поставщик',
@@ -427,7 +431,9 @@ const T = {
     sync_err:'Сервер недоступен — синхронизация отключена',
     login_title:'Вход', login_as:'Войти как', password:'Пароль', login_btn:'Войти',
     wrong_pass:'Неверный пароль', demo_mode:'Демо-режим без входа (обе стороны на одном экране)', logout:'Выйти',
-    logged_as:'Вы вошли как'
+    logged_as:'Вы вошли как',
+    receive_pay:'Принять платёж', mark_paid:'Отметить оплату', statement:'Акт сверки', balance:'Сальдо',
+    days_unpaid:'дн. не оплачен', doc_col:'Документ', bill_doc:'Счёт', pay_doc:'Платёж'
   }
 };
 
@@ -559,7 +565,29 @@ function renderLogin(err){
     </div>
   </div>`;
 }
+function askNotifPermission(){
+  try{ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); }catch(e){}
+}
+function beep(){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type='sine'; o.frequency.value=880; g.gain.value=0.08;
+    o.start(); o.frequency.setValueAtTime(1175, ctx.currentTime+0.12);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.35);
+    o.stop(ctx.currentTime+0.4);
+  }catch(e){}
+}
+function osNotify(txt){
+  try{
+    if('Notification' in window && Notification.permission==='granted'){
+      new Notification('ArmTrade', {body:txt, tag:'armtrade', icon:undefined});
+    }
+  }catch(e){}
+}
 async function doLogin(){
+  askNotifPermission();
   const p = document.getElementById('passInput').value||'';
   const h = await sha256hex(p);
   if(h !== AUTH_HASH[loginSel]){ renderLogin(true); return; }
@@ -579,6 +607,7 @@ async function doLogin(){
   renderAll();
 }
 function demoLogin(){
+  askNotifPermission();
   AUTHD = {role:'demo'};
   try{ localStorage.setItem('armtrade_auth', JSON.stringify(AUTHD)); }catch(e){}
   renderAll();
@@ -969,8 +998,17 @@ function renderAll(fromSync){
     else if(promoN>prevPP.promo) notifyShop(t('promo_new'));
   }
   prevPP = {prop:propN, promo:promoN};
+  // generic: anything new arrived from the other device → sound + OS notification
+  const evN = S.evCounter||0;
+  if(prevEvN!=null && evN>prevEvN && fromSync){
+    beep();
+    const fresh = S.events.filter(e=>e.n>prevEvN).slice(0,2);
+    fresh.forEach(e=>{ const [ic,txt]=evText(e); osNotify(ic+' '+txt); if(document.hidden) return; });
+    if(fresh.length && !document.hidden){ const [ic,txt]=evText(fresh[0]); toast(ic+' '+txt); }
+  }
+  prevEvN = evN;
 }
-let prevPP = null;
+let prevPP = null, prevEvN = null;
 let prevMy = null;
 function notifyShop(msg){
   const sp=document.querySelector('[data-role="shop"]');
@@ -1358,8 +1396,39 @@ function billRows(withShop){
     <td class="num" style="color:var(--cyan)">${b.id}</td><td>${fdate(b.date)}</td>
     <td>${withShop ? nm(MY_SHOP) : SUP(b.sup).em+' '+nm(SUP(b.sup))}</td>
     <td class="num">${b.amount.toLocaleString('en-US')} ֏</td>
-    <td>${b.paid?`<span class="badge b-green">${t('paid_st')}${b.paidDate?' · '+fdate(b.paidDate):''}</span>`:`<span class="badge b-rose">${t('unpaid_st')}</span>`}</td>
+    <td>${b.paid
+      ? `<span class="badge b-green">${t('paid_st')}${b.paidDate?' · '+fdate(b.paidDate):''}</span>`
+      : `<span class="badge b-rose">${t('unpaid_st')} · ${daysAgo(b.date)} ${dayW()}</span>${withShop?` <button class="btn small green noprint" onclick="event.stopPropagation();markBillPaid('${b.id}')">✓ ${t('mark_paid')}</button>`:''}`}</td>
   </tr>`).join('');
+}
+function markBillPaid(bid){
+  const b = S.bills.find(x=>x.id===bid); if(!b || b.paid) return;
+  b.paid = true; b.paidDate = S.today;
+  S.debts[b.sup] = Math.max(0, (S.debts[b.sup]||0) - b.amount);
+  S.payments.push({date:S.today, sup:b.sup, amount:b.amount});
+  logEv('payment', {sup:b.sup, amount:b.amount});
+  saveD(); toast(t('paid')); renderAll();
+}
+function openStatement(sup){
+  const s = SUP(sup);
+  const entries = S.bills.filter(b=>b.sup===sup).map(b=>({date:b.date, doc:`${t('bill_doc')} ${b.id}`, amt:b.amount}))
+    .concat(S.payments.filter(p=>p.sup===sup).map(p=>({date:p.date, doc:t('pay_doc'), amt:-p.amount})))
+    .sort((a,b)=>a.date-b.date);
+  let bal = 0;
+  const rows = entries.map(e=>{
+    bal += e.amt;
+    return `<tr><td>${fdate(e.date)}</td><td>${e.doc}</td>
+      <td class="num" style="color:${e.amt>0?'var(--ink)':'var(--green)'}">${e.amt>0?'+':''}${e.amt.toLocaleString('en-US')}</td>
+      <td class="num">${bal.toLocaleString('en-US')}</td></tr>`;
+  }).join('');
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="mbody"><div class="grabber noprint"></div>
+    <h3>📄 ${t('statement')}</h3>
+    <div class="muted">${s.em} ${nm(s)} ⇄ 🏪 ${nm(MY_SHOP)} · ${fdate(S.today)} 2026</div>
+    <table class="tbl"><tr><th>${t('date')}</th><th>${t('doc_col')}</th><th>${t('amount_col')}</th><th>${t('balance')}</th></tr>${rows}</table>
+    <div class="row" style="margin-top:14px"><b>${t('balance')}</b><span class="big" style="color:${bal>0?'var(--rose)':'var(--green)'}">${amd(bal)}</span></div>
+    <button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">🖨 ${t('print')}</button>
+    <button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">${t('close')}</button></div></div>`;
 }
 function payRows(){
   return [...S.payments].sort((a,b)=>b.date-a.date).map(p=>`<tr>
@@ -1430,7 +1499,11 @@ function vSupData(){
   <div class="card"><h3>⏳ ${t('dc_receiv')}</h3>
     ${SUPPLIERS.map(s=>`<div class="row" style="padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)">
       <span>${s.em} ${nm(s)} ← ${nm(MY_SHOP)}</span>
-      <b class="num" style="color:${S.debts[s.id]?'var(--rose)':'var(--green)'}">${(S.debts[s.id]||0).toLocaleString('en-US')} ֏</b>
+      <span style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        <b class="num" style="color:${S.debts[s.id]?'var(--rose)':'var(--green)'}">${(S.debts[s.id]||0).toLocaleString('en-US')} ֏</b>
+        ${S.debts[s.id]?`<button class="btn small green" onclick="payDebt('${s.id}')">💰 ${t('receive_pay')}</button>`:''}
+        <button class="btn small ghost" onclick="openStatement('${s.id}')">📄 ${t('statement')}</button>
+      </span>
     </div>`).join('')}</div>
   <div class="card"><h3 style="justify-content:space-between">🧾 ${t('dc_bills')} <button class="btn small ghost noprint" onclick="exportCSV('bills')">⬇ CSV</button></h3><div class="muted" style="margin:-6px 0 8px">${t('tap_bill')}</div><div class="tblwrap"><table class="tbl">
     <tr><th>${t('bill_col')}</th><th>${t('date')}</th><th>${t('shop_col')}</th><th>${t('amount_col')}</th><th>${t('status_col')}</th></tr>
