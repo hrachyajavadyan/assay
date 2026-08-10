@@ -959,6 +959,19 @@ function paneHead(role){
   </div>`;
 }
 
+function singleTabs(role){
+  const r = role==='supplier' ? 'supplier' : 'shop';
+  const labels = r==='shop'?T[lang].tabs_shop:T[lang].tabs_sup;
+  const tabs = r==='shop'?['home','catalog','basket','orders','debts','data']:['dash','inbox','shops','alerts','catalog','data'];
+  const icons = r==='shop'?{home:'📋',catalog:'🛒',basket:'🧺',orders:'📦',debts:'💳',data:'📈'}:{dash:'📊',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷',data:'📈'};
+  const badges = r==='shop'
+    ? {home:S.proposals.length, basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
+    : {inbox:S.orders.filter(o=>o.status==='new').length, alerts:supAlerts().length};
+  const cur = U.tab[r];
+  return `<div style="max-width:1400px;margin:14px auto 0;padding:0 16px">
+    <div class="chips panetabs">${tabs.map(tb=>`<button class="${cur===tb?'active':''}" onclick="paneTab('${r}','${tb}')">${icons[tb]} ${labels[tb]}${badges[tb]?` <span class="dot">${badges[tb]}</span>`:''}</button>`).join('')}</div>
+  </div>`;
+}
 let prevInboxN = null;
 function renderAll(fromSync){
   lang = U.lang;
@@ -986,6 +999,7 @@ function renderAll(fromSync){
         <button class="${role==='shop'?'active':''}" onclick="setRole('shop')">🏪 ${t('shop')}</button>
         <button class="${role==='supplier'?'active':''}" onclick="setRole('supplier')">🚚 ${t('supplier')}</button>
       </div>`)
+      + (desktop ? singleTabs(role) : '')
       + `<main class="${cls}">${viewFor(role,U.tab[role])}</main>`;
     renderNav(role);
     nav.style.display = desktop ? 'none' : 'flex';
