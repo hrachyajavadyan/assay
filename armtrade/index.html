@@ -566,11 +566,27 @@ function renderLogin(err){
   </div>`;
 }
 function askNotifPermission(){
-  try{ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); }catch(e){}
+  try{ if('Notification' in window && Notification.permission==='default') Notification.requestPermission().then(()=>renderAll()); }catch(e){}
+}
+// unlock audio on the first user tap so beeps can play later
+let audioCtx = null;
+document.addEventListener('pointerdown', function unlock(){
+  try{ audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)(); audioCtx.resume(); }catch(e){}
+  document.removeEventListener('pointerdown', unlock);
+}, {once:true});
+function notifBanner(){
+  if(!AUTHD) return '';
+  if(!('Notification' in window) || Notification.permission!=='default') return '';
+  return `<div style="max-width:720px;margin:10px auto 0;padding:0 14px">
+    <div class="notice" style="display:flex;align-items:center;gap:12px;justify-content:space-between">
+      <span>🔔 ${lang==='hy'?'Միացրեք ծանուցումները՝ պատվերների մասին ազդանշան ստանալու համար':(lang==='ru'?'Включите уведомления, чтобы получать сигналы о заказах':'Enable notifications to get alerted about orders')}</span>
+      <button class="btn small cyan" style="flex:0 0 auto" onclick="askNotifPermission()">${lang==='hy'?'Միացնել':(lang==='ru'?'Включить':'Enable')}</button>
+    </div></div>`;
 }
 function beep(){
   try{
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const ctx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    if(ctx.state==='suspended') ctx.resume();
     const o = ctx.createOscillator(), g = ctx.createGain();
     o.connect(g); g.connect(ctx.destination);
     o.type='sine'; o.frequency.value=880; g.gain.value=0.08;
@@ -764,6 +780,7 @@ function openEvents(){
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody"><div class="grabber"></div><h3>🔔 ${t('ev_title')}</h3>
     ${list || `<div class="empty"><span class="em">🔕</span>${t('ev_empty')}</div>`}
+    <button class="btn small violet" style="margin-top:12px" onclick="beep();osNotify('✅ ArmTrade — ${lang==='hy'?'ծանուցումներն աշխատում են':(lang==='ru'?'уведомления работают':'notifications are working')}');toast('🔔 ✓')">🔔 ${lang==='hy'?'Փորձնական ծանուցում':(lang==='ru'?'Тестовое уведомление':'Test notification')}</button>
     <button class="btn ghost full" style="margin-top:12px" onclick="closeModal()">${t('close')}</button></div></div>`;
   renderAll();
 }
@@ -955,7 +972,7 @@ function renderAll(fromSync){
 
   if(U.split){
     nav.style.display='none';
-    app.innerHTML = `<div class="split is-two">
+    app.innerHTML = notifBanner() + `<div class="split is-two">
       <section class="pane glass" data-role="shop">${paneHead('shop')}<div class="panebody">${viewFor('shop',U.tab.shop)}</div></section>
       <div class="flowmark">⇄</div>
       <section class="pane glass" data-role="supplier">${paneHead('supplier')}<div class="panebody">${viewFor('supplier',U.tab.supplier)}</div></section>
@@ -963,7 +980,7 @@ function renderAll(fromSync){
   } else {
     const role=U.role;
     const cls = desktop ? 'single-desk' : '';
-    app.innerHTML = (roleLocked()
+    app.innerHTML = notifBanner() + (roleLocked()
       ? `<div class="roleswitch" style="margin-top:14px;pointer-events:none"><button class="active" style="flex:1">${role==='shop'?'🏪 '+t('shop')+' · '+nm(MY_SHOP):'🚚 '+t('supplier')}</button></div>`
       : `<div class="roleswitch" style="margin-top:14px">
         <button class="${role==='shop'?'active':''}" onclick="setRole('shop')">🏪 ${t('shop')}</button>
