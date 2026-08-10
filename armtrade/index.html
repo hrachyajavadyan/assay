@@ -512,6 +512,14 @@ function freshState(){
   st.events = []; st.evCounter = 0;
   // store stock + retail sell-out history (VMI core)
   st.stock = {}; st.sales = []; st.stockoutFlag = {};
+  st.shopStock = {};
+  OTHER_SHOPS.forEach((o,i)=>{
+    st.shopStock[o.id] = {};
+    PRODUCTS.forEach((p,j)=>{
+      const vel = Math.max(0.4, p.qty/p.cycle) * [1.3,0.8,0.5,1.6,1.0][i%5];
+      st.shopStock[o.id][p.id] = o.id==='o3' ? Math.round(vel*(j%3)) : Math.max(1, Math.round(vel*(2+(i+j)%6)));
+    });
+  });
   PRODUCTS.forEach((p,i)=>{
     const vel = Math.max(0.5, p.qty / p.cycle);
     st.stock[p.id] = Math.max(1, Math.round(vel * (i%3===1 ? 1.5 : 3 + (i%4))));
@@ -562,6 +570,16 @@ if(!S.stock){
   });
 }
 if(!S.stockoutFlag) S.stockoutFlag={};
+if(!S.shopStock){
+  S.shopStock={};
+  OTHER_SHOPS.forEach((o,i)=>{
+    S.shopStock[o.id]={};
+    PRODUCTS.forEach((p,j)=>{
+      const vel = Math.max(0.4, p.qty/p.cycle) * [1.3,0.8,0.5,1.6,1.0][i%5];
+      S.shopStock[o.id][p.id] = o.id==='o3' ? Math.round(vel*(j%3)) : Math.max(1, Math.round(vel*(2+(i+j)%6)));
+    });
+  });
+}
 U = loadU();
 if(U.lastSeenEv==null) U.lastSeenEv = 0;
 let lang = U.lang;
@@ -852,6 +870,15 @@ function last7Bars(pid){
   const max = Math.max(...days, 1);
   return `<span class="spark">${days.map(q=>`<i style="height:${Math.max(2, Math.round(q/max*22))}px" title="${q}"></i>`).join('')}</span>`;
 }
+function shopStockOf(shopId){ return shopId==='me' ? S.stock : (S.shopStock[shopId]||{}); }
+function velOfShop(shopId, pid){
+  if(shopId==='me') return velOf(pid);
+  const i = OTHER_SHOPS.findIndex(o=>o.id===shopId);
+  const p = P(pid);
+  return Math.max(0.3, p.qty/p.cycle) * [1.3,0.8,0.5,1.6,1.0][Math.max(0,i)%5];
+}
+function daysLeftShop(shopId, pid){ return (shopStockOf(shopId)[pid]||0) / velOfShop(shopId, pid); }
+function critCount(shopId){ return PRODUCTS.filter(p=>daysLeftShop(shopId, p.id)<=2).length; }
 function recordSale(pid, qty){
   qty = Math.max(1, Math.min(qty, S.stock[pid]||0));
   if(!qty){ toast(t('out_of_stock')); return; }
@@ -997,6 +1024,14 @@ function advanceDay(){
   });
   if(S.sales.length>600) S.sales = S.sales.slice(-500);
   checkStockouts();
+  // other shops' shelves sell down too
+  OTHER_SHOPS.forEach(o=>{
+    const stk = S.shopStock[o.id]; if(!stk) return;
+    PRODUCTS.forEach(p=>{
+      const q = Math.min(stk[p.id]||0, Math.round(velOfShop(o.id, p.id) * (0.5 + Math.random()*0.9)));
+      if(q>0) stk[p.id] -= q;
+    });
+  });
   if(Math.random() < 0.75){
     const shop = OTHER_SHOPS[Math.floor(Math.random()*OTHER_SHOPS.length)];
     if(shop.id!=='o3'){
@@ -1007,6 +1042,9 @@ function advanceDay(){
       S.orders.unshift({id:oid, date:S.today, shop, sup, items, status:'new', deliveryDate:S.today + (1+Math.floor(Math.random()*3))*DAY});
       logEv('order',{oid, shop:shop.id, sup});
       S.otherLast[shop.id] = S.today;
+      // their shelf refills when the sim order arrives
+      const stk = S.shopStock[shop.id];
+      if(stk) items.forEach(it=>{ stk[it.productId] = (stk[it.productId]||0) + it.qty; });
     }
   }
   saveD(); toast(t('day_advanced') + ' ' + fdate(S.today)); renderAll();
@@ -1508,18 +1546,36 @@ function shopRow(shop, sub, badge){
     ${badge}
   </div>`;
 }
+function shopStockChips(shopId){
+  const stk = shopStockOf(shopId);
+  return PRODUCTS.map(p=>{
+    const q = stk[p.id]||0;
+    const d = daysLeftShop(shopId, p.id);
+    const col = q===0 || d<=1 ? 'b-rose' : d<=3 ? 'b-gold' : 'b-green';
+    return `<span class="badge ${col}" style="font-size:11px;padding:4px 8px">${p.em} ${q}</span>`;
+  }).join(' ');
+}
+function shopCard(shop, sub, badge){
+  const crit = critCount(shop.id);
+  return `<div class="card" ${crit>=3?'style="border-color:rgba(251,113,133,.35)"':''}>
+    <div class="shoprow" style="border:none;padding:0 0 10px" onclick="openShop('${shop.id}')">
+      <div class="shopav">${nm(shop).replace(/[«»]/g,'').trim()[0]}</div>
+      <div class="info" style="flex:1"><div style="font-weight:600;font-size:14.5px">${nm(shop)}</div><div class="muted" style="margin-top:2px">${sub}</div></div>
+      <span style="display:flex;gap:6px;align-items:center">${crit?`<span class="badge b-rose">🚨 ${crit}</span>`:''}${badge}</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">${shopStockChips(shop.id)}</div>
+  </div>`;
+}
 function vSupShops(){
   const myLast = Math.max(...S.history.map(h=>h.date), 0);
-  const rows = [
-    shopRow(MY_SHOP, `${t('last_order')}՝ ${fdate(myLast)}`, `<span class="badge b-green">${t('ok_status')}</span>`),
-    ...OTHER_SHOPS.map((o)=>{
+  return `<div class="sec">${t('shops')} (${OTHER_SHOPS.length+1}) · ${t('stock_lbl')}</div>`
+    + shopCard(MY_SHOP, `${t('last_order')}՝ ${fdate(myLast)} · LIVE`, `<span class="badge b-cyan">● LIVE</span>`)
+    + OTHER_SHOPS.map((o)=>{
       const last = S.otherLast[o.id]; const ago = daysAgo(last);
       const b = o.id==='o3' ? `<span class="badge b-rose">${ago} ${lang==='hy'?'օր լռություն':(lang==='ru'?'дн. молчания':'days silent')}</span>`
         : ago>3 ? `<span class="badge b-gold">${ago} ${dayW()}</span>` : `<span class="badge b-green">${t('ok_status')}</span>`;
-      return shopRow(o, `${t('last_order')}՝ ${fdate(last)}`, b);
-    })
-  ].join('');
-  return `<div class="sec">${t('shops')} (${OTHER_SHOPS.length+1})</div><div class="card">${rows}</div>`;
+      return shopCard(o, `${t('last_order')}՝ ${fdate(last)}`, b);
+    }).join('');
 }
 function alertCard(a){
   const isChurn = a.type==='churn';
@@ -1701,9 +1757,17 @@ function openShop(id){
         const cls = st.dueIn<0?'style="color:var(--rose);font-weight:700"':'';
         return `<tr><td>${nm(p)}</td><td class="num">${st.cycle} ${dayW()}</td><td class="num">${st.avgQty}</td><td ${cls}>${st.dueIn<0?(t('overdue')+' '+(-st.dueIn)+(' '+dayW())):fdate(st.due)}</td></tr>`;}).join('') + '</table>';
   } else {
-    body = `<div class="muted">${t('last_order')}՝ ${fdate(S.otherLast[id])} (${daysAgo(S.otherLast[id])} ${lang==='hy'?'օր առաջ':(lang==='ru'?'дн. назад':'days ago')})</div>
-    <div class="muted" style="margin-top:8px">${lang==='hy'?'Դեմո խանութ — մանրամասն պատմությունը հասանելի է միայն ձեր խանութի համար։':(lang==='ru'?'Демо-магазин — подробная история доступна только для вашего магазина.':'Demo shop — detailed history is available for your own shop only.')}</div>`;
+    body = `<div class="muted">${t('last_order')}՝ ${fdate(S.otherLast[id])} (${daysAgo(S.otherLast[id])} ${lang==='hy'?'օր առաջ':(lang==='ru'?'дн. назад':'days ago')})</div>`;
   }
+  // live stock table for every shop
+  body += `<div class="sec" style="margin-top:16px">📦 ${t('stock_lbl')}</div>
+  <table class="tbl"><tr><th>${t('product')}</th><th>${t('stock_lbl')}</th><th>${t('velocity')}</th><th>${t('days_left')}</th></tr>` +
+    PRODUCTS.map(p=>{
+      const q = shopStockOf(id)[p.id]||0;
+      const d = daysLeftShop(id, p.id);
+      const cls = q===0||d<=1 ? 'style="color:var(--rose);font-weight:700"' : d<=3 ? 'style="color:var(--gold2)"' : '';
+      return `<tr><td>${p.em} ${nm(p)}</td><td class="num" ${cls}>${q}</td><td class="num">${velOfShop(id,p.id).toFixed(1)}</td><td class="num" ${cls}>${q===0?'—':'~'+Math.floor(d)}</td></tr>`;
+    }).join('') + '</table>';
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody"><div class="grabber"></div><h3>${nm(shop)}</h3><div class="muted">${t('shop_detail')}</div>${body}
     <button class="btn primary" style="margin-top:16px" onclick="closeModal()">${t('close')}</button></div></div>`;
