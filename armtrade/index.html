@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Armenian:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#080C18; --ink:#EDF1FA; --muted:#93A0BD; --dim:#5E6D8C;
+  --bg:#080C18; --ink:#EDF1FA; --muted:#93A0BD; --dim:#5E6D8C; --sep:var(--sep);
   --gold:#E39A3B; --gold2:#F7C572;
   --cyan:#22D3EE; --green:#34D399; --rose:#FB7185; --violet:#A78BFA; --blue:#60A5FA;
   --glass:rgba(255,255,255,.055); --glass2:rgba(255,255,255,.09);
@@ -74,7 +74,7 @@ button{font-family:var(--font)}
 .kpi .l{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:5px}
 
 /* product rows */
-.sug{display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.sug{display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid var(--sep)}
 .sug:last-child{border-bottom:none;padding-bottom:2px}
 .sug:first-child{padding-top:2px}
 .pav{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0;background:var(--glass2);border:1px solid var(--stroke2)}
@@ -148,7 +148,7 @@ button{font-family:var(--font)}
 }
 
 /* supplier shop list */
-.shoprow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer}
+.shoprow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--sep);cursor:pointer}
 .shoprow:last-child{border-bottom:none}
 .shopav{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,rgba(247,197,114,.22),rgba(167,139,250,.16));border:1px solid var(--stroke2);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold2);font-size:15px;flex-shrink:0}
 
@@ -165,7 +165,7 @@ button{font-family:var(--font)}
 .footer-note{text-align:center;color:var(--dim);font-size:11px;margin:18px 0 4px}
 .tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
 .tbl th{text-align:left;color:var(--dim);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:7px 5px;border-bottom:1px solid var(--stroke2)}
-.tbl td{padding:9px 5px;border-bottom:1px solid rgba(255,255,255,.07)}
+.tbl td{padding:9px 5px;border-bottom:1px solid var(--sep)}
 
 /* ---------- TOP BAR (global controls) ---------- */
 #top{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:10px;padding:calc(9px + env(safe-area-inset-top)) 14px 9px;background:rgba(9,13,26,.72);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid var(--stroke)}
@@ -243,6 +243,75 @@ body.single-mobile{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 @media (min-width:980px) and (max-width:1200px){
   .panetabs button{padding:6px 9px;font-size:11.5px}
 }
+
+/* ================= MINIMAL LIGHT THEME (default) ================= */
+body.light{
+  --bg:#F5F6F8; --ink:#1A2233; --muted:#5B6472; --dim:#8A93A3; --sep:#ECEEF2;
+  --gold:#C77E1E; --gold2:#A8690F;
+  --cyan:#0E7490; --green:#15803D; --rose:#DC2626; --violet:#6D28D9; --blue:#1D4ED8;
+  --glass:#FFFFFF; --glass2:#F1F3F6;
+  --stroke:#E3E6EB; --stroke2:#CBD2DC;
+  background:var(--bg);
+}
+body.light::before, body.light::after{display:none}
+body.light .glass, body.light .card, body.light .kpi, body.light .pane{
+  backdrop-filter:none; -webkit-backdrop-filter:none;
+  background:#FFFFFF; box-shadow:0 1px 3px rgba(16,24,40,.06);
+}
+body.light .kpi::before{display:none}
+body.light .btn{backdrop-filter:none;-webkit-backdrop-filter:none;background:#FFFFFF;box-shadow:none}
+body.light .btn::after{display:none}
+body.light .btn.primary{background:#C77E1E;color:#fff;box-shadow:none;border-color:#C77E1E}
+body.light .btn.cyan{background:#0E7490;color:#fff;box-shadow:none}
+body.light .btn.green{background:#15803D;color:#fff;box-shadow:none}
+body.light .btn.violet{background:#6D28D9;color:#fff;box-shadow:none}
+body.light .btn.ghost{background:#F1F3F6;color:var(--ink)}
+body.light .btn.danger{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
+body.light .addbtn{background:#C77E1E;color:#fff;box-shadow:none}
+body.light .addbtn.added{background:#15803D;color:#fff;box-shadow:none}
+body.light .daybtn, body.light .tbtn.day{background:#C77E1E;color:#fff;box-shadow:none;border-color:transparent}
+body.light .tbtn{background:#FFFFFF;backdrop-filter:none;color:var(--ink)}
+body.light .tbtn.on{background:#FDF3E3;color:#A8690F;border-color:#E8C58A}
+body.light #top{background:#FFFFFF;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:1px solid var(--stroke)}
+body.light nav{background:#FFFFFF;backdrop-filter:none;-webkit-backdrop-filter:none;border-top:1px solid var(--stroke)}
+body.light nav button.active{color:#A8690F}
+body.light nav button.active .icw{background:#FDF3E3}
+body.light .logomark{box-shadow:none}
+body.light .roleswitch{background:#EDEFF3}
+body.light .roleswitch button.active{background:#FFFFFF;color:#A8690F;box-shadow:0 1px 2px rgba(16,24,40,.1)}
+body.light .chips button{background:#FFFFFF;color:var(--muted)}
+body.light .chips button.active{background:#FDF3E3;color:#A8690F;border-color:#E8C58A}
+body.light .search{background:#FFFFFF;backdrop-filter:none}
+body.light .search:focus{border-color:#C77E1E;box-shadow:0 0 0 3px rgba(199,126,30,.12)}
+body.light .qtyctl{background:#F1F3F6}
+body.light .qtyctl button{color:#A8690F}
+body.light .pav{background:#F1F3F6}
+body.light .order{background:#FFFFFF;box-shadow:0 1px 3px rgba(16,24,40,.06)}
+body.light .b-cyan{background:#ECFEFF;color:#0E7490;border-color:#A5F3FC}
+body.light .b-gold{background:#FDF6E7;color:#A8690F;border-color:#F0DCB0}
+body.light .b-green{background:#F0FDF4;color:#15803D;border-color:#BBF7D0}
+body.light .b-rose{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
+body.light .b-violet{background:#F5F3FF;color:#6D28D9;border-color:#DDD6FE}
+body.light .b-neutral{background:#F1F3F6;color:#5B6472;border-color:#E3E6EB}
+body.light .dot{background:#DC2626;color:#fff}
+body.light .navbadge{background:#DC2626;color:#fff}
+body.light .notice{background:#EFF6FF;border-color:#BFDBFE;color:#1E40AF}
+body.light .alert{background:#FFFBEB;border-color:#FDE68A}
+body.light .alert.bad{background:#FEF2F2;border-color:#FECACA}
+body.light #toast{background:#1A2233;color:#fff;box-shadow:0 6px 20px rgba(16,24,40,.25)}
+body.light .modal{background:rgba(23,30,45,.45);backdrop-filter:none}
+body.light .mbody{background:#FFFFFF;backdrop-filter:none}
+body.light .hbar .track{background:#EDEFF3}
+body.light .hbar .fill{background:#C77E1E;box-shadow:none}
+body.light .hbar .fill.cy{background:#0E7490;box-shadow:none}
+body.light .spark i{background:#0E7490}
+body.light .panehead{background:#FAFBFC;backdrop-filter:none}
+body.light .shopav{background:#FDF3E3;color:#A8690F}
+body.light .sug .sub b{color:#A8690F}
+body.light .osum{color:#A8690F}
+body.light .order.st-new{border-color:#A5F3FC}
+body.light .flowmark{background:#0E7490 !important;color:#fff !important;box-shadow:0 4px 14px rgba(14,116,144,.35) !important;animation:none !important}
+body.light .langsw{color:var(--muted)}
 @media (min-width:1500px){
   .kpis{grid-template-columns:repeat(4,1fr)}
   .split{gap:26px;padding:20px 32px}
@@ -605,6 +674,7 @@ function renderLogin(err){
   document.getElementById('nav').style.display='none';
   document.getElementById('top').innerHTML = `<div class="logo"><div class="logomark">⇄</div><div>ArmTrade<small>${lang==='hy'?'դեմո':(lang==='ru'?'демо':'demo')}</small></div></div>
     <div class="spacer"></div>
+    <button class="tbtn" onclick="toggleTheme()">${THEME==='light'?'🌙':'☀️'}</button>
     <button class="tbtn" onclick="toggleLang()">${({hy:'EN',en:'РУ',ru:'ՀԱՅ'})[lang]}</button>`;
   document.getElementById('app').innerHTML = `
   <div style="max-width:420px;margin:9vh auto 0;padding:0 18px">
@@ -938,6 +1008,11 @@ function paneTab(role, tb){ U.tab[role]=tb; saveU(); renderAll(); }
 function setRole(r){ U.role=r; saveU(); renderAll(); }
 function toggleSplit(){ U.split=!U.split; saveU(); renderAll(); }
 function toggleLang(){ U.lang = lang = ({hy:'en',en:'ru',ru:'hy'})[lang]||'hy'; saveU(); renderAll(); }
+let THEME = 'light';
+try{ THEME = localStorage.getItem('armtrade_theme') || 'light'; }catch(e){}
+function applyTheme(){ document.body.classList.toggle('light', THEME==='light'); }
+function toggleTheme(){ THEME = THEME==='light' ? 'dark' : 'light'; try{ localStorage.setItem('armtrade_theme', THEME); }catch(e){} applyTheme(); renderAll(); }
+applyTheme();
 const dayW = ()=> lang==='hy'?'օր':(lang==='ru'?'дн.':'d');
 function addToBasket(pid, qty){ S.basket[pid] = (S.basket[pid]||0) + qty; saveD(); renderAll(); }
 function setBasketQty(pid, qty){ if(qty<=0) delete S.basket[pid]; else S.basket[pid]=qty; saveD(); renderAll(); }
@@ -1066,6 +1141,7 @@ function topBar(){
   return `<div class="logo"><div class="logomark">⇄</div><div>ArmTrade<small>${lang==='hy'?'դեմո':(lang==='ru'?'демо':'demo')}</small></div></div>
     <span class="datechip">📅 ${dateTxt}</span>
     <div class="spacer"></div>
+    <button class="tbtn" onclick="toggleTheme()" title="theme">${THEME==='light'?'🌙':'☀️'}</button>
     <button class="tbtn ${ROOM?'on':''}" onclick="openSync()" title="${t('sync')}">🔗${ROOM?` <span style="color:var(--green)">●</span>`:''}</button>
     <button class="tbtn" onclick="openEvents()" style="position:relative">🔔${unreadEv()?` <span class="dot">${unreadEv()}</span>`:''}</button>
     ${roleLocked()?'':`<button class="tbtn ${U.split?'on':''}" onclick="toggleSplit()">${U.split?'▚ '+t('split_on'):'▙ '+t('split_off')}</button>`}
@@ -1489,7 +1565,7 @@ function forecastCard(){
   return `<div class="card" style="border-color:rgba(34,211,238,.3)"><h3>🔮 ${t('forecast')}</h3>
     ${rows.map(x=>{
       const due = x.st.dueIn<=0 ? `<span class="badge b-rose">${t('due_today')}</span>` : `<span class="badge b-cyan">+${x.st.dueIn} ${dayW()}</span>`;
-      return `<div class="row" style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07)">
+      return `<div class="row" style="padding:8px 0;border-bottom:1px solid var(--sep)">
         <span style="font-size:13px">${x.p.em} ${nm(x.p)} <span class="muted">· ${nm(MY_SHOP)}</span></span>
         <span style="display:flex;gap:8px;align-items:center">${due}<b class="num">${x.st.avgQty} ${t('pcs')}</b></span>
       </div>`;}).join('')}
@@ -1526,7 +1602,7 @@ function routeCard(){
       const sum = orders.reduce((a,o)=>a+o.items.reduce((x,i)=>x+i.qty*i.price,0),0);
       const shops = [...new Set(orders.map(o=>nm(o.shop)))].join(', ');
       const dn = +d===S.today ? t('today_w') : +d===S.today+DAY ? t('tomorrow_w') : fdate(+d);
-      return `<div class="row" style="padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07);align-items:flex-start">
+      return `<div class="row" style="padding:9px 0;border-bottom:1px solid var(--sep);align-items:flex-start">
         <div><span class="badge b-cyan">🚚 ${dn}</span><div class="muted" style="margin-top:5px;max-width:340px">${shops}</div></div>
         <div style="text-align:right"><b class="num">${orders.length}</b> <span class="muted">${t('items')}</span><div class="num" style="color:var(--gold2);margin-top:3px;font-weight:600">${sum.toLocaleString('en-US')} ֏</div></div>
       </div>`;}).join('')}
@@ -1732,7 +1808,7 @@ function vSupData(){
   </div>
   <div class="card"><h3>📊 ${t('dc_rev_by_month')}</h3>${monthBars('cy')}</div>
   <div class="card"><h3>⏳ ${t('dc_receiv')}</h3>
-    ${SUPPLIERS.map(s=>`<div class="row" style="padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)">
+    ${SUPPLIERS.map(s=>`<div class="row" style="padding:9px 0;border-bottom:1px solid var(--sep)">
       <span>${s.em} ${nm(s)} ← ${nm(MY_SHOP)}</span>
       <span style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
         <b class="num" style="color:${S.debts[s.id]?'var(--rose)':'var(--green)'}">${(S.debts[s.id]||0).toLocaleString('en-US')} ֏</b>

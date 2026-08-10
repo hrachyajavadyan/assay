@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#F5F6F8">
+<title>ArmTrade — Ուղեցույց / Guide / Руководство</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Armenian:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F5F6F8;--ink:#1A2233;--muted:#5B6472;--dim:#8A93A3;--gold:#C77E1E;--sep:#ECEEF2;--stroke:#E3E6EB}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Inter','Noto Sans Armenian',-apple-system,sans-serif;line-height:1.65;font-size:15.5px}
+.wrap{max-width:820px;margin:0 auto;padding:34px 20px 80px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.logomark{width:40px;height:40px;border-radius:11px;background:var(--gold);display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px;font-weight:800}
+.top b{font-size:20px}
+.langs{margin-left:auto;display:flex;gap:6px}
+.langs button{border:1px solid var(--stroke);background:#fff;border-radius:9px;padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;color:var(--muted)}
+.langs button.active{background:#FDF3E3;color:#A8690F;border-color:#E8C58A}
+h1{font-size:26px;margin:18px 0 6px;line-height:1.3}
+.sub{color:var(--muted);margin:0 0 26px}
+h2{font-size:18px;margin:36px 0 10px;padding-top:22px;border-top:1px solid var(--sep)}
+h3{font-size:15px;margin:20px 0 6px}
+p{margin:8px 0}
+.card{background:#fff;border:1px solid var(--stroke);border-radius:14px;padding:18px 20px;margin:14px 0;box-shadow:0 1px 3px rgba(16,24,40,.05)}
+.tag{display:inline-block;background:#F1F3F6;border-radius:7px;padding:2px 9px;font-size:12.5px;font-weight:600;margin-right:4px;white-space:nowrap}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
+th{text-align:left;color:var(--dim);font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;padding:8px 8px;border-bottom:1px solid var(--stroke)}
+td{padding:9px 8px;border-bottom:1px solid var(--sep);vertical-align:top}
+code,.mono{font-family:'IBM Plex Mono',monospace;font-size:13px;background:#F1F3F6;border-radius:6px;padding:1px 7px}
+a{color:#1D4ED8}
+.btn{display:inline-block;background:var(--gold);color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:11px;margin:6px 8px 0 0}
+.muted{color:var(--muted);font-size:13.5px}
+.warn{background:#FFFBEB;border:1px solid #FDE68A;border-radius:11px;padding:12px 16px;font-size:14px;margin:12px 0}
+ul{margin:8px 0;padding-left:22px}
+li{margin:5px 0}
+.foot{margin-top:48px;padding-top:20px;border-top:1px solid var(--stroke);color:var(--dim);font-size:13px}
+@media print{.langs,.btn{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="logomark">⇄</div><b>ArmTrade</b>
+    <div class="langs">
+      <button id="b_hy" class="active" onclick="setL('hy')">ՀԱՅ</button>
+      <button id="b_en" onclick="setL('en')">ENG</button>
+      <button id="b_ru" onclick="setL('ru')">РУС</button>
+    </div>
+  </div>
+
+<!-- ================= ARMENIAN ================= -->
+<div id="l_hy">
+  <h1>Ուղեցույց</h1>
+  <p class="sub">Խանութ–մատակարար կապի հարթակ · տարբերակ 5 (նախատիպ)</p>
+
+  <div class="card">
+    <b>Ի՞նչ է ArmTrade-ը։</b>
+    <p>Հարթակ, որտեղ խանութն ու մատակարարը աշխատում են առանց զանգերի։ Համակարգը հետևում է խանութի պահեստին ու վաճառքներին, ինքն է հուշում՝ երբ և ինչ պատվիրել, իսկ պատվերները, հաշիվներն ու պարտքերը երկու կողմում երևում են իրական ժամանակում։</p>
+    <a class="btn" href="/armtrade/">▶ Բացել ծրագիրը</a>
+  </div>
+
+  <h2>Արագ մեկնարկ</h2>
+  <table>
+    <tr><th>Դեր</th><th>Գաղտնաբառ</th><th>Ինչ է տեսնում</th></tr>
+    <tr><td>🏪 Խանութ</td><td><code>nran2026</code></td><td>Պատվերներ, վաճառք, պարտքեր</td></tr>
+    <tr><td>🚚 Մատակարար</td><td><code>aqua2026</code></td><td>Պատվերներ, պահեստներ, հաշվառում</td></tr>
+  </table>
+  <p>Բացեք <a href="/armtrade/">ծրագիրը</a> երկու տարբեր սարքի վրա, մուտք գործեք տարբեր դերերով — և նրանք ավտոմատ կմիանան իրար․ պատվերը մի սարքից երևում է մյուսի վրա մի քանի վայրկյանում։ «Դեմո ռեժիմ» կոճակը բացում է երկու կողմը մեկ էկրանին՝ ներկայացումների համար։</p>
+  <p>Վերևի կոճակներ՝ <span class="tag">🌙/☀️ թեմա</span> <span class="tag">🔗 կապ</span> <span class="tag">🔔 ծանուցումներ</span> <span class="tag">EN/РУ/ՀԱՅ լեզու</span> <span class="tag">⏭ հաջորդ օր (դեմո)</span></p>
+
+  <h2>Խանութի կողմը</h2>
+  <ul>
+    <li><b>📋 Այսօր</b> — ինչ է պետք պատվիրել այսօր․ համակարգը հաշվում է ամեն ապրանքի ցիկլը։ Այստեղ են գալիս նաև մատակարարի 📨 առաջարկները՝ հաստատվում են մեկ հպումով։</li>
+    <li><b>🛒 Ապրանքներ</b> — ամբողջ տեսականին՝ գներով ու ակցիաներով, որոնում և ֆիլտր։</li>
+    <li><b>💵 Վաճառք</b> — գրանցեք օրվա վաճառքները․ պահեստը նվազում է, մատակարարը դա տեսնում է ուղիղ եթերում։</li>
+    <li><b>🧺 Զամբյուղ</b> — պատվերը ուղարկվում է ըստ մատակարարների, ընտրում եք առաքման օրը։ Կրեդիտ լիմիտը գերազանցելիս՝ նախազգուշացում։</li>
+    <li><b>📦 Պատվերներ</b> — կարգավիճակի գիծ (Նոր → Հաստատված → Առաքված), 💬 չատ, ↩ վերադարձ։</li>
+    <li><b>💳 Պարտքեր</b> — պարտք ամեն մատակարարին, կրեդիտ լիմիտի սանդղակ, վճարում։</li>
+    <li><b>📈 Տվյալներ</b> — ծախսերն ըստ ամիսների, հաշիվներ (սեղմեք՝ տպելու), վճարումներ, պատմություն, CSV։</li>
+  </ul>
+
+  <h2>Մատակարարի կողմը</h2>
+  <ul>
+    <li><b>📊 Վահանակ</b> — օրվա պատկերը, 🔮 առաջիկա 7 օրվա կանխատեսում, սպասվող պատվերներ։</li>
+    <li><b>📉 Պահեստ</b> — խանութի պահեստն ու վաճառքի արագությունը ուղիղ եթերում․ քանի օրից կվերջանա ամեն ապրանք, 7 օրվա գրաֆիկ, «📨 Առաջարկել» կոճակ։</li>
+    <li><b>📥 Պատվերներ</b> — 🗺 առաքումների պլան ըստ օրերի, հաստատում, ✂ մասնակի առաքում, չատ։</li>
+    <li><b>🏪 Խանութներ</b> — բոլոր խանութների պահեստի քարտեզը․ կանաչ/դեղին/կարմիր չիպեր ամեն ապրանքի համար, 🚨 կրիտիկական հաշվիչ։</li>
+    <li><b>🔔 Ազդանշաններ</b> — երբ խանութը դադարում է պատվիրել կամ ցիկլն անցել է․ «Հիշեցնել»-ը խանութին ուղարկում է պատրաստի առաջարկ։</li>
+    <li><b>🏷 Գնացուցակ</b> — ակցիա −10% միացնել/անջատել․ խանութները տեսնում են անմիջապես։</li>
+    <li><b>📈 Տվյալներ</b> — հասույթ, ստացվելիք գումարներ (💰 վճարման ընդունում, 📄 համեմատման ակտ), հաշիվներ՝ ժամկետանց օրերով, CSV։</li>
+  </ul>
+
+  <h2>Ընդհանուր</h2>
+  <ul>
+    <li><b>Ծանուցումներ</b> — սեղմեք «Միացնել» բաններին և թույլատրեք բրաուզերում։ Ստուգում՝ 🔔 → «Փորձնական ծանուցում»։ iPhone-ում համակարգային ծանուցումների համար ավելացրեք ծրագիրը Home Screen (Share → Add to Home Screen)։</li>
+    <li><b>Կապ սարքերի միջև</b> — մուտքով ավտոմատ է։ Առանց մուտքի՝ 🔗 կոճակով ստեղծեք սենյակի կոդ և մուտքագրեք նույնը երկու սարքի վրա։</li>
+    <li><b>⏭ Օրվա սիմուլյատոր</b> — դեմոյի համար․ անցնում է հաջորդ օրը, խանութները «վաճառում» են, գալիս են նոր պատվերներ։</li>
+    <li><b>Վերսկսում</b> — Վահանակ → «↺ Վերսկսել»՝ դեմոյի տվյալները զրոյացնելու համար։</li>
+  </ul>
+
+  <h2>Տեխնիկական տեղեկանք (ծրագրավորողի համար)</h2>
+  <div class="card">
+    <p><b>Կառուցվածք՝</b> մեկ ֆայլ <code>armtrade/index.html</code> (HTML+CSS+JS, առանց framework-ների)։ Հոսթինգ՝ Cloudflare Pages, ավտոմատ deploy GitHub-ից՝ <code>github.com/hrachyajavadyan/assay</code>։</p>
+    <p><b>Համաժամացում՝</b> Cloudflare Pages Function <code>functions/api/room/[code].js</code> + D1 բազա (binding՝ <code>DB</code>)։ Ամբողջ վիճակը մեկ JSON՝ սենյակի կոդով, տարբերակի հաշվիչով (optimistic concurrency, 409 կոնֆլիկտի դեպքում)։ Հաճախորդը հարցում է անում 4 վրկ-ը մեկ։</p>
+    <p><b>Մուտք՝</b> դեմո մակարդակի (գաղտնաբառի SHA-256 հեշը կոդի մեջ է)։ Իրական արտադրանքի համար անհրաժեշտ է սերվերային authentication։</p>
+    <p><b>Հաջորդ քայլեր (v6)՝</b> սերվերային հաշիվներ, իրական push ծանուցումներ (փակ ծրագրի դեպքում), տվյալների մասնակի (ոչ ամբողջական) համաժամացում, բազմախանութ իրական հաշիվներ։</p>
+  </div>
+</div>
+
+<!-- ================= ENGLISH ================= -->
+<div id="l_en" style="display:none">
+  <h1>User Guide</h1>
+  <p class="sub">Shop–supplier collaboration platform · version 5 (prototype)</p>
+
+  <div class="card">
+    <b>What is ArmTrade?</b>
+    <p>A platform where a shop and its supplier work without phone calls. The system tracks the store's stock and sales, suggests what to order and when, and keeps orders, invoices and debts visible to both sides in real time.</p>
+    <a class="btn" href="/armtrade/">▶ Open the app</a>
+  </div>
+
+  <h2>Quick start</h2>
+  <table>
+    <tr><th>Role</th><th>Password</th><th>Sees</th></tr>
+    <tr><td>🏪 Shop</td><td><code>nran2026</code></td><td>Orders, sales, debts</td></tr>
+    <tr><td>🚚 Supplier</td><td><code>aqua2026</code></td><td>Orders, store stock, accounting</td></tr>
+  </table>
+  <p>Open the <a href="/armtrade/">app</a> on two different devices and sign in with different roles — they connect automatically: an order placed on one device appears on the other within seconds. The "Demo mode" link shows both sides on one screen for presentations.</p>
+  <p>Top bar: <span class="tag">🌙/☀️ theme</span> <span class="tag">🔗 connection</span> <span class="tag">🔔 notifications</span> <span class="tag">EN/РУ/ՀԱՅ language</span> <span class="tag">⏭ next day (demo)</span></p>
+
+  <h2>Shop side</h2>
+  <ul>
+    <li><b>📋 Today</b> — what needs reordering today; the system learns each product's cycle. Supplier 📨 offers land here and are confirmed with one tap.</li>
+    <li><b>🛒 Products</b> — full catalog with prices and promos, search and filters.</li>
+    <li><b>💵 Sales</b> — record daily retail sales; stock decreases and the supplier sees it live.</li>
+    <li><b>🧺 Basket</b> — orders are split by supplier; pick a delivery day. A warning appears if an order would exceed the credit limit.</li>
+    <li><b>📦 Orders</b> — status tracker (New → Confirmed → Delivered), 💬 chat, ↩ returns.</li>
+    <li><b>💳 Debts</b> — debt per supplier, credit-limit gauge, payment.</li>
+    <li><b>📈 Data</b> — monthly spend, invoices (tap to print), payments, history, CSV export.</li>
+  </ul>
+
+  <h2>Supplier side</h2>
+  <ul>
+    <li><b>📊 Dashboard</b> — today at a glance, 🔮 7-day demand forecast, pending orders.</li>
+    <li><b>📉 Stock</b> — the store's live stock and sales velocity: days until each product runs out, 7-day sales chart, "📨 Suggest order" button.</li>
+    <li><b>📥 Orders</b> — 🗺 delivery plan grouped by day, confirm, ✂ partial delivery, chat.</li>
+    <li><b>🏪 Shops</b> — stock map of every store: green/yellow/red chips per product, 🚨 critical counters.</li>
+    <li><b>🔔 Alerts</b> — fires when a shop stops ordering or a cycle is overdue; "Remind" sends the shop a ready-made offer.</li>
+    <li><b>🏷 Price list</b> — start/stop −10% promos; shops see the new price instantly.</li>
+    <li><b>📈 Data</b> — revenue, receivables (💰 receive payment, 📄 reconciliation statement), invoices with days-overdue, CSV.</li>
+  </ul>
+
+  <h2>Shared features</h2>
+  <ul>
+    <li><b>Notifications</b> — tap "Enable" on the banner and allow in the browser. Test via 🔔 → "Test notification". On iPhone, add the app to the Home Screen (Share → Add to Home Screen) for system notifications.</li>
+    <li><b>Device connection</b> — automatic when signed in. Without login, use 🔗 to generate a room code and enter the same code on both devices.</li>
+    <li><b>⏭ Day simulator</b> — for demos: advances one day, stores "sell", new orders arrive.</li>
+    <li><b>Reset</b> — Dashboard → "↺ Reset" clears the demo data.</li>
+  </ul>
+
+  <h2>Technical handoff (for developers)</h2>
+  <div class="card">
+    <p><b>Architecture:</b> a single file <code>armtrade/index.html</code> (HTML+CSS+JS, no frameworks). Hosted on Cloudflare Pages with auto-deploy from GitHub: <code>github.com/hrachyajavadyan/assay</code>.</p>
+    <p><b>Sync:</b> Cloudflare Pages Function <code>functions/api/room/[code].js</code> + a D1 database (binding <code>DB</code>). The whole state is one JSON blob per room code with a version counter (optimistic concurrency, 409 on conflict). Clients poll every 4 s.</p>
+    <p><b>Auth:</b> demo-grade (SHA-256 password hashes embedded in the client). A production build needs server-side authentication.</p>
+    <p><b>Roadmap (v6):</b> server-side accounts, real push notifications (app closed), granular (non-blob) sync, real multi-shop accounts.</p>
+  </div>
+</div>
+
+<!-- ================= RUSSIAN ================= -->
+<div id="l_ru" style="display:none">
+  <h1>Руководство</h1>
+  <p class="sub">Платформа «магазин–поставщик» · версия 5 (прототип)</p>
+
+  <div class="card">
+    <b>Что такое ArmTrade?</b>
+    <p>Платформа, где магазин и поставщик работают без звонков. Система следит за остатками и продажами магазина, сама подсказывает, что и когда заказать, а заказы, счета и долги видны обеим сторонам в реальном времени.</p>
+    <a class="btn" href="/armtrade/">▶ Открыть программу</a>
+  </div>
+
+  <h2>Быстрый старт</h2>
+  <table>
+    <tr><th>Роль</th><th>Пароль</th><th>Видит</th></tr>
+    <tr><td>🏪 Магазин</td><td><code>nran2026</code></td><td>Заказы, продажи, долги</td></tr>
+    <tr><td>🚚 Поставщик</td><td><code>aqua2026</code></td><td>Заказы, склады, учёт</td></tr>
+  </table>
+  <p>Откройте <a href="/armtrade/">программу</a> на двух устройствах и войдите под разными ролями — они соединятся автоматически: заказ с одного устройства появится на другом за несколько секунд. «Демо-режим» показывает обе стороны на одном экране — удобно для презентаций.</p>
+  <p>Верхняя панель: <span class="tag">🌙/☀️ тема</span> <span class="tag">🔗 связь</span> <span class="tag">🔔 уведомления</span> <span class="tag">EN/РУ/ՀԱՅ язык</span> <span class="tag">⏭ следующий день (демо)</span></p>
+
+  <h2>Сторона магазина</h2>
+  <ul>
+    <li><b>📋 Сегодня</b> — что пора заказать; система выучивает цикл каждого товара. Сюда же приходят 📨 предложения поставщика — подтверждаются одним нажатием.</li>
+    <li><b>🛒 Товары</b> — весь ассортимент с ценами и акциями, поиск и фильтры.</li>
+    <li><b>💵 Продажи</b> — записывайте дневные продажи; остаток уменьшается, поставщик видит это в прямом эфире.</li>
+    <li><b>🧺 Корзина</b> — заказ делится по поставщикам; выбирается день доставки. При превышении кредитного лимита — предупреждение.</li>
+    <li><b>📦 Заказы</b> — статус (Новый → Подтверждён → Доставлен), 💬 чат, ↩ возврат.</li>
+    <li><b>💳 Долги</b> — долг каждому поставщику, шкала лимита, оплата.</li>
+    <li><b>📈 Данные</b> — расходы по месяцам, счета (нажмите — печать), платежи, история, CSV.</li>
+  </ul>
+
+  <h2>Сторона поставщика</h2>
+  <ul>
+    <li><b>📊 Панель</b> — картина дня, 🔮 прогноз на 7 дней, ожидающие заказы.</li>
+    <li><b>📉 Склад</b> — остатки и скорость продаж магазина в прямом эфире: через сколько дней закончится каждый товар, график за 7 дней, кнопка «📨 Предложить заказ».</li>
+    <li><b>📥 Заказы</b> — 🗺 план доставок по дням, подтверждение, ✂ частичная доставка, чат.</li>
+    <li><b>🏪 Магазины</b> — карта остатков по всем магазинам: зелёные/жёлтые/красные чипы по каждому товару, 🚨 счётчик критичных.</li>
+    <li><b>🔔 Сигналы</b> — когда магазин перестал заказывать или цикл просрочен; «Напомнить» отправляет магазину готовое предложение.</li>
+    <li><b>🏷 Прайс</b> — включение/выключение акции −10%; магазины видят цену сразу.</li>
+    <li><b>📈 Данные</b> — выручка, дебиторка (💰 приём платежа, 📄 акт сверки), счета с днями просрочки, CSV.</li>
+  </ul>
+
+  <h2>Общее</h2>
+  <ul>
+    <li><b>Уведомления</b> — нажмите «Включить» на баннере и разрешите в браузере. Проверка: 🔔 → «Тестовое уведомление». На iPhone для системных уведомлений добавьте программу на экран «Домой» (Поделиться → На экран «Домой»).</li>
+    <li><b>Связь устройств</b> — автоматическая при входе. Без входа: кнопкой 🔗 создайте код комнаты и введите одинаковый код на двух устройствах.</li>
+    <li><b>⏭ Симулятор дня</b> — для демо: наступает следующий день, магазины «продают», приходят новые заказы.</li>
+    <li><b>Сброс</b> — Панель → «↺ Сброс» очищает демо-данные.</li>
+  </ul>
+
+  <h2>Техническая справка (для разработчика)</h2>
+  <div class="card">
+    <p><b>Архитектура:</b> один файл <code>armtrade/index.html</code> (HTML+CSS+JS, без фреймворков). Хостинг — Cloudflare Pages, автодеплой из GitHub: <code>github.com/hrachyajavadyan/assay</code>.</p>
+    <p><b>Синхронизация:</b> Cloudflare Pages Function <code>functions/api/room/[code].js</code> + база D1 (binding <code>DB</code>). Всё состояние — один JSON на код комнаты со счётчиком версий (оптимистическая блокировка, 409 при конфликте). Клиенты опрашивают сервер каждые 4 с.</p>
+    <p><b>Авторизация:</b> демо-уровня (SHA-256-хеши паролей в клиенте). Для продакшена нужна серверная аутентификация.</p>
+    <p><b>Дальше (v6):</b> серверные аккаунты, настоящие push-уведомления (при закрытой программе), частичная (не цельным блоком) синхронизация, реальные аккаунты для многих магазинов.</p>
+  </div>
+</div>
+
+  <div class="foot">
+    ArmTrade · <a href="/armtrade/">assay-9e6.pages.dev/armtrade</a> · <a href="/pitch/">/pitch</a> · <a href="mailto:hrachya.javadyan@gmail.com">hrachya.javadyan@gmail.com</a>
+  </div>
+</div>
+<script>
+function setL(l){
+  ['hy','en','ru'].forEach(x=>{
+    document.getElementById('l_'+x).style.display = x===l?'':'none';
+    document.getElementById('b_'+x).className = x===l?'active':'';
+  });
+  document.documentElement.lang = l;
+}
+</script>
+</body>
+</html>
