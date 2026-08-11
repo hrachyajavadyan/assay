@@ -2,7 +2,9 @@
 <html lang="hy">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<!-- R10 · pinch-zoom stays available: the reader this product is built for is 55 and often in
+     poor light, and «user-scalable=no» took his last resort away. Nothing here needs a zoom lock. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0A0F1E">
@@ -226,6 +228,15 @@ button{font-family:var(--font)}
 .kpi .v.m{letter-spacing:-.4px}
 @media (max-width:400px){ .kpi .v,.kpi .v.m{font-size:23px;line-height:1.15} }
 @media (max-width:340px){ .kpi .v,.kpi .v.m{font-size:19px;line-height:1.15} }
+/* R10 · a two-up tile on a 320px phone is 140px wide and «Շրջանառություն» is a single 130px
+   word: there is no wrap that saves it and 14px is the type floor, so the BOX gives instead —
+   one tile per row below 360px. Every label reads whole; the four values still step together. */
+@media (max-width:359px){
+  .kpis{grid-template-columns:1fr}
+  /* one per row means no cross-tile baseline to hold and no two-line label to reserve for */
+  .kpi{min-height:0;padding-bottom:var(--s3)}
+  .kpi .l{min-height:0}
+}
 /* the ONE exception to "KPI numbers are always --ink": an actionable alert count */
 .kpi-alert{border-color:var(--danger-line);background:var(--danger-tint)}
 .kpi-alert .v{color:var(--danger)}
@@ -662,6 +673,7 @@ input.err,textarea.err{border-color:var(--danger)}
    actually something to scroll to, and costs no JS. */
 .tbl td,.tbl th{overflow-wrap:break-word}
 .tblsub{display:none}
+.tfoldq{display:none}
 .tbl .badge{white-space:normal;text-align:left;line-height:1.25}
 /* On a phone a 5-column Armenian table can never be 324px wide by measuring its content, so it
    was cut at the right edge and the Կարգավիճակ badge — the one fact Պարտքեր turns on — was
@@ -689,6 +701,14 @@ input.err,textarea.err{border-color:var(--danger)}
      one fact the Պարտքեր workflow turns on — stays inside the card without a sideways swipe. */
   @media (max-width:400px){
     .tfold-b th:nth-child(3),.tfold-b td:nth-child(3){display:none}
+    /* R10 · the SHOP's copy of the purchase history carries a «＋ Փաստաթուղթ չկա» button in the
+       document column, and that button's own longest word made the column 134px — pushing the
+       table 21px past its box, so «Փաստաթղթի համար» — the point of the table — was cut at the
+       edge while the supplier's identical table fitted. The quantity takes the same fold the
+       date already takes: into the sub-line under the product it belongs to. */
+    .tfold-hs th:nth-child(3),.tfold-hs td:nth-child(3){display:none}
+    .tfold-hs .tfoldq{display:inline}
+    .tfold-hs .tblsub{white-space:nowrap}
   }
   /* shares chosen from measured Armenian word widths: the status pill and the document
      number are the two values that must never break, so they get the slack. */
@@ -861,7 +881,11 @@ input.err,textarea.err{border-color:var(--danger)}
 /* R4: this animation used to run on EVERY renderAll(), so each ± tap on a replenishment or
    receiving stepper faded the whole pane out for ~150 ms and the number being adjusted was
    unreadable. It now plays only when the view actually changes (see VIEWKEY in renderAll). */
-main{padding:var(--s3) var(--s4) var(--s4);max-width:680px;margin:0 auto}
+/* R10 · the bottom nav is fixed and ~49px tall (44px row + 2+2 padding + the rule); a 16px
+   bottom padding left the last row of a long screen inside its swipe area. The reserve is now
+   the nav row itself plus a gutter plus the home-indicator inset, so the final control on any
+   tab is fully clear of the strip. */
+main{padding:var(--s3) var(--s4) calc(var(--h-nav-row) + var(--s4) + env(safe-area-inset-bottom));max-width:680px;margin:0 auto}
 main.anim{animation:fadeUp var(--dur-3) var(--ease-out) both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
@@ -920,7 +944,9 @@ nav button.active::before{
   content:"";position:absolute;top:0;left:0;right:0;height:3px;
   background:var(--acc);
 }
-body.single-mobile{padding-bottom:calc(var(--h-nav) + env(safe-area-inset-bottom))}
+/* the reserve now lives on <main> (the last element of every single-role screen), so the body
+   no longer adds a second one on top of it. */
+body.single-mobile{padding-bottom:0}
 
 /* R9 · the permanent navigation of the whole product used to be the smallest type in it: ten
    Armenian labels wrapped onto two rows and were still shrunk to 10–11px to fit. Type has a
@@ -963,6 +989,10 @@ nav button{flex:1 1 0;max-width:none}
 /* in that bounded column 44% is ~90px — narrower than «Վերադարձնել մատակարարին» can ever be.
    Full-width stacked there; side by side only on the phone, where the column IS the row. */
 @media (min-width:461px){ .expcard .obtns .btn,.rptrow .obtns .btn{flex:1 1 100%} }
+/* R10 · ...and at the OTHER end the same thing happens: on a 320px phone the row is 254px, so
+   44% is 121px and «Վերադարձնել մատակարարին» — a 135px word — was cut inside its own button.
+   Below 361px each action takes the whole row instead of half of it. The label is not shortened. */
+@media (max-width:360px){ .expcard .obtns .btn,.rptrow .obtns .btn{flex:1 1 100%} }
 
 /* ---------- toast & modal ---------- */
 #toast{
@@ -7652,6 +7682,10 @@ function vShopDebts(){
     ${debt>0?`<button class="btn small" style="margin-top:7px" onclick="payDebt('${s.id}')">${t('pay')}</button>`:''}</div>
   </div>
   <div class="hbar" style="margin:10px 0 0"><div class="track"><div class="fill" style="width:${pct}%;${pct>=90?'background:var(--danger)':''}"></div></div></div>
+  ${/* R10 · the Համեմատման ակտ is the document the shopkeeper takes to his distributor to argue
+       about money, and until now only the SUPPLIER console could open it. Same openStatement(),
+       one ghost button per supplier card — «Վճարել» above stays the only filled action here. */''}
+  <button class="btn ghost full" style="margin-top:10px" onclick="openStatement('${s.id}')">📄 ${t('statement')}</button>
   </div>`;}).join('')}`;
 }
 
@@ -8024,7 +8058,10 @@ function vSupDash(){
   ${(()=>{const pending=S.orders.filter(o=>o.status!=='delivered').slice(0,6);
     return pending.length ? pending.map(o=>orderCard(o,'sup')).join('') + `<button class="btn ghost full" onclick="paneTab('${curRole}','inbox')">${t('inbox')} →</button>` : `<div class="card"><div class="empty"><span class="em">📥</span>${t('inbox_empty')}</div></div>`;})()}
   ${alerts.length?`<div class="sec">${t('alerts')}</div>`+alerts.slice(0,2).map(alertCard).join('')+`<button class="btn ghost full" onclick="paneTab('${curRole}','alerts')">${t('alerts')} →</button>`:''}
-  <div style="margin-top:20px;text-align:center"><button class="btn small danger" onclick="${RESETARM?'resetDemo()':'armReset()'}">${RESETARM?'✓':'↺'} ${t('reset')}</button></div>`;
+  ${/* R10 · the demo reset is a DEMO control. On a real account two taps replaced the whole state
+        with freshState() and saveD() then published that empty state into the paired room — real
+        data, gone from both devices. Gated exactly as topBar() gates the ⏭ day-advance. */
+    roleLocked()?'':`<div style="margin-top:20px;text-align:center"><button class="btn small danger" onclick="${RESETARM?'resetDemo()':'armReset()'}">${RESETARM?'✓':'↺'} ${t('reset')}</button></div>`}`;
 }
 function routeCard(){
   const active = S.orders.filter(o=>o.status!=='delivered' && o.deliveryDate);
@@ -8262,7 +8299,7 @@ function supSaleRows(limit){
 }
 function histRows(limit){
   return [...S.history].sort((a,b)=>b.date-a.date).slice(0,limit).map(h=>`<tr>
-    <td>${fdate(h.date)}</td><td>${PX(h.productId).em} ${nm(PX(h.productId))}<div class="tblsub">${fdate(h.date)}</div></td>
+    <td>${fdate(h.date)}</td><td>${PX(h.productId).em} ${nm(PX(h.productId))}<div class="tblsub">${fdate(h.date)}<span class="tfoldq"> · <b class="num">${h.qty}</b> ${unitOf(h.productId)}</span></div></td>
     <td class="num">${h.qty}</td><td class="num">${(h.qty*h.price).toLocaleString('en-US')}<span class="cur">֏</span></td>
     <td>${(h.doc&&h.doc.no)?`<span class="num">${escH(h.doc.no)}</span>`
       : `<button class="btn small ghost" style="background:var(--acc-tint);border-color:var(--acc-line);color:var(--acc-text)" onclick="openDocFix('${escH(h.id||'')}')">＋ ${t('doc_missing')}</button>`}</td>
@@ -8453,7 +8490,7 @@ function vShopData(){
     <tr><th>${t('date')}</th><th>${t('supplier_col')}</th><th>${t('amount_col')}</th></tr>
     ${payRows() || `<tr><td colspan="3" class="muted">—</td></tr>`}</table></div></div>
   <div class="card"><h3 style="justify-content:space-between">🕘 ${t('dc_history')} <button class="btn small ghost noprint" onclick="exportCSV('history')">⬇ CSV</button></h3>
-    <div class="muted" style="margin:-6px 0 8px">${t('dc_history_hint')}</div><div class="tblwrap"><table class="tbl tfold-h">
+    <div class="muted" style="margin:-6px 0 8px">${t('dc_history_hint')}</div><div class="tblwrap"><table class="tbl tfold-h tfold-hs">
     <tr><th>${t('date')}</th><th>${t('product')}</th><th>${t('qty')}</th><th>${t('amount_col')}</th><th>${t('recv_doc_no')}</th></tr>
     ${histRows(40)}</table></div>
     ${(()=>{ const c = docCoverage(30);
