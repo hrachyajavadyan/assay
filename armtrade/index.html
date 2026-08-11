@@ -719,17 +719,22 @@ input.err,textarea.err{border-color:var(--danger)}
   background:var(--acc);display:flex;align-items:center;justify-content:center;
   color:var(--acc-ink);font-size:15px;box-shadow:none;flex:0 0 auto}
 #top .spacer{flex:1 1 0;min-width:0}
-/* The date is the demo's ONLY readout of the day-simulator, so it must not be the thing that
-   shrinks first — it used to collapse to «📅 …» (one character) at the default demo width.
-   The split toggle's word label absorbs the squeeze instead; the date holds its digits. */
+/* R7 fix — the cause, not the shrink order. R6's predecessor let the split toggle lose letters
+   («Մեկ կ»); R6 inverted the priority and the date was squeezed to 0px instead (390/ru). Both are
+   symptoms of ONE fact: seven controls plus a date want ~420px and the phone has 390. So below
+   461px the header carries FIVE controls, not seven — theme, sync and language fold into one ⚙
+   that opens them as a sheet. That buys ~90px: at 390/ru, the worst of the nine width×language
+   cases, the row now measures ~341px with the date rendered in full. Nothing shrinks any more,
+   so nothing can truncate. The chip drops the YEAR (kept in title=, and every printed document
+   still prints it): a 12-day simulation never crosses a year boundary. */
 .datechip{
   font-weight:600;font-size:var(--fs-micro);color:var(--muted);
   font-variant-numeric:tabular-nums;white-space:nowrap;
-  flex:0 0 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;
+  flex:0 0 auto;min-width:0;
 }
 /* every global control is one 38px square; a control that carries words widens, nothing else does */
 .tbtn{
-  width:38px;height:38px;padding:0;flex:0 0 auto;
+  width:38px;height:38px;padding:0;flex:0 0 auto;position:relative;
   border:var(--bw) solid var(--stroke2);border-radius:var(--r-xs);
   background:var(--surface);color:var(--ink);
   font-family:var(--font);font-size:17px;line-height:1;font-weight:600;
@@ -737,9 +742,26 @@ input.err,textarea.err{border-color:var(--danger)}
   backdrop-filter:none;
   transition:transform var(--dur-1) var(--ease),background var(--dur-1) var(--ease);
 }
+/* R7: an inline count made «🔔 5» 5px wider than its own 38px button at 320px. A badge is a
+   corner mark, not a second word — it leaves the glyph centred and costs the row no width. */
+.tbtn .dot,.tbtn .okdot{
+  position:absolute;top:-6px;right:-6px;z-index:1;
+  border:2px solid var(--surface);
+}
+/* the app's standard count size (.dot is 12px everywhere); the corner position is what changed,
+   not the legibility of the number */
+.tbtn .dot{min-width:19px;height:19px;padding:0 4px;font-size:12px;line-height:15px}
+.tbtn .okdot{width:12px;height:12px;top:-4px;right:-4px;border-radius:var(--r-pill);
+  background:var(--success);font-size:0;display:block}
+/* the phone header: one ⚙ stands in for theme + sync + language */
+.tbtn.hdr-sm{display:none}
+@media (max-width:460px){
+  .tbtn.hdr-lg{display:none}
+  .tbtn.hdr-sm{display:flex}
+}
 .tbtn:active{transform:scale(.94);background:var(--surface-2)}
 .tbtn.wide{width:auto;min-width:38px;padding:0 var(--s3);font-size:var(--fs-label);
-  flex:0 20 auto;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  flex:0 0 auto;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .tbtn.on{background:var(--acc-tint);color:var(--acc-text);border-color:var(--acc-line)}
 .tbtn.day{background:var(--acc-tint);color:var(--acc-text);border-color:var(--acc-line);border-width:var(--bw-strong);box-shadow:none}
 
@@ -755,9 +777,13 @@ input.err,textarea.err{border-color:var(--danger)}
      give width and keep their 38px height. */
   .tbtn{width:34px;height:38px;font-size:16px}
   .tbtn.wide{padding:0 5px;font-size:13px;min-width:34px}
-  /* at 320 there is genuinely not enough room for six controls AND a full date, so here —
-     and only here — the date may ellipsise again, after everything else has given way. */
-  .datechip{font-size:12.5px;flex:0 1 auto}
+  .datechip{font-size:12.5px}
+}
+/* R7: with five controls instead of seven, 320px has ~40px of slack in every language. These
+   last few px come out of gaps and padding — never out of a label and never out of a hit height. */
+@media (max-width:340px){
+  #top{gap:3px;padding-left:5px;padding-right:5px}
+  .tbtn.wide{padding:0 4px}
 }
 /* hidden-on-scroll state */
 #top.hid{transform:translateY(-100%)}
@@ -1020,6 +1046,149 @@ body.light .flowmark{background:var(--acc) !important;color:#fff !important;
   .kpis{grid-template-columns:repeat(4,1fr)}
   .split{gap:26px;padding:20px 32px}
 }
+
+/* ================= R6 · F1 — tappable notification rows =================
+   A notification is a door, not a receipt. Three affordances stack: a trailing chevron, a
+   press state, and one line of instruction above the list. */
+.evrow{
+  display:flex;gap:var(--s3);align-items:flex-start;width:100%;
+  padding:var(--s3) var(--s2) var(--s3) var(--s3);
+  background:transparent;border:none;border-bottom:var(--bw) solid var(--sep);
+  border-left:3px solid transparent;border-radius:0;
+  font-family:var(--font);color:var(--ink);text-align:left;cursor:pointer;
+  min-height:56px;
+  transition:background var(--dur-1) var(--ease);
+}
+.evrow:last-of-type{border-bottom:none}
+.evrow:active{background:var(--surface-2)}
+.evrow:focus-visible{outline:none;box-shadow:var(--focus)}
+.evrow.unread{border-left-color:var(--acc);background:var(--acc-tint)}
+.evrow .evtx{flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--s1)}
+.evrow .evt{
+  font-size:var(--fs-body-l);font-weight:var(--fw-body-l);
+  line-height:var(--lh-body-l);letter-spacing:var(--ls-body-l);
+  overflow-wrap:anywhere;
+}
+.evrow.unread .evt{font-weight:700}
+.evrow .evd{font-size:var(--fs-micro);color:var(--muted);line-height:var(--lh-micro)}
+/* the "this goes somewhere" mark. Not scoped to .evrow: the same chevron closes the tappable
+   .sug rows in pcAskCard() and pcShopSection(), which are the same affordance. */
+.evgo{flex:0 0 auto;align-self:center;color:var(--dim);font-size:18px;line-height:1;padding-left:var(--s1)}
+/* a row whose target no longer exists is rendered dead rather than deleted: deleting it would
+   rewrite history he might be looking for. */
+.evrow.dead{opacity:.5;cursor:default;pointer-events:none}
+.evrow.dead .evgo{visibility:hidden}
+/* the feed's 38px icon tile, promoted from inline styles to a real Tier-1 emoji container */
+.pav.pav-sm{width:38px;height:38px;font-size:18px;border-radius:var(--r-xs)}
+
+/* ================= R6 · F1 — highlight the thing you were sent to ================= */
+@keyframes hlPulse{
+  0%{box-shadow:0 0 0 0 var(--acc)}
+  20%{box-shadow:0 0 0 3px var(--acc)}
+  100%{box-shadow:0 0 0 0 rgba(0,0,0,0)}
+}
+/* NOT `.hl` — that class already exists inside `.hbar` as the meter's label row. */
+.hlflash{animation:hlPulse 1.6s var(--ease) 1}
+tr.hlflash{animation:none;background:var(--acc-tint)}
+/* the global reduced-motion rule collapses every animation to 0.001ms, which would make the
+   ring invisible. Reduced motion must not mean "no feedback". */
+@media (prefers-reduced-motion:reduce){ .hlflash{animation:none;background:var(--acc-tint)} }
+
+/* ================= R6 · F1 — the actionable toast ================= */
+#toast.tappable{
+  display:flex;align-items:center;gap:var(--s3);
+  text-align:left;pointer-events:auto;padding-right:var(--s2);
+  /* #toast is a fixed box at left:50% with auto width, so its shrink-to-fit budget is only HALF
+     the viewport — plain toasts have always wrapped inside that. A row that must hold a message
+     AND a target needs the real width, so the tappable variant takes a definite one. */
+  width:min(calc(100vw - var(--s8)), 520px);
+}
+#toast .tgo{
+  /* R7 · 44px like every other primary target in the app, not 36 */
+  flex:0 0 auto;min-height:44px;padding:0 var(--s3);
+  border:none;border-radius:var(--r-pill);
+  background:var(--bg);color:var(--ink);
+  font-family:var(--font);font-size:var(--fs-label);font-weight:700;line-height:1;
+  cursor:pointer;display:inline-flex;align-items:center;gap:var(--s1);white-space:nowrap;
+}
+/* a tap already in flight when the toast appeared must not be able to land on it */
+#toast.arming .tgo{opacity:.45;pointer-events:none}
+/* break-word, not anywhere: toastGo() only ever carries evText() output (never user text), so
+   word boundaries are safe to respect — and a mid-word break is exactly what this reader loses. */
+#toast .tmsg{flex:1;min-width:0;overflow-wrap:break-word}
+
+/* ================= R6 · F2 — the product-chat chip on a product row =================
+   R7 · the chip and the preview no longer live inside the .info column. In split/demo mode that
+   column collapses to ~124px, which clipped the chip's own unread count in half (overflow:hidden
+   sliced the .dot) and left the preview a 98px box that could not finish the word «Մատակարարը»,
+   let alone show any of the message. They now sit on their own full-row line, so both get the
+   whole row width on every surface and at every width. */
+.pcline{
+  flex:1 1 100%;min-width:0;width:100%;
+  display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;
+  margin-top:var(--s2);
+}
+.sug.pcw{flex-wrap:wrap}
+.pcchip{
+  display:inline-flex;align-items:center;gap:var(--s1);
+  /* 44px, not 36: this is the only entry point to the feature on a product row, and the reader
+     is 55 and one-handed in a narrow aisle (design system §3.4). */
+  min-height:44px;padding:0 var(--s3);max-width:100%;
+  border:var(--bw) solid var(--stroke2);border-radius:var(--r-pill);
+  background:var(--surface);color:var(--muted);
+  font-family:var(--font);font-size:var(--fs-micro);font-weight:600;line-height:1.2;
+  cursor:pointer;white-space:nowrap;flex:0 0 auto;
+  transition:background var(--dur-1) var(--ease),border-color var(--dur-1) var(--ease);
+}
+.pcchip:active{background:var(--surface-2)}
+.pcchip:focus-visible{outline:none;box-shadow:var(--focus)}
+.pcchip.has{background:var(--acc-tint);color:var(--acc-text);border-color:var(--acc-line)}
+/* the count is the chip's whole point; it is never the thing that gets cut */
+.pcchip .dot{flex:0 0 auto}
+.pcprev{
+  min-width:0;
+  font-size:var(--fs-micro);color:var(--muted);line-height:var(--lh-micro);
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow-wrap:anywhere;
+}
+/* only INSIDE the row does the preview flex — .sug .info is a COLUMN flex container, where a
+   flex-basis is a HEIGHT, and 200px there gave the supplier's ask card a 200px-tall blank line. */
+.pcline>.pcprev{flex:1 1 200px}
+.pcprev b{font-weight:600;color:var(--dim)}
+/* three demo-days of silence is the one thing in this app worth reddening */
+.card.pcurgent{border-color:var(--danger-line);border-left:3px solid var(--danger)}
+
+/* ================= R6 · F2 — the thread sheet ================= */
+.pcctx{
+  display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;
+  margin:var(--s2) 0 0;padding:var(--s2) var(--s3);
+  background:var(--surface-2);border:var(--bw) solid var(--stroke);border-radius:var(--r-sm);
+  font-size:var(--fs-micro);color:var(--muted);overflow-wrap:anywhere;
+}
+.pcctx b{color:var(--ink);font-weight:700}
+.msgs{margin:var(--s3) 0;max-height:44vh;overflow-y:auto;overscroll-behavior:contain}
+.msg{display:flex;margin-bottom:var(--s2)}
+.msg.mine{justify-content:flex-end}
+.msg .bub{
+  max-width:78%;padding:var(--s2) var(--s3);
+  border:var(--bw) solid var(--stroke2);
+  border-radius:var(--r) var(--r) var(--r) var(--r-xs);
+  background:var(--surface-2);
+  font-size:var(--fs-body);line-height:1.45;overflow-wrap:anywhere;
+}
+.msg.mine .bub{border-radius:var(--r) var(--r) var(--r-xs) var(--r)}
+/* keyed to the AUTHOR, not to "me": the same message is the same colour on both devices */
+.msg.byshop .bub{background:var(--acc-tint);border-color:var(--acc-line)}
+/* R7 · 14px, not the 12px --fs-caps token. These were the only two texts in the new UI under
+   14px, and "who said this and when" is exactly what a 55-year-old reader checks in bad light. */
+.msg .who{
+  display:flex;align-items:center;gap:var(--s1);margin-bottom:2px;
+  font-size:var(--fs-micro);font-weight:var(--fw-caps);letter-spacing:var(--ls-caps);color:var(--dim);
+}
+.msg .when{font-size:var(--fs-micro);color:var(--dim);margin-top:var(--s1);text-align:right}
+.pccomp{display:flex;gap:var(--s2);align-items:stretch}
+.pccomp .search{margin:0;flex:1;min-width:0}
+.pccomp .btn{flex:0 0 auto}
 
 /* ================= PRINT =================
    MUST be the last block in the sheet. Declared earlier it lost every property that a later
@@ -1308,7 +1477,37 @@ const T = {
     live_badge:'ՈՒՂԻՂ',
     count_doc_prefix:'ԳԱ',
     scan_emb_ignored:'Կշիռը հաշվի չի առնվում — քանակը նշեք ձեռքով',
-    more_tab:'Ավելին', menu_title:'Ընտրացանկ'
+    more_tab:'Ավելին', menu_title:'Ընտրացանկ',
+    /* ---- R6 · F2 ապրանքի չատ ---- */
+    pc_ask:'Հարցնել',
+    pc_thread:'Չատ ապրանքի մասին',
+    pc_empty:'Դեռ հաղորդագրություն չկա։ Հարցրեք այս ապրանքի մասին։',
+    pc_open_btn:'Բացել չատը',
+    pc_privacy_shop:'Մատակարարը կարդում է միայն այն, ինչ գրում եք։ Ձեր վաճառքի գինն ու շահույթը չեն ուղարկվում։',
+    pc_privacy_sup:'Խանութը կարդում է այն, ինչ գրում եք։',
+    pc_sup_title:'Չպատասխանված հարցեր',
+    pc_answer:'Պատասխանել',
+    pc_days_wait:'{n} օր անպատասխան',
+    pc_today_wait:'Այսօրվանից անպատասխան',
+    pc_new:'Նոր',
+    pc_shop_nudge:'Մատակարարը պատասխանեց',
+    pc_section:'Հաղորդագրություններ ապրանքների մասին',
+    pc_none_shop:'Այս խանութի հետ դեռ չատ չկա',
+    pc_more:'Եվ ևս {n}-ը',
+    pc_said_shop:'Խանութը գրել է',
+    pc_said_sup:'Մատակարարը գրել է',
+    pc_said_me:'Դուք գրել եք',
+    pc_q1:'Ե՞րբ կբերեք', pc_q2:'Պահեստում կա՞', pc_q3:'Ակցիա կլինի՞',
+    pc_a1:'Վաղը կբերենք', pc_a2:'Պահեստում կա', pc_a3:'Այս շաբաթ չկա',
+    /* ---- R6 · F1 սեղմվող ծանուցումներ ---- */
+    ev_pchat_ask:'Հարց ապրանքի մասին',
+    ev_pchat_reply:'Պատասխան ապրանքի մասին',
+    ev_gone:'Այս գրառումն այլևս չկա',
+    ev_tap_hint:'Սեղմեք ծանուցման վրա՝ բացելու համար',
+    ev_open:'Բացել',
+    /* ---- R7: հեռախոսի վերնագրում մեկ ⚙ կոճակ՝ երեքի փոխարեն ---- */
+    settings:'Կարգավորումներ', theme_lbl:'Տեսք',
+    theme_light:'Լուսավոր', theme_dark:'Մուգ', lang_lbl:'Լեզու'
   },
   en: {
     shop:'Shop', supplier:'Supplier',
@@ -1543,7 +1742,37 @@ const T = {
     live_badge:'LIVE',
     count_doc_prefix:'CA',
     scan_emb_ignored:'Weight is not applied — set the quantity by hand',
-    more_tab:'More', menu_title:'Menu'
+    more_tab:'More', menu_title:'Menu',
+    /* ---- R6 · F2 product chat ---- */
+    pc_ask:'Ask',
+    pc_thread:'Product chat',
+    pc_empty:'No messages yet. Ask about this product.',
+    pc_open_btn:'Open chat',
+    pc_privacy_shop:'The supplier only reads what you write here. Your selling price and margin are never sent.',
+    pc_privacy_sup:'The shop reads what you write here.',
+    pc_sup_title:'Unanswered questions',
+    pc_answer:'Reply',
+    pc_days_wait:'unanswered for {n} d',
+    pc_today_wait:'Unanswered since today',
+    pc_new:'New',
+    pc_shop_nudge:'The supplier replied',
+    pc_section:'Product messages',
+    pc_none_shop:'No product chats with this shop yet',
+    pc_more:'And {n} more',
+    pc_said_shop:'The shop wrote',
+    pc_said_sup:'The supplier wrote',
+    pc_said_me:'You wrote',
+    pc_q1:'When will you deliver?', pc_q2:'Do you have it in stock?', pc_q3:'Will there be a promo?',
+    pc_a1:"We'll deliver tomorrow", pc_a2:"It's in stock", pc_a3:'Not available this week',
+    /* ---- R6 · F1 clickable notifications ---- */
+    ev_pchat_ask:'Question about a product',
+    ev_pchat_reply:'Reply about a product',
+    ev_gone:'This item no longer exists',
+    ev_tap_hint:'Tap a notification to open it',
+    ev_open:'Open',
+    /* ---- R7: one ⚙ in the phone header instead of three buttons ---- */
+    settings:'Settings', theme_lbl:'Appearance',
+    theme_light:'Light', theme_dark:'Dark', lang_lbl:'Language'
   },
   ru: {
     shop:'Магазин', supplier:'Поставщик',
@@ -1781,7 +2010,37 @@ const T = {
     live_badge:'ОНЛАЙН',
     count_doc_prefix:'АИ',
     scan_emb_ignored:'Вес не применяется — укажите количество вручную',
-    more_tab:'Ещё', menu_title:'Меню'
+    more_tab:'Ещё', menu_title:'Меню',
+    /* ---- R6 · F2 чат по товару ---- */
+    pc_ask:'Спросить',
+    pc_thread:'Чат по товару',
+    pc_empty:'Сообщений пока нет. Спросите об этом товаре.',
+    pc_open_btn:'Открыть чат',
+    pc_privacy_shop:'Поставщик читает только то, что вы пишете. Ваша цена продажи и наценка не отправляются.',
+    pc_privacy_sup:'Магазин читает то, что вы пишете.',
+    pc_sup_title:'Вопросы без ответа',
+    pc_answer:'Ответить',
+    pc_days_wait:'без ответа {n} дн.',
+    pc_today_wait:'Без ответа с сегодня',
+    pc_new:'Новое',
+    pc_shop_nudge:'Поставщик ответил',
+    pc_section:'Сообщения по товарам',
+    pc_none_shop:'Чатов по товарам с этим магазином пока нет',
+    pc_more:'И ещё {n}',
+    pc_said_shop:'Магазин написал',
+    pc_said_sup:'Поставщик написал',
+    pc_said_me:'Вы написали',
+    pc_q1:'Когда привезёте?', pc_q2:'Есть на складе?', pc_q3:'Будет акция?',
+    pc_a1:'Привезём завтра', pc_a2:'Есть на складе', pc_a3:'На этой неделе нет',
+    /* ---- R6 · F1 кликабельные уведомления ---- */
+    ev_pchat_ask:'Вопрос по товару',
+    ev_pchat_reply:'Ответ по товару',
+    ev_gone:'Этой записи больше нет',
+    ev_tap_hint:'Нажмите на уведомление, чтобы открыть',
+    ev_open:'Открыть',
+    /* ---- R7: одна ⚙ в шапке телефона вместо трёх кнопок ---- */
+    settings:'Настройки', theme_lbl:'Оформление',
+    theme_light:'Светлое', theme_dark:'Тёмное', lang_lbl:'Язык'
   }
 };
 
@@ -1891,6 +2150,7 @@ function freshState(){
   st.markdowns = {}; st.expFlag = {};
   st.swapReqs = []; st.swapSeq = 0;
   st.minStock = {};
+  st.pchats = {};                 // R6 · F2: "<shopId>|<pid>" -> {shop, pid, sup, msgs[]}
   /* ---- immutable stock ledger (R1): an opening balance per SKU plus one sale move per
      seeded sell-out entry, so rebuildStock() reproduces st.stock exactly on day one. ---- */
   st.moves = []; st.moveSeq = 0; st.itemMeta = {}; st.ledgerV = 1;
@@ -2112,6 +2372,51 @@ function migrate(st){
     const v = +st.otherLast[o.id];
     if(!isFinite(v)) st.otherLast[o.id] = (st.today||START) - (i===2?12:(1+i%4))*DAY;
   });
+  /* ---- R6 · F2: per-product chat threads. Every branch idempotent on its own output. ---- */
+  if(!st.pchats || typeof st.pchats!=='object' || Array.isArray(st.pchats)) st.pchats = {};
+  let _pmi = 0;
+  Object.keys(st.pchats).forEach(k=>{
+    const th = st.pchats[k];
+    if(!th || typeof th!=='object' || Array.isArray(th)){ delete st.pchats[k]; return; }
+    const parts = String(k).split('|'), shop = parts[0], pid = parts[1];
+    /* an unknown SKU from a future build, or a thread for any shop other than 'me': drop the
+       thread, never the state. Same policy as migrate()'s batch/req filters.
+       R7 — this used to keep OTHER_SHOPS-keyed threads "for forward compatibility", but pcEnsure()
+       refuses to create one and every consumer (pcAskCard, pcAlertCards, pcShopSection,
+       unansweredAsks, openPChat) hardcodes MY_SHOP. One arriving from the sync room therefore
+       rendered another shop's question under «Նռան այգի», inflated the Ազդանշաններ badge for ever
+       and made the dashboard's one accent-filled button open nothing. There is no such thing as a
+       thread the operator can answer for a simulation fixture: it goes. */
+    if(parts.length!==2 || shop!=='me' || !PRODUCTS.some(p=>p.id===pid)){ delete st.pchats[k]; return; }
+    th.shop = shop; th.pid = pid;
+    if(!th.sup || !SUPPLIERS_IDS[th.sup]) th.sup = (PRODUCTS.find(p=>p.id===pid)||{}).sup || 's1';
+    if(!Array.isArray(th.msgs)) th.msgs = [];
+    th.msgs = th.msgs
+      .filter(m => m && typeof m==='object' && typeof m.text==='string')
+      .map(m=>{
+        if(typeof m.id!=='string' || !m.id) m.id = 'pm-mig-'+k+'-'+(_pmi++);
+        m.from = (m.from==='sup') ? 'sup' : 'shop';
+        m.text = String(m.text).slice(0,400);
+        m.ts   = (typeof m.ts ==='number' && isFinite(m.ts))  ? m.ts  : (st.today||START);
+        m.rts  = (typeof m.rts==='number' && isFinite(m.rts)) ? m.rts : 0;
+        return m;
+      });
+    const seenPm = {};
+    th.msgs = th.msgs.filter(m => seenPm[m.id] ? false : (seenPm[m.id]=1));
+    /* (rts, id) is a TOTAL order and a pure function of the message set, so two devices
+       holding the same messages render the same transcript byte for byte. */
+    th.msgs.sort((a,b)=> (a.rts-b.rts) || (a.id<b.id?-1:(a.id>b.id?1:0)));
+    if(th.msgs.length>200) th.msgs = th.msgs.slice(-200);
+    if(!th.msgs.length) delete st.pchats[k];      // an empty thread is not a thread
+  });
+  /* ---- R6 · F1: events gain a stable identity and a real clock. Both optional: an event
+     from an older build keeps working, it just falls back to the n-based watermark. ---- */
+  (st.events||[]).forEach((e,i)=>{
+    if(!e || typeof e!=='object') return;
+    if(typeof e.uuid!=='string' || !e.uuid) e.uuid = 'e-mig-'+(e.n!=null?e.n:i)+'-'+i;
+    if(typeof e.rts!=='number' || !isFinite(e.rts)) e.rts = 0;
+    if(!e.data || typeof e.data!=='object') e.data = {};
+  });
   st.ledgerV=1;
   return st;
 }
@@ -2126,7 +2431,39 @@ function adopt(d){
   try{ return migrate(freshState()); }catch(e){ return freshState(); }
 }
 function freshU(){ return {split:true, role:'shop', tab:{shop:'home', supplier:'dash'}, lang:'hy'}; }
-function loadU(){ try{ const x=sessionStorage.getItem(UKEY); if(x) return Object.assign(freshU(), JSON.parse(x)); }catch(e){} return freshU(); }
+/* R7 · "I already read that" must outlive the app being closed.
+   U lives in sessionStorage on purpose — split/role/tab are per-tab UI state. But three of its
+   keys are not UI state, they are READ RECEIPTS, and they were dying with the tab: a shopkeeper
+   who read the supplier's three answers, locked his phone and reopened the app in the aisle saw
+   the same three products flagged «Նոր» again, with the Կատալոգ badge back. Those three keys —
+   and only those three — are mirrored into localStorage. Defensive on both sides: a missing or
+   corrupt mirror simply leaves the session values alone. */
+const SEENKEY = UKEY + '_seen';
+function loadSeen(){
+  try{ const x = JSON.parse(localStorage.getItem(SEENKEY)||'null');
+    if(!x || typeof x!=='object') return null;
+    return {pcSeen:(x.pcSeen && typeof x.pcSeen==='object' && !Array.isArray(x.pcSeen)) ? x.pcSeen : {},
+            lastSeenEv:+x.lastSeenEv||0, lastSeenRts:+x.lastSeenRts||0};
+  }catch(e){ return null; }
+}
+function saveSeen(u){
+  try{ localStorage.setItem(SEENKEY, JSON.stringify({pcSeen:u.pcSeen||{},
+        lastSeenEv:+u.lastSeenEv||0, lastSeenRts:+u.lastSeenRts||0})); }catch(e){}
+}
+function loadU(){
+  let u = freshU();
+  try{ const x=sessionStorage.getItem(UKEY); if(x) u = Object.assign(freshU(), JSON.parse(x)); }catch(e){}
+  const sn = loadSeen();
+  if(sn){
+    const cur = (u.pcSeen && typeof u.pcSeen==='object' && !Array.isArray(u.pcSeen)) ? u.pcSeen : {};
+    const out = Object.assign({}, sn.pcSeen);
+    Object.keys(cur).forEach(k=>{ out[k] = Math.max(+out[k]||0, +cur[k]||0); });   // watermarks only grow
+    u.pcSeen = out;
+    u.lastSeenEv  = Math.max(+u.lastSeenEv||0,  sn.lastSeenEv);
+    u.lastSeenRts = Math.max(+u.lastSeenRts||0, sn.lastSeenRts);
+  }
+  return u;
+}
 let bc=null; try{ bc=new BroadcastChannel('armtrade_v4'); }catch(e){}
 /* R4 · B4: a full profile on a cheap Android makes setItem() throw. Swallowing that made every
    action report success and then lose a whole shift of work on reload. Surface it, loudly. */
@@ -2136,7 +2473,8 @@ function saveD(){
   try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){ okSave = false; }
   if(!okSave){
     // one retry after dropping the coldest history the app can rebuild without
-    try{ compactMoves(); if(S.sales && S.sales.length>200) S.sales = S.sales.slice(-200);
+    try{ compactMoves(); compactPChats();
+         if(S.sales && S.sales.length>200) S.sales = S.sales.slice(-200);
          localStorage.setItem(DKEY, JSON.stringify(S)); okSave = true; }catch(e){}
   }
   if(okSave !== !saveFailed){ saveFailed = !okSave; try{ renderSaveBanner(); }catch(e){} }
@@ -2149,13 +2487,19 @@ function renderSaveBanner(){
     ? `<div class="notice bad" style="margin:10px 16px 0">⚠ <b>${t('save_fail_title')}</b><div class="muted" style="margin-top:4px">${t('save_fail_body')}</div></div>`
     : '';
 }
-function saveU(){ try{ sessionStorage.setItem(UKEY, JSON.stringify(U)); }catch(e){} }
+function saveU(){ try{ sessionStorage.setItem(UKEY, JSON.stringify(U)); }catch(e){} saveSeen(U); }
 S = adopt(loadD() || freshState());
 try{ sweepMarkdowns(); }catch(e){}
 // the ledger is the source of truth; if the cache ever drifts, silently heal it
 try{ const bad = verifyLedger(); if(bad.length){ console.warn('ArmTrade: ledger/cache mismatch', bad); S.stock = rebuildStock(); } }catch(e){}
 U = loadU();
 if(U.lastSeenEv==null) U.lastSeenEv = 0;
+/* R6: read state lives in U (sessionStorage, never synced) — it is per-person, not per-business,
+   and keeping it out of S means read state can never cause a sync conflict. U.pcSeen is keyed by
+   SIDE as well as thread, so in demo mode the shopkeeper opening a thread does not mark it read
+   for the supplier sitting in the other pane. */
+if(U.lastSeenRts==null) U.lastSeenRts = 0;
+if(!U.pcSeen || typeof U.pcSeen!=='object' || Array.isArray(U.pcSeen)) U.pcSeen = {};
 let lang = U.lang;
 const t = k => T[lang][k];
 
@@ -2164,26 +2508,91 @@ const t = k => T[lang][k];
    wrong number, verifyLedger() reported clean and nothing surfaced the loss.
    The ledger is append-only with a unique uuid per move, so deltas commute: keep every local
    move the incoming state has not seen, then rebuild the on-hand cache from the union. */
+/* R6: this used to be one body with two early `return remote` paths, which would have skipped
+   the thread and event merges added below. Restructured into three merges plus one shared tail;
+   the ledger merge's own logic is unchanged, only extracted. */
 let MERGED_EXTRA = false;
 function mergeAdopt(d){
   MERGED_EXTRA = false;
   const remote = adopt(d);
   try{
-    const mine = (typeof S!=='undefined' && S && Array.isArray(S.moves)) ? S.moves : [];
-    if(!mine.length || !Array.isArray(remote.moves)) return remote;
-    const seen = {}; remote.moves.forEach(m=>{ if(m && m.uuid) seen[m.uuid]=1; });
-    const missing = mine.filter(m=>m && m.uuid && !seen[m.uuid] &&
-                                   m.type!=='open' && m.reason!=='migration');
-    if(!missing.length) return remote;
-    MERGED_EXTRA = true;
-    let seq = +remote.moveSeq || remote.moves.length;
-    remote.moves = remote.moves.concat(missing.map(m=>Object.assign({}, m, {n: ++seq})));
-    remote.moveSeq = seq;
-    remote.stock = {};
-    remote.moves.forEach(m=>{ if(m && m.pid) remote.stock[m.pid] = (remote.stock[m.pid]||0) + (+m.dq||0); });
-    /* re-run the migration so the batch annotation is re-clamped against the merged on-hand */
+    mergeMoves(remote);
+    mergePChats(remote);
+    mergeEvents(remote);
+    if(!MERGED_EXTRA) return remote;
+    /* rebuild the on-hand cache from the union, then re-run the migration so the batch
+       annotation is re-clamped against it — unchanged behaviour, moved into the tail.
+       (When only threads or events merged, migrate() has already reconciled moves against the
+       cache, so this rebuild is a no-op rather than a change.) */
+    if(Array.isArray(remote.moves)){
+      remote.stock = {};
+      remote.moves.forEach(m=>{ if(m && m.pid) remote.stock[m.pid] = (remote.stock[m.pid]||0) + (+m.dq||0); });
+    }
     return adopt(remote);
   }catch(e){ return remote; }
+}
+function mergeMoves(remote){
+  const mine = (typeof S!=='undefined' && S && Array.isArray(S.moves)) ? S.moves : [];
+  if(!mine.length || !Array.isArray(remote.moves)) return;
+  const seen = {}; remote.moves.forEach(m=>{ if(m && m.uuid) seen[m.uuid]=1; });
+  const missing = mine.filter(m=>m && m.uuid && !seen[m.uuid] &&
+                                 m.type!=='open' && m.reason!=='migration');
+  if(!missing.length) return;
+  MERGED_EXTRA = true;
+  let seq = +remote.moveSeq || remote.moves.length;
+  remote.moves = remote.moves.concat(missing.map(m=>Object.assign({}, m, {n: ++seq})));
+  remote.moveSeq = seq;
+}
+/* a thread is the same object as the ledger: an append-only list whose rows commute. Union by
+   message id (minted once on the authoring device, never regenerated), then re-sort on the
+   total (rts, id) key so both devices converge on one identical transcript. A thread has no
+   counter to re-number, precisely so there is nothing to renumber. */
+function mergePChats(remote){
+  const mine = (typeof S!=='undefined' && S && S.pchats && typeof S.pchats==='object' && !Array.isArray(S.pchats)) ? S.pchats : null;
+  if(!mine) return;
+  if(!remote.pchats || typeof remote.pchats!=='object' || Array.isArray(remote.pchats)) remote.pchats = {};
+  Object.keys(mine).forEach(k=>{
+    const lt = mine[k];
+    if(!lt || !Array.isArray(lt.msgs) || !lt.msgs.length) return;
+    const rt = remote.pchats[k];
+    if(!rt){                                        // the whole thread is new to the remote
+      remote.pchats[k] = {shop:lt.shop, pid:lt.pid, sup:lt.sup, msgs:lt.msgs.map(m=>Object.assign({}, m))};
+      MERGED_EXTRA = true; return;
+    }
+    if(!Array.isArray(rt.msgs)) rt.msgs = [];
+    const seen = {}; rt.msgs.forEach(m=>{ if(m && m.id) seen[m.id]=1; });
+    const missing = lt.msgs.filter(m=>m && m.id && !seen[m.id]);
+    if(!missing.length) return;
+    MERGED_EXTRA = true;
+    rt.msgs = rt.msgs.concat(missing.map(m=>Object.assign({}, m)));
+    rt.msgs.sort((a,b)=> ((a.rts||0)-(b.rts||0)) || (a.id<b.id?-1:(a.id>b.id?1:0)));
+    if(rt.msgs.length>200) rt.msgs = rt.msgs.slice(-200);
+  });
+}
+function mergeEvents(remote){
+  const mine = (typeof S!=='undefined' && S && Array.isArray(S.events)) ? S.events : [];
+  if(!mine.length) return;
+  if(!Array.isArray(remote.events)) remote.events = [];
+  const seen = {}; remote.events.forEach(e=>{ if(e && e.uuid) seen[e.uuid]=1; });
+  const missing = mine.filter(e=>e && e.uuid && !seen[e.uuid]);
+  if(!missing.length) return;
+  MERGED_EXTRA = true;
+  remote.events = remote.events.concat(missing.map(e=>Object.assign({}, e)));
+  /* newest first, exactly as logEv()'s unshift produces. rts is the real clock; events from an
+     older build have rts 0 and sink to the bottom, which is where they belong. */
+  remote.events.sort((a,b)=> ((b.rts||0)-(a.rts||0)) || ((b.n||0)-(a.n||0)));
+  if(remote.events.length>100) remote.events.length = 100;
+  remote.evCounter = Math.max(+remote.evCounter||0, mine.reduce((mx,e)=>Math.max(mx,+e.n||0),0));
+}
+/* threads are cheap but unbounded. Drop the oldest first, never the newest: the newest is the
+   one someone is waiting on an answer for. */
+function compactPChats(){
+  const ks = Object.keys(S.pchats||{});
+  if(ks.length<=20) return;
+  ks.map(k=>({k, rts:((S.pchats[k]||{}).msgs||[]).reduce((mx,m)=>Math.max(mx,+m.rts||0),0)}))
+    .sort((a,b)=>a.rts-b.rts)
+    .slice(0, ks.length-20)
+    .forEach(x=>{ delete S.pchats[x.k]; });
 }
 /* when the merge actually rescued a local move, write the union back so the tab that wrote last
    converges on it too. The next round finds nothing missing, so this terminates after one hop. */
@@ -2317,10 +2726,10 @@ async function pushState(){
       // someone else wrote first — adopt their state instead of overwriting it
       const j = await r.json();
       syncOk = true;
-      if(looksLikeState(j.data)){ S = mergeAdopt(j.data); S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} toast('🔄'); renderAll(true); }
+      if(looksLikeState(j.data)){ S = mergeAdopt(j.data); S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} toastSoft('🔄'); renderAll(true); }
     }
     else throw new Error('http '+r.status);
-  }catch(e){ syncOk = false; if(!syncErrShown){ syncErrShown = true; toast(t('sync_err')); } }
+  }catch(e){ syncOk = false; if(!syncErrShown){ syncErrShown = true; toastSoft(t('sync_err')); } }
   syncBusy = false;
 }
 async function pollSync(){
@@ -2363,6 +2772,26 @@ function syncBadgeHtml(){
   if(syncOk===false) return `<span class="badge b-rose">● ${t('sync_unreach')}</span>`;
   if(syncOk===true) return `<span class="badge b-green">● ${t('sync_on')}</span>`;
   return `<span class="badge b-neutral">${t('sync_check')}</span>`;
+}
+/* R7 · the phone header's ⚙. Below 461px seven controls plus a date do not fit 390px in any of
+   the three languages, and the two previous rounds both "fixed" that by letting one control lose
+   its letters. This holds the three set-once controls instead — appearance, language, sync — so
+   the five that carry live information (date, bell, split, day) each keep their full width.
+   Every row is a full-width 44px button: this is the one sheet the 55-year-old will open in bad
+   light to make the screen readable in the first place. */
+function openSettings(){ MODAL_RE=()=>openSettings(); armPushOverlay();
+  const langName = {hy:'Հայերեն', en:'English', ru:'Русский'};
+  const nextLang = {hy:'en', en:'ru', ru:'hy'}[lang];
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="mbody"><div class="grabber"></div><h3>⚙ ${t('settings')}</h3>
+    <div class="sec">${t('theme_lbl')}</div>
+    <button class="btn ghost full" onclick="toggleTheme()">${THEME==='light'?'🌙 '+t('theme_dark'):'☀️ '+t('theme_light')}</button>
+    <div class="sec" style="margin-top:14px">${t('lang_lbl')}</div>
+    <button class="btn ghost full" onclick="toggleLang()">🌐 ${escH(langName[nextLang])}</button>
+    <div class="sec" style="margin-top:14px">${t('sync')}</div>
+    <div class="muted" style="margin-bottom:8px">${syncBadgeHtml()}${ROOM?` <b class="num">${escH(ROOM)}</b>`:''}</div>
+    <button class="btn ghost full" onclick="openSync()">🔗 ${t('sync')} →</button>
+    <button class="btn ghost full" style="margin-top:14px" onclick="closeModal()">${t('close')}</button></div></div>`;
 }
 function openSync(){ MODAL_RE=()=>openSync(); armPushOverlay();
   if(roleLocked()){
@@ -2441,9 +2870,20 @@ function togglePromo(pid){
   logEv(turningOn?'promo_on':'promo_off', {pid});
   saveD(); renderAll();
 }
+/* ---------- R6 · F1: a notification is a door, not a receipt ----------
+   PCHAT  — the open product-chat thread ({key, side}); HILITE — the one-shot "flash this element
+   when the page repaints" instruction; EVSEEN — the bell's pre-open unread watermark, so rows
+   still render unread after openEvents() has advanced it; TOASTGO — the event key the actionable
+   toast's pill would navigate to. */
+let PCHAT = null, HILITE = null, EVSEEN = null, TOASTGO = null;
 function logEv(type, data){
   S.evCounter = (S.evCounter||0)+1;
-  S.events.unshift({n:S.evCounter, type, data:data||{}, date:S.today});
+  /* uuid is the stable identity the merge and evGo() key on; rts is the real wall clock, which
+     S.today (a simulated, rewindable clock) can never be. Both are additive: an event from an
+     older peer simply has neither and falls back to the n-based watermark. */
+  S.events.unshift({n:S.evCounter,
+                    uuid:'e-'+Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4),
+                    rts:Date.now(), type, data:data||{}, date:S.today});
   if(S.events.length>100) S.events.length = 100;
 }
 function evText(e){
@@ -2470,22 +2910,244 @@ function evText(e){
     exp:       ['🗓', `${fmt('ev_exp',{n:d.d})}${VJ()} ${pn}`],
     req:       ['📨', `${t('ev_req')}${VJ()} ${pn} × ${d.qty||''}`],
     req_reply: ['📬', `${t('ev_req_reply')}${VJ()} ${pn}${d.reply?' · '+t('req_r_'+d.reply):''}`],
+    pchat_ask:   ['💬', `${t('ev_pchat_ask')}${VJ()} ${pn}`],
+    pchat_reply: ['💬', `${t('ev_pchat_reply')}${VJ()} ${pn}`],
   };
   return map[e.type] || ['🔔', e.type];
 }
 const EV_SHOP_ONLY = {exp:1, writeoff:1, count:1};
+/* an event that is ONE side's business only. In split/demo mode nothing is filtered —
+   both roles are deliberately on one screen there, exactly like EV_SHOP_ONLY.
+   R7: recv_due is the shop's own nag about a receipt only the shop can confirm. */
+const EV_SIDE = {pchat_ask:'sup', pchat_reply:'shop', req:'sup', req_reply:'shop', recv_due:'shop'};
+const evMyRole = ()=> roleLocked() ? (AUTHD.role==='sup' ? 'supplier' : 'shop') : U.role;
+/* the ONE filter. unreadEv() and openEvents() must apply exactly the same rule, or a role-locked
+   supplier carries a red badge for notifications he is never shown.
+   R7 · the third clause is the real fix: seven types used to render as live, chevroned rows that
+   did nothing for a role-locked account because evTarget() named a pane that account cannot see.
+   Reachability is now decided by evTarget() itself — one source of truth, no second table to
+   drift — so a row is shown only if it is dead (honest) or leads somewhere this user can go. */
+function evVisible(e){
+  if(!e || typeof e!=='object') return false;
+  const side = roleLocked() ? (AUTHD.role==='sup' ? 'sup' : 'shop') : null;
+  if(!side) return true;                      // split/demo: both panes are on screen
+  const myRole = side==='sup' ? 'supplier' : 'shop';
+  if(side==='sup' && EV_SHOP_ONLY[e.type]) return false;
+  if(EV_SIDE[e.type] && EV_SIDE[e.type]!==side) return false;
+  const tg = evTarget(e, myRole);
+  return !tg || tg.role===myRole;             // dead is honest; unreachable is a broken promise
+}
+function evFeed(){ return (S.events||[]).filter(evVisible); }
+const evKey = e => (e && e.uuid) ? e.uuid : ('n'+((e&&e.n)||0));
+const evUnreadAt = (e, rts, n) => e.rts ? e.rts > rts : ((e.n||0) > n);
+
+/* ---------- the routing table ----------
+   Returns null (unknown OR dead) or {role, tab, kind, id, modal}. `role` is the role to switch
+   TO; when the current role already matches, or when U.split is true, no switch happens.
+   kind/id feed hlSet(); modal names an existing opener. A type from a FUTURE build falls through
+   to default → null → the row renders dead. That is the forward-compatibility guarantee: a peer
+   on a newer build cannot produce a tappable row that crashes us. */
+function evTarget(e, role){
+  if(!e || typeof e!=='object') return null;
+  const d = e.data || {};
+  const meRole = (role==='supplier') ? 'supplier' : 'shop';
+  const ord = oid => !!oid && (S.orders||[]).some(o=>o && o.id===oid);
+  const G = (r, tab, kind, id, modal)=>({role:r, tab, kind:kind||null, id:id==null?null:String(id), modal:modal||null});
+  /* R7 · the credit note a return produces is the supplier's copy of that return */
+  const adjOf = ref => (S.bills||[]).filter(b=>b && b.adj && b.ref===ref).slice(-1)[0] || null;
+  switch(e.type){
+    case 'order':
+      if(!ord(d.oid)) return null;
+      /* every order — including the other shops' — sits in the supplier's own inbox */
+      if(meRole==='supplier') return G('supplier','inbox','order',d.oid);
+      return d.shop==='me' ? G('shop','orders','order',d.oid) : G('supplier','inbox','order',d.oid);
+    case 'confirmed': case 'delivered': case 'recv':
+      if(!ord(d.oid)) return null;
+      return meRole==='supplier' ? G('supplier','inbox','order',d.oid) : G('shop','orders','order',d.oid);
+    case 'recv_due': {
+      if(!ord(d.oid)) return null;
+      const o = S.orders.find(x=>x && x.id===d.oid);
+      /* R7: the Ընդունում tab lists only DELIVERED orders awaiting a receipt. Sending an order
+         that is still «նոր» there landed on an empty screen with nothing to flash. */
+      return (o && !o.receipt && o.status==='delivered') ? G('shop','recv','order',d.oid)
+                                                         : G('shop','orders','order',d.oid);
+    }
+    case 'diff': {
+      const o = (S.orders||[]).find(x=>x && x.id===d.oid);
+      if(!o || !o.receipt || !o.receipt.diff) return null;
+      return meRole==='supplier' ? G('supplier','alerts','diff',d.oid) : G('shop','orders','order',d.oid);
+    }
+    case 'ret': {
+      if(meRole==='supplier'){
+        /* his side of a return is the ճշգրտող հաշիվ it wrote into his ledger */
+        const adj = adjOf(d.oid);
+        return adj ? G('supplier','data','bill',adj.id) : null;
+      }
+      if(ord(d.oid)) return G('shop','orders','order',d.oid);
+      const r = (S.swapReqs||[]).find(x=>x && x.id===d.oid);
+      return (r && P(r.pid)) ? G('shop','exp','batch',r.pid) : null;
+    }
+    case 'chat':
+      if(!ord(d.oid)) return null;
+      return meRole==='supplier' ? G('supplier','inbox',null,null,['chat',d.oid,'sup'])
+                                 : G('shop','orders',null,null,['chat',d.oid,'shop']);
+    case 'pchat_ask':
+      return pcThread(d.key) ? G('supplier','sellout',null,null,['pchat',d.key,'sup']) : null;
+    case 'pchat_reply':
+      return pcThread(d.key) ? G('shop','catalog',null,null,['pchat',d.key,'shop']) : null;
+    case 'stockout':
+      if(!P(d.pid)) return null;
+      return meRole==='supplier' ? G('supplier','sellout','prod',d.pid) : G('shop','pos','prod',d.pid);
+    case 'proposal':
+      if(!P(d.pid)) return null;
+      /* the supplier is the AUTHOR of a proposal — his copy is the sell-out row he sent it from */
+      if(meRole==='supplier') return G('supplier','sellout','prod',d.pid);
+      return (S.proposals||[]).some(pr=>pr && pr.productId===d.pid)
+        ? G('shop','home','prop',d.pid) : G('shop','catalog','prod',d.pid);
+    case 'promo_on': case 'promo_off':
+      if(!P(d.pid)) return null;
+      return meRole==='supplier' ? G('supplier','catalog','prod',d.pid) : G('shop','catalog','prod',d.pid);
+    case 'payment': {
+      const bill = d.bid ? (S.bills||[]).find(b=>b && b.id===d.bid) : null;
+      /* payDebt() logs a payment with no bill at all; the tab alone is still a real destination */
+      const cand = bill || (S.bills||[]).filter(b=>b && b.sup===d.sup && b.amount===d.amount)
+                                        .sort((a,b)=>(b.date||0)-(a.date||0))[0] || null;
+      /* R7: this branch used to fire openInvoice() unconditionally, so tapping it as a
+         role-locked supplier opened the SHOP's invoice sheet on top of the supplier pane. The
+         supplier's own bill table (vSupData) is the destination — highlight, no sheet. */
+      if(meRole==='supplier') return cand ? G('supplier','data','bill',cand.id) : G('supplier','data');
+      if(bill) return G('shop','data','bill',bill.id,['invoice',bill.id]);
+      return cand ? G('shop','data','bill',cand.id) : G('shop','data');
+    }
+    case 'writeoff':
+      return P(d.pid) ? G('shop','data',null,null,['ledger',d.pid]) : null;
+    case 'count':
+      return (S.counts||[]).some(c=>c && c.id===d.id) ? G('shop','count',null,null,['count',d.id]) : null;
+    case 'exp': {
+      const b = (S.batches||[]).find(x=>x && x.id===d.id && x.left>0);
+      if(b) return G('shop','exp',null,null,['exp',b.id]);
+      return (P(d.pid) && batchesOf(d.pid).length) ? G('shop','exp','batch',d.pid) : null;
+    }
+    case 'req': {
+      const r = d.rid ? (S.swapReqs||[]).find(x=>x && x.id===d.rid)
+                      : openReqs().filter(x=>x.pid===d.pid).slice(-1)[0];
+      return (r && r.status==='open') ? G('supplier','alerts','req',r.id) : null;
+    }
+    case 'req_reply': {
+      const r = d.rid ? (S.swapReqs||[]).find(x=>x && x.id===d.rid)
+                      : (S.swapReqs||[]).filter(x=>x && x.pid===d.pid).slice(-1)[0];
+      if(r) return G('shop','exp',null,null,['req',r.id]);
+      return P(d.pid) ? G('shop','exp','batch',d.pid) : null;
+    }
+    default: return null;
+  }
+}
+/* evTarget() already performs the existence test for every branch, so aliveness IS resolvability.
+   It is re-run on tap because a 4-second sync poll can delete the target between render and tap. */
+const evAlive = (e, role) => !!evTarget(e, role);
+/* R7 · what a ROW may promise: resolvable AND reachable by whoever is looking at it. Every
+   surface that decides "is this tappable?" — the feed row, the toast pill — asks this one. */
+function evGoTarget(e){
+  const myRole = evMyRole();
+  const tg = evTarget(e, myRole);
+  return (tg && (!roleLocked() || tg.role===myRole)) ? tg : null;
+}
+function evOpenModal(m){
+  if(!m) return;
+  try{
+    switch(m[0]){
+      case 'chat':    openChat(m[1], m[2]); break;
+      case 'pchat':   openPChat(m[1], m[2]); break;
+      case 'invoice': openInvoice(m[1]); break;
+      case 'ledger':  openItemLedger(m[1]); break;
+      case 'count':   openCountAct(m[1]); break;
+      case 'exp':     openExpSheet(m[1]); break;
+      case 'req':   { const r=(S.swapReqs||[]).find(x=>x && x.id===m[1]); if(r) renderReqSheet(r); break; }
+    }
+  }catch(err){ console.warn('ArmTrade: evGo modal failed', err); }
+}
+function evGo(key){
+  const e = (S.events||[]).find(x=>x && evKey(x)===key);
+  const myRole = evMyRole();
+  const tg = e ? evTarget(e, myRole) : null;
+  /* R7 · the second half of the reachability fix. evFeed() should never have rendered such a row,
+     but a tap arriving 4 seconds after a sync poll changed the state must still never end in a
+     silent no-op: a role-locked account is told the target is gone rather than shown nothing. */
+  if(!tg || (roleLocked() && tg.role && tg.role!==myRole)){ toast('⌀ '+t('ev_gone')); return; }
+  /* in split/demo mode both panes are already on screen, so no role switch happens */
+  if(!U.split && !roleLocked() && tg.role && tg.role!==U.role) U.role = tg.role;
+  if(tg.tab && tg.role) U.tab[tg.role] = tg.tab;
+  saveU();
+  if(tg.kind && tg.id) hlSet(tg.kind, tg.id);
+  EVSEEN = null;
+  if(tg.modal){
+    /* replace the sheet in place rather than closeModal()+open: armOverlayDepth stays at 1, so
+       Android Back closes the new sheet onto the page behind it, never out of the app. */
+    renderAll();
+    evOpenModal(tg.modal);
+  } else {
+    closeModal();
+    renderAll();
+  }
+}
+/* ---------- one-shot highlight ---------- */
+function hlSet(kind, id){ HILITE = {kind, id:String(id)}; }
+function hlAttr(kind, id){ return (HILITE && HILITE.kind===kind && HILITE.id===String(id)) ? ' data-hl="1"' : ''; }
+function applyHilite(){
+  if(!HILITE) return;
+  HILITE = null;                 /* one-shot: cleared BEFORE the scroll, so the next automatic
+                                    re-render (a sync poll 4s later) cannot yank the page again */
+  const els = document.querySelectorAll('[data-hl="1"]');
+  if(!els.length) return;
+  els.forEach(el=>{ el.classList.remove('hlflash'); void el.offsetWidth; el.classList.add('hlflash'); });
+  hlScroll(els[0]);
+}
+/* R7 — the reason a tapped notification never moved the page. closeModal() ends in
+   armPopOverlay() -> history.back(), which is ASYNCHRONOUS: the same-document traversal lands a
+   frame or two later and restores the previous entry's scroll offset (0), silently undoing the
+   scrollIntoView() we had just performed — and cancelling it outright when it was `smooth`. So:
+     1. scrollRestoration is 'manual' — the app owns its scroll, the browser never re-imposes one;
+     2. when a pop is in flight the scroll WAITS for popstate before it runs;
+     3. it is instant, because an animation is the one thing a traversal can still interrupt.
+   Everything below the fold (promo at ~1870px, proposal at ~1073px, stockout at ~940px) now
+   actually lands under the shopkeeper's eye instead of flashing an amber ring off-screen. */
+try{ if('scrollRestoration' in history) history.scrollRestoration = 'manual'; }catch(e){}
+function hlScroll(el){
+  const go = ()=>{ try{ el.scrollIntoView({block:'center'}); }
+                   catch(err){ try{ el.scrollIntoView(); }catch(e2){} } };
+  if(!armPopGuard){ requestAnimationFrame(go); return; }
+  let done = false;
+  const fire = ()=>{ if(done) return; done = true;
+    window.removeEventListener('popstate', fire);
+    requestAnimationFrame(()=>requestAnimationFrame(go)); };
+  window.addEventListener('popstate', fire);
+  setTimeout(fire, 260);        /* if the pop never lands (no entry to pop) the scroll still happens */
+}
 function openEvents(){ MODAL_RE=()=>openEvents(); armPushOverlay();
-  U.lastSeenEv = S.evCounter||0; saveU();
-  /* Դուրսգրում / Գույքագրում / ժամկետ are the shop's own business. In split/demo mode nothing is
-     filtered — both roles are deliberately on one screen there. */
-  const supSide = roleLocked() && AUTHD.role==='sup';
-  const list = S.events.filter(e=>!(supSide && EV_SHOP_ONLY[e.type])).slice(0,30).map(e=>{
+  /* capture the pre-open watermark once, then advance it: the rows that were unread when the
+     sheet opened keep their accent rail even though the header badge has already cleared.
+     Guarded so toggleLang()'s re-render does not silently mark everything read. */
+  if(!EVSEEN) EVSEEN = {n:U.lastSeenEv||0, rts:U.lastSeenRts||0};
+  U.lastSeenEv = S.evCounter||0;
+  U.lastSeenRts = Math.max(U.lastSeenRts||0, (S.events||[]).reduce((mx,e)=>Math.max(mx, +e.rts||0), 0));
+  saveU();
+  let anyLive = false;
+  const rows = evFeed().slice(0,30);
+  const list = rows.map(e=>{
     const [ic,txt] = evText(e);
-    return `<div class="sug" style="padding:10px 0"><div class="pav" style="width:38px;height:38px;font-size:18px;border-radius:11px">${ic}</div>
-      <div class="info"><div style="font-size:14px;font-weight:600">${txt}</div><div class="muted" style="margin-top:2px">${fdate(e.date)}</div></div></div>`;
+    const tg = evGoTarget(e);
+    if(tg) anyLive = true;
+    const un = evUnreadAt(e, EVSEEN.rts, EVSEEN.n);
+    /* evText() interpolates ids that can arrive from the sync room, so the whole line is escaped
+       at this sink like every other user-reachable string in the file. */
+    return `<button type="button" class="evrow${tg?'':' dead'}${un?' unread':''}"${tg?` onclick="evGo('${escH(evKey(e))}')"`:''}>
+      <span class="pav pav-sm">${ic}</span>
+      <span class="evtx"><span class="evt">${escH(txt)}</span><span class="evd">${fdate(e.date)}</span></span>
+      <span class="evgo">›</span></button>`;
   }).join('');
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody"><div class="grabber"></div><h3>🔔 ${t('ev_title')}</h3>
+    ${anyLive?`<div class="notice">${t('ev_tap_hint')}</div>`:''}
     ${list || `<div class="empty"><span class="em">🔕</span>${t('ev_empty')}</div>`}
 
     <button class="btn ghost full" style="margin-top:12px" onclick="closeModal()">${t('close')}</button></div></div>`;
@@ -2521,7 +3183,7 @@ window.addEventListener('popstate', ()=>{
   if(armPopGuard){ armPopGuard = false; return; }
   if(modalOpen()){
     try{ if(typeof SCAN!=='undefined' && SCAN){ closeScanner(); return; } }catch(e){}
-    try{ CHAT=null; }catch(e){} try{ RET=null; }catch(e){} try{ PARTIAL=null; }catch(e){}
+    try{ CHAT=null; }catch(e){} try{ PCHAT=null; }catch(e){} try{ RET=null; }catch(e){} try{ PARTIAL=null; }catch(e){}
     try{ WO=null; }catch(e){} try{ if(typeof EXPUI!=='undefined'&&EXPUI) EXPUI.batch=null; }catch(e){}
     try{ if(typeof COUNTUI!=='undefined'&&COUNTUI) COUNTUI.entry=null; }catch(e){}
     armPopGuard = true; closeModal(); armPopGuard = false; renderAll();
@@ -2552,7 +3214,55 @@ function navGuard(){
   n.style.pointerEvents = 'none';
   setTimeout(()=>{ try{ n.style.pointerEvents=''; }catch(e){} }, 500);
 }
-function toast(msg){ const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('show'), 2200); }
+function hideToast(){
+  const el = document.getElementById('toast'); if(!el) return;
+  clearTimeout(el._t); clearTimeout(el._a);
+  el.classList.remove('show','tappable','arming'); el.onclick = null; TOASTGO = null;
+}
+
+function toast(msg){
+  const el = document.getElementById('toast'); if(!el) return;
+  clearTimeout(el._t); clearTimeout(el._a);
+  /* R6: one added line — a plain toast must never inherit the tappable state of the one before
+     it. Signature, timing and textContent-safety are unchanged for all ~40 call sites. */
+  el.classList.remove('tappable','arming'); el.onclick = null; TOASTGO = null;
+  el.textContent = msg; el.classList.add('show');
+  el._t = setTimeout(()=>el.classList.remove('show'), 2200);
+}
+/* the actionable toast. A mis-tap that yanks a shopkeeper out of a half-finished receiving sheet
+   is worse than no toast at all, so: only the bounded pill navigates (tapping the message just
+   dismisses), the pill is dead for its first 350ms, and the toast lives 4200ms because a control
+   you must aim at needs time to be aimed at. */
+function toastGo(msg, key){
+  const el = document.getElementById('toast'); if(!el) return toast(msg);
+  clearTimeout(el._t); clearTimeout(el._a);
+  TOASTGO = key;
+  el.innerHTML = `<span class="tmsg">${escH(msg)}</span>`
+    + `<button type="button" class="tgo" onclick="event.stopPropagation();toastGoTap()">${escH(t('ev_open'))} ›</button>`;
+  el.onclick = hideToast;
+  el.classList.add('show','tappable','arming');
+  el._a = setTimeout(()=>{ try{ el.classList.remove('arming'); }catch(e){} }, 350);
+  el._t = setTimeout(()=>{ try{ el.classList.remove('show','tappable','arming'); }catch(e){} }, 4200);
+}
+function toastGoTap(){ const k = TOASTGO; hideToast(); if(k) evGo(k); }
+/* R7 · a BACKGROUND status message (sync unreachable, simultaneous-write merge) must never delete
+   a FOREGROUND, actionable one. The old code fired toast() straight from pushState(), and because
+   mergeAdopt -> afterMerge -> schedulePush starts a push the moment a cross-device event lands,
+   the «Բացել ›» pill was replaced ~340ms in — before its own 350ms arming timer had even released
+   it. So the very first cross-device notification of a session was never actionable, and the 409
+   branch — the simultaneous-write case where an actionable toast matters most — was worst hit.
+   The status message now waits its turn, and gives up after ~13s rather than pile up. */
+function toastSoft(msg, tries){
+  const el = document.getElementById('toast');
+  if(el && el.classList.contains('show') && el.classList.contains('tappable')){
+    const n = (tries||0) + 1;
+    if(n > 3) return;
+    clearTimeout(el._q);
+    el._q = setTimeout(()=>toastSoft(msg, n), 4400);
+    return;
+  }
+  toast(msg);
+}
 
 /* ---------- immutable stock ledger (R1 · G1) ----------
    S.moves is append-only: never edited, never re-ordered. On-hand is SUM(dq) and S.stock is
@@ -2837,6 +3547,13 @@ function suggestions(){
     .filter(x=>x.st && x.st.dueIn <= 1 && !S.dismissed[x.p.id])
     .sort((a,b)=>a.st.dueIn - b.st.dueIn);
 }
+/* R7 · ONE number for «Ազդանշաններ». The dashboard KPI counted supAlerts() alone while the nav
+   badge counted alerts + diffs + reqs + unanswered asks, so the same screen showed 2 and 4 for
+   the same queue — which teaches the manager that badges are decorative. Every surface that says
+   "alerts" now counts through here, and vSupAlerts() renders exactly this many cards. */
+function supAlertTotal(){
+  return supAlerts().length + recvDiffAlerts().length + openReqs().length + unansweredAsks().length;
+}
 function supAlerts(){
   const out = [];
   PRODUCTS.forEach(p=>{
@@ -2951,10 +3668,13 @@ function payDebt(sup){
   if(amt>0){ S.payments.push({date:S.today, sup, amount:amt}); logEv('payment',{sup, amount:amt}); }
   saveD(); toast(t('paid')); renderAll();
 }
-function resetDemo(){ closeModal(); S = adopt(freshState()); RECV=null; saveRecv(); WO=null; CHAT=null; RET=null; PARTIAL=null;
+function resetDemo(){ closeModal(); S = adopt(freshState()); RECV=null; saveRecv(); WO=null; CHAT=null; PCHAT=null; HILITE=null; EVSEEN=null; RET=null; PARTIAL=null;
   try{ scanCamStop(); }catch(e){} SCAN=null;
   COUNTUI={review:false, cancelArm:false, q:'', entry:null};
   EXPUI={batch:null, pct:30}; REQUI={pid:null, kind:'exp', qty:1}; REPQ={}; RPT='dead'; ITEMSHEET=null;
+  /* R7: the read receipts are now persistent, so a reset must clear them too — otherwise the
+     fresh demo starts with every notification already "read" and a silent bell. */
+  U.pcSeen = {}; U.lastSeenEv = 0; U.lastSeenRts = 0; saveU();
   saveD(); toast(t('reset_done')); renderAll(); }
 
 function advanceDay(){
@@ -3008,26 +3728,32 @@ function viewFor(role, tab){
   return (views[tab] || views[Object.keys(views)[0]])();
 }
 function topBar(){
-  const dateTxt = fdateY(S.today);
+  /* the chip is the readout the ⏭ button advances, so it must never be the thing that gets
+     squeezed. Day+month always fits; the year lives in title= and in every printed document. */
+  const dateTxt = fdate(S.today), dateFull = fdateY(S.today);
+  const n = unreadEv();
   return `<div class="logo"><div class="logomark">⇄</div><div>ArmTrade<small>${lang==='hy'?'դեմո':(lang==='ru'?'демо':'demo')}</small></div></div>
-    <span class="datechip" title="${dateTxt}">📅 ${dateTxt}</span>
+    <span class="datechip" title="${escH(dateFull)}">📅 ${escH(dateTxt)}</span>
     <div class="spacer"></div>
-    <button class="tbtn" onclick="toggleTheme()" title="theme">${THEME==='light'?'🌙':'☀️'}</button>
-    <button class="tbtn ${ROOM?'on':''}" onclick="openSync()" title="${t('sync')}">🔗${ROOM?` <span style="color:var(--green)">●</span>`:''}</button>
-    <button class="tbtn" onclick="openEvents()" style="position:relative">🔔${unreadEv()?` <span class="dot">${unreadEv()}</span>`:''}</button>
+    <button class="tbtn hdr-lg" onclick="toggleTheme()" title="${t('theme_lbl')}">${THEME==='light'?'🌙':'☀️'}</button>
+    <button class="tbtn hdr-lg ${ROOM?'on':''}" onclick="openSync()" title="${t('sync')}">🔗${ROOM?`<span class="okdot"></span>`:''}</button>
+    <button class="tbtn" onclick="openEvents()" title="${t('ev_title')}">🔔${n?`<span class="dot">${n}</span>`:''}</button>
+    <button class="tbtn hdr-sm" onclick="openSettings()" title="${t('settings')}">⚙${ROOM?`<span class="okdot"></span>`:''}</button>
     ${roleLocked()?'':`<button class="tbtn wide ${U.split?'on':''}" onclick="toggleSplit()">${U.split?'▚ '+t('split_on'):'▙ '+t('split_off')}</button>`}
-    <button class="tbtn wide" onclick="toggleLang()">${({hy:'EN',en:'РУ',ru:'ՀԱՅ'})[lang]}</button>
-    <button class="tbtn day" onclick="advanceDay()">⏭</button>`;
+    <button class="tbtn wide hdr-lg" onclick="toggleLang()">${({hy:'EN',en:'РУ',ru:'ՀԱՅ'})[lang]}</button>
+    <button class="tbtn day" onclick="advanceDay()" title="${t('next_day')}">⏭</button>`;
 }
-function unreadEv(){ return S.events.filter(e=>e.n>(U.lastSeenEv||0)).length; }
+/* R6 fix: this used to count events that openEvents() then filtered out, so a role-locked
+   supplier could carry a red `3` over an empty-looking feed. Same filter, one source. */
+function unreadEv(){ return evFeed().filter(e=>evUnreadAt(e, U.lastSeenRts||0, U.lastSeenEv||0)).length; }
 function paneHead(role){
   const labels = role==='shop'?T[lang].tabs_shop:T[lang].tabs_sup;
   const tabs = role==='shop'?['home','recv','count','exp','catalog','pos','basket','orders','debts','data']:['dash','sellout','inbox','shops','alerts','catalog','data'];
   const icons = role==='shop'?{home:'📋',recv:'📥',count:'🧮',exp:'🗓',catalog:'🛒',pos:'💵',basket:'🧺',orders:'📦',debts:'💳',data:'📈'}:{dash:'📊',sellout:'📉',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷',data:'📈'};
   const cur=U.tab[role];
   const badges = role==='shop'
-    ? {home:S.proposals.length, recv:pendingReceipts().length, count:countNavBadge(), exp:expActionCount(), basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
-    : {inbox:S.orders.filter(o=>o.status==='new').length, alerts:supAlerts().length+recvDiffAlerts().length+openReqs().length};
+    ? {home:S.proposals.length, recv:pendingReceipts().length, count:countNavBadge(), exp:expActionCount(), catalog:pcUnreadTotal('shop'), basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
+    : {inbox:S.orders.filter(o=>o.status==='new').length, alerts:supAlertTotal()};
   return `<div class="panehead">
     <div class="panetitle">${role==='shop'?'🏪 '+t('shop'):'🚚 '+t('supplier')}<span class="tag">${role==='shop'?nm(MY_SHOP).replace(/[«»]/g,''):nm(SUPPLIERS[0])+' +2'}</span></div>
     <div class="chips panetabs wrap">${tabs.map(tb=>`<button class="${cur===tb?'active':''}" onclick="paneTab('${role}','${tb}')">${icons[tb]} ${labels[tb]}${badges[tb]?` <span class="dot">${badges[tb]}</span>`:''}</button>`).join('')}</div>
@@ -3040,8 +3766,8 @@ function singleTabs(role){
   const tabs = r==='shop'?['home','recv','count','exp','catalog','pos','basket','orders','debts','data']:['dash','sellout','inbox','shops','alerts','catalog','data'];
   const icons = r==='shop'?{home:'📋',recv:'📥',count:'🧮',exp:'🗓',catalog:'🛒',pos:'💵',basket:'🧺',orders:'📦',debts:'💳',data:'📈'}:{dash:'📊',sellout:'📉',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷',data:'📈'};
   const badges = r==='shop'
-    ? {home:S.proposals.length, recv:pendingReceipts().length, count:countNavBadge(), exp:expActionCount(), basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
-    : {inbox:S.orders.filter(o=>o.status==='new').length, alerts:supAlerts().length+recvDiffAlerts().length+openReqs().length};
+    ? {home:S.proposals.length, recv:pendingReceipts().length, count:countNavBadge(), exp:expActionCount(), catalog:pcUnreadTotal('shop'), basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
+    : {inbox:S.orders.filter(o=>o.status==='new').length, alerts:supAlertTotal()};
   const cur = U.tab[r];
   return `<div style="max-width:1400px;margin:14px auto 0;padding:0 16px">
     <div class="chips panetabs wrap">${tabs.map(tb=>`<button class="${cur===tb?'active':''}" onclick="paneTab('${r}','${tb}')">${icons[tb]} ${labels[tb]}${badges[tb]?` <span class="dot">${badges[tb]}</span>`:''}</button>`).join('')}</div>
@@ -3108,11 +3834,18 @@ function renderAll(fromSync){
   const evN = S.evCounter||0;
   if(prevEvN!=null && evN>prevEvN && fromSync){
     beep();
-    const fresh = S.events.filter(e=>e.n>prevEvN).slice(0,2);
+    /* R7: the same visibility rule as the bell — a role-locked supplier must not be woken by an
+       OS notification about a write-off he cannot open. */
+    const fresh = S.events.filter(e=>e.n>prevEvN && evVisible(e)).slice(0,2);
     fresh.forEach(e=>{ const [ic,txt]=evText(e); osNotify(ic+' '+txt); if(document.hidden) return; });
-    if(fresh.length && !document.hidden){ const [ic,txt]=evText(fresh[0]); toast(ic+' '+txt); }
+    if(fresh.length && !document.hidden){
+      const e0 = fresh[0], [ic,txt] = evText(e0), msg = ic+' '+txt;
+      /* only offer the pill when the event actually has somewhere this user can go */
+      if(evGoTarget(e0)) toastGo(msg, evKey(e0)); else toast(msg);
+    }
   }
   prevEvN = evN;
+  try{ applyHilite(); }catch(e){}
 }
 let prevPP = null, prevEvN = null;
 let prevMy = null;
@@ -3124,10 +3857,10 @@ function notifyShop(msg){
 function renderNav(role){
   const basketN = Object.keys(S.basket).length;
   const inboxN = S.orders.filter(o=>o.status==='new').length;
-  const alertsN = supAlerts().length + recvDiffAlerts().length + openReqs().length;
+  const alertsN = supAlertTotal();
   const myActiveN = S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length;
   const items = role==='shop'
-    ? [['home','📋',S.proposals.length],['recv','📥',pendingReceipts().length],['count','🧮',countNavBadge()],['exp','🗓',expActionCount()],['catalog','🛒'],['pos','💵'],['basket','🧺',basketN],['orders','📦',myActiveN],['debts','💳'],['data','📈']]
+    ? [['home','📋',S.proposals.length],['recv','📥',pendingReceipts().length],['count','🧮',countNavBadge()],['exp','🗓',expActionCount()],['catalog','🛒',pcUnreadTotal('shop')],['pos','💵'],['basket','🧺',basketN],['orders','📦',myActiveN],['debts','💳'],['data','📈']]
     : [['dash','📊'],['sellout','📉',PRODUCTS.filter(p=>stockDays(p.id)<=2).length],['inbox','📥',inboxN],['shops','🏪'],['alerts','🔔',alertsN],['catalog','🏷'],['data','📈']];
   const labels = role==='shop' ? T[lang].tabs_shop : T[lang].tabs_sup;
   const nv = document.getElementById('nav');
@@ -3151,7 +3884,7 @@ function sugCard(x){
   }
   const qty = inB || (st ? st.avgQty : p.qty);
   const sup = SUPX(p.sup);
-  return `<div class="sug posrow">
+  return `<div class="sug posrow pcw"${hlAttr('prod', p.id)}>
     <div class="pav">${p.em}</div>
     <div class="info">
       <div class="nm">${nm(p)}</div>
@@ -3166,6 +3899,7 @@ function sugCard(x){
       </div>
       <button class="addbtn ${inB?'added':''}" style="margin-top:7px" onclick="addToBasket('${p.id}', ${inB?0:qty})">${inB?t('added'):t('add')}</button>
     </div>
+    ${pcLine(p.id,'shop')}
   </div>`;
 }
 /* R4 · the headline claim is that every suggested quantity shows a human reason. The supplier's
@@ -3187,7 +3921,7 @@ function propCard(pr){
   const p = P(pr.productId); const sup = SUP(pr.sup);
   if(!p || !sup) return '';
   const sum = pr.qty * effPrice(p);
-  return `<div class="card" style="border-color:var(--note-line);background:var(--note-tint)">
+  return `<div class="card"${hlAttr('prop', pr.productId)} style="border-color:var(--note-line);background:var(--note-tint)">
     <div class="sug" style="border:none;padding:2px 0">
       <div class="pav">${p.em}</div>
       <div class="info">
@@ -3214,6 +3948,7 @@ function vShopHome(){
   ${recvNudgeCard()}
   ${expNudgeCard()}
   ${countNudgeCard()}
+  ${pcShopNudgeCard()}
   ${S.proposals.length?`<div class="sec">📨 ${t('prop_title')} (${S.proposals.length})</div>`+S.proposals.map(propCard).join(''):''}
   ${repCard()}
   ${basketN?`<button class="btn primary" onclick="paneTab('${curRole}','basket')">${t('basket')} (${basketN}) →</button>`:''}
@@ -3284,7 +4019,7 @@ function orderCard(o, side){
                           : ` <span class="badge b-green">✓ ${t('recv_received')} · ${fdate(o.receipt.ts)}</span>`)
         : (o.receipt ? '' : ` <span class="badge b-gold">${t('recv_pending')}</span>`))
     : '';
-  return `<div class="order st-${o.status}">
+  return `<div class="order st-${o.status}"${hlAttr('order', o.id)}>
     <div class="oh">
       <b>${side==='shop' ? SUPX(o.sup).em+' '+nm(SUPX(o.sup)) : '🏪 '+nm(o.shop||{})}</b>
       <span>${o.overLimit?`<span class="badge b-rose">⚠ ${t('over_limit')}</span> `:''}${statusBadge(o.status)}${recvBadge}</span>
@@ -3341,6 +4076,234 @@ function sendChat(){
   logEv('chat',{oid:o.id});
   saveD(); renderChat(); renderAll();
 }
+/* ================= R6 · F2 — «Չատ ապրանքի մասին» (per-product chat) =================
+   A thread is keyed (shop × product). It is entirely separate from o.messages: openChat(),
+   renderChat() and sendChat() above are not modified in any way, not even to share CSS.
+
+   INVARIANT A — the trust tripwire. The thread sheet is rendered by ONE function with no `side`
+   branch in its header, its context line or its message list. There is therefore no code path
+   that can show one side more than the other. The context line renders product name, unit and
+   on-hand — all three already disclosed to the supplier by vSupSellout() — and NO ֏ figure of
+   any kind: no effPrice(), no mdOf(), no expAmd(), no costOf().
+
+   Threads exist only for shop 'me'. OTHER_SHOPS are simulation fixtures with no device and no
+   operator; giving them threads would produce questions that can never be answered — the exact
+   failure mode this feature exists to prevent. */
+const pcKey = (shop, pid) => String(shop)+'|'+String(pid);
+const pcThread = key => ((S && S.pchats) || {})[key] || null;
+function pcEnsure(shop, pid){
+  if(shop!=='me' || !P(pid)) return null;
+  if(!S.pchats || typeof S.pchats!=='object' || Array.isArray(S.pchats)) S.pchats = {};
+  const k = pcKey(shop, pid);
+  if(!S.pchats[k] || typeof S.pchats[k]!=='object') S.pchats[k] = {shop:'me', pid, sup:(P(pid)||{}).sup||'s1', msgs:[]};
+  if(!Array.isArray(S.pchats[k].msgs)) S.pchats[k].msgs = [];
+  return S.pchats[k];
+}
+/* shallow copies carrying their own key: every consumer only reads, and nothing extra is ever
+   written back into the synced state. */
+function pcThreads(){
+  const o = (S && S.pchats) || {};
+  /* R7 · second layer. migrate() drops a foreign-shop thread on the way in; this drops it on the
+     way out, so no surface can ever attribute another shop's question to «Նռան այգի» — not even
+     between a hostile room payload landing and the next migrate(). */
+  return Object.keys(o).map(k=>{ const th=o[k];
+    return (th && Array.isArray(th.msgs) && th.msgs.length
+            && String(k).split('|')[0]==='me' && th.shop==='me' && P(th.pid))
+      ? {key:k, shop:'me', pid:th.pid, sup:th.sup, msgs:th.msgs} : null; }).filter(Boolean);
+}
+function pcLast(th){ const m = th && th.msgs; return (m && m.length) ? m[m.length-1] : null; }
+function pcUnanswered(th){ const l = pcLast(th); return !!l && l.from==='shop'; }
+/* oldest first — the question that has waited longest is what the one primary button opens */
+function unansweredAsks(){
+  return pcThreads().filter(pcUnanswered)
+    .sort((a,b)=>{ const la=pcLast(a), lb=pcLast(b);
+      return ((la.ts||0)-(lb.ts||0)) || ((la.rts||0)-(lb.rts||0)); });
+}
+function pcWaitDays(th){ const l = pcLast(th); return l ? Math.max(0, Math.round((S.today - (l.ts||S.today))/DAY)) : 0; }
+const pcSeenKey = (side, key) => side+'|'+key;
+function pcUnread(side, key){
+  const th = pcThread(key); if(!th || !Array.isArray(th.msgs)) return 0;
+  const other = side==='sup' ? 'shop' : 'sup';
+  const w = ((U.pcSeen||{})[pcSeenKey(side, key)]) || 0;
+  return th.msgs.filter(m=>m && m.from===other && (+m.rts||0) > w).length;
+}
+/* R7: iterates the FILTERED thread list, so a foreign-shop thread can no longer pin a red badge
+   on the Կատալոգ / Ազդանշաններ tab that no sheet in the app is able to clear. */
+function pcUnreadTotal(side){ return pcThreads().reduce((a,th)=>a+pcUnread(side,th.key), 0); }
+function pcMarkRead(side, key){
+  const th = pcThread(key); if(!th) return;
+  if(!U.pcSeen || typeof U.pcSeen!=='object') U.pcSeen = {};
+  const kk = pcSeenKey(side, key);
+  const mx = (th.msgs||[]).reduce((m,x)=>Math.max(m, +x.rts||0), 0);
+  U.pcSeen[kk] = Math.max(U.pcSeen[kk]||0, mx);
+  saveU();
+}
+const pcSide = ()=> curRole==='supplier' ? 'sup' : 'shop';
+function uuidPm(){ return 'pm-'+Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4); }
+
+/* ----- F2 · row chip + one-line preview, the two pieces every product surface reuses ----- */
+function pcChip(pid, side){
+  const sd = side || pcSide();
+  const key = pcKey('me', pid), th = pcThread(key);
+  const n = (th && th.msgs) ? th.msgs.length : 0;
+  const un = pcUnread(sd, key);
+  const lbl = n ? (t('chat')+' '+n) : t('pc_ask');
+  return `<button type="button" class="pcchip${n?' has':''}" title="${escH(lbl)}" onclick="event.stopPropagation();openPChat('${escH(key)}','${sd}')">💬 ${escH(lbl)}${un?` <span class="dot">${un}</span>`:''}</button>`;
+}
+function pcPrev(pid, side){
+  const sd = side || pcSide();
+  const l = pcLast(pcThread(pcKey('me', pid)));
+  if(!l) return '';
+  const who = (l.from===sd) ? t('pc_said_me') : (l.from==='shop' ? t('pc_said_shop') : t('pc_said_sup'));
+  return `<div class="pcprev"><b>${escH(who)}${VJ()}</b> «${escH(l.text)}»</div>`;
+}
+/* R7 · the chip and the preview as ONE full-row line. Emitted as a direct child of the row (NOT
+   inside .info), because .info is the column that collapses to ~124px in split/demo mode — which
+   is what clipped the unread count and reduced the preview to «Մատակարար…». The row carrying it
+   must also carry class "pcw" so it is allowed to wrap. */
+function pcLine(pid, side){
+  const sd = side || pcSide();
+  return `<div class="pcline">${pcChip(pid, sd)}${pcPrev(pid, sd)}</div>`;
+}
+
+/* ----- F2 · the thread sheet. ONE function, no side branch outside bubble alignment. ----- */
+function openPChat(key, side){
+  const parts = String(key||'').split('|');
+  if(parts.length!==2 || parts[0]!=='me' || !P(parts[1])){ toast('⌀ '+t('ev_gone')); return; }
+  PCHAT = {key:String(key), side: side==='sup' ? 'sup' : 'shop'};
+  pcMarkRead(PCHAT.side, PCHAT.key);
+  renderAll();
+  renderPChat();
+}
+function pcClose(){ PCHAT = null; closeModal(); }
+function renderPChat(){ MODAL_RE=()=>renderPChat(); armPushOverlay();
+  if(!PCHAT) return;
+  const key = PCHAT.key, side = PCHAT.side;
+  const pid = String(key).split('|')[1];
+  const p = P(pid); if(!p){ pcClose(); return; }
+  const th = pcThread(key);
+  const sup = SUPX(p.sup);
+  const msgs = ((th && th.msgs) || []).map(m=>`
+    <div class="msg ${m.from===side?'mine':''} ${m.from==='shop'?'byshop':'bysup'}">
+      <div class="bub">
+        <div class="who">${m.from==='shop'?'🏪 '+t('shop'):'🚚 '+t('supplier')}</div>
+        ${escH(m.text)}
+        <div class="when">${fdate(m.ts)}</div>
+      </div>
+    </div>`).join('');
+  /* starter chips fill the input and DO NOT send: a mis-tap costs one backspace, and a
+     shopkeeper who does not type fluently gets a whole question for one tap. */
+  const qk = side==='sup' ? ['pc_a1','pc_a2','pc_a3'] : ['pc_q1','pc_q2','pc_q3'];
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)pcClose()">
+    <div class="mbody"><div class="grabber"></div>
+    <h3>💬 ${t('chat')} · ${nm(p)}</h3>
+    <div class="muted">${sup.em} ${nm(sup)} ⇄ 🏪 ${nm(MY_SHOP)}</div>
+    <div class="pcctx"><span>${p.em} ${nm(p)}</span><span>·</span><span>${t('onhand_lbl')}${VJ()} <b class="num">${onHand(pid)}</b> ${unitOf(pid)}</span></div>
+    <div class="msgs" id="pcMsgs">${msgs || `<div class="empty"><span class="em">💬</span>${t('pc_empty')}</div>`}</div>
+    <div class="pccomp">
+      <input class="search" id="pcInput" placeholder="${t('chat_ph')}" onkeydown="if(event.key==='Enter')pcSend()">
+      <button class="btn cyan" onclick="pcSend()">${t('send')}</button>
+    </div>
+    <div class="chips wrap" style="margin-top:10px">${qk.map((k,i)=>`<button type="button" onclick="pcQuick(${i})">${t(k)}</button>`).join('')}</div>
+    <div class="notice" style="margin-top:10px">${side==='sup' ? t('pc_privacy_sup') : t('pc_privacy_shop')}</div>
+    <button class="btn ghost full" onclick="pcClose()">${t('close')}</button></div></div>`;
+  const cm = document.getElementById('pcMsgs'); if(cm) cm.scrollTop = cm.scrollHeight;
+}
+function pcQuick(i){
+  if(!PCHAT) return;
+  const el = document.getElementById('pcInput'); if(!el) return;
+  const qk = PCHAT.side==='sup' ? ['pc_a1','pc_a2','pc_a3'] : ['pc_q1','pc_q2','pc_q3'];
+  el.value = t(qk[i] || qk[0]);
+  try{ el.focus(); }catch(e){}
+}
+function pcSend(){
+  if(!PCHAT) return;
+  const inp = document.getElementById('pcInput'); if(!inp) return;
+  /* stored RAW and escaped at render, exactly like sendChat(): a message can also arrive from
+     the sync room, so the render sink is the only place escaping can be correct. Capped at 400. */
+  const txt = (inp.value||'').trim().slice(0,400); if(!txt) return;
+  const key = PCHAT.key, side = PCHAT.side, pid = String(key).split('|')[1];
+  const th = pcEnsure('me', pid); if(!th) return;
+  th.msgs.push({id:uuidPm(), from:side==='sup'?'sup':'shop', text:txt, ts:S.today, rts:Date.now()});
+  if(th.msgs.length>200) th.msgs = th.msgs.slice(-200);
+  logEv(side==='sup' ? 'pchat_reply' : 'pchat_ask', {key, pid, shop:'me', sup:th.sup});
+  pcMarkRead(side, key);     // his own message must not make his own badge red
+  saveD(); renderAll(); renderPChat();   // the bubble is the confirmation; no toast on top of a sheet
+}
+
+/* ----- F2 · the surfaces ----- */
+/* the failure-mode killer: a thread nobody answers is worse than no thread, so unanswered
+   questions are the FIRST block of the supplier's dashboard — above his revenue. */
+function pcAskCard(){
+  const list = unansweredAsks();
+  if(!list.length) return '';          // zero asks -> the dashboard is byte-identical to before
+  const oldest = pcWaitDays(list[0]);
+  const rows = list.slice(0,3).map(th=>{
+    const p = PX(th.pid), l = pcLast(th), w = pcWaitDays(th), un = pcUnread('sup', th.key);
+    return `<div class="sug"${hlAttr('pchat', th.key)} style="cursor:pointer" onclick="openPChat('${escH(th.key)}','sup')">
+      <div class="pav">${p.em}</div>
+      <div class="info">
+        <div class="nm">${nm(p)}${un?` <span class="badge b-rose">${t('pc_new')}</span>`:''}</div>
+        <div class="sub muted">🏪 ${nm(MY_SHOP)} · ${w>0?fmt('pc_days_wait',{n:w}):t('pc_today_wait')}</div>
+        <div class="pcprev">«${escH(l.text)}»</div>
+      </div>
+      <span class="evgo">›</span>
+    </div>`;
+  }).join('');
+  return `<div class="card${oldest>=3?' pcurgent':''}">
+    <h3>💬 ${t('pc_sup_title')} (${list.length})</h3>
+    ${rows}
+    ${list.length>3?`<div style="margin-top:8px"><button class="btn small ghost" onclick="paneTab('supplier','alerts')">${fmt('pc_more',{n:list.length-3})} →</button></div>`:''}
+    <button class="btn primary" style="margin-top:12px" onclick="openPChat('${escH(list[0].key)}','sup')">💬 ${t('pc_answer')} →</button>
+  </div>`;
+}
+function pcAlertCards(){
+  return unansweredAsks().map(th=>{
+    const p = PX(th.pid), l = pcLast(th), w = pcWaitDays(th);
+    return `<div class="alert ${w>=3?'bad':''}"${hlAttr('pchat', th.key)}>
+      <div class="t">💬 ${t('pc_sup_title')} · ${p.em} ${nm(p)}</div>
+      <div class="d">🏪 ${nm(MY_SHOP)} · ${w>0?fmt('pc_days_wait',{n:w}):t('pc_today_wait')}
+        <div class="pcprev" style="margin-top:4px">«${escH(l.text)}»</div></div>
+      <div class="act"><button class="btn small ghost" onclick="openPChat('${escH(th.key)}','sup')">💬 ${t('pc_answer')} →</button></div>
+    </div>`;
+  }).join('');
+}
+/* one card, never one per product — and deliberately a GHOST button: vShopHome() already spends
+   its one accent fill on «Զամբյուղ (n) →». */
+function pcShopNudgeCard(){
+  const ths = pcThreads().filter(th=>pcUnread('shop', th.key)>0);
+  if(!ths.length) return '';
+  const names = ths.slice(0,3).map(th=>nm(PX(th.pid))).join(' · ');
+  return `<div class="alert">
+    <div class="t">💬 ${t('pc_shop_nudge')} (${ths.length})</div>
+    <div class="d">${escH(names)}</div>
+    <div class="act"><button class="btn small ghost" onclick="openPChat('${escH(ths[0].key)}','shop')">💬 ${t('pc_open_btn')}</button></div>
+  </div>`;
+}
+function pcShopSection(id){
+  if(id!=='me') return '';             // a simulation fixture has no device and no operator
+  const ths = pcThreads().slice().sort((a,b)=>((pcLast(b).rts||0)-(pcLast(a).rts||0)));
+  const body = ths.length ? ths.map(th=>{
+    const p = PX(th.pid), un = pcUnread('sup', th.key);
+    return `<div class="sug"${hlAttr('pchat', th.key)} style="cursor:pointer" onclick="openPChat('${escH(th.key)}','sup')">
+      <div class="pav">${p.em}</div>
+      <div class="info">
+        <div class="nm">${nm(p)}${un?` <span class="badge b-rose">${t('pc_new')} <span class="dot">${un}</span></span>`:''}</div>
+        ${pcPrev(th.pid,'sup')}
+      </div>
+      <span class="evgo">›</span>
+    </div>`;
+  }).join('') : `<div class="muted">${t('pc_none_shop')}</div>`;
+  return `<div class="sec" style="margin-top:16px">💬 ${t('pc_section')}</div>${body}`;
+}
+function pcItemBlock(pid){
+  const key = pcKey('me', pid), th = pcThread(key);
+  const n = (th && th.msgs) ? th.msgs.length : 0;
+  return `<div class="sec">💬 ${t('pc_thread')}</div>
+    ${n ? pcPrev(pid,'shop') : `<div class="muted">${t('pc_empty')}</div>`}
+    <button class="btn ghost full" style="margin-top:9px" onclick="openPChat('${escH(key)}','shop')">💬 ${n ? t('pc_open_btn')+' ('+n+')' : t('pc_ask')}</button>`;
+}
+
 /* ----- returns ----- */
 let RET = null;
 function openReturn(oid){
@@ -3577,7 +4540,7 @@ function diffLineTxt(o){
     .map(l=>`${nm(P(l.pid))} ${l.shipped}→${l.received}${l.reason?' · '+reasonLabel(l.reason):''}`).join(' · ');
 }
 function diffAlertCard(o){
-  return `<div class="alert bad">
+  return `<div class="alert bad"${hlAttr('diff', o.id)}>
     <div class="t">⚠ ${o.id} · ${t('ev_diff')}</div>
     <div class="d">${diffLineTxt(o)}</div>
     <div class="act"><button class="btn small ghost" onclick="remindFix('diff_${o.id}')">${t('close')}</button></div>
@@ -3606,7 +4569,7 @@ function vShopRecv(){
     const badge = age>=2 ? `<span class="badge b-rose">${age} ${t('recv_waiting_days')}</span>`
                          : `<span class="badge b-gold">${t('recv_pending')}</span>`;
     const sum = o.items.reduce((a,it)=>a + recvShipped(it)*it.price, 0);
-    return `<div class="order st-delivered">
+    return `<div class="order st-delivered"${hlAttr('order', o.id)}>
       <div class="oh"><b>${SUPX(o.sup).em} ${nm(SUPX(o.sup))}</b>${badge}</div>
       <div class="oid">${o.id} · 🚚 ${fdate(o.deliveryDate||o.date)}</div>
       <div class="oitems">${o.items.map(it=>`${nm(P(it.productId))} <span class="num">× ${recvShipped(it)}</span>`).join('<br>')}</div>
@@ -3752,6 +4715,7 @@ function openItemSheet(pid){ MODAL_RE=()=>openItemSheet(pid); armPushOverlay();
     ${(()=>{ const r = replenish().find(x=>x.pid===pid);
       return r ? `<div class="muted" style="font-size:13px;margin-top:6px">${repReasonFull(r)}</div>` : ''; })()}
     ${mdBlock}
+    ${pcItemBlock(pid)}
     <button class="btn danger full" style="margin-top:16px" onclick="openWriteoff('${pid}')">${t('wo_open')}</button>
     <button class="btn ghost full" style="margin-top:9px" onclick="openItemLedger('${pid}')">📜 ${t('led_title')}</button>
     <button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">${t('close')}</button>
@@ -3998,7 +4962,7 @@ function expRowHtml(b, showReq){
   else acts.push(`<button class="btn small primary" style="width:auto" onclick="openExpSheet('${b.id}')">${t('md_btn')}</button>`);
   if(req && req.status==='open' && (req.reply==='swap' || req.reply==='back'))
     acts.push(`<button class="btn small cyan" onclick="shopReturnToSup('${req.id}')">${t('ret_to_sup')}</button>`);
-  return `<div class="sug stack expcard">
+  return `<div class="sug stack expcard pcw"${hlAttr('batch', pid)}>
     <button class="pav" title="${t('item_card')}" onclick="openExpSheet('${b.id}')">${p.em||'🗓'}<span class="pavdots">⋯</span></button>
     <div class="info">
       <div class="nm">${goodNameOf(pid)}</div>
@@ -4007,6 +4971,7 @@ function expRowHtml(b, showReq){
       <div class="sub muted">${t('exp_received_on')} ${fdate(b.date)}${(b.ref && b.ref!=='seed')?` · <span class="num">${escH(b.ref)}</span>`:''}</div>
     </div>
     <div class="sugact" style="text-align:right"><div class="obtns" style="margin-top:0">${acts.join('')}</div></div>
+    ${showReq===false?'':pcLine(pid,'shop')}
   </div>`;
 }
 function vShopExp(){
@@ -4114,7 +5079,7 @@ function sendReq(){
   const nb = nearestExpOf(pid);
   S.swapReqs.push({id:'REQ-'+S.swapSeq, pid, sup:(P(pid)||{}).sup||'s1', qty:q, kind:REQUI.kind,
                    days: nb ? expDaysLeft(nb) : null, date:S.today, status:'open', reply:'', rdate:0});
-  logEv('req', {pid, qty:q});
+  logEv('req', {pid, qty:q, rid:'REQ-'+S.swapSeq});
   REQUI = {pid:null, kind:'exp', qty:1};
   closeModal(); saveD(); toast('📨 '+t('req_sent')); renderAll();
 }
@@ -4123,7 +5088,7 @@ function supReply(reqId, reply){
   if(['swap','back','no'].indexOf(reply) < 0) return;
   r.reply = reply; r.rdate = S.today;
   r.status = reply==='no' ? 'closed' : 'open';   // swap/back stay open: the SHOP still has to act
-  logEv('req_reply', {pid:r.pid, reply});
+  logEv('req_reply', {pid:r.pid, reply, rid:r.id});
   saveD(); toast(t('req_r_'+reply)); renderAll();
 }
 /* The only new stock-moving path in F3, and it reuses confirmReceipt()'s adjusting-invoice
@@ -4161,7 +5126,7 @@ function supExpCard(){
 }
 function supReqCard(r){
   const p = P(r.pid) || {}, d = r.days;
-  return `<div class="alert">
+  return `<div class="alert"${hlAttr('req', r.id)}>
     <div class="t">📨 ${t('sup_req_title')} · ${nm(p)} × <b class="num">${r.qty}</b>${d!=null?` · ${d<0?t('exp_group_over'):fmt('exp_left',{n:d})}`:''}</div>
     <div class="d">${r.kind==='dead'?t('req_kind_dead'):t('req_kind_exp')}${r.reply?` · ${t('req_r_'+r.reply)}`:''}</div>
     <div class="act">
@@ -5432,7 +6397,7 @@ function vShopPOS(){
       eb = ` <span class="badge ${(nbs==='expired'||dl<=1)?'b-rose':'b-gold'}">🗓 ${dl<0?t('exp_group_over'):fmt('exp_left',{n:dl})}</span>`;
     }
     if(mdActive(p.id)) eb += ` <span class="badge b-violet">🏷 −${mdOf(p.id).pct}%</span>`;
-    return `<div class="sug posrow">
+    return `<div class="sug posrow pcw"${hlAttr('prod', p.id)}>
       <button class="pav" title="${t('item_card')}" onclick="openItemSheet('${p.id}')">${p.em}<span class="pavdots">⋯</span></button>
       <div class="info">
         <div class="nm">${nm(p)}</div>
@@ -5445,6 +6410,7 @@ function vShopPOS(){
         </div>
         <button class="addbtn ${st===0?'':''}" style="margin-top:7px;${st===0?'opacity:.35;pointer-events:none':''}" onclick="recordSale('${p.id}', ${q})">💵 ${t('sell_btn')}</button>
       </div>
+      ${pcLine(p.id,'shop')}
     </div>`;}).join('')}</div>`;
 }
 function vSupSellout(){
@@ -5457,11 +6423,11 @@ function vSupSellout(){
       : x.d<=4 ? `<span class="badge b-gold">~${Math.floor(x.d)} ${t('days_left')}</span>`
       : `<span class="badge b-green">~${Math.floor(x.d)} ${t('days_left')}</span>`;
     const pct = Math.min(100, Math.round(x.d/7*100));
-    return `<div class="card" ${x.d<=2?'style="border-color:var(--danger-line)"':''}>
+    return `<div class="card"${hlAttr('prod', x.p.id)} ${x.d<=2?'style="border-color:var(--danger-line)"':''}>
       <div class="row" style="align-items:flex-start">
         <div style="display:flex;gap:12px;align-items:center;min-width:0">
           <div class="pav">${x.p.em}</div>
-          <div>
+          <div style="min-width:0">
             <div class="nm" style="font-weight:600">${nm(x.p)}</div>
             <div class="sub muted" style="margin-top:4px">🏪 ${nm(MY_SHOP)} · ${t('today_sold')}${VJ()} <b class="num">${todaySold(x.p.id)}</b> · ${x.vel.toFixed(1)} ${t('velocity')}</div>
           </div>
@@ -5476,6 +6442,7 @@ function vSupSellout(){
         <span class="muted" style="font-size:13px">${t('last7')}</span> ${last7Bars(x.p.id)}
         <button class="btn small violet" style="flex-shrink:0" onclick="proposeRestock('${x.p.id}')">📨 ${t('suggest_order')}</button>
       </div>
+      ${pcLine(x.p.id,'sup')}
     </div>`;}).join('')}`;
 }
 /* ----- SUPPLIER views ----- */
@@ -5499,13 +6466,16 @@ function vSupDash(){
   const todayOrders = S.orders.filter(o=>o.date===S.today);
   const rev = todayOrders.reduce((a,o)=>a+o.items.reduce((x,i)=>x+i.qty*i.price,0),0);
   const alerts = supAlerts();
+  /* R7: the KPI and the Ազդանշաններ nav badge now read the same number from the same helper */
+  const alertsN = supAlertTotal();
   return `
+  ${pcAskCard()}
   <div class="sec">${t('dash')}</div>
   <div class="kpis">
     <div class="kpi"><div class="l">📥 ${t('orders_today')}</div><div class="v">${todayOrders.length}</div></div>
     <div class="kpi"><div class="l">💰 ${t('revenue_today')}</div><div class="v m">${amd(rev)}</div></div>
     <div class="kpi"><div class="l">🏪 ${t('active_shops')}</div><div class="v">${OTHER_SHOPS.length+1}</div></div>
-    <div class="kpi ${alerts.length?'kpi-alert':''}"><div class="l">🔔 ${t('alerts_n')}</div><div class="v">${alerts.length}</div></div>
+    <div class="kpi ${alertsN?'kpi-alert':''}"><div class="l">🔔 ${t('alerts_n')}</div><div class="v">${alertsN}</div></div>
   </div>
   ${forecastCard()}
   ${supLeadCard()}
@@ -5594,22 +6564,26 @@ function vSupAlerts(){
   const diffs = recvDiffAlerts();
   const reqs = openReqs();
   const expc = supExpCard();
-  return `<div class="sec">${t('alerts')} (${alerts.length + diffs.length + reqs.length})</div>` +
-    expc + reqs.map(supReqCard).join('') +
+  /* a live human question outranks a batch clock, so the asks sit above supExpCard() */
+  const asks = pcAlertCards();
+  return `<div class="sec">${t('alerts')} (${supAlertTotal()})</div>` +
+    asks + expc + reqs.map(supReqCard).join('') +
     diffs.map(diffAlertCard).join('') +
     (alerts.length ? alerts.map(alertCard).join('')
-      : ((diffs.length||reqs.length||expc) ? '' : `<div class="card"><div class="empty"><span class="em">✅</span>${t('all_ok')}</div></div>`));
+      : ((diffs.length||reqs.length||expc||asks) ? '' : `<div class="card"><div class="empty"><span class="em">✅</span>${t('all_ok')}</div></div>`));
 }
 function vSupCatalog(){
   return `<div class="sec">${t('catalog_sup')}</div>` +
     SUPPLIERS.map(s=>`<div class="card"><h3>${s.em} ${nm(s)}</h3>` +
-      PRODUCTS.filter(p=>p.sup===s.id).map(p=>`<div class="sug stack">
+      PRODUCTS.filter(p=>p.sup===s.id).map(p=>`<div class="sug stack pcw"${hlAttr('prod', p.id)}>
         <div class="pav">${p.em}</div>
         <div class="info"><div class="nm">${nm(p)}</div>
-          <div class="sub"><b>${effPrice(p).toLocaleString('en-US')}<span class="cur">֏</span></b>${isPromo(p)?` <s style="color:var(--dim)">${p.price.toLocaleString('en-US')}</s> <span class="badge b-violet">${t('promo')} −10%</span>`:''}</div></div>
+          <div class="sub"><b>${effPrice(p).toLocaleString('en-US')}<span class="cur">֏</span></b>${isPromo(p)?` <s style="color:var(--dim)">${p.price.toLocaleString('en-US')}</s> <span class="badge b-violet">${t('promo')} −10%</span>`:''}</div>
+          </div>
         <div class="sugact" style="min-width:120px;text-align:right">
           <button class="btn small ${isPromo(p)?'danger':'violet'}" onclick="togglePromo('${p.id}')">${isPromo(p)?t('promo_stop'):t('promo_start')}</button>
         </div>
+        ${pcLine(p.id,'sup')}
       </div>`).join('') + `</div>`
     ).join('');
 }
@@ -5634,7 +6608,7 @@ function monthBars(cls){
 }
 function billRows(withShop){
   const bills=[...S.bills].sort((a,b)=>b.date-a.date);
-  return bills.map(b=>`<tr style="cursor:pointer" onclick="openInvoice('${b.id}')">
+  return bills.map(b=>`<tr style="cursor:pointer"${hlAttr('bill', b.id)} onclick="openInvoice('${b.id}')">
     <td class="num" style="color:var(--info)">${b.id}<div class="tblsub">${fdate(b.date)}</div></td><td>${fdate(b.date)}</td>
     <td>${withShop ? nm(MY_SHOP) : SUPX(b.sup).em+' '+nm(SUPX(b.sup))}</td>
     <td class="num">${b.amount.toLocaleString('en-US')}<span class="cur">֏</span></td>
@@ -5650,7 +6624,7 @@ function markBillPaid(bid){
   b.paid = true; b.paidDate = S.today;
   S.debts[b.sup] = Math.max(0, (S.debts[b.sup]||0) - b.amount);
   S.payments.push({date:S.today, sup:b.sup, amount:b.amount});
-  logEv('payment', {sup:b.sup, amount:b.amount});
+  logEv('payment', {sup:b.sup, amount:b.amount, bid:b.id});
   saveD(); toast(t('paid')); renderAll();
 }
 function openStatement(sup){ MODAL_RE=()=>openStatement(sup); armPushOverlay();
@@ -5827,6 +6801,7 @@ function openShop(id){ MODAL_RE=()=>openShop(id); armPushOverlay();
   } else {
     body = `<div class="muted">${t('last_order')}${VJ()} ${fdate(S.otherLast[id])} (${daysAgo(S.otherLast[id])} ${lang==='hy'?'օր առաջ':(lang==='ru'?'дн. назад':'days ago')})</div>`;
   }
+  body += pcShopSection(id);
   // live stock table for every shop
   body += `<div class="sec" style="margin-top:16px">📦 ${t('stock_lbl')}</div>
   <table class="tbl"><tr><th>${t('product')}</th><th>${t('stock_lbl')}</th><th>${t('velocity')}</th><th>${t('days_left')}</th></tr>` +
@@ -5840,7 +6815,7 @@ function openShop(id){ MODAL_RE=()=>openShop(id); armPushOverlay();
     <div class="mbody"><div class="grabber"></div><h3>${nm(shop)}</h3><div class="muted">${t('shop_detail')}</div>${body}
     <button class="btn primary" style="margin-top:16px" onclick="closeModal()">${t('close')}</button></div></div>`;
 }
-function closeModal(){ document.getElementById('modalRoot').innerHTML=''; ITEMSHEET=null; MODAL_RE=null; armPopOverlay(); }
+function closeModal(){ document.getElementById('modalRoot').innerHTML=''; ITEMSHEET=null; PCHAT=null; EVSEEN=null; MODAL_RE=null; armPopOverlay(); }
 function openInvoice(bid){ MODAL_RE=()=>openInvoice(bid); armPushOverlay();
   const b = S.bills.find(x=>x.id===bid); if(!b) return;
   const sup = SUP(b.sup);
