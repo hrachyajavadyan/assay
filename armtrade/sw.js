@@ -8,7 +8,7 @@
    - /api/room/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armtrade-shell-v4';
+const CACHE = 'armtrade-shell-v7';   /* R9: shell changed (nav, type scale, statement act, zxing fallback) */
 const SHELL = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
@@ -34,6 +34,22 @@ self.addEventListener('fetch', e => {
   try { url = new URL(req.url); } catch (err) { return; }
   if (url.origin !== self.location.origin) return;
   if (url.pathname.indexOf('/api/') === 0) return;   // the room is live data or it is nothing
+
+  /* R9 · the ZXing reader is NOT precached — 824 KB on install would be charged to a shopkeeper
+     who may never need it (his Android Chrome has the native detector). It is fetched the first
+     time he actually opens the camera on a browser without one, and kept forever after: a
+     cache-first immutable asset, so the basement scan works offline from the second time on. */
+  if (url.pathname.indexOf('/vendor/') >= 0) {
+    e.respondWith((async () => {
+      const cache = await caches.open(CACHE);
+      const hit = await cache.match(req, { ignoreSearch: true });
+      if (hit) return hit;
+      const r = await fetch(req);
+      if (r && r.ok) cache.put(req, r.clone()).catch(() => {});
+      return r;
+    })());
+    return;
+  }
 
   const isShell = req.mode === 'navigate' || url.pathname.endsWith('/armtrade/') ||
                   url.pathname.endsWith('/index.html') || url.pathname.endsWith('/manifest.json');
