@@ -9,88 +9,384 @@
 <link rel="manifest" href="manifest.json">
 <title>ArmTrade — Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Armenian:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Armenian:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ================= ArmTrade design system v5 "Aisle" =================
+   Optimised for a 55-year-old shopkeeper reading a number correctly, first
+   time, one-handed, in bad light, on a cheap Android. Budget goes to size,
+   weight and whitespace; almost nothing to colour. */
 :root{
-  --bg:#080C18; --ink:#EDF1FA; --muted:#93A0BD; --dim:#5E6D8C; --sep:var(--sep);
-  --gold:#E39A3B; --gold2:#F7C572;
-  --cyan:#22D3EE; --green:#34D399; --rose:#FB7185; --violet:#A78BFA; --blue:#60A5FA;
-  --glass:rgba(255,255,255,.055); --glass2:rgba(255,255,255,.09);
-  --stroke:rgba(255,255,255,.11); --stroke2:rgba(255,255,255,.18);
-  --r:18px;
-  --font:'Inter','Noto Sans Armenian',-apple-system,sans-serif;
-  --display:'Space Grotesk','Noto Sans Armenian',sans-serif;
-  --mono:'IBM Plex Mono',menlo,monospace;
+  /* ---- surfaces & ink ---- */
+  --bg:#0B0F17;
+  --surface:#161C2A;          /* cards, sheets, nav, header */
+  --surface-2:#1E2637;        /* inputs, steppers, quiet fills */
+  --surface-3:#28324A;        /* pressed / hover */
+  --ink:#E8EDF7;              /* 16.3:1 on --bg */
+  --muted:#A3B0C7;            /* 8.8:1 on --bg  — body-secondary */
+  --dim:#8B97AE;              /* 6.5:1 on --bg  — micro-labels only */
+  /* was --sep:var(--sep) — a self-reference, so every hairline in the dark
+     theme fell back to currentColor and drew a near-white line. */
+  --sep:#242D40;              /* hairline inside a surface */
+  --stroke:#242D40;           /* card border */
+  --stroke2:#313C55;          /* control border */
+
+  /* ---- the one accent ---- */
+  --acc:#F0A93B;              /* 9.5:1 on --bg, 8.5:1 on --surface */
+  --acc-ink:#1A1205;          /* text ON the accent */
+  --acc-tint:#2A1F0C;         /* accent-tinted surface */
+  --acc-line:#5A431A;         /* accent-tinted border */
+  --acc-text:#F5C06A;         /* accent as text on a tint */
+
+  /* legacy aliases — every existing rule keeps compiling */
+  --gold:var(--acc); --gold2:var(--acc-text);
+
+  /* ---- status (badges, rails, alerts — NEVER buttons) ---- */
+  --danger:#FF9C9C;   --danger-tint:#2A1315; --danger-line:#5A2226;
+  --success:#5AD79A;  --success-tint:#0E2A1E; --success-line:#1E5540;
+  --info:#7DD3FC;     --info-tint:#0D2430;   --info-line:#1C4A5E;
+  --note:#C4B5FD;     --note-tint:#1E1A33;   --note-line:#3B3161;
+  /* legacy aliases */
+  --rose:var(--danger); --green:var(--success); --cyan:var(--info);
+  --violet:var(--note); --blue:var(--info);
+
+  /* glass primitives retired — kept as flat surfaces so .glass/.card compile */
+  --glass:var(--surface); --glass2:var(--surface-2);
+
+  /* ---- type ---- */
+  --font:'Inter','Noto Sans Armenian',-apple-system,'Segoe UI',Roboto,sans-serif;
+  --display:var(--font);
+  --mono:var(--font);         /* figures come from Inter tnum, not a mono face */
+
+  /* R6 legibility floor: the reader is 55, in bad light, on a cheap phone. Nothing that
+     carries meaning is allowed below 14px; the only exceptions are the bottom-nav label
+     (11.5px, physically bounded by a 10-cell strip) and status pills (12px).
+     The 41px of chrome this round reclaimed is spent here, on the content. */
+  --fs-display-l:34px; --lh-display-l:1.05; --ls-display-l:-0.8px; --fw-display-l:700;
+  --fs-display-m:26px; --lh-display-m:1.10; --ls-display-m:-0.5px; --fw-display-m:700;
+  --fs-display-s:21px; --lh-display-s:1.15; --ls-display-s:-0.3px; --fw-display-s:700;
+  --fs-title:17px;     --lh-title:1.25;     --ls-title:-0.2px;     --fw-title:700;
+  --fs-body-l:16px;    --lh-body-l:1.35;    --ls-body-l:-0.1px;    --fw-body-l:600;
+  --fs-body:15px;      --lh-body:1.45;      --ls-body:0;           --fw-body:400;
+  --fs-label:14px;     --lh-label:1.25;     --ls-label:0;          --fw-label:600;
+  --fs-micro:14px;     --lh-micro:1.40;     --ls-micro:0;          --fw-micro:500;
+  --fs-caps:12px;      --lh-caps:1.20;      --ls-caps:0.2px;       --fw-caps:700;
+  --fs-nav:11.5px;     --lh-nav:1.15;
+
+  /* ---- spacing: strict 4px grid ---- */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s10:40px;
+
+  /* ---- radii ---- */
+  --r-xs:6px; --r-sm:10px; --r:14px; --r-lg:18px; --r-pill:999px;
+
+  /* ---- borders ---- */
+  --bw:1px; --bw-strong:1.5px;
+
+  /* ---- elevation ---- */
+  --sh-0:none;
+  --sh-1:0 1px 2px rgba(0,0,0,.45);
+  --sh-2:0 6px 20px rgba(0,0,0,.50);
+  --sh-3:0 -8px 32px rgba(0,0,0,.55);
+  --focus:0 0 0 3px rgba(240,169,59,.34);
+
+  /* ---- motion ---- */
+  --dur-1:120ms; --dur-2:180ms; --dur-3:260ms;
+  --ease:cubic-bezier(.2,0,0,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+
+  /* ---- chrome heights (single source of truth) ---- */
+  --h-top:52px; --h-nav-row:44px; --h-nav:92px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 /* the canvas colour must come from BODY alone. html carrying its own background blocks CSS's
-   background-propagation rule, so body.light's #F5F6F8 never painted the area below a short
+   background-propagation rule, so body.light's #F4F6F8 never painted the area below a short
    page and the dark :root --bg showed through as a black band on every empty screen. */
 html{margin:0;padding:0}
-body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;-webkit-font-smoothing:antialiased}
-/* bright ambient glows */
-body::before{content:"";position:fixed;inset:0;z-index:-2;background:
-  radial-gradient(60vw 50vh at 12% -8%, rgba(227,154,59,.22), transparent 60%),
-  radial-gradient(55vw 50vh at 96% 4%, rgba(167,139,250,.20), transparent 60%),
-  radial-gradient(70vw 60vh at 50% 118%, rgba(34,211,238,.16), transparent 60%),
-  #080C18;}
-body::after{content:"";position:fixed;inset:0;z-index:-1;background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);background-size:26px 26px;opacity:.5}
-.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+body{
+  margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:var(--font);
+  font-size:var(--fs-body);line-height:var(--lh-body);
+  -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1,"lnum" 1;
+}
+body::before,body::after{display:none}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+}
 button{font-family:var(--font)}
 
-/* ---------- glass primitives ---------- */
-.glass{background:var(--glass);backdrop-filter:blur(18px) saturate(135%);-webkit-backdrop-filter:blur(18px) saturate(135%);border:1px solid var(--stroke);border-radius:var(--r)}
-.card{background:var(--glass);backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);border:1px solid var(--stroke);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:0 8px 30px rgba(0,0,0,.22)}
-.card h3{margin:0 0 12px;font-family:var(--display);font-size:15px;letter-spacing:.2px;display:flex;align-items:center;gap:8px}
-.sec{margin:20px 4px 11px;font-size:11px;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:1.7px}
-.sec:first-child{margin-top:2px}
-.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.muted{color:var(--muted);font-size:12.5px;line-height:1.55}
-.big{font-family:var(--mono);font-size:24px;font-weight:600;letter-spacing:-.5px}
+/* ---------- money & numerals (§4) ---------- */
+/* .num appears ~90 times. This one rule fixes every one of them. */
+.num{
+  font-family:var(--font);
+  font-variant-numeric:tabular-nums lining-nums;
+  font-feature-settings:"tnum" 1,"lnum" 1;
+  letter-spacing:-.1px;
+  font-weight:600;
+  white-space:nowrap;
+}
+/* the hero number: on-hand, at-risk value, basket total, KPI value */
+.big{
+  font-family:var(--font);
+  font-size:var(--fs-display-m);font-weight:var(--fw-display-m);
+  line-height:var(--lh-display-m);letter-spacing:var(--ls-display-m);
+  font-variant-numeric:tabular-nums lining-nums;
+  color:var(--ink);
+}
+/* the currency mark is quieter than the amount: smaller, lighter, one space of air */
+/* .cur is ALWAYS nested inside the .num/.big it belongs to (see amd() and every call site),
+   so .7em resolves against the amount, never against whatever container the pair landed in.
+   max() puts a hard 13px floor under it: at 8px the dram sign read as a smudge on paper and
+   on a dim screen, which is the one thing a money mark may never do. */
+.cur{
+  font-size:max(.7em,13px);font-weight:600;color:var(--muted);
+  margin-left:.22em;letter-spacing:0;
+  font-variant-numeric:normal;
+}
+/* inside a status pill the mark rides WITH the pill's own text — a 13px floor there would
+   make the ֏ larger than the digits beside it */
+.badge .cur{font-size:1em;font-weight:700;color:inherit;margin-left:.15em}
+/* the caption OF a number: micro-label above, value below (§4 rule 3). Never body prose. */
+.mlbl,.doclbl{
+  font-size:var(--fs-caps);font-weight:var(--fw-caps);line-height:var(--lh-caps);
+  letter-spacing:0;color:var(--dim);text-transform:none;
+}
+.doclbl{margin-bottom:2px}
+.neg{color:var(--danger);font-weight:700}
+.neg::before{content:"−";margin-right:.05em}
+.pos{color:var(--success);font-weight:700}
+.osum{font-weight:700;margin-top:var(--s2);font-size:var(--fs-body-l);color:var(--ink);
+  font-variant-numeric:tabular-nums}
 
-/* glassy buttons */
-.btn{position:relative;border:1px solid var(--stroke2);border-radius:13px;background:linear-gradient(180deg,var(--glass2),rgba(255,255,255,.03));color:var(--ink);font-weight:700;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:hidden;transition:transform .14s,box-shadow .2s;padding:13px 15px;font-size:13.5px}
-.btn::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.22),transparent 42%);opacity:.7;pointer-events:none}
-.btn:active{transform:scale(.96)}
-.btn.primary{width:100%;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1205;border-color:rgba(255,255,255,.25);padding:16px;font-size:16px;font-weight:800;box-shadow:0 10px 34px rgba(227,154,59,.4)}
-.btn.cyan{background:linear-gradient(135deg,#67E8F9,var(--cyan));color:#062a30;border-color:transparent;box-shadow:0 8px 26px rgba(34,211,238,.32)}
-.btn.green{background:linear-gradient(135deg,#6EE7B7,var(--green));color:#052e1c;border-color:transparent;box-shadow:0 8px 26px rgba(52,211,153,.30)}
-.btn.violet{background:linear-gradient(135deg,#C4B5FD,var(--violet));color:#1e1146;border-color:transparent;box-shadow:0 8px 26px rgba(167,139,250,.30)}
-.btn.ghost{background:var(--glass);color:var(--ink)}
-.btn.small{padding:10px 13px;font-size:12.5px;border-radius:10px}
-.btn.danger{background:linear-gradient(180deg,rgba(251,113,133,.18),rgba(251,113,133,.06));color:var(--rose);border-color:rgba(251,113,133,.35)}
+/* ---------- card ---------- */
+.glass,.card{
+  background:var(--surface);
+  border:var(--bw) solid var(--stroke);
+  border-radius:var(--r);
+  box-shadow:var(--sh-1);
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+}
+.card{padding:var(--s4);margin-bottom:var(--s3)}
+.card h3{
+  margin:0 0 var(--s3);
+  font-family:var(--font);
+  font-size:var(--fs-title);font-weight:var(--fw-title);
+  line-height:var(--lh-title);letter-spacing:var(--ls-title);
+  display:flex;align-items:center;gap:var(--s2);
+}
+/* section heading above a card group. Armenian is NOT uppercased: at 11px with
+   1.7px tracking, all-caps Armenian is the single least legible thing in the app. */
+.sec{
+  margin:var(--s5) var(--s1) var(--s2);
+  font-size:15px;font-weight:700;line-height:1.3;letter-spacing:-.1px;
+  color:var(--ink);text-transform:none;
+  display:flex;align-items:center;gap:var(--s2);
+}
+.sec:first-child{margin-top:var(--s1)}
+/* a row is a label and its value. When the pair genuinely cannot share a line — a long
+   Armenian product name beside a status pill — the value drops to its own line rather than
+   squeezing the pill into a three-line block taller than the row it annotates. */
+.row{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);flex-wrap:wrap}
+.row>*{min-width:0}
+.muted{color:var(--muted);font-size:var(--fs-micro);line-height:var(--lh-micro)}
+
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s2);margin-bottom:var(--s1)}
+.kpi{
+  background:var(--surface);border:var(--bw) solid var(--stroke);
+  border-radius:var(--r);padding:var(--s3) var(--s3) var(--s4);
+  position:relative;overflow:hidden;box-shadow:var(--sh-1);
+  display:flex;flex-direction:column;gap:var(--s1);min-height:84px;justify-content:flex-end;
+}
+.kpi::before{display:none}                        /* the corner glow is gone */
+.kpi .l{
+  order:1;font-size:var(--fs-caps);font-weight:var(--fw-caps);
+  line-height:var(--lh-caps);letter-spacing:var(--ls-caps);
+  color:var(--dim);text-transform:none;
+  display:flex;align-items:center;gap:var(--s1);
+  min-height:2.3em;                               /* two-line HY labels stay aligned */
+}
+.kpi .v{
+  order:2;font-family:var(--font);
+  font-size:var(--fs-display-m);font-weight:var(--fw-display-m);
+  line-height:var(--lh-display-m);letter-spacing:var(--ls-display-m);
+  color:var(--ink);margin-top:0;
+}
+/* A 2x2 grid of peer metrics must share ONE value size or the four numbers stop scanning as
+   one row. A money tile carries up to 9 digits, so instead of shrinking that ONE tile the whole
+   grid steps down together at the widths where the digits stop fitting. */
+.kpi .v.m{letter-spacing:-.4px}
+@media (max-width:400px){ .kpi .v,.kpi .v.m{font-size:23px;line-height:1.15} }
+@media (max-width:340px){ .kpi .v,.kpi .v.m{font-size:19px;line-height:1.15} }
+/* the ONE exception to "KPI numbers are always --ink": an actionable alert count */
+.kpi-alert{border-color:var(--danger-line);background:var(--danger-tint)}
+.kpi-alert .v{color:var(--danger)}
+.kpi-alert .l{color:var(--danger)}
+
+/* ---------- buttons: exactly four roles ---------- */
+.btn{
+  position:relative;
+  border:var(--bw-strong) solid var(--stroke2);
+  border-radius:var(--r-sm);
+  background:var(--surface);color:var(--ink);
+  font-family:var(--font);font-size:var(--fs-label);font-weight:var(--fw-label);
+  line-height:1.25;letter-spacing:0;
+  cursor:pointer;overflow:hidden;
+  padding:0 var(--s4);min-height:44px;
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;
+  transition:transform var(--dur-1) var(--ease),background var(--dur-1) var(--ease),border-color var(--dur-1) var(--ease);
+}
+.btn::after{display:none}                          /* the gloss overlay is gone */
+.btn:active{transform:scale(.97);background:var(--surface-3)}
+.btn:focus-visible{outline:none;box-shadow:var(--focus)}
 .btn.full{width:100%}
+.btn.small{padding:0 var(--s3);min-height:44px;font-size:var(--fs-label);border-radius:var(--r-xs)}
 
-/* badges / pills */
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:8px;font-size:10.5px;font-weight:800;letter-spacing:.3px;border:1px solid transparent}
-.b-cyan{background:rgba(34,211,238,.14);color:#7DE9F7;border-color:rgba(34,211,238,.3)}
-.b-gold{background:rgba(247,197,114,.14);color:var(--gold2);border-color:rgba(247,197,114,.3)}
-.b-green{background:rgba(52,211,153,.14);color:#6EE7B7;border-color:rgba(52,211,153,.3)}
-.b-rose{background:rgba(251,113,133,.15);color:#FDA4B4;border-color:rgba(251,113,133,.32)}
-.b-violet{background:rgba(167,139,250,.15);color:#C4B5FD;border-color:rgba(167,139,250,.32)}
-.b-neutral{background:rgba(147,160,189,.13);color:var(--muted);border-color:rgba(147,160,189,.22)}
-.dot{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;padding:0 5px;border-radius:99px;background:var(--rose);color:#2a0710;font-size:10px;font-weight:800}
+/* PRIMARY — the one thing to do next. 52px, full-width, accent fill. */
+.btn.primary,
+.btn.full.cyan,.btn.full.green,.btn.full.violet{
+  width:100%;min-height:52px;
+  background:var(--acc);color:var(--acc-ink);
+  border-color:var(--acc);
+  font-size:16px;font-weight:700;letter-spacing:-.1px;
+}
+/* a primary that cannot be pressed yet must stop LOOKING like the primary. opacity:.35 on an
+   amber fill composited a white label to ~1.7:1 on tan — an unreadable label on a slab that
+   still read as the screen's next action. */
+.btn.off{
+  background:var(--surface-2) !important;color:var(--dim) !important;
+  border-color:var(--stroke2) !important;pointer-events:none;opacity:1 !important;
+  font-weight:600 !important;
+}
+.btn.primary:active,
+.btn.full.cyan:active,.btn.full.green:active,.btn.full.violet:active{
+  background:var(--acc-text);border-color:var(--acc-text);transform:scale(.985);
+}
+/* a "small primary" is a ROW action in a list — never the screen's one filled action.
+   It keeps accent identity at a fraction of the weight, so a 12-row list is not 12 amber slabs. */
+.btn.small.primary{min-height:44px;font-size:var(--fs-label);width:auto;
+  background:var(--acc-tint);color:var(--acc-text);border-color:var(--acc-line)}
+.btn.small.primary:active{background:var(--surface-3);border-color:var(--acc-line)}
 
-.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-bottom:6px}
-.kpi{background:var(--glass);border:1px solid var(--stroke);border-radius:15px;padding:14px;position:relative;overflow:hidden}
-.kpi::before{content:"";position:absolute;top:-30px;right:-30px;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.09),transparent 70%)}
-.kpi .v{font-family:var(--mono);font-size:22px;font-weight:600;margin-top:6px}
-.kpi .l{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:5px}
+/* SECONDARY — accent outline. All non-full hue variants land here. */
+.btn.cyan,.btn.green,.btn.violet{
+  background:var(--surface);color:var(--acc-text);
+  border-color:var(--acc-line);border-width:var(--bw-strong);
+}
+.btn.cyan:active,.btn.green:active,.btn.violet:active{background:var(--acc-tint)}
 
-/* product rows */
-.sug{display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid var(--sep)}
-.sug:last-child{border-bottom:none;padding-bottom:2px}
-.sug:first-child{padding-top:2px}
-.pav{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0;background:var(--glass2);border:1px solid var(--stroke2)}
-/* the 48x48 avatar doubles as the item-card button, so the product name keeps its full column */
-button.pav{padding:0;position:relative;cursor:pointer;color:inherit;font-family:inherit}
-button.pav:active{transform:scale(.93)}
-button.pav .pavdots{position:absolute;right:3px;bottom:-1px;font-size:12px;line-height:1;font-weight:800;color:var(--muted)}
-.sug .info{flex:1;min-width:0}
+/* GHOST — neutral. The default for "another thing you could do". */
+.btn.ghost{background:var(--surface);color:var(--ink);border-color:var(--stroke2)}
+.btn.ghost:active{background:var(--surface-2)}
+
+/* DANGER — outline only, never filled. */
+.btn.danger{background:var(--surface);color:var(--danger);border-color:var(--danger-line);border-width:var(--bw-strong)}
+.btn.danger:active{background:var(--danger-tint)}
+/* the one committing action on a sheet must outweigh everything above it. Outlined-danger at
+   the same weight as the «Փակել» below it meant nothing on the Դուրսգրում sheet read as
+   "the button". Tint + 2px rule + 52px gives it that weight without a filled red slab. */
+.btn.danger.full{
+  min-height:52px;font-size:16px;font-weight:700;
+  background:var(--danger-tint);border-width:2px;
+}
+.btn.danger.full:active{background:var(--danger);color:#fff;border-color:var(--danger)}
+
+/* A ROW action, repeated 9-12 times down a list. It was amber-tinted, which meant the accent
+   marked nine things per screen and therefore nothing. It is now a neutral raised control at
+   the 44px floor; the screen's single amber primary is the only accent left. */
+.addbtn{
+  background:var(--surface-2);color:var(--ink);border:var(--bw-strong) solid var(--stroke2);
+  border-radius:var(--r-xs);padding:0 var(--s3);min-height:44px;
+  font-family:var(--font);font-weight:700;font-size:var(--fs-label);
+  cursor:pointer;width:100%;box-shadow:none;
+  transition:transform var(--dur-1) var(--ease),background var(--dur-1) var(--ease);
+}
+.addbtn:active{background:var(--surface-3)}
+.addbtn:active{transform:scale(.96)}
+.addbtn.added{background:var(--success-tint);color:var(--success);border-color:var(--success-line)}
+
+.iconbtn{
+  width:40px;height:40px;border-radius:var(--r-xs);
+  border:var(--bw) solid var(--stroke2);background:var(--surface);color:var(--muted);
+  font-size:17px;line-height:1;font-weight:600;cursor:pointer;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform var(--dur-1) var(--ease),background var(--dur-1) var(--ease);
+}
+.iconbtn:active{transform:scale(.94);background:var(--surface-2)}
+
+/* ---------- badges, chips, counts ---------- */
+.chips{display:flex;gap:var(--s2);overflow-x:auto;padding-bottom:var(--s2);
+  margin-bottom:var(--s1);scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+/* a mandatory choice may never hide behind a scrollbar-less swipe: wrap onto as many rows as it takes */
+.chips.wrap{flex-wrap:wrap;overflow-x:visible}
+.chips button{
+  white-space:nowrap;background:var(--surface);
+  border:var(--bw) solid var(--stroke2);border-radius:var(--r-pill);
+  padding:0 var(--s3);min-height:44px;
+  font-family:var(--font);font-size:var(--fs-label);font-weight:var(--fw-label);
+  color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:var(--s1);
+  transition:background var(--dur-1) var(--ease),color var(--dur-1) var(--ease),border-color var(--dur-1) var(--ease);
+}
+.chips button.active{
+  background:var(--acc-tint);color:var(--acc-text);
+  border-color:var(--acc-line);border-width:var(--bw-strong);font-weight:700;
+}
+.chips button:active{transform:scale(.97)}
+
+.badge{
+  display:inline-flex;align-items:center;gap:var(--s1);
+  padding:2px var(--s2);min-height:22px;border-radius:var(--r-xs);
+  font-size:var(--fs-caps);font-weight:var(--fw-caps);line-height:1.2;
+  white-space:nowrap;
+  letter-spacing:0;border:var(--bw) solid transparent;
+}
+.b-cyan   {background:var(--info-tint);   color:var(--info);   border-color:var(--info-line)}
+.b-gold   {background:var(--acc-tint);    color:var(--acc-text);border-color:var(--acc-line)}
+.b-green  {background:var(--success-tint);color:var(--success);border-color:var(--success-line)}
+.b-rose   {background:var(--danger-tint); color:var(--danger); border-color:var(--danger-line)}
+.b-violet {background:var(--note-tint);   color:var(--note);   border-color:var(--note-line)}
+.b-neutral{background:var(--surface-2);   color:var(--muted);  border-color:var(--stroke)}
+
+/* counts. One shape only: a filled danger pill. */
+.dot{display:inline-flex;align-items:center;justify-content:center;
+  min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-pill);
+  background:var(--danger);color:#2A0710;font-size:12px;font-weight:700;line-height:1.1}
+body.light .dot{background:var(--danger);color:#fff}
+.navbadge{position:absolute;top:1px;left:calc(50% + 5px);
+  background:var(--danger);color:#fff;font-size:11px;font-weight:700;
+  border-radius:var(--r-pill);padding:1px 5px;line-height:1.3;min-width:16px;text-align:center}
+body:not(.light) .navbadge{color:#2A0710}
+
+/* ---------- product / list rows ---------- */
+.sug{
+  display:flex;gap:var(--s3);align-items:flex-start;
+  padding:var(--s3) 0;border-bottom:var(--bw) solid var(--sep);
+}
+.sug:last-child{border-bottom:none;padding-bottom:var(--s1)}
+.sug:first-child{padding-top:var(--s1)}
+.sug .info{flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--s1)}
+/* the product/identity tile. Tier-1 emoji container (§6). */
+.pav{
+  width:44px;height:44px;border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;line-height:1;flex-shrink:0;
+  background:var(--surface-2);border:var(--bw) solid var(--stroke);
+}
+/* the avatar doubles as the item-card button, so the product name keeps its full column */
+button.pav{padding:0;position:relative;cursor:pointer;color:inherit;font-family:inherit;
+  transition:transform var(--dur-1) var(--ease),background var(--dur-1) var(--ease)}
+button.pav:active{transform:scale(.94);background:var(--surface-3)}
+button.pav .pavdots{position:absolute;right:2px;bottom:0;font-size:13px;line-height:1;font-weight:700;color:var(--muted)}
 /* Armenian product names run 150-190px; on a 320-412px phone the flex row can never give them
    that on ONE line, so they used to ellipsise down to «Ջ…». Wrap to two lines instead — the
    name is what identifies the SKU being counted, priced or sold. */
-.sug .nm{font-weight:600;font-size:14.5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere;line-height:1.3}
+.sug .nm{
+  font-size:var(--fs-body-l);font-weight:var(--fw-body-l);
+  line-height:var(--lh-body-l);letter-spacing:var(--ls-body-l);color:var(--ink);
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow-wrap:anywhere;
+}
 /* a row action must be able to give width back to the name */
 .sug .rowact{flex:0 1 auto;min-width:0;white-space:normal}
 /* at 320px the name column is only ~76px, so two lines are not enough for the longest names */
@@ -101,7 +397,9 @@ button.pav .pavdots{position:absolute;right:3px;bottom:-1px;font-size:12px;line-
    selling screen — was drawn under the stepper. Below 360 the control column takes its own row. */
 @media (max-width:360px){
   .posrow{flex-wrap:wrap}
-  .posrow .info{flex:1 1 100%;min-width:0}
+  /* the control column takes its own row — the 44px product tile does NOT: basis 100% put
+     the tile alone on line 1 and the name on line 2, costing ~56px a row. */
+  .posrow .info{flex:1 1 0;min-width:0}
   .posrow .posact{flex:1 1 100% !important;min-width:0 !important;text-align:left !important;margin-top:9px;display:flex;gap:10px;align-items:center}
   .posrow .posact .addbtn{margin-top:0 !important;flex:1}
 }
@@ -111,119 +409,281 @@ button.pav .pavdots{position:absolute;right:3px;bottom:-1px;font-size:12px;line-
   .selloutfoot{flex-wrap:wrap}
   .selloutfoot .btn{flex:1 1 100%;margin-top:8px}
 }
-/* accordion groups on Տվյալներ */
-.acc{margin:0 0 12px}
-.acc>summary{list-style:none;cursor:pointer;padding:12px 14px;border:1px solid var(--stroke);border-radius:14px;background:var(--glass);font-weight:800;font-size:13.5px;display:flex;align-items:center;gap:8px}
-.acc>summary::-webkit-details-marker{display:none}
-.acc>summary::after{content:'▾';margin-left:auto;color:var(--muted);font-size:12px}
-.acc[open]>summary::after{content:'▴'}
-body.light .acc>summary{background:#FFFFFF}
 /* rows whose action carries a long sentence-length label (the promo toggle) squeezed the name
    column down to 31px at 320px. Below 460px the action drops onto its own full-width line. */
 @media (max-width:460px){
   .sug.stack{flex-wrap:wrap}
-  .sug.stack .info{flex:1 1 auto}
+  /* flex-basis:auto made the info column's hypothetical size its MAX-content width, so on a
+     wrapping row the 44px tile was pushed onto a line of its own and every Ժամկետներ row
+     grew ~56px. basis:0 keeps the tile and the name on one line, as every other list row. */
+  .sug.stack .info{flex:1 1 0;min-width:0}
   .sug.stack .sugact{flex:1 1 100%;min-width:0 !important;text-align:left !important;margin-top:8px}
   .sug.stack .sugact .btn{width:100%}
 }
-.sug .sub{font-size:11.5px;color:var(--muted);margin-top:4px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-.sug .sub b{font-family:var(--mono);color:var(--gold2);font-weight:600}
-.qtyctl{display:flex;align-items:center;gap:2px;background:var(--glass2);border:1px solid var(--stroke2);border-radius:11px;padding:3px}
-.qtyctl button{width:38px;height:38px;border-radius:9px;border:none;background:transparent;color:var(--gold2);font-size:18px;font-weight:800;cursor:pointer}
-/* the scan tray's ± is the control reached for after a mis-scan, one-handed, mid-aisle */
-.scantray .qtyctl button{width:44px;height:44px;font-size:21px}
-.scantray .qtyctl span{min-width:30px}
-.qtyctl button:active{background:rgba(247,197,114,.18)}
-.qtyctl span{min-width:26px;text-align:center;font-family:var(--mono);font-weight:600;font-size:15px}
-.addbtn{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1205;border:none;border-radius:11px;padding:9px 13px;font-weight:800;font-size:12.5px;cursor:pointer;transition:.15s;width:100%;box-shadow:0 5px 16px rgba(227,154,59,.3)}
-.addbtn:active{transform:scale(.95)}
-.addbtn.added{background:linear-gradient(135deg,#6EE7B7,var(--green));color:#052e1c;box-shadow:0 5px 16px rgba(52,211,153,.3)}
-.iconbtn{width:32px;height:32px;border-radius:10px;border:1px solid var(--stroke2);background:var(--glass);color:var(--muted);font-size:16px;font-weight:700;cursor:pointer;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
-.iconbtn:active{transform:scale(.92)}
-body.light .iconbtn{background:#FFFFFF}
-/* receiving discrepancy line */
-.rline{display:flex;gap:7px;align-items:center;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin:7px 0 0 60px}
-.rline .was{text-decoration:line-through;color:var(--dim);font-family:var(--mono)}
-.rline .chips{margin:0;padding:0}
-.rline .chips button{padding:5px 10px;font-size:11px}
-body.light .rline .chips button{background:#FFFFFF}
-/* barcode scanner (R2): the box always holds video, so it stays dark in both themes */
-.scanbox{position:relative;margin-top:12px;border-radius:15px;overflow:hidden;background:#000;aspect-ratio:4/3;min-height:190px}
-.scanbox video{width:100%;height:100%;object-fit:cover;display:block}
-.scanroi{position:absolute;left:6%;right:6%;top:35%;height:30%;border:2px solid var(--gold2);border-radius:10px;box-shadow:0 0 0 2000px rgba(0,0,0,.34)}
-.scanroi::after{content:"";position:absolute;left:6px;right:6px;top:50%;height:2px;background:var(--rose);opacity:.85}
-.scanhint{position:absolute;left:0;right:0;bottom:8px;text-align:center;color:#fff;font-size:11.5px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.sug .sub{
+  font-size:var(--fs-micro);font-weight:var(--fw-micro);line-height:var(--lh-micro);
+  color:var(--muted);margin-top:0;
+  display:flex;flex-wrap:wrap;gap:var(--s1) var(--s2);align-items:center;
+}
+/* inside a wrapping list row a pill may take a second line — the row is built to wrap. It is
+   the non-wrapping label/value rows that must never squeeze a pill into a three-line block. */
+.sug .sub .badge,.rline .badge,.chips .badge{white-space:normal}
+.sug .sub b{font-weight:700;color:var(--ink)}     /* was gold — money is weight, not hue */
+.sug .sub.muted{color:var(--dim)}
 
-/* search & chips */
-.search{width:100%;padding:13px 16px;border:1px solid var(--stroke2);border-radius:13px;font-size:15px;font-family:var(--font);background:var(--glass);color:var(--ink);margin-bottom:12px;outline:none;transition:.15s;backdrop-filter:blur(10px)}
-.search::placeholder{color:var(--dim)}
-.search:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(227,154,59,.18)}
-.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-/* a mandatory choice may never hide behind a scrollbar-less swipe: wrap onto as many rows as it takes */
-.chips.wrap{flex-wrap:wrap;overflow-x:visible}
-.chips button{white-space:nowrap;background:var(--glass);border:1px solid var(--stroke2);border-radius:99px;padding:10px 14px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px}
-.chips button.active{background:linear-gradient(135deg,rgba(247,197,114,.22),rgba(227,154,59,.12));color:var(--gold2);border-color:rgba(247,197,114,.5)}
-
-/* orders */
-.order{border:1px solid var(--stroke);border-radius:15px;padding:15px;margin-bottom:12px;background:var(--glass);position:relative;overflow:hidden}
-.order.st-new{border-color:rgba(34,211,238,.28)}
-.order.st-new::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan)}
-.order.st-confirmed::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold)}
-.order.st-delivered::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green)}
-.order .oh{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;gap:8px}
-.order .oh b{font-size:14px}
-.oid{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
-.oitems{font-size:12.5px;color:var(--muted);line-height:1.75;margin-top:7px}
-.osum{font-family:var(--mono);font-weight:600;margin-top:8px;font-size:15px;color:var(--gold2)}
-.obtns{display:flex;gap:10px;margin-top:12px}
-.obtns button{flex:1}
-/* order progress tracker (shop side) */
-.otrack{display:flex;align-items:center;margin-top:13px;padding:0 2px}
-.onode{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;background:var(--glass2);border:1px solid var(--stroke2);color:var(--dim)}
-.onode.done{background:linear-gradient(135deg,#6EE7B7,var(--green));border-color:transparent;color:#052e1c;box-shadow:0 0 12px rgba(52,211,153,.45)}
-.onode.now{background:linear-gradient(135deg,#67E8F9,var(--cyan));border-color:transparent;color:#062a30;box-shadow:0 0 14px rgba(34,211,238,.55);animation:nowPulse 1.6s ease-in-out infinite}
-@keyframes nowPulse{0%,100%{box-shadow:0 0 8px rgba(34,211,238,.35)}50%{box-shadow:0 0 18px rgba(34,211,238,.75)}}
-.oline{flex:1;height:3px;border-radius:99px;background:var(--stroke);margin:0 5px}
-.oline.done{background:linear-gradient(90deg,var(--green),var(--cyan))}
-.olabels{display:flex;justify-content:space-between;margin-top:6px;font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--dim)}
-.olabels span.on{color:var(--ink)}
-/* data centre */
-.hbar{margin-bottom:11px}
-.hbar .hl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-bottom:5px}
-.hbar .hl b{font-family:var(--mono);color:var(--gold2);font-weight:600}
-.hbar .track{height:11px;border-radius:99px;background:var(--glass2);overflow:hidden;border:1px solid var(--stroke)}
-.hbar .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold2),var(--gold));box-shadow:0 0 14px rgba(227,154,59,.45)}
-.hbar .fill.cy{background:linear-gradient(90deg,#67E8F9,var(--violet));box-shadow:0 0 14px rgba(34,211,238,.4)}
-.tblwrap{max-height:330px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--stroke2) transparent}
-.tblwrap::-webkit-scrollbar{width:7px}
-.tblwrap::-webkit-scrollbar-thumb{background:var(--stroke2);border-radius:99px}
-.spark{display:inline-flex;gap:2px;align-items:flex-end;height:22px;vertical-align:middle}
-.spark i{width:5px;background:linear-gradient(180deg,#67E8F9,var(--violet));border-radius:2px;display:block;min-height:2px}
-
-/* supplier shop list */
-.shoprow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--sep);cursor:pointer}
+.shoprow{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s3) 0;
+  border-bottom:var(--bw) solid var(--sep);cursor:pointer}
 .shoprow:last-child{border-bottom:none}
-.shopav{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,rgba(247,197,114,.22),rgba(167,139,250,.16));border:1px solid var(--stroke2);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold2);font-size:15px;flex-shrink:0}
+.shoprow .info{min-width:0}
+.shopav{width:40px;height:40px;border-radius:var(--r-sm);background:var(--acc-tint);
+  border:var(--bw) solid var(--acc-line);display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:var(--acc-text);font-size:var(--fs-body-l);flex-shrink:0}
 
-/* alerts */
-.alert{border:1px solid rgba(247,197,114,.3);background:linear-gradient(180deg,rgba(247,197,114,.10),rgba(247,197,114,.03));border-radius:15px;padding:14px 15px;margin-bottom:11px}
-.alert.bad{border-color:rgba(251,113,133,.38);background:linear-gradient(180deg,rgba(251,113,133,.12),rgba(251,113,133,.03))}
-.alert .t{font-weight:600;font-size:13.5px;line-height:1.5}
-.alert .d{font-size:12px;color:var(--muted);margin-top:5px}
-.alert .act{margin-top:10px;display:flex;gap:8px}
+/* receiving discrepancy line */
+.rline{display:flex;gap:var(--s2);align-items:center;flex-wrap:wrap;
+  font-size:var(--fs-micro);color:var(--muted);margin:var(--s2) 0 0 56px}
+.rline .was{text-decoration:line-through;color:var(--dim);font-weight:500}
+.rline .chips{margin:0;padding:0}
+.rline .chips button{padding:var(--s1) var(--s2);font-size:var(--fs-micro);min-height:44px}
 
-.empty{color:var(--muted);text-align:center;padding:30px 12px;font-size:13.5px}
-.empty .em{font-size:34px;display:block;margin-bottom:8px}
-.notice{background:linear-gradient(135deg,rgba(34,211,238,.12),rgba(167,139,250,.10));border:1px solid var(--stroke2);border-radius:15px;padding:13px 15px;margin-bottom:14px;font-size:12.5px;color:#CDE9F5;line-height:1.6}
-.footer-note{text-align:center;color:var(--dim);font-size:11px;margin:18px 0 4px}
-.tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
-.tbl th{text-align:left;color:var(--dim);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:7px 5px;border-bottom:1px solid var(--stroke2)}
-.tbl td{padding:9px 5px;border-bottom:1px solid var(--sep)}
+/* ---------- numeric stepper ---------- */
+.qtyctl{
+  display:flex;align-items:center;gap:0;
+  background:var(--surface-2);border:var(--bw) solid var(--stroke2);
+  border-radius:var(--r-sm);padding:2px;
+}
+.qtyctl button{
+  width:44px;height:44px;border-radius:var(--r-xs);border:none;background:transparent;
+  color:var(--ink);font-family:var(--font);font-size:22px;font-weight:700;line-height:1;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background var(--dur-1) var(--ease);
+}
+.qtyctl button:active{background:var(--acc-tint)}
+.qtyctl span{
+  min-width:38px;text-align:center;
+  font-family:var(--font);font-variant-numeric:tabular-nums;
+  font-weight:700;font-size:18px;color:var(--ink);
+}
+/* mid-aisle, one-handed, after a mis-scan: this is the biggest control in the app */
+.scantray .qtyctl button{width:48px;height:48px;font-size:24px}
+.scantray .qtyctl span{min-width:44px;font-size:20px}
+
+/* ---------- accordion ---------- */
+.acc{margin:0 0 var(--s3)}
+.acc>summary{list-style:none;cursor:pointer;padding:var(--s3) var(--s4);
+  border:var(--bw) solid var(--stroke);border-radius:var(--r-sm);
+  background:var(--surface);font-weight:700;font-size:var(--fs-body-l);
+  display:flex;align-items:center;gap:var(--s2);min-height:48px}
+.acc>summary::-webkit-details-marker{display:none}
+.acc>summary::after{content:'▾';margin-left:auto;color:var(--muted);font-size:13px}
+.acc[open]>summary::after{content:'▴'}
+body.light .acc>summary{background:var(--surface)}
+
+/* ---------- barcode scanner ---------- */
+/* the box always holds video, so it stays dark in both themes */
+.scanbox{position:relative;margin-top:var(--s3);border-radius:var(--r);overflow:hidden;
+  background:#000;aspect-ratio:4/3;min-height:200px}
+.scanbox video{width:100%;height:100%;object-fit:cover;display:block}
+.scanroi{position:absolute;left:6%;right:6%;top:35%;height:30%;
+  border:2px solid #FFC46B;border-radius:var(--r-xs);box-shadow:0 0 0 2000px rgba(0,0,0,.42)}
+.scanroi::after{content:"";position:absolute;left:6px;right:6px;top:50%;height:2px;background:#FF6B6B;opacity:.9}
+.scanhint{position:absolute;left:0;right:0;bottom:var(--s2);text-align:center;color:#fff;
+  font-size:var(--fs-micro);font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.9)}
+
+/* ---------- inputs ---------- */
+.search,input[type="text"],input[type="number"],input[type="password"],input[type="date"],textarea,select{
+  width:100%;padding:0 var(--s3);min-height:48px;
+  border:var(--bw-strong) solid var(--stroke2);border-radius:var(--r-sm);
+  font-size:16px;                                  /* 16px prevents iOS zoom-on-focus */
+  font-family:var(--font);font-weight:500;
+  background:var(--surface);color:var(--ink);
+  outline:none;box-shadow:none;backdrop-filter:none;
+  transition:border-color var(--dur-1) var(--ease),box-shadow var(--dur-1) var(--ease);
+}
+textarea{padding:var(--s3);min-height:88px;line-height:1.5}
+.search{margin-bottom:var(--s3)}
+.search::placeholder,input::placeholder,textarea::placeholder{color:var(--dim);font-weight:400}
+#roomInput::placeholder{text-transform:none;letter-spacing:0}
+.search:focus,input:focus,textarea:focus,select:focus{
+  border-color:var(--acc);box-shadow:var(--focus);
+}
+/* field label — micro-label ABOVE the field, never a sentence beside it */
+.fieldlbl{
+  display:block;font-size:var(--fs-caps);font-weight:var(--fw-caps);
+  letter-spacing:var(--ls-caps);color:var(--dim);margin:0 0 var(--s1);
+}
+.fielderr{display:block;font-size:var(--fs-micro);font-weight:600;color:var(--danger);margin-top:var(--s1)}
+input.err,textarea.err{border-color:var(--danger)}
+
+/* ---------- orders ---------- */
+.order{
+  border:var(--bw) solid var(--stroke);border-radius:var(--r);
+  padding:var(--s4);margin-bottom:var(--s3);
+  background:var(--surface);box-shadow:var(--sh-1);
+  position:relative;overflow:hidden;
+}
+.order.st-new::before,.order.st-confirmed::before,.order.st-delivered::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+}
+.order.st-new{border-color:var(--stroke)}          /* status lives in the rail + badge only */
+.order.st-new::before{background:var(--info)}
+.order.st-confirmed::before{background:var(--acc)}
+.order.st-delivered::before{background:var(--success)}
+.order .oh{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s2);margin-bottom:var(--s1)}
+.order .oh b{font-size:var(--fs-body-l);font-weight:700}
+.oid{font-size:var(--fs-micro);color:var(--dim);font-weight:500}
+.oitems{font-size:var(--fs-micro);color:var(--muted);line-height:1.7;margin-top:var(--s2)}
+.obtns{display:flex;gap:var(--s2);margin-top:var(--s3)}
+.obtns button{flex:1}
+
+/* order progress tracker (shop side) */
+.otrack{display:flex;align-items:center;margin-top:var(--s3);padding:0 2px}
+.onode{width:24px;height:24px;border-radius:var(--r-pill);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;flex-shrink:0;
+  background:var(--surface-2);border:var(--bw) solid var(--stroke2);color:var(--muted)}
+.onode.done{background:var(--success);border-color:var(--success);color:var(--bg);box-shadow:none}
+.onode.now{background:var(--acc);border-color:var(--acc);color:var(--acc-ink);box-shadow:none;animation:none}
+.oline{flex:1;height:3px;border-radius:var(--r-pill);background:var(--stroke);margin:0 var(--s1)}
+.oline.done{background:var(--success)}
+.olabels{display:flex;justify-content:space-between;margin-top:var(--s1);
+  font-size:var(--fs-caps);font-weight:600;letter-spacing:0;text-transform:none;color:var(--dim)}
+.olabels span.on{color:var(--ink);font-weight:700}
+
+/* ---------- progress / meter ---------- */
+.hbar{margin-bottom:var(--s3)}
+.hbar .hl{display:flex;justify-content:space-between;align-items:baseline;
+  font-size:var(--fs-micro);color:var(--muted);margin-bottom:var(--s1);gap:var(--s2)}
+.hbar .hl b{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.hbar .track{height:8px;border-radius:var(--r-pill);background:var(--surface-2);
+  overflow:hidden;border:var(--bw) solid var(--stroke)}
+.hbar .fill{height:100%;border-radius:var(--r-pill);background:var(--acc);box-shadow:none;
+  transition:width var(--dur-3) var(--ease)}
+.hbar .fill.cy{background:var(--info)}
+.spark{display:inline-flex;gap:2px;align-items:flex-end;height:20px;vertical-align:middle}
+.spark i{width:4px;background:var(--acc);border-radius:1px;display:block;min-height:2px;opacity:.7}
+.spark i:last-child{opacity:1}
+
+/* ---------- alerts / notices / empty ---------- */
+/* alert = a card with a 3px status rail, no gradient, no tint fill */
+.alert{
+  border:var(--bw) solid var(--acc-line);border-left:3px solid var(--acc);
+  background:var(--surface);border-radius:var(--r);
+  padding:var(--s3) var(--s4);margin-bottom:var(--s2);box-shadow:var(--sh-1);
+}
+.alert.bad{border-color:var(--danger-line);border-left-color:var(--danger)}
+.alert .t{font-size:var(--fs-body-l);font-weight:600;line-height:1.4;color:var(--ink)}
+.alert .d{font-size:var(--fs-micro);color:var(--muted);margin-top:var(--s1);line-height:var(--lh-micro)}
+.alert .act{margin-top:var(--s3);display:flex;gap:var(--s2)}
+
+/* the demo note and the privacy one-liner are context, not content: a rule, not a box */
+.notice{
+  background:transparent;border:none;border-left:3px solid var(--info-line);
+  border-radius:0;padding:var(--s1) 0 var(--s1) var(--s3);
+  margin:0 0 var(--s3);font-size:var(--fs-micro);line-height:1.5;color:var(--muted);
+}
+.notice.bad{border-left-color:var(--danger)}
+
+.empty{
+  color:var(--muted);text-align:center;
+  padding:var(--s8) var(--s4);
+  font-size:var(--fs-body);line-height:1.5;
+  display:flex;flex-direction:column;align-items:center;gap:var(--s2);
+}
+.empty .em{
+  font-size:28px;line-height:1;display:flex;align-items:center;justify-content:center;
+  width:56px;height:56px;border-radius:var(--r-pill);
+  background:var(--surface-2);margin:0 0 var(--s1);
+  filter:grayscale(.35);opacity:.9;
+}
+.footer-note{text-align:center;color:var(--dim);font-size:var(--fs-caps);margin:var(--s5) 0 var(--s1)}
+
+/* ---------- tables ---------- */
+.tbl{width:100%;border-collapse:collapse;font-size:var(--fs-micro);margin-top:var(--s2);min-width:100%}
+.tbl th{
+  text-align:left;color:var(--dim);
+  font-size:var(--fs-caps);font-weight:var(--fw-caps);
+  letter-spacing:var(--ls-caps);text-transform:none;
+  padding:var(--s2) var(--s1);border-bottom:var(--bw) solid var(--stroke2);
+  white-space:nowrap;
+}
+.tbl td{padding:var(--s3) var(--s1);border-bottom:var(--bw) solid var(--sep);color:var(--ink);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+/* every numeric column right-aligns and shares one figure width */
+.tbl td.num,.tbl th.num,.tbl td:has(.num){text-align:right;font-variant-numeric:tabular-nums}
+/* The last column — the Կարգավիճակ badge and the Փաստաթուղթ button, i.e. the one fact the
+   Պարտքեր workflow turns on — was sliced by the card edge and read as rendering damage.
+   Two fixes: cells may now WRAP (so at 390px the table fits and nothing is cut at all), and
+   where a table is still wider than its box, a scroll shadow makes the motion visible.
+   The shadow is the background-attachment:local trick — it appears only when there is
+   actually something to scroll to, and costs no JS. */
+.tbl td,.tbl th{overflow-wrap:break-word}
+.tblsub{display:none}
+.tbl .badge{white-space:normal;text-align:left;line-height:1.25}
+/* On a phone a 5-column Armenian table can never be 324px wide by measuring its content, so it
+   was cut at the right edge and the Կարգավիճակ badge — the one fact Պարտքեր turns on — was
+   sliced mid-word. Fixed layout gives every column a guaranteed share of the width the phone
+   actually has and lets the text wrap inside it: taller rows, nothing hidden, no sideways
+   swipe to discover. The scroll shadow above stays as the safety net for wider tables. */
+@media (max-width:520px){
+  /* fixed layout + an explicit share per column: every column is guaranteed enough room for
+     its own header and its own content, so nothing is cut and nothing chops mid-word. */
+  .tbl{font-size:13.5px;table-layout:fixed;width:100%}
+  .tbl th,.tbl td{padding-left:3px;padding-right:3px;white-space:normal}
+  .tbl th{font-size:11px;letter-spacing:0;line-height:1.25}
+  .tbl td{padding-top:10px;padding-bottom:10px}
+  .tbl th:nth-child(1),.tbl td:nth-child(1){width:25%}
+  .tbl th:nth-child(2),.tbl td:nth-child(2){width:16%}
+  .tbl th:nth-child(3),.tbl td:nth-child(3){width:17%}
+  .tbl th:nth-child(4),.tbl td:nth-child(4){width:19%}
+  .tbl th:nth-child(5),.tbl td:nth-child(5){width:23%}
+  /* Five Armenian columns cannot share 324px without chopping words. The date is the one
+     field that reads perfectly well as a sub-line under the identity it belongs to — exactly
+     the fold the գույքագրման ակտ already uses for its two reference columns. Print, CSV and
+     desktop keep all five columns. */
+  .tblsub{display:block;font-size:12px;font-weight:500;color:var(--dim);margin-top:2px;
+          letter-spacing:0;white-space:nowrap}
+  .tfold-b th:nth-child(2),.tfold-b td:nth-child(2),
+  .tfold-h th:nth-child(1),.tfold-h td:nth-child(1){display:none}
+  /* shares chosen from measured Armenian word widths: the status pill and the document
+     number are the two values that must never break, so they get the slack. */
+  .tfold-b th:nth-child(1),.tfold-b td:nth-child(1){width:24%}
+  .tfold-b th:nth-child(3),.tfold-b td:nth-child(3){width:23%}
+  .tfold-b th:nth-child(4),.tfold-b td:nth-child(4){width:21%}
+  .tfold-b th:nth-child(5),.tfold-b td:nth-child(5){width:32%}
+  .tfold-h th:nth-child(2),.tfold-h td:nth-child(2){width:28%}
+  .tfold-h th:nth-child(3),.tfold-h td:nth-child(3){width:12%}
+  .tfold-h th:nth-child(4),.tfold-h td:nth-child(4){width:22%}
+  .tfold-h th:nth-child(5),.tfold-h td:nth-child(5){width:38%}
+  .tbl .num{white-space:nowrap;overflow-wrap:normal}
+  .tbl .cur{font-size:13px;margin-left:.1em}
+  /* a row-action button inside a table cell is a BLOCK under the status it acts on, not an
+     inline pill that sizes the column by its own Armenian label */
+  .tbl .btn{width:100%;display:flex;font-size:13px;padding:0 3px;min-height:44px;
+            margin-top:5px;white-space:normal;overflow-wrap:anywhere;line-height:1.15}
+  /* an inline-FLEX pill can never be narrower than its longest word (flex items carry
+     min-width:auto), which is what kept the status column 98px wide inside a 56px cell */
+  /* a shrink-to-fit pill can never be narrower than its longest word even with break-word, so
+     in a fixed column it overflowed. As a block it takes exactly the column and wraps inside it. */
+  .tbl .badge{display:block;padding:3px 2px;font-size:12px;line-height:1.3;
+              white-space:normal;overflow-wrap:anywhere;text-align:center}
+}
+.tblwrap{max-height:340px;overflow-y:auto;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;scrollbar-color:var(--stroke2) transparent;
+  background:
+    linear-gradient(to right,var(--surface) 40%,rgba(255,255,255,0)) left center,
+    linear-gradient(to left,var(--surface) 40%,rgba(255,255,255,0)) right center,
+    linear-gradient(to right,rgba(14,23,38,.20),rgba(14,23,38,0)) left center,
+    linear-gradient(to left,rgba(14,23,38,.20),rgba(14,23,38,0)) right center;
+  background-repeat:no-repeat;
+  background-size:34px 100%,34px 100%,14px 100%,14px 100%;
+  background-attachment:local,local,scroll,scroll;}
+.tblwrap::-webkit-scrollbar{width:6px}
+.tblwrap::-webkit-scrollbar-thumb{background:var(--stroke2);border-radius:var(--r-pill)}
 /* ---- գույքագրման ակտ ---- */
-.actrule{border:none;border-top:1px solid var(--stroke2);margin:12px 0}
-.actsep{border-top:1px solid var(--stroke2)}
-.actsignline{border-bottom:1px solid var(--stroke2);height:26px;max-width:180px}
+.actrule{border:none;border-top:var(--bw) solid var(--stroke2);margin:var(--s3) 0}
+.actsep{border-top:var(--bw) solid var(--stroke2)}
+.actsignline{border-bottom:var(--bw) solid var(--stroke2);height:26px;max-width:180px}
 .acttbl .actsub{display:none}
 /* On a phone the 7-column act is ~465px wide inside a 352px wrapper, so ՓԱՍՏԱՑԻ, Δ and ֏ —
    the whole point of the document — scrolled off with no cue. Below 560px the two reference
@@ -232,97 +692,200 @@ body.light .rline .chips button{background:#FFFFFF}
 @media screen and (max-width:560px){
   .acttbl th:nth-child(2),.acttbl td:nth-child(2),
   .acttbl th:nth-child(3),.acttbl td:nth-child(3){display:none}
-  .acttbl .actsub{display:block;font-size:10px;margin-top:3px}
+  .acttbl .actsub{display:block;font-size:12.5px;margin-top:3px}
   .acttbl th,.acttbl td{padding-left:3px;padding-right:3px}
-  .acttbl{font-size:11.5px}
+  .acttbl{font-size:13px}
 }
 
-/* ---------- TOP BAR (global controls) ---------- */
-/* the six global controls + the logo cannot share one 390px row: without wrapping they pushed
-   the bell, the split toggle, the language switch and ⏭ off-screen and made the WHOLE document
-   scroll sideways. Wrap instead — every control stays reachable and nothing overflows. */
-#top{position:sticky;top:0;z-index:60;display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:calc(9px + env(safe-area-inset-top)) 14px 9px;background:rgba(9,13,26,.72);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid var(--stroke)}
-.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.3px}
-.logomark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--gold2),var(--gold));display:flex;align-items:center;justify-content:center;color:#1a1205;font-size:16px;box-shadow:0 5px 18px rgba(227,154,59,.45)}
-.logo small{display:block;font-family:var(--font);font-weight:500;font-size:10.5px;color:var(--muted);margin-top:1px}
-#top .spacer{flex:1 1 0;min-width:0}
-.logo{min-width:0}
-.logo>div{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tbtn{border:1px solid var(--stroke2);background:var(--glass);color:var(--ink);border-radius:11px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;backdrop-filter:blur(10px)}
-.tbtn:active{transform:scale(.95)}
-.tbtn.on{background:linear-gradient(135deg,rgba(247,197,114,.24),rgba(227,154,59,.12));color:var(--gold2);border-color:rgba(247,197,114,.5)}
-.tbtn.day{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1205;border-color:transparent;box-shadow:0 5px 16px rgba(227,154,59,.35)}
-.datechip{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
-/* R4: two header rows + two nav rows left less than half a 390px phone for content. */
-@media (max-width:460px){
-  #top{gap:5px 6px;padding:calc(7px + env(safe-area-inset-top)) 9px 7px}
-  .tbtn{padding:6px 8px;font-size:11.5px;gap:4px}
-  .datechip{font-size:10px}
-  #top .logo small{display:none}
+/* ---------- TOP BAR: one 52px row ---------- */
+#top{
+  position:sticky;top:0;z-index:60;
+  display:flex;flex-wrap:nowrap;align-items:center;gap:var(--s2);
+  /* 38px control + 6px above + 6px below + the 1px rule = the 52px row exactly */
+  padding:6px var(--s3);
+  padding-top:calc(6px + env(safe-area-inset-top));
+  min-height:calc(var(--h-top) + env(safe-area-inset-top));
+  background:var(--surface);
+  border-bottom:var(--bw) solid var(--stroke);
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  transition:transform var(--dur-2) var(--ease);
+  will-change:transform;
 }
+.logo{display:flex;align-items:center;gap:var(--s2);min-width:0;
+  font-family:var(--font);font-weight:700;font-size:var(--fs-body-l);letter-spacing:-.2px}
+.logo>div{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.logo small{display:block;font-weight:500;font-size:11.5px;color:var(--dim);margin-top:0}
+.logomark{width:30px;height:30px;border-radius:var(--r-xs);
+  background:var(--acc);display:flex;align-items:center;justify-content:center;
+  color:var(--acc-ink);font-size:15px;box-shadow:none;flex:0 0 auto}
+#top .spacer{flex:1 1 0;min-width:0}
+/* The date is the demo's ONLY readout of the day-simulator, so it must not be the thing that
+   shrinks first — it used to collapse to «📅 …» (one character) at the default demo width.
+   The split toggle's word label absorbs the squeeze instead; the date holds its digits. */
+.datechip{
+  font-weight:600;font-size:var(--fs-micro);color:var(--muted);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+  flex:0 0 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;
+}
+/* every global control is one 38px square; a control that carries words widens, nothing else does */
+.tbtn{
+  width:38px;height:38px;padding:0;flex:0 0 auto;
+  border:var(--bw) solid var(--stroke2);border-radius:var(--r-xs);
+  background:var(--surface);color:var(--ink);
+  font-family:var(--font);font-size:17px;line-height:1;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:var(--s1);
+  backdrop-filter:none;
+  transition:transform var(--dur-1) var(--ease),background var(--dur-1) var(--ease);
+}
+.tbtn:active{transform:scale(.94);background:var(--surface-2)}
+.tbtn.wide{width:auto;min-width:38px;padding:0 var(--s3);font-size:var(--fs-label);
+  flex:0 20 auto;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.tbtn.on{background:var(--acc-tint);color:var(--acc-text);border-color:var(--acc-line)}
+.tbtn.day{background:var(--acc-tint);color:var(--acc-text);border-color:var(--acc-line);border-width:var(--bw-strong);box-shadow:none}
+
+/* on a phone the brand is not worth a header row */
+@media (max-width:460px){
+  #top .logo{display:none}
+  #top{gap:6px}
+  .tbtn.wide{padding:0 var(--s2)}
+}
+@media (max-width:360px){
+  #top{gap:4px;padding-left:6px;padding-right:6px}
+  /* narrow, not short: the horizontal budget is what binds at 320px, so the header controls
+     give width and keep their 38px height. */
+  .tbtn{width:34px;height:38px;font-size:16px}
+  .tbtn.wide{padding:0 5px;font-size:13px;min-width:34px}
+  /* at 320 there is genuinely not enough room for six controls AND a full date, so here —
+     and only here — the date may ellipsise again, after everything else has given way. */
+  .datechip{font-size:12.5px;flex:0 1 auto}
+}
+/* hidden-on-scroll state */
+#top.hid{transform:translateY(-100%)}
 
 /* ---------- SPLIT layout ---------- */
 #app{position:relative}
-.split{display:grid;grid-template-columns:1fr;gap:14px;padding:14px;max-width:720px;margin:0 auto}
-.pane{display:flex;flex-direction:column;min-height:0;overflow:hidden}
-.panehead{position:sticky;top:0;z-index:5;padding:12px 14px 8px;background:rgba(255,255,255,.04);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
-.panetitle{font-family:var(--display);font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.panetitle .tag{margin-left:auto;font-family:var(--font);font-weight:700;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.split{display:grid;grid-template-columns:1fr;gap:var(--s3);padding:var(--s3);max-width:720px;margin:0 auto}
+.pane{display:flex;flex-direction:column;min-height:0;overflow:hidden;
+  background:var(--surface);border:var(--bw) solid var(--stroke);
+  border-radius:var(--r);box-shadow:var(--sh-1)}
+.panehead{position:sticky;top:0;z-index:5;padding:var(--s3) var(--s4) var(--s2);
+  background:var(--surface);backdrop-filter:none;border-bottom:var(--bw) solid var(--stroke)}
+.panetitle{font-family:var(--font);font-size:var(--fs-title);font-weight:var(--fw-title);
+  letter-spacing:var(--ls-title);display:flex;align-items:center;gap:var(--s2);margin-bottom:var(--s3)}
+.panetitle .tag{margin-left:auto;font-weight:600;font-size:var(--fs-caps);color:var(--dim);
+  text-transform:none;letter-spacing:0}
 .panetabs{margin-bottom:0}
-.panetabs button{padding:7px 12px}
-.panetabs button.active .dot,.chips button.active .dot{background:var(--gold2);color:#1a1205}
-.panebody{padding:14px}
-.pane.flash{animation:flashPane .9s ease}
-@keyframes flashPane{0%{box-shadow:0 0 0 0 rgba(34,211,238,.0)}25%{box-shadow:0 0 0 3px rgba(34,211,238,.6),0 0 40px rgba(34,211,238,.35)}100%{box-shadow:0 0 0 0 rgba(34,211,238,0)}}
+.panetabs button{padding:0 var(--s3);min-height:40px;font-size:var(--fs-micro)}
+.panebody{padding:var(--s4)}
+.pane.flash{animation:flashPane .9s var(--ease)}
+@keyframes flashPane{
+  0%{box-shadow:var(--sh-1)}
+  25%{box-shadow:0 0 0 2px var(--acc), var(--sh-2)}
+  100%{box-shadow:var(--sh-1)}
+}
 .flowmark{display:none}
 
 /* ---------- SINGLE layout (mobile bottom nav) ---------- */
 /* R4: this animation used to run on EVERY renderAll(), so each ± tap on a replenishment or
    receiving stepper faded the whole pane out for ~150 ms and the number being adjusted was
    unreadable. It now plays only when the view actually changes (see VIEWKEY in renderAll). */
-main{padding:14px;max-width:680px;margin:0 auto}
-main.anim{animation:fadeUp .28s ease both}
-@media (prefers-reduced-motion:reduce){ main.anim{animation:none} }
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.roleswitch{display:flex;background:var(--glass);border:1px solid var(--stroke);border-radius:13px;padding:3px;margin:0 auto 4px;max-width:680px}
-.roleswitch button{flex:1;border:none;background:transparent;color:var(--muted);padding:9px 6px;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;transition:.18s}
-.roleswitch button.active{background:linear-gradient(135deg,rgba(247,197,114,.24),rgba(227,154,59,.12));color:var(--gold2)}
-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(9,13,26,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--stroke);display:flex;z-index:60;padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
-nav button{flex:1;border:none;background:none;padding:7px 2px;font-size:10px;color:var(--dim);cursor:pointer;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative}
-nav button.active{color:var(--gold2)}
-nav button.active .icw{background:rgba(247,197,114,.18)}
-nav .icw{width:44px;height:28px;border-radius:99px;display:flex;align-items:center;justify-content:center;font-size:18px;transition:.15s}
-.navbadge{position:absolute;top:0;left:calc(50% + 6px);background:var(--rose);color:#2a0710;font-size:9.5px;font-weight:800;border-radius:99px;padding:1.5px 6px}
-/* 8 shop tabs must fit a one-thumb phone */
-nav .icw{width:40px}
-nav button{min-width:0;overflow:hidden;white-space:nowrap}
-nav button>span:last-child{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
-body.single-mobile{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
-/* Below ~460px eight full Armenian labels cannot share one row without ellipsising into
-   ambiguous stubs (Պատվ… / Պարտ…). Wrap the strip onto two rows of four instead: every
+main{padding:var(--s3) var(--s4) var(--s4);max-width:680px;margin:0 auto}
+main.anim{animation:fadeUp var(--dur-3) var(--ease-out) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}
+
+.roleswitch{display:flex;background:var(--surface-2);border:var(--bw) solid var(--stroke);
+  border-radius:var(--r-sm);padding:2px;margin:var(--s2) auto var(--s1);max-width:680px}
+.roleswitch button{flex:1;min-height:44px;border:none;background:transparent;color:var(--muted);
+  padding:0;border-radius:var(--r-xs);font-family:var(--font);
+  font-size:var(--fs-label);font-weight:600;cursor:pointer;
+  transition:background var(--dur-2) var(--ease),color var(--dur-2) var(--ease)}
+.roleswitch button.active{background:var(--surface);color:var(--acc-text);font-weight:700;box-shadow:var(--sh-1)}
+/* a real account cannot switch roles, so the strip is not a control — it is the caption that
+   tells the shopkeeper which shop he is logged in as. As a 50px pill it cost 62px of every
+   screen for a line of text; as a caption it costs 24px and says exactly the same thing. */
+.acctline{max-width:680px;margin:var(--s2) auto 0;text-align:center;
+  font-size:var(--fs-label);font-weight:700;color:var(--muted);line-height:1.25}
+
+nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:60;
+  display:flex;flex-wrap:wrap;
+  background:var(--surface);
+  border-top:var(--bw) solid var(--stroke);
+  box-shadow:var(--sh-3);
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  padding:2px var(--s1) calc(2px + env(safe-area-inset-bottom));
+}
+nav button{
+  flex:1;min-width:0;border:none;background:none;cursor:pointer;
+  height:var(--h-nav-row);padding:0 1px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  position:relative;overflow:hidden;white-space:nowrap;
+  font-family:var(--font);font-size:var(--fs-nav);font-weight:600;line-height:var(--lh-nav);
+  color:var(--dim);
+  transition:color var(--dur-1) var(--ease);
+}
+nav button>span:last-child{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+nav .icw{
+  width:26px;height:20px;border-radius:var(--r-xs);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;line-height:1;
+  transition:background var(--dur-1) var(--ease);
+}
+/* The active marker must be UNAMBIGUOUS on a two-row strip. A 3px rule at the top edge of a
+   row-2 cell sits 6px under a row-1 LABEL, so it read as underlining the tab above it — for 8
+   of 17 destinations the strongest cue in the nav pointed at the wrong screen. The marker is
+   now the cell itself: a tinted, outlined slab that starts and ends where the tab does, with
+   the accent rule drawn inside it. */
+nav button.active{
+  color:var(--acc-text);font-weight:700;
+  background:var(--acc-tint);border-radius:var(--r-xs);
+  box-shadow:inset 0 0 0 1.5px var(--acc-line);
+}
+nav button.active .icw{background:transparent}
+nav button.active::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--acc);
+}
+body.single-mobile{padding-bottom:calc(var(--h-nav) + env(safe-area-inset-bottom))}
+
+/* Below ~460px ten full Armenian labels cannot share one row without ellipsising into
+   ambiguous stubs (Պատվ… / Պարտ…). Wrap the strip onto two rows instead: every
    destination keeps its whole name and every tab keeps a comfortable touch target. */
 @media (max-width:460px){
-  nav{flex-wrap:wrap;padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
-  nav button{flex:0 0 25%;max-width:25%;font-size:10px;padding:5px 2px;gap:2px}
-  nav .icw{width:34px;height:23px;font-size:15px}
-  body.single-mobile{padding-bottom:calc(132px + env(safe-area-inset-bottom))}
-  /* the shop grew a 9th tab (🧮 Գույքագրում): 5 + 4 across the same two rows, same height */
-  nav.cols9 button{flex:0 0 20%;max-width:20%}
+  nav{padding-left:0;padding-right:0}
+  nav button{flex:0 0 25%;max-width:25%;padding:0}
+  nav.cols9 button,nav.cols10 button{flex:0 0 20%;max-width:20%}
+  /* «Խանութի մնացորդ» is 124px of Armenian in a 97px cell — the only truncated destination
+     left in the app. It gets a second line, paid for out of the icon, so the strip keeps its
+     42px rows and every destination keeps its whole name. */
+  nav.cols7 button>span:last-child{white-space:normal;line-height:1.05;overflow:visible;text-overflow:clip}
+  nav.cols7 .icw{height:18px;font-size:16px}
 }
-@media (max-width:400px){ nav.cols9 button{font-size:9px} nav.cols9 .icw{width:30px} }
-@media (max-width:340px){ nav button{font-size:9px} }
-/* at 320px a 9-tab strip gives each button ~58px of label room; «Գույքագրում» / «Ապրանքներ» /
-   «Պատվերներ» only fit whole below 8.5px. Scoped to cols9, so the supplier nav is untouched. */
-@media (max-width:340px){ nav.cols9 button{font-size:8px;letter-spacing:-.2px} }
-/* R3: the shop grew a 10th tab (🗓 Ժամկետներ) — a clean 5+5 across the SAME two rows, so
-   body.single-mobile padding (132px) and the #toast offset (144px) are unchanged. */
-@media (max-width:460px){ nav.cols10 button{flex:0 0 20%;max-width:20%} }
-@media (max-width:400px){ nav.cols10 button{font-size:9px} nav.cols10 .icw{width:30px} }
-@media (max-width:340px){ nav.cols10 button{font-size:8px;letter-spacing:-.2px} }
-@media (min-width:461px) and (max-width:700px){ nav.cols10 button{font-size:9px} nav.cols10 .icw{width:30px} }
+@media (max-width:400px){
+  nav.cols9 button,nav.cols10 button{font-size:11px;letter-spacing:-.2px}
+  nav.cols9 .icw,nav.cols10 .icw{width:24px;font-size:17px}
+}
+@media (max-width:378px){
+  nav.cols9 button,nav.cols10 button{font-size:10.5px;letter-spacing:-.3px}
+}
+@media (max-width:340px){
+  nav button{font-size:11px;letter-spacing:-.2px}
+  nav.cols9 button,nav.cols10 button{font-size:10px;letter-spacing:-.4px}
+}
+@media (max-width:360px){
+  nav.cols7 .icw{height:16px;font-size:15px}
+  nav.cols7 button{font-size:10px;letter-spacing:-.3px}
+}
+@media (min-width:461px) and (max-width:700px){
+  nav.cols10 button{font-size:10.5px}
+  nav.cols10 .icw{width:24px}
+}
+
 /* a row that carries two actions must be allowed to wrap them; flex-basis beats the
    width:100% the .sug.stack rule gives a stacked action button */
-.expcard .obtns,.rptrow .obtns{flex-wrap:wrap}
+.expcard .obtns,.rptrow .obtns{flex-wrap:wrap;gap:var(--s2)}
 .expcard .obtns .btn,.rptrow .obtns .btn{flex:1 1 44%;min-width:0;overflow-wrap:anywhere}
 /* ...and the action column must be BOUNDED, or two long Armenian labels size it by their own
    content and squeeze the product name to one character per line in the 600px split pane.
@@ -332,111 +895,127 @@ body.single-mobile{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
    Full-width stacked there; side by side only on the phone, where the column IS the row. */
 @media (min-width:461px){ .expcard .obtns .btn,.rptrow .obtns .btn{flex:1 1 100%} }
 
-/* toast & modal */
-#toast{position:fixed;left:50%;transform:translateX(-50%) translateY(8px);bottom:calc(96px + env(safe-area-inset-bottom));background:linear-gradient(135deg,#67E8F9,var(--cyan));color:#062a30;padding:12px 20px;border-radius:13px;font-size:13.5px;font-weight:800;z-index:100;opacity:0;transition:.28s;pointer-events:none;max-width:88%;text-align:center;box-shadow:0 10px 34px rgba(34,211,238,.45)}
+/* ---------- toast & modal ---------- */
+#toast{
+  position:fixed;left:50%;transform:translateX(-50%) translateY(8px);
+  bottom:calc(var(--h-nav) + var(--s3) + env(safe-area-inset-bottom));
+  background:var(--ink);color:var(--bg);
+  padding:var(--s3) var(--s5);border-radius:var(--r-sm);
+  font-family:var(--font);font-size:var(--fs-body);font-weight:600;line-height:1.35;
+  z-index:100;opacity:0;pointer-events:none;
+  max-width:calc(100% - var(--s8));text-align:center;
+  box-shadow:var(--sh-2);
+  transition:opacity var(--dur-2) var(--ease),transform var(--dur-2) var(--ease-out);
+}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-@media (max-width:460px){ #toast{bottom:calc(144px + env(safe-area-inset-bottom))} }
-.modal{position:fixed;inset:0;background:rgba(4,7,14,.72);backdrop-filter:blur(6px);z-index:90;display:flex;align-items:flex-end;justify-content:center;animation:fade .2s ease}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-.mbody{background:rgba(20,26,44,.92);backdrop-filter:blur(24px);border:1px solid var(--stroke2);width:100%;max-width:680px;border-radius:24px 24px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom));max-height:84vh;overflow-y:auto;animation:slideUp .28s cubic-bezier(.2,.9,.3,1)}
-@keyframes slideUp{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}
-.grabber{width:40px;height:4px;border-radius:99px;background:var(--stroke2);margin:6px auto 14px}
-.mbody h3{margin:0 0 4px;font-family:var(--display);font-size:18px}
+@media (min-width:461px){ #toast{bottom:calc(var(--s5) + env(safe-area-inset-bottom))} }
+
+.modal{
+  position:fixed;inset:0;z-index:90;
+  background:rgba(6,10,18,.58);
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  display:flex;align-items:flex-end;justify-content:center;
+  animation:fade var(--dur-2) var(--ease);
+}
+body.light .modal{background:rgba(14,23,38,.42)}
+.mbody{
+  background:var(--surface);color:var(--ink);
+  border:none;border-top:var(--bw) solid var(--stroke);
+  width:100%;max-width:680px;
+  border-radius:var(--r-lg) var(--r-lg) 0 0;
+  padding:var(--s2) var(--s4) calc(var(--s5) + env(safe-area-inset-bottom));
+  max-height:88vh;overflow-y:auto;overscroll-behavior:contain;
+  box-shadow:var(--sh-3);backdrop-filter:none;
+  animation:slideUp var(--dur-3) var(--ease-out);
+}
+.grabber{width:36px;height:4px;border-radius:var(--r-pill);background:var(--stroke2);
+  margin:var(--s2) auto var(--s4)}
+.mbody h3{
+  margin:0 0 var(--s1);font-family:var(--font);
+  font-size:var(--fs-display-s);font-weight:var(--fw-display-s);
+  line-height:var(--lh-display-s);letter-spacing:var(--ls-display-s);
+}
 
 /* grid inside single desktop */
 .grid2{display:block}
 
 /* ================= DESKTOP ================= */
 @media (min-width:980px){
-  .split{max-width:none;grid-template-columns:1fr 1fr;gap:20px;height:calc(100vh - 60px);padding:18px 24px;align-items:stretch}
+  .split{max-width:none;grid-template-columns:1fr 1fr;gap:var(--s5);height:calc(100vh - 53px);padding:var(--s4) var(--s6);align-items:stretch}
   .pane{height:100%}
   .panebody{overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--stroke2) transparent}
   .panebody::-webkit-scrollbar{width:8px}
-  .panebody::-webkit-scrollbar-thumb{background:var(--stroke2);border-radius:99px}
-  .split.is-two .flowmark{display:flex;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:8;width:46px;height:46px;border-radius:50%;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,rgba(34,211,238,.9),rgba(167,139,250,.9));color:#04121a;box-shadow:0 8px 30px rgba(34,211,238,.5);border:2px solid rgba(255,255,255,.3);animation:pulseFlow 2.6s ease-in-out infinite}
-  @keyframes pulseFlow{0%,100%{box-shadow:0 8px 30px rgba(34,211,238,.5)}50%{box-shadow:0 8px 44px rgba(167,139,250,.7)}}
+  .panebody::-webkit-scrollbar-thumb{background:var(--stroke2);border-radius:var(--r-pill)}
+  .split.is-two .flowmark{display:flex;position:absolute;left:50%;top:50%;
+    transform:translate(-50%,-50%);z-index:8;width:40px;height:40px;border-radius:var(--r-pill);
+    align-items:center;justify-content:center;font-size:18px;
+    background:var(--acc);color:var(--acc-ink);box-shadow:var(--sh-2);
+    border:2px solid var(--surface);animation:none}
   /* wider details on big screens */
   .sug .nm{white-space:normal;overflow:visible;text-overflow:clip;font-size:15px;line-height:1.4}
-  .panebody{padding:16px 20px}
+  .panebody{padding:var(--s4) var(--s5)}
   /* single desktop */
-  main.single-desk{max-width:1400px}
+  /* the type scale, the 44px controls and the 2-line clamp on a product name are all tuned
+     for a narrow column; a 1400px measure ran .oitems to ~180 characters and put a row's
+     stepper 1600px from its product name. */
+  main.single-desk{max-width:1040px}
   .single-desk .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 30px;align-items:start}
   .single-desk .kpis{grid-template-columns:repeat(4,1fr)}
   .modal{align-items:center}
-  .mbody{border-radius:20px;max-width:560px}
+  .mbody{border-radius:var(--r-lg);max-width:560px}
 }
 @media (min-width:980px) and (max-width:1200px){
-  .panetabs button{padding:6px 9px;font-size:11.5px}
+  .panetabs button{padding:0 var(--s2);font-size:var(--fs-micro)}
+}
+
+/* ---------- Tier-1 emoji containers: one shared centring rule (§6) ---------- */
+nav .icw,.pav,.empty .em,.logomark,.shopav{
+  line-height:1;
+  font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",var(--font);
+  text-align:center;font-style:normal;
 }
 
 /* ================= MINIMAL LIGHT THEME (default) ================= */
 body.light{
-  --bg:#F5F6F8; --ink:#1A2233; --muted:#5B6472; --dim:#8A93A3; --sep:#ECEEF2;
-  --gold:#C77E1E; --gold2:#A8690F;
-  --cyan:#0E7490; --green:#15803D; --rose:#DC2626; --violet:#6D28D9; --blue:#1D4ED8;
-  --glass:#FFFFFF; --glass2:#F1F3F6;
-  --stroke:#E3E6EB; --stroke2:#CBD2DC;
+  --bg:#F4F6F8;
+  --surface:#FFFFFF;
+  --surface-2:#F1F4F8;
+  --surface-3:#E6EBF2;
+  --ink:#0E1726;              /* 16.6:1 on --bg */
+  --muted:#54607A;            /* 5.8:1 on --bg, 6.3:1 on white */
+  --dim:#5D6880;              /* 5.2:1 on --bg — never lighter than this */
+  --sep:#E6EAF0;
+  --stroke:#E1E6EE;
+  --stroke2:#C9D2E0;
+
+  --acc:#A85A07;              /* white-on-accent 5.08:1 */
+  --acc-ink:#FFFFFF;
+  --acc-tint:#FFF4E3;
+  --acc-line:#EBCFA4;
+  --acc-text:#8A4B00;         /* 6.8:1 on white, 6.25:1 on --acc-tint */
+  --gold:var(--acc); --gold2:var(--acc-text);
+
+  --danger:#B42318;   --danger-tint:#FEF1F1; --danger-line:#F5C9C4;
+  --success:#0B6B3A;  --success-tint:#EEF9F2; --success-line:#B7E3C9;
+  --info:#1F5FA8;     --info-tint:#EFF6FF;   --info-line:#BCD7F5;
+  --note:#5B21B6;     --note-tint:#F5F2FF;   --note-line:#DDD5F8;
+  --rose:var(--danger); --green:var(--success); --cyan:var(--info);
+  --violet:var(--note); --blue:var(--info);
+
+  --glass:var(--surface); --glass2:var(--surface-2);
+
+  --sh-0:none;
+  --sh-1:0 1px 2px rgba(14,23,38,.06);
+  --sh-2:0 4px 16px rgba(14,23,38,.08);
+  --sh-3:0 -8px 32px rgba(14,23,38,.14);
+  --focus:0 0 0 3px rgba(168,90,7,.22);
+
   background:var(--bg);
 }
 body.light::before, body.light::after{display:none}
-body.light .glass, body.light .card, body.light .kpi, body.light .pane{
-  backdrop-filter:none; -webkit-backdrop-filter:none;
-  background:#FFFFFF; box-shadow:0 1px 3px rgba(16,24,40,.06);
-}
-body.light .kpi::before{display:none}
-body.light .btn{backdrop-filter:none;-webkit-backdrop-filter:none;background:#FFFFFF;box-shadow:none}
-body.light .btn::after{display:none}
-body.light .btn.primary{background:#C77E1E;color:#fff;box-shadow:none;border-color:#C77E1E}
-body.light .btn.cyan{background:#0E7490;color:#fff;box-shadow:none}
-body.light .btn.green{background:#15803D;color:#fff;box-shadow:none}
-body.light .btn.violet{background:#6D28D9;color:#fff;box-shadow:none}
-body.light .btn.ghost{background:#F1F3F6;color:var(--ink)}
-body.light .btn.danger{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
-body.light .addbtn{background:#C77E1E;color:#fff;box-shadow:none}
-body.light .addbtn.added{background:#15803D;color:#fff;box-shadow:none}
-body.light .daybtn, body.light .tbtn.day{background:#C77E1E;color:#fff;box-shadow:none;border-color:transparent}
-body.light .tbtn{background:#FFFFFF;backdrop-filter:none;color:var(--ink)}
-body.light .tbtn.on{background:#FDF3E3;color:#A8690F;border-color:#E8C58A}
-body.light #top{background:#FFFFFF;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:1px solid var(--stroke)}
-body.light nav{background:#FFFFFF;backdrop-filter:none;-webkit-backdrop-filter:none;border-top:1px solid var(--stroke)}
-body.light nav button.active{color:#A8690F}
-body.light nav button.active .icw{background:#FDF3E3}
-body.light .logomark{box-shadow:none}
-body.light .roleswitch{background:#EDEFF3}
-body.light .roleswitch button.active{background:#FFFFFF;color:#A8690F;box-shadow:0 1px 2px rgba(16,24,40,.1)}
-body.light .chips button{background:#FFFFFF;color:var(--muted)}
-body.light .chips button.active{background:#FDF3E3;color:#A8690F;border-color:#E8C58A}
-body.light .search{background:#FFFFFF;backdrop-filter:none}
-body.light .search:focus{border-color:#C77E1E;box-shadow:0 0 0 3px rgba(199,126,30,.12)}
-body.light .qtyctl{background:#F1F3F6}
-body.light .qtyctl button{color:#A8690F}
-body.light .pav{background:#F1F3F6}
-body.light .order{background:#FFFFFF;box-shadow:0 1px 3px rgba(16,24,40,.06)}
-body.light .b-cyan{background:#ECFEFF;color:#0E7490;border-color:#A5F3FC}
-body.light .b-gold{background:#FDF6E7;color:#A8690F;border-color:#F0DCB0}
-body.light .b-green{background:#F0FDF4;color:#15803D;border-color:#BBF7D0}
-body.light .b-rose{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
-body.light .b-violet{background:#F5F3FF;color:#6D28D9;border-color:#DDD6FE}
-body.light .b-neutral{background:#F1F3F6;color:#5B6472;border-color:#E3E6EB}
-body.light .dot{background:#DC2626;color:#fff}
-body.light .navbadge{background:#DC2626;color:#fff}
-body.light .notice{background:#EFF6FF;border-color:#BFDBFE;color:#1E40AF}
-body.light .alert{background:#FFFBEB;border-color:#FDE68A}
-body.light .alert.bad{background:#FEF2F2;border-color:#FECACA}
-body.light #toast{background:#1A2233;color:#fff;box-shadow:0 6px 20px rgba(16,24,40,.25)}
-body.light .modal{background:rgba(23,30,45,.45);backdrop-filter:none}
-body.light .mbody{background:#FFFFFF;backdrop-filter:none}
-body.light .hbar .track{background:#EDEFF3}
-body.light .hbar .fill{background:#C77E1E;box-shadow:none}
-body.light .hbar .fill.cy{background:#0E7490;box-shadow:none}
-body.light .spark i{background:#0E7490}
-body.light .panehead{background:#FAFBFC;backdrop-filter:none}
-body.light .shopav{background:#FDF3E3;color:#A8690F}
-body.light .sug .sub b{color:#A8690F}
-body.light .osum{color:#A8690F}
-body.light .order.st-new{border-color:#A5F3FC}
-body.light .flowmark{background:#0E7490 !important;color:#fff !important;box-shadow:0 4px 14px rgba(14,116,144,.35) !important;animation:none !important}
-body.light .langsw{color:var(--muted)}
+body.light .flowmark{background:var(--acc) !important;color:#fff !important;
+  box-shadow:var(--sh-2) !important;animation:none !important}
+
 @media (min-width:1500px){
   .kpis{grid-template-columns:repeat(4,1fr)}
   .split{gap:26px;padding:20px 32px}
@@ -460,7 +1039,15 @@ body.light .langsw{color:var(--muted)}
          -webkit-backdrop-filter:none !important;animation:none !important}
   .mbody .muted{color:#555 !important}
   .mbody .big,.mbody .osum{color:#111 !important}
-  .tblwrap{max-height:none !important;overflow:visible !important}
+  .tblwrap{max-height:none !important;overflow:visible !important;background:none !important}
+  .tbl{table-layout:auto !important}
+  .tbl th,.tbl td{width:auto !important;display:table-cell !important;white-space:normal !important}
+  .tblsub{display:none !important}
+  /* the dram sign is INSIDE the .num it belongs to, so the td colour rule never reached it and
+     it printed 8px light-grey on both documents. On paper every mark is ink. */
+  .cur{color:#111 !important;font-size:max(.72em,12px) !important;font-weight:600 !important}
+  .doclbl,.mlbl{color:#333 !important;font-size:11px !important;letter-spacing:0 !important;
+                text-transform:none !important}
   .tbl{page-break-inside:auto}
   .tbl tr{page-break-inside:avoid}
   .tbl th{color:#555 !important;border-color:#ccc !important}
@@ -1559,7 +2146,7 @@ function saveD(){
 function renderSaveBanner(){
   const el = document.getElementById('saveWarn'); if(!el) return;
   el.innerHTML = saveFailed
-    ? `<div class="notice" style="border-color:rgba(251,113,133,.55);background:rgba(251,113,133,.12);margin:10px 16px 0">⚠ <b>${t('save_fail_title')}</b><div class="muted" style="margin-top:4px">${t('save_fail_body')}</div></div>`
+    ? `<div class="notice bad" style="margin:10px 16px 0">⚠ <b>${t('save_fail_title')}</b><div class="muted" style="margin-top:4px">${t('save_fail_body')}</div></div>`
     : '';
 }
 function saveU(){ try{ sessionStorage.setItem(UKEY, JSON.stringify(U)); }catch(e){} }
@@ -1622,7 +2209,7 @@ function renderLogin(err){
   document.getElementById('top').innerHTML = `<div class="logo"><div class="logomark">⇄</div><div>ArmTrade<small>${lang==='hy'?'դեմո':(lang==='ru'?'демо':'demo')}</small></div></div>
     <div class="spacer"></div>
     <button class="tbtn" onclick="toggleTheme()">${THEME==='light'?'🌙':'☀️'}</button>
-    <button class="tbtn" onclick="toggleLang()">${({hy:'EN',en:'РУ',ru:'ՀԱՅ'})[lang]}</button>`;
+    <button class="tbtn wide" onclick="toggleLang()">${({hy:'EN',en:'РУ',ru:'ՀԱՅ'})[lang]}</button>`;
   document.getElementById('app').innerHTML = `
   <div style="max-width:420px;margin:9vh auto 0;padding:0 18px">
     <div class="card" style="padding:26px">
@@ -1895,7 +2482,7 @@ function openEvents(){ MODAL_RE=()=>openEvents(); armPushOverlay();
   const list = S.events.filter(e=>!(supSide && EV_SHOP_ONLY[e.type])).slice(0,30).map(e=>{
     const [ic,txt] = evText(e);
     return `<div class="sug" style="padding:10px 0"><div class="pav" style="width:38px;height:38px;font-size:18px;border-radius:11px">${ic}</div>
-      <div class="info"><div style="font-size:13.5px;font-weight:600">${txt}</div><div class="muted" style="margin-top:2px">${fdate(e.date)}</div></div></div>`;
+      <div class="info"><div style="font-size:14px;font-weight:600">${txt}</div><div class="muted" style="margin-top:2px">${fdate(e.date)}</div></div></div>`;
   }).join('');
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody"><div class="grabber"></div><h3>🔔 ${t('ev_title')}</h3>
@@ -1904,7 +2491,7 @@ function openEvents(){ MODAL_RE=()=>openEvents(); armPushOverlay();
     <button class="btn ghost full" style="margin-top:12px" onclick="closeModal()">${t('close')}</button></div></div>`;
   renderAll();
 }
-const amd = n => `<span class="num">${n.toLocaleString('en-US')}</span> ֏`;
+const amd = n => `<span class="num">${n.toLocaleString('en-US')}<span class="cur">֏</span></span>`;
 /* anything the shopkeeper typed (a scanned code, a counter's name) goes through this before
    it is interpolated into a template — the app has no other user-authored HTML sink. */
 const escH = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -2034,7 +2621,7 @@ try{ PRIVACY_OK = localStorage.getItem('armtrade_privacy_ok')==='1'; }catch(e){}
 function ackPrivacy(){ PRIVACY_OK = true; try{ localStorage.setItem('armtrade_privacy_ok','1'); }catch(e){} renderAll(); }
 function privacyCard(){
   if(PRIVACY_OK) return '';
-  return `<div class="card" style="border-color:rgba(52,211,153,.45);background:linear-gradient(135deg,rgba(52,211,153,.12),rgba(255,255,255,.04))">
+  return `<div class="card" style="border-color:var(--success-line);background:var(--success-tint)">
     <h3>🔒 ${t('privacy_title')}</h3>
     <div class="muted" style="line-height:1.55">${t('privacy_body')}</div>
     <button class="btn ghost full" style="margin-top:12px" onclick="ackPrivacy()">✓ ${t('privacy_ok')}</button></div>`;
@@ -2202,7 +2789,7 @@ function openExpiredSale(pid, qty){
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody"><div class="grabber"></div><h3>⚠ ${t('sell_exp_title')}</h3>
     <div class="muted">${p.em||''} ${goodNameOf(pid)} · ${t('exp_batch')} ${escH(b.id)} · ${b.exp!=null?fdateY(b.exp):t('exp_unknown')}</div>
-    <div class="notice" style="margin-top:12px;border-color:rgba(251,113,133,.5);background:rgba(251,113,133,.1)">${t('sell_exp_body')}</div>
+    <div class="notice bad" style="margin-top:12px">${t('sell_exp_body')}</div>
     <button class="btn danger full" style="margin-top:14px" onclick="closeModal();openWriteoff('${pid}',{qty:${Math.max(1,b.left)},reason:'expired',batch:'${escH(b.id)}'})">📉 ${t('exp_writeoff')}</button>
     <button class="btn ghost full" style="margin-top:9px" onclick="closeModal();recordSale('${pid}',${+qty||1},true)">${t('sell_exp_anyway')}</button>
     <button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">${t('close')}</button></div></div>`;
@@ -2423,13 +3010,13 @@ function viewFor(role, tab){
 function topBar(){
   const dateTxt = fdateY(S.today);
   return `<div class="logo"><div class="logomark">⇄</div><div>ArmTrade<small>${lang==='hy'?'դեմո':(lang==='ru'?'демо':'demo')}</small></div></div>
-    <span class="datechip">📅 ${dateTxt}</span>
+    <span class="datechip" title="${dateTxt}">📅 ${dateTxt}</span>
     <div class="spacer"></div>
     <button class="tbtn" onclick="toggleTheme()" title="theme">${THEME==='light'?'🌙':'☀️'}</button>
     <button class="tbtn ${ROOM?'on':''}" onclick="openSync()" title="${t('sync')}">🔗${ROOM?` <span style="color:var(--green)">●</span>`:''}</button>
     <button class="tbtn" onclick="openEvents()" style="position:relative">🔔${unreadEv()?` <span class="dot">${unreadEv()}</span>`:''}</button>
-    ${roleLocked()?'':`<button class="tbtn ${U.split?'on':''}" onclick="toggleSplit()">${U.split?'▚ '+t('split_on'):'▙ '+t('split_off')}</button>`}
-    <button class="tbtn" onclick="toggleLang()">${({hy:'EN',en:'РУ',ru:'ՀԱՅ'})[lang]}</button>
+    ${roleLocked()?'':`<button class="tbtn wide ${U.split?'on':''}" onclick="toggleSplit()">${U.split?'▚ '+t('split_on'):'▙ '+t('split_off')}</button>`}
+    <button class="tbtn wide" onclick="toggleLang()">${({hy:'EN',en:'РУ',ru:'ՀԱՅ'})[lang]}</button>
     <button class="tbtn day" onclick="advanceDay()">⏭</button>`;
 }
 function unreadEv(){ return S.events.filter(e=>e.n>(U.lastSeenEv||0)).length; }
@@ -2482,8 +3069,8 @@ function renderAll(fromSync){
     const role=U.role;
     const cls = desktop ? 'single-desk' : '';
     app.innerHTML = notifBanner() + (roleLocked()
-      ? `<div class="roleswitch" style="margin-top:14px;pointer-events:none"><button class="active" style="flex:1">${role==='shop'?'🏪 '+nm(MY_SHOP):'🚚 '+t('supplier')}</button></div>`
-      : `<div class="roleswitch" style="margin-top:14px">
+      ? `<div class="acctline">${role==='shop'?'🏪 '+nm(MY_SHOP):'🚚 '+t('supplier')}</div>`
+      : `<div class="roleswitch">
         <button class="${role==='shop'?'active':''}" onclick="setRole('shop')">🏪 ${t('shop')}</button>
         <button class="${role==='supplier'?'active':''}" onclick="setRole('supplier')">🚚 ${t('supplier')}</button>
       </div>`)
@@ -2568,7 +3155,7 @@ function sugCard(x){
     <div class="pav">${p.em}</div>
     <div class="info">
       <div class="nm">${nm(p)}</div>
-      <div class="sub">${sup.em} ${nm(sup)} · <b>${effPrice(p).toLocaleString('en-US')} ֏</b>${isPromo(p)?` <s style="color:var(--dim)">${p.price.toLocaleString('en-US')}</s> <span class="badge b-violet">${t('promo')} −10%</span>`:''}</div>
+      <div class="sub">${sup.em} ${nm(sup)} · <b>${effPrice(p).toLocaleString('en-US')}<span class="cur">֏</span></b>${isPromo(p)?` <s style="color:var(--dim)">${p.price.toLocaleString('en-US')}</s> <span class="badge b-violet">${t('promo')} −10%</span>`:''}</div>
       <div class="sub">${st?`${t('every')} ${st.cycle} ${t('days')} · ${t('last_order')}${VJ()} ${fdate(st.last)}`:''} ${badge}</div>
       ${st?`<div class="sub muted">${fmt('sug_why',{c:st.cycle, n:st.avgQty})}</div>`:''}
     </div>
@@ -2600,12 +3187,12 @@ function propCard(pr){
   const p = P(pr.productId); const sup = SUP(pr.sup);
   if(!p || !sup) return '';
   const sum = pr.qty * effPrice(p);
-  return `<div class="card" style="border-color:rgba(167,139,250,.4);background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(255,255,255,.04))">
+  return `<div class="card" style="border-color:var(--note-line);background:var(--note-tint)">
     <div class="sug" style="border:none;padding:2px 0">
       <div class="pav">${p.em}</div>
       <div class="info">
         <div class="nm">📨 ${nm(p)}</div>
-        <div class="sub">${sup.em} ${nm(sup)} · <b>${effPrice(p).toLocaleString('en-US')} ֏</b> · ${t('sum')}${VJ()} <b>${sum.toLocaleString('en-US')} ֏</b></div>
+        <div class="sub">${sup.em} ${nm(sup)} · <b>${effPrice(p).toLocaleString('en-US')}<span class="cur">֏</span></b> · ${t('sum')}${VJ()} <b>${sum.toLocaleString('en-US')}<span class="cur">֏</span></b></div>
         ${propWhy(pr)}
       </div>
       <div class="qtyctl">
@@ -2661,7 +3248,7 @@ function vShopBasket(){
           <button onclick="setBasketQty('${pid}', ${S.basket[pid]+1})">+</button>
         </div></div>`;}).join('')}
       <div class="osum">${t('sum')}${VJ()} ${amd(sum)}</div>
-      ${(S.debts[sup]||0)+sum > (S.creditLimit[sup]||Infinity) ? `<div style="margin-top:9px;font-size:12px;color:var(--rose);font-weight:700">${t('over_warn')} (${t('credit_limit')}${VJ()} ${(S.creditLimit[sup]).toLocaleString('en-US')} ֏)</div>`:''}
+      ${(S.debts[sup]||0)+sum > (S.creditLimit[sup]||Infinity) ? `<div style="margin-top:9px;font-size:13.5px;color:var(--rose);font-weight:700">${t('over_warn')} (${t('credit_limit')}${VJ()} ${(S.creditLimit[sup]).toLocaleString('en-US')} ֏)</div>`:''}
     </div>`;
   }).join('');
   const dayChips = [0,1,2,3].map(d=>{
@@ -2670,7 +3257,7 @@ function vShopBasket(){
   }).join('');
   return `${html}
     <div class="card"><h3>🚚 ${t('deliv_day')}</h3><div class="chips">${dayChips}</div></div>
-    <div class="card"><div class="row"><b>${t('sum')}</b><span class="big" style="color:var(--gold2)">${amd(total)}</span></div>
+    <div class="card"><div class="row"><b>${t('sum')}</b><span class="big">${amd(total)}</span></div>
     <div class="muted" style="margin-top:5px">${Object.keys(bySup).length} ${t('orders_split')}</div></div>
     <button class="btn primary" onclick="submitBasket()">${t('submit_orders')} →</button>`;
 }
@@ -2702,7 +3289,7 @@ function orderCard(o, side){
       <b>${side==='shop' ? SUPX(o.sup).em+' '+nm(SUPX(o.sup)) : '🏪 '+nm(o.shop||{})}</b>
       <span>${o.overLimit?`<span class="badge b-rose">⚠ ${t('over_limit')}</span> `:''}${statusBadge(o.status)}${recvBadge}</span>
     </div>
-    <div class="oid">${o.id} · ${fdate(o.date)}${o.deliveryDate?` · <span style="color:#7DE9F7">🚚 ${fdate(o.deliveryDate)}</span>`:''}</div>
+    <div class="oid">${o.id} · ${fdate(o.date)}${o.deliveryDate?` · <span style="color:var(--info);font-weight:700">🚚 ${fdate(o.deliveryDate)}</span>`:''}</div>
     <div class="oitems">${o.items.map(it=>{
       const shorted = it.delivered!=null && it.delivered<it.qty;
       return `${nm(P(it.productId))} <span class="num" ${shorted?'style="color:var(--rose);font-weight:700"':''}>× ${shorted?it.delivered+'/'+it.qty:it.qty}</span>${shorted?` <span class="badge b-rose">${t('short_lbl')}</span>`:''}`;
@@ -2724,12 +3311,12 @@ function renderChat(){ MODAL_RE=()=>renderChat(); armPushOverlay();
   const o = S.orders.find(x=>x.id===CHAT.oid); if(!o) return;
   const msgs = (o.messages||[]).map(m=>`
     <div style="display:flex;justify-content:${m.from===CHAT.side?'flex-end':'flex-start'};margin-bottom:8px">
-      <div style="max-width:78%;padding:9px 13px;border-radius:${m.from===CHAT.side?'14px 14px 4px 14px':'14px 14px 14px 4px'};font-size:13.5px;line-height:1.45;
-        background:${m.from==='shop'?'linear-gradient(135deg,rgba(247,197,114,.25),rgba(227,154,59,.15))':'linear-gradient(135deg,rgba(34,211,238,.22),rgba(167,139,250,.16))'};
+      <div style="max-width:78%;padding:9px 13px;border-radius:${m.from===CHAT.side?'14px 14px 4px 14px':'14px 14px 14px 4px'};font-size:14px;line-height:1.45;
+        background:${m.from==='shop'?'var(--acc-tint)':'var(--surface-2)'};
         border:1px solid var(--stroke2)">
-        <div style="font-size:10px;font-weight:800;opacity:.7;margin-bottom:2px">${m.from==='shop'?'🏪 '+t('shop'):'🚚 '+t('supplier')}</div>
+        <div style="font-size:13px;font-weight:800;opacity:.7;margin-bottom:2px">${m.from==='shop'?'🏪 '+t('shop'):'🚚 '+t('supplier')}</div>
         ${escH(m.text)}
-        <div class="muted" style="font-size:10px;margin-top:3px;text-align:right">${fdate(m.date)}</div>
+        <div class="muted" style="font-size:13px;margin-top:3px;text-align:right">${fdate(m.date)}</div>
       </div>
     </div>`).join('');
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this){CHAT=null;closeModal()}">
@@ -2873,8 +3460,8 @@ function recvExpWarnHtml(pid){
   const v = (RECV && RECV.exp) ? RECV.exp[pid] : undefined;
   /* the native <input type="date"> prints in the DEVICE locale (09/04/2026 reads as 9 April to an
      Armenian user), so echo the value the way every other date in the app is written */
-  const echo = (v!=null) ? `<span class="muted" style="font-size:11.5px">${fdateY(v)}</span> ` : '';
-  return echo + ((v!=null && v < S.today) ? `<span style="font-size:11.5px;color:var(--rose)">${t('exp_past_warn')}</span>` : '');
+  const echo = (v!=null) ? `<span class="muted" style="font-size:13.5px">${fdateY(v)}</span> ` : '';
+  return echo + ((v!=null && v < S.today) ? `<span style="font-size:13.5px;color:var(--rose)">${t('exp_past_warn')}</span>` : '');
 }
 function recvExpPaint(pid){
   const w = document.getElementById('recvExpW-'+pid);
@@ -3086,7 +3673,7 @@ function vShopRecvSheet(){
     <div class="row" style="padding:7px 0"><span class="muted">${t('doc_type_col')}</span><b>${t('recv_doc_type')}</b></div>
     ${RECV.editDoc
       ? docEdit(t('recv_doc_no'), RECV.doc.no, 'no', true) + docEdit(t('recv_doc_date'), recvDocDate(RECV.doc.date), 'date', false) + docEdit(t('recv_tin'), RECV.doc.tin, 'tin', true)
-        + (recvTinOk()?'':`<div class="muted" style="color:var(--rose);font-size:11.5px">${t('recv_tin_bad')}</div>`)
+        + (recvTinOk()?'':`<div class="muted" style="color:var(--rose);font-size:13.5px">${t('recv_tin_bad')}</div>`)
       : docVal(t('recv_doc_no'), RECV.doc.no) + docVal(t('recv_doc_date'), recvDocDate(RECV.doc.date)) + docVal(t('recv_tin'), RECV.doc.tin)}
   </div>
   ${RECV.scanMode?`<div class="notice" style="margin-bottom:12px">📷 <b>${t('recv_scan_on')}</b> · ${t('recv_scan_hint')}
@@ -3097,13 +3684,13 @@ function vShopRecvSheet(){
     <div class="row"><span class="muted">${t('recv_received')}</span>
       <b>${lang==='hy'
           ? `${nGot}/${o.items.length} ${t('recv_lines')}`
-          : `${nGot} ${t('recv_of')} ${o.items.length} ${t('recv_lines')}`} · <span class="num">${Math.round(total).toLocaleString('en-US')}</span> ֏</b></div>
+          : `${nGot} ${t('recv_of')} ${o.items.length} ${t('recv_lines')}`} · <span class="num">${Math.round(total).toLocaleString('en-US')}<span class="cur">֏</span></span></b></div>
     ${nDiff?`<div class="row" style="margin-top:9px"><span class="badge b-rose">⚠ ${nDiff} ${t('diff_title')}</span>
-      <span class="muted">${t('adj_doc')}${VJ()} <b class="num" style="color:var(--rose)">${diffAmd>0?'+':'−'}${Math.abs(Math.round(diffAmd)).toLocaleString('en-US')}</b> ֏</span></div>`
+      <span class="muted">${t('adj_doc')}${VJ()} <b class="num" style="color:var(--rose)">${diffAmd>0?'+':'−'}${Math.abs(Math.round(diffAmd)).toLocaleString('en-US')}<span class="cur">֏</span></b></span></div>`
       :`<div class="row" style="margin-top:9px"><span class="badge b-green">✓ ${t('diff_none')}</span></div>`}
   </div>
   <button class="btn primary" onclick="confirmReceipt()">✓ ${nDiff
-      ? `${t('recv_accept_part')} · <span class="num">${Math.round(total).toLocaleString('en-US')}</span> ֏`
+      ? `${t('recv_accept_part')} · <span class="num">${Math.round(total).toLocaleString('en-US')}<span class="cur">֏</span></span>`
       : `${t('recv_accept_all')} · ${o.items.length} ${t('recv_lines')}`}</button>`;
 }
 
@@ -3127,7 +3714,7 @@ function openItemSheet(pid){ MODAL_RE=()=>openItemSheet(pid); armPushOverlay();
         <span class="muted">${b.exp!=null ? fdateY(b.exp) : t('exp_unknown')}</span>
         <span style="display:flex;gap:7px;align-items:center"><b class="num">${b.left}</b> <span class="muted">${unitOf(pid)}</span> ${expBadge(b)}</span>
       </div>`).join('')
-      + (un>0 ? `<div class="muted" style="font-size:11.5px;margin-top:4px">${un} ${unitOf(pid)} · ${t('exp_untracked')}</div>` : '');
+      + (un>0 ? `<div class="muted" style="font-size:13.5px;margin-top:4px">${un} ${unitOf(pid)} · ${t('exp_untracked')}</div>` : '');
   }
   /* R3 · F4: Նվազագույն մնացորդ — the trigger the replenishment list explains out loud */
   const ms = minStockOf(pid), sup = p.sup, ls = leadStats(sup);
@@ -3136,14 +3723,14 @@ function openItemSheet(pid){ MODAL_RE=()=>openItemSheet(pid); armPushOverlay();
       <span style="display:flex;gap:7px;align-items:center">${ms.auto?`<span class="badge b-neutral">${t('rep_min_auto')}</span>`:`<button class="btn small ghost" onclick="clearMinStock('${pid}')">${t('rep_min_manual')}</button>`}</span>
       <span class="qtyctl"><button onclick="setMinStock('${pid}',${Math.max(0,ms.v-1)})">−</button><span>${ms.v}</span><button onclick="setMinStock('${pid}',${Math.min(9999,ms.v+1)})">+</button></span>
     </div>
-    <div class="muted" style="font-size:11px;margin-top:6px">${fmt('rep_min_why',{v:velTxt(velOf(pid)), l:ls.lead, s:safetyDaysOf(sup)})}</div>`;
+    <div class="muted" style="font-size:13px;margin-top:6px">${fmt('rep_min_why',{v:velTxt(velOf(pid)), l:ls.lead, s:safetyDaysOf(sup)})}</div>`;
   /* R3 fix: the markdown is what stops this SKU being suggested for reorder, so the OFF switch
      lives on the item card — the one surface that exists for every SKU, batch or no batch. */
   const md = mdOf(pid);
   const mdBlock = md ? `<div class="sec">🏷 ${t('md_title')}</div>
     <div class="row" style="padding:2px 0"><span class="muted">${fmt('md_on',{n:md.pct})}</span>
       <span class="badge b-neutral">${fmt('md_left',{n:mdDaysLeft(md)})}</span></div>
-    <div class="muted" style="font-size:11px;margin:6px 0 8px">${t('md_norep')}</div>
+    <div class="muted" style="font-size:13px;margin:6px 0 8px">${t('md_norep')}</div>
     <button class="btn ghost full" onclick="closeModal();clearMarkdown('${pid}')">${t('md_stop')}</button>` : '';
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody"><div class="grabber"></div>
@@ -3159,11 +3746,11 @@ function openItemSheet(pid){ MODAL_RE=()=>openItemSheet(pid); armPushOverlay();
       <span><span class="big num">${onHand(pid)}</span> <span class="muted">${unitOf(pid)}</span></span></div>
     ${expBlock}
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">${chips.join('')}</div>
-    <div class="muted" style="font-size:11px;margin-top:8px">${t('item_atg_src')}</div>
-    ${im.marked?`<div class="muted" style="font-size:11px;margin-top:5px">${t('item_mark_note')}</div>`:''}
+    <div class="muted" style="font-size:13px;margin-top:8px">${t('item_atg_src')}</div>
+    ${im.marked?`<div class="muted" style="font-size:13px;margin-top:5px">${t('item_mark_note')}</div>`:''}
     ${minBlock}
     ${(()=>{ const r = replenish().find(x=>x.pid===pid);
-      return r ? `<div class="muted" style="font-size:11px;margin-top:6px">${repReasonFull(r)}</div>` : ''; })()}
+      return r ? `<div class="muted" style="font-size:13px;margin-top:6px">${repReasonFull(r)}</div>` : ''; })()}
     ${mdBlock}
     <button class="btn danger full" style="margin-top:16px" onclick="openWriteoff('${pid}')">${t('wo_open')}</button>
     <button class="btn ghost full" style="margin-top:9px" onclick="openItemLedger('${pid}')">📜 ${t('led_title')}</button>
@@ -3178,7 +3765,7 @@ function openItemLedger(pid){ MODAL_RE=()=>openItemLedger(pid); armPushOverlay()
        they go through escH() like every other user-authored string in this file. */
     const sub = [reasonLabel(m.reason), escH(m.ref), escH(m.note)].filter(Boolean).join(' · ');
     return `<tr><td>${fdateY(m.ts)}</td>
-      <td>${moveLabel(m.type)}${sub?`<div class="muted" style="font-size:10.5px">${sub}</div>`:''}</td>
+      <td>${moveLabel(m.type)}${sub?`<div class="muted" style="font-size:13px">${sub}</div>`:''}</td>
       <td class="num" style="color:${up?'var(--green)':'var(--rose)'};font-weight:700">${up?'+':'−'}${Math.abs(+m.dq||0)}</td>
       <td>${escH(actorLabel(m.actor))}</td>
       <td class="num">${m.bal}</td></tr>`;
@@ -3220,7 +3807,7 @@ function renderWriteoff(){ MODAL_RE=()=>renderWriteoff(); armPushOverlay();
       <div class="qtyctl" style="transform:scale(1.15);margin:14px auto;width:max-content">
         <button onclick="woQty(-1)">−</button><span>${WO.qty}</span><button onclick="woQty(1)">+</button></div>
       <div class="sec">${t('wo_reason')}</div>
-      ${WO.err?`<div style="color:var(--rose);font-size:12px;font-weight:700;margin:-6px 0 8px">${t('wo_reason_req')}</div>`:''}
+      ${WO.err?`<div style="color:var(--rose);font-size:13.5px;font-weight:700;margin:-6px 0 8px">${t('wo_reason_req')}</div>`:''}
       <div class="chips wrap">${WO_CODES.map(c=>`<button class="${WO.reason===c?'active':''}" onclick="woReason('${c}')">${t(REASON_KEY[c])}</button>`).join('')}</div>
       <input id="woNote" class="search" style="margin-top:8px" maxlength="80" placeholder="${t('wo_note')}" value="${String(WO.note||'').replace(/"/g,'&quot;')}" oninput="woNote(this.value)">
       <button class="btn danger full" style="margin-top:6px" onclick="confirmWriteoff()">✓ ${t('wo_confirm')}</button>`;
@@ -3275,11 +3862,11 @@ function writeoffCard(){
     <div class="empty"><span class="em">✅</span>${t('shrink_none')}</div></div>`;
   const rows = WO_CODES.filter(c=>s.byReason[c]).map(c=>`<div class="row" style="padding:7px 0">
     <span class="muted">${t(REASON_KEY[c])}</span>
-    <span><b class="num">${s.byReason[c].units}</b> ${t('shrink_units')} · <b class="num">${Math.round(s.byReason[c].amd).toLocaleString('en-US')}</b> ֏</span></div>`).join('');
+    <span><b class="num">${s.byReason[c].units}</b> ${t('shrink_units')} · <b class="num">${Math.round(s.byReason[c].amd).toLocaleString('en-US')}<span class="cur">֏</span></b></span></div>`).join('');
   return `<div class="card"><h3>📉 ${t('shrink_title')} · ${t('shrink_month')}</h3>${rows}
     <div class="row" style="border-top:1px solid var(--stroke2);padding-top:10px;margin-top:8px">
       <b>${t('shrink_total')}</b>
-      <span><b class="num">${s.units}</b> ${t('shrink_units')} · <b class="num">${Math.round(s.amd).toLocaleString('en-US')}</b> ֏</span></div>
+      <span><b class="num">${s.units}</b> ${t('shrink_units')} · <b class="num">${Math.round(s.amd).toLocaleString('en-US')}<span class="cur">֏</span></b></span></div>
     <div class="muted" style="margin-top:7px">${t('shrink_cost')} · ${s.pct.toFixed(1)}% ${t('shrink_share')}</div></div>`;
 }
 
@@ -3387,7 +3974,7 @@ function renderExpSheet(){ MODAL_RE=()=>renderExpSheet(); armPushOverlay();
     <div class="mbody"><div class="grabber"></div>
     <h3>${p.em||''} ${goodNameOf(pid)}</h3>
     <div class="muted">${t('exp_batch')} ${escH(b.id)} · ${b.exp!=null?fdateY(b.exp):t('exp_unknown')} · <b class="num">${b.left}</b> ${unitOf(pid)}</div>
-    <div style="margin-top:10px">${expBadge(b)} <span class="badge b-neutral">${Math.round(expAmd(b)).toLocaleString('en-US')} ֏ ${lcFirst(t('exp_at_risk'))}</span></div>
+    <div style="margin-top:10px">${expBadge(b)} <span class="badge b-neutral">${Math.round(expAmd(b)).toLocaleString('en-US')}<span class="cur">֏</span> ${lcFirst(t('exp_at_risk'))}</span></div>
     <button class="btn danger full" style="margin-top:16px" onclick="EXPUI.batch=null;openWriteoff('${pid}',{qty:${b.left},reason:'expired',batch:'${b.id}'})">${t('wo_open_exp')}</button>
     <div class="sec">🏷 ${t('md_title')}</div>
     ${md
@@ -3395,7 +3982,7 @@ function renderExpSheet(){ MODAL_RE=()=>renderExpSheet(); armPushOverlay();
          <button class="btn ghost full" onclick="EXPUI.batch=null;closeModal();clearMarkdown('${pid}')">${t('md_stop')}</button>`
       : `<div class="chips wrap">${[20,30,50].map(v=>`<button class="${EXPUI.pct===v?'active':''}" onclick="expSheetPct(${v})">−${v}%</button>`).join('')}</div>
          <button class="btn primary" onclick="EXPUI.batch=null;closeModal();setMarkdown('${pid}',${EXPUI.pct})">${t('md_btn')}</button>`}
-    <div class="muted" style="font-size:11px;margin-top:8px">${t('md_hint')}</div>
+    <div class="muted" style="font-size:13px;margin-top:8px">${t('md_hint')}</div>
     <button class="btn violet full" style="margin-top:16px" onclick="EXPUI.batch=null;openReqSheet('${pid}','exp')">${t('req_btn')}</button>
     <button class="btn ghost full" style="margin-top:9px" onclick="EXPUI.batch=null;openItemSheet('${pid}')">${t('item_card')}</button>
     <button class="btn ghost full" style="margin-top:9px" onclick="EXPUI.batch=null;closeModal()">${t('close')}</button>
@@ -3415,7 +4002,7 @@ function expRowHtml(b, showReq){
     <button class="pav" title="${t('item_card')}" onclick="openExpSheet('${b.id}')">${p.em||'🗓'}<span class="pavdots">⋯</span></button>
     <div class="info">
       <div class="nm">${goodNameOf(pid)}</div>
-      <div class="sub">${expBadge(b)} <b class="num">${b.left}</b> ${unitOf(pid)} · <b class="num">${Math.round(expAmd(b)).toLocaleString('en-US')}</b> ֏ ${lcFirst(t('exp_at_risk'))}${mdActive(pid)?` <span class="badge b-violet">🏷 −${mdOf(pid).pct}%</span>`:''}${reqBadge(pid)}</div>
+      <div class="sub">${expBadge(b)} <b class="num">${b.left}</b> ${unitOf(pid)} · <b class="num">${Math.round(expAmd(b)).toLocaleString('en-US')}<span class="cur">֏</span></b> ${lcFirst(t('exp_at_risk'))}${mdActive(pid)?` <span class="badge b-violet">🏷 −${mdOf(pid).pct}%</span>`:''}${reqBadge(pid)}</div>
       <div class="sub">${t('exp_batch')} ${escH(b.id)} · ${b.exp!=null ? `<b>${t('exp_until')} ${fdateY(b.exp)}</b>` : t('exp_unknown')}</div>
       <div class="sub muted">${t('exp_received_on')} ${fdate(b.date)}${(b.ref && b.ref!=='seed')?` · <span class="num">${escH(b.ref)}</span>`:''}</div>
     </div>
@@ -3427,11 +4014,11 @@ function vShopExp(){
   const head = `<div class="card">
     <h3>🗓 ${t('exp_title')}</h3>
     <div class="row">
-      <div><div class="muted">${t('exp_at_risk')}</div>
-        <div style="margin-top:4px"><span class="big num">${Math.round(expAmdAtRisk()).toLocaleString('en-US')}</span> ֏</div></div>
+      <div><div class="mlbl">${t('exp_at_risk')}</div>
+        <div style="margin-top:4px"><span class="big num">${Math.round(expAmdAtRisk()).toLocaleString('en-US')}<span class="cur">֏</span></span></div></div>
       <span class="badge b-neutral">${fmt('exp_batches_n',{n:r.total})}</span>
     </div>
-    <div class="muted" style="margin-top:11px;font-size:11.5px">${t('exp_law')}</div>
+    <div class="muted" style="margin-top:11px;font-size:13.5px">${t('exp_law')}</div>
   </div>`;
   if(!r.total){
     const pend = pendingReceipts();
@@ -3461,7 +4048,7 @@ function expNudgeCard(){
   const names = [];
   r.rows.forEach(b=>{ const n = goodNameOf(b.pid); if(names.indexOf(n)<0 && names.length<2) names.push(n); });
   return `<div class="alert ${bad?'bad':''}">
-    <div class="t">🗓 ${fmt('exp_batches_n',{n:r.total})} · <b class="num">${Math.round(expAmdAtRisk()).toLocaleString('en-US')}</b> ֏ ${lcFirst(t('exp_at_risk'))}</div>
+    <div class="t">🗓 ${fmt('exp_batches_n',{n:r.total})} · <b class="num">${Math.round(expAmdAtRisk()).toLocaleString('en-US')}<span class="cur">֏</span></b> ${lcFirst(t('exp_at_risk'))}</div>
     <div class="d">${names.join(' · ')}</div>
     <div class="act"><button class="btn green full" onclick="paneTab('shop','exp')">🗓 ${t('exp_title')} →</button></div>
   </div>`;
@@ -3507,7 +4094,7 @@ function renderReqSheet(existing){ MODAL_RE=()=>renderReqSheet(existing); armPus
     : `<div class="row" style="margin:16px 0"><span class="muted">${t('qty')}</span>
         <span class="qtyctl"><button onclick="reqQty(-1)">−</button><span>${REQUI.qty}</span><button onclick="reqQty(1)">+</button></span></div>
        <div class="row" style="padding:6px 0"><span class="muted">${t('supplier_col')}</span><b>${sup.em||''} ${nm(sup)}</b></div>
-       <div class="muted" style="font-size:11px;margin-top:10px">${t('req_privacy')}</div>
+       <div class="muted" style="font-size:13px;margin-top:10px">${t('req_privacy')}</div>
        <button class="btn violet full" style="margin-top:14px" onclick="sendReq()">📨 ${t('req_send')}</button>`;
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody"><div class="grabber"></div>
@@ -3888,7 +4475,7 @@ function rptDeadRow(r){
     <button class="pav" title="${t('item_card')}" onclick="openItemSheet('${r.pid}')">${(P(r.pid)||{}).em||''}<span class="pavdots">⋯</span></button>
     <div class="info">
       <div class="nm">${goodNameOf(r.pid)}</div>
-      <div class="sub"><b class="num">${onHand(r.pid)}</b> ${unitOf(r.pid)} · <b class="num">${Math.round(r.amd).toLocaleString('en-US')}</b> ֏ ${t('rpt_capital')}</div>
+      <div class="sub"><b class="num">${onHand(r.pid)}</b> ${unitOf(r.pid)} · <b class="num">${Math.round(r.amd).toLocaleString('en-US')}<span class="cur">֏</span></b> ${t('rpt_capital')}</div>
       <div class="sub">${r.slow ? fmt('rpt_cover_days',{n:r.d}) : fmt('rpt_no_sale',{n:r.d})}${mdActive(r.pid)?` <span class="badge b-violet">${fmt('md_on',{n:mdOf(r.pid).pct})}</span>`:''}${reqBadge(r.pid)}</div>
     </div>
     <div class="sugact" style="text-align:right"><div class="obtns" style="margin-top:0">
@@ -3953,7 +4540,7 @@ function rptShrinkCat(){
   return keys.map(k=>`<div class="sug stack rptrow">
       <div class="pav">📉</div>
       <div class="info"><div class="nm">${catLabel(k)}</div>
-        <div class="sub"><b class="num">${agg[k].units}</b> ${t('shrink_units')} · <b class="num">${Math.round(agg[k].amd).toLocaleString('en-US')}</b> ֏ · ${agg[k].pct.toFixed(1)}% ${t('rpt_cat_share')}</div></div>
+        <div class="sub"><b class="num">${agg[k].units}</b> ${t('shrink_units')} · <b class="num">${Math.round(agg[k].amd).toLocaleString('en-US')}<span class="cur">֏</span></b> · ${agg[k].pct.toFixed(1)}% ${t('rpt_cat_share')}</div></div>
       <div class="sugact" style="text-align:right"><div class="obtns" style="margin-top:0">
         <button class="btn small ghost" onclick="goCountScope('cat','${k}')">${t('rpt_count_cat')}</button></div></div>
     </div>`).join('')
@@ -3965,7 +4552,7 @@ function rptShrinkCat(){
 }
 function vReports(){
   const chips = [['dead',t('rpt_dead')],['abc',t('rpt_abc')],['low',t('rpt_low')],['shrinkcat',t('rpt_shrink_cat')]];
-  const body = (RPT==='abc' ? `<div class="muted" style="font-size:11.5px;margin:2px 0 8px">${t('abc_hint')}</div>`+rptABC()
+  const body = (RPT==='abc' ? `<div class="muted" style="font-size:13.5px;margin:2px 0 8px">${t('abc_hint')}</div>`+rptABC()
     : RPT==='low' ? rptLow() : RPT==='shrinkcat' ? rptShrinkCat() : rptDead());
   return `<div class="card"><h3 style="justify-content:space-between">📑 ${t('rpt_title')}
       <button class="btn small ghost noprint" onclick="exportReportCSV('${RPT}')">⬇ CSV</button></h3>
@@ -4203,7 +4790,7 @@ function openExpiredScanSale(entries){
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody"><div class="grabber"></div><h3>⚠ ${t('sell_exp_title')}</h3>
     <div class="muted">${bad.map(e=>escH(goodNameOf(e.pid))).join(' · ')}</div>
-    <div class="notice" style="margin-top:12px;border-color:rgba(251,113,133,.5);background:rgba(251,113,133,.1)">${t('sell_exp_body')}</div>
+    <div class="notice bad" style="margin-top:12px">${t('sell_exp_body')}</div>
     <button class="btn danger full" style="margin-top:14px" onclick="closeModal();openWriteoff('${bad[0].pid}',{reason:'expired'})">📉 ${t('exp_writeoff')}</button>
     <button class="btn ghost full" style="margin-top:9px" onclick="closeModal();recordSaleBatch(${escH(JSON.stringify(entries)).replace(/'/g,'&#39;')}, true)">${t('sell_exp_anyway')}</button>
     <button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">${t('close')}</button></div></div>`;
@@ -4363,7 +4950,7 @@ function renderScanner(){ MODAL_RE=renderScanner; armPushOverlay();
     </div>
     <div id="scanSug">${scanSugHtml()}</div>
     ${SCAN.unknown ? '' : camBlock}
-    <div id="scanErr" style="color:var(--rose);font-size:12px;font-weight:700;margin-top:8px">${SCAN.err && SCAN.err!==t('scan_cam_denied') ? escH(SCAN.err) : ''}</div>
+    <div id="scanErr" style="color:var(--rose);font-size:13.5px;font-weight:700;margin-top:8px">${SCAN.err && SCAN.err!==t('scan_cam_denied') ? escH(SCAN.err) : ''}</div>
     ${unknownBlock}
     <div id="scanTray">${scanTrayHtml()}</div>
     <button class="btn ghost full" style="margin-top:12px" onclick="closeScanner()">${t('close')}</button>
@@ -4482,7 +5069,7 @@ function renderCountEntry(){ MODAL_RE=()=>renderCountEntry(); armPushOverlay();
     <div class="mbody"><div class="grabber"></div>
     <h3>${p.em} ${goodNameOf(e.pid)}</h3>
     <div class="muted">${t('count_qty')} · ${unitOf(e.pid)}</div>
-    ${e.err?`<div style="color:var(--rose);font-size:12px;font-weight:700;margin-top:10px">${escH(e.errMsg||t('count_qty_req'))}</div>`:''}
+    ${e.err?`<div style="color:var(--rose);font-size:13.5px;font-weight:700;margin-top:10px">${escH(e.errMsg||t('count_qty_req'))}</div>`:''}
     <input id="cntQty" class="search" inputmode="numeric" autocomplete="off" maxlength="6"
       style="font-size:32px;text-align:center;font-family:var(--mono);margin-top:14px"
       value="${escH(e.v)}" oninput="countEntrySet(this.value)" onkeydown="if(event.key==='Enter')saveCountLine()">
@@ -4627,14 +5214,14 @@ function vShopCountIntro(){
     return `<div class="card" style="cursor:pointer" onclick="openCountAct('${escH(c.id)}')">
       <div class="row"><div><b>${escH(countDocNo(c.id))}</b>
         <div class="muted" style="margin-top:3px">${fdate(c.date)} · ${escH(c.counter||'')} · ${(c.lines||[]).length} ${t('recv_lines')}</div></div>
-        <span class="badge ${cls}">${(c.net||0)>0?'+':''}${(c.net||0).toLocaleString('en-US')} ֏</span></div></div>`;
+        <span class="badge ${cls}">${(c.net||0)>0?'+':''}${(c.net||0).toLocaleString('en-US')}<span class="cur">֏</span></span></div></div>`;
   }).join('');
   return `<div class="sec">🧮 ${t('count_title')}</div>
   <div class="card">
     <div class="muted">${t('count_intro')}</div>
     <div class="sec">${t('count_counter')}</div>
     <input class="search" id="cntName" maxlength="60" placeholder="${t('count_counter_ph')}" value="${escH(nameV)}" oninput="countSetName(this.value)">
-    ${COUNTUI.nameErr?`<div style="color:var(--rose);font-size:12px;font-weight:700;margin:-6px 0 8px">${t('count_counter_req')}</div>`:''}
+    ${COUNTUI.nameErr?`<div style="color:var(--rose);font-size:13.5px;font-weight:700;margin:-6px 0 8px">${t('count_counter_req')}</div>`:''}
     <div class="sec">${t('count_scope')}</div>
     <div class="chips wrap">
       <button class="${scope.kind==='all'?'active':''}" onclick="countSetScope('all')">${t('count_scope_all')} (${PRODUCTS.length})</button>
@@ -4690,11 +5277,11 @@ function vShopCountSession(){
     </div>
     <div class="muted" style="margin-top:9px">🙈 ${t('count_blind')}</div>
   </div>
-  <button class="btn primary" onclick="openScanner('count')">📷 ${t('scan_btn')}</button>
+  <button class="btn ghost full" style="min-height:48px" onclick="openScanner('count')">📷 ${t('scan_btn')}</button>
   <input class="search" style="margin-top:12px" placeholder="${t('search')}" value="${escH(COUNTUI.q||'')}" oninput="countSetQ(this.value)">
   <div class="card">${un.map(row).join('') || `<div class="empty"><span class="em">✅</span>${t('count_counted')}</div>`}</div>
   ${cn.length?`<div class="sec">✓ ${t('count_counted')} (${cn.length})</div><div class="card">${cn.map(row).join('')}</div>`:''}
-  <button class="btn primary" style="${done?'':'opacity:.35;pointer-events:none'}" onclick="openCountReview()">✓ ${t('count_finish')} · ${done} ${t('recv_lines')}</button>
+  <button class="btn primary${done?'':' off'}" onclick="openCountReview()">✓ ${t('count_finish')} · ${done} ${t('recv_lines')}</button>
   </div>`;
 }
 function vShopCountReview(){
@@ -4710,7 +5297,7 @@ function vShopCountReview(){
   const tbl = rows.map(r=>{
     const zero = r.diff===0;
     return `<tr style="${zero?'opacity:.55':''}">
-      <td>${goodNameOf(r.pid)}${r.after?`<div class="muted" style="font-size:10.5px">${movesSinceLabel(r.pid, ((c.lines||{})[r.pid]||{}).mn)}</div>`:''}</td>
+      <td>${goodNameOf(r.pid)}${r.after?`<div class="muted" style="font-size:13px">${movesSinceLabel(r.pid, ((c.lines||{})[r.pid]||{}).mn)}</div>`:''}</td>
       <td class="num">${r.book}</td><td class="num">${r.counted}</td>
       <td class="num" style="font-weight:700;color:${r.diff>0?'var(--green)':(r.diff<0?'var(--rose)':'var(--muted)')}">${zero?`<span class="badge b-neutral">${t('count_match')}</span>`:(r.diff>0?'+':'')+r.diff}${r.clamped?' ⚠':''}</td>
       <td class="num" style="color:${r.amd>0?'var(--green)':(r.amd<0?'var(--rose)':'var(--muted)')}">${r.amd>0?'+':''}${Math.round(r.amd).toLocaleString('en-US')}</td></tr>`;
@@ -4718,11 +5305,11 @@ function vShopCountReview(){
   return `<div class="sec">🧮 ${t('count_review')} · ${escH(countDocNo(c.id))}</div>
   <div class="card">
     <div class="row" style="padding:6px 0"><span class="muted">${t('count_surplus')}</span>
-      <b class="num" style="color:var(--green)">${surplus>0?'+':''}${Math.round(surplus).toLocaleString('en-US')} ֏</b></div>
+      <b class="num" style="color:var(--green)">${surplus>0?'+':''}${Math.round(surplus).toLocaleString('en-US')}<span class="cur">֏</span></b></div>
     <div class="row" style="padding:6px 0"><span class="muted">${t('count_short')}</span>
-      <b class="num" style="color:var(--rose)">${Math.round(short).toLocaleString('en-US')} ֏</b></div>
+      <b class="num" style="color:var(--rose)">${Math.round(short).toLocaleString('en-US')}<span class="cur">֏</span></b></div>
     <div class="row" style="border-top:1px solid var(--stroke2);padding-top:10px;margin-top:6px">
-      <b>${t('count_net')}</b><span class="big" style="color:${net>0?'var(--green)':(net<0?'var(--rose)':'var(--ink)')}">${net>0?'+':''}${Math.round(net).toLocaleString('en-US')} ֏</span></div>
+      <b>${t('count_net')}</b><span class="big" style="color:${net>0?'var(--green)':(net<0?'var(--rose)':'var(--ink)')}">${net>0?'+':''}${Math.round(net).toLocaleString('en-US')}<span class="cur">֏</span></span></div>
     <div class="muted" style="margin-top:8px">${rows.length} ${t('recv_lines')} · ${t('count_counter')}${VJ()} ${escH(c.counter)} · ${fdate(c.date)}</div>
   </div>
   <div class="card">
@@ -4749,27 +5336,27 @@ function countActHtml(c){
       <td class="num" style="font-weight:700;color:${l.diff>0?'var(--green)':(l.diff<0?'var(--rose)':'var(--muted)')}">${l.diff>0?'+':''}${l.diff}</td>
       <td class="num">${l.amd>0?'+':''}${(l.amd||0).toLocaleString('en-US')}</td></tr>`;
   }).join('');
-  const sign = lbl => `<div style="flex:1;min-width:150px"><div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:1px">${lbl}</div>
+  const sign = lbl => `<div style="flex:1;min-width:150px"><div class="doclbl">${lbl}</div>
       <div class="actsignline"></div></div>`;
   return `<h3>🧮 ${t('count_act')} ${escH(countDocNo(c.id))}</h3>
     <div class="muted">${fdateY(c.date)}</div>
     <hr class="actrule">
     <div class="row" style="align-items:flex-start">
-      <div><div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:1px">${t('shop_col')}</div>
+      <div><div class="doclbl">${t('shop_col')}</div>
         <b>🏪 ${nm(MY_SHOP)}</b><div class="muted">${t('recv_tin')} <span class="num">${escH(MY_SHOP.tin||'')}</span></div></div>
-      <div style="text-align:right"><div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:1px">${t('count_counter')}</div>
+      <div style="text-align:right"><div class="doclbl">${t('count_counter')}</div>
         <b>${escH(c.counter||'')}</b><div class="muted">${t('count_scope')}${VJ()} ${escH(scopeLbl)}</div></div>
     </div>
     <div class="tblwrap" style="max-height:none"><table class="tbl acttbl">
       <tr><th>${t('product')}</th><th>${t('item_code')}</th><th>${t('item_unit')}</th><th>${t('count_book')}</th><th>${t('count_fact')}</th><th>${t('count_diff_short')}</th><th>֏</th></tr>
       ${rows || `<tr><td colspan="7" class="muted">—</td></tr>`}</table></div>
-    <div class="row" style="margin-top:12px"><span class="muted">${t('count_surplus')}</span><b class="num" style="color:var(--green)">${(c.surplus||0)>0?'+':''}${(c.surplus||0).toLocaleString('en-US')} ֏</b></div>
-    <div class="row" style="margin-top:5px"><span class="muted">${t('count_short')}</span><b class="num" style="color:var(--rose)">${(c.short||0).toLocaleString('en-US')} ֏</b></div>
+    <div class="row" style="margin-top:12px"><span class="muted">${t('count_surplus')}</span><b class="num" style="color:var(--green)">${(c.surplus||0)>0?'+':''}${(c.surplus||0).toLocaleString('en-US')}<span class="cur">֏</span></b></div>
+    <div class="row" style="margin-top:5px"><span class="muted">${t('count_short')}</span><b class="num" style="color:var(--rose)">${(c.short||0).toLocaleString('en-US')}<span class="cur">֏</span></b></div>
     <div class="row actsep" style="margin-top:9px;padding-top:9px"><b>${t('count_net')}</b>
-      <span class="big">${(c.net||0)>0?'+':''}${(c.net||0).toLocaleString('en-US')} ֏</span></div>
-    <div class="muted" style="font-size:11px;margin-top:12px">${t('count_act_basis')}</div>
+      <span class="big">${(c.net||0)>0?'+':''}${(c.net||0).toLocaleString('en-US')}<span class="cur">֏</span></span></div>
+    <div class="muted" style="font-size:13px;margin-top:12px">${t('count_act_basis')}</div>
     <div style="display:flex;gap:20px;margin-top:20px;flex-wrap:wrap">${sign(t('count_act_sign'))}${sign(t('count_act_resp'))}</div>
-    <div class="muted" style="font-size:11px;margin-top:14px">${t('count_act_note')}</div>`;
+    <div class="muted" style="font-size:13px;margin-top:14px">${t('count_act_note')}</div>`;
 }
 function openCountAct(id){ MODAL_RE=()=>openCountAct(id); armPushOverlay();
   const c = (S.counts||[]).find(x=>x && x.id===id);
@@ -4815,12 +5402,12 @@ function vShopDebts(){
     const debt=S.debts[s.id]||0, lim=S.creditLimit[s.id]||0;
     const pct=lim?Math.max(0,Math.min(100,Math.round(debt/lim*100))):0;
     return `<div class="card"><div class="row">
-    <div><b>${s.em} ${nm(s)}</b><div class="muted" style="margin-top:3px">${t('credit_limit')}${VJ()} <span class="num">${lim.toLocaleString('en-US')} ֏</span></div></div>
+    <div><b>${s.em} ${nm(s)}</b><div class="muted" style="margin-top:3px">${t('credit_limit')}${VJ()} <span class="num">${lim.toLocaleString('en-US')}<span class="cur">֏</span></span></div></div>
     <div style="text-align:right"><div class="num" style="font-weight:600;font-size:15px;color:${debt>lim?'var(--rose)':(debt<0?'var(--green)':'var(--ink)')}">${amd(debt)}</div>
     ${debt<0?`<div class="badge b-green" style="margin-top:6px">${t('credit_bal')}</div>`:''}
     ${debt>0?`<button class="btn small" style="margin-top:7px" onclick="payDebt('${s.id}')">${t('pay')}</button>`:''}</div>
   </div>
-  <div class="hbar" style="margin:10px 0 0"><div class="track"><div class="fill" style="width:${pct}%;${pct>=90?'background:linear-gradient(90deg,#FDA4B4,var(--rose));box-shadow:0 0 14px rgba(251,113,133,.45)':''}"></div></div></div>
+  <div class="hbar" style="margin:10px 0 0"><div class="track"><div class="fill" style="width:${pct}%;${pct>=90?'background:var(--danger)':''}"></div></div></div>
   </div>`;}).join('')}`;
 }
 
@@ -4870,7 +5457,7 @@ function vSupSellout(){
       : x.d<=4 ? `<span class="badge b-gold">~${Math.floor(x.d)} ${t('days_left')}</span>`
       : `<span class="badge b-green">~${Math.floor(x.d)} ${t('days_left')}</span>`;
     const pct = Math.min(100, Math.round(x.d/7*100));
-    return `<div class="card" ${x.d<=2?'style="border-color:rgba(251,113,133,.4)"':''}>
+    return `<div class="card" ${x.d<=2?'style="border-color:var(--danger-line)"':''}>
       <div class="row" style="align-items:flex-start">
         <div style="display:flex;gap:12px;align-items:center;min-width:0">
           <div class="pav">${x.p.em}</div>
@@ -4880,13 +5467,13 @@ function vSupSellout(){
           </div>
         </div>
         <div style="text-align:right;flex-shrink:0">
-          <div class="num" style="font-size:22px;font-weight:600">${x.st} <span class="muted" style="font-size:11px">${t('pcs')}</span></div>
+          <div class="num" style="font-size:22px;font-weight:600">${x.st} <span class="muted" style="font-size:13px">${t('pcs')}</span></div>
           ${badge}
         </div>
       </div>
       <div class="row selloutfoot" style="margin-top:11px;gap:14px">
-        <div class="hbar" style="flex:1;margin:0"><div class="track"><div class="fill" style="width:${pct}%;${x.d<=2?'background:linear-gradient(90deg,#FDA4B4,var(--rose));box-shadow:0 0 12px rgba(251,113,133,.5)':x.d<=4?'':'background:linear-gradient(90deg,#6EE7B7,var(--green));box-shadow:0 0 12px rgba(52,211,153,.4)'}"></div></div></div>
-        <span class="muted" style="font-size:10.5px">${t('last7')}</span> ${last7Bars(x.p.id)}
+        <div class="hbar" style="flex:1;margin:0"><div class="track"><div class="fill" style="width:${pct}%;${x.d<=2?'background:var(--danger)':x.d<=4?'':'background:var(--success)'}"></div></div></div>
+        <span class="muted" style="font-size:13px">${t('last7')}</span> ${last7Bars(x.p.id)}
         <button class="btn small violet" style="flex-shrink:0" onclick="proposeRestock('${x.p.id}')">📨 ${t('suggest_order')}</button>
       </div>
     </div>`;}).join('')}`;
@@ -4898,14 +5485,14 @@ function forecastCard(){
     .sort((a,b)=>a.st.dueIn-b.st.dueIn);
   if(!rows.length) return '';
   const total = rows.reduce((a,x)=>a+x.st.avgQty*effPrice(x.p),0);
-  return `<div class="card" style="border-color:rgba(34,211,238,.3)"><h3>🔮 ${t('forecast')}</h3>
+  return `<div class="card" style="border-color:var(--info-line)"><h3>🔮 ${t('forecast')}</h3>
     ${rows.map(x=>{
       const due = x.st.dueIn<=0 ? `<span class="badge b-rose">${t('due_today')}</span>` : `<span class="badge b-cyan">+${x.st.dueIn} ${dayW()}</span>`;
       return `<div class="row" style="padding:8px 0;border-bottom:1px solid var(--sep)">
-        <span style="font-size:13px">${x.p.em} ${nm(x.p)} <span class="muted">· ${nm(MY_SHOP)}</span></span>
+        <span style="font-size:13.5px">${x.p.em} ${nm(x.p)} <span class="muted">· ${nm(MY_SHOP)}</span></span>
         <span style="display:flex;gap:8px;align-items:center">${due}<b class="num">${x.st.avgQty} ${t('pcs')}</b></span>
       </div>`;}).join('')}
-    <div class="row" style="margin-top:10px"><span class="muted">${t('forecast_total')}</span><b class="num" style="color:#7DE9F7">${amd(total)}</b></div>
+    <div class="row" style="margin-top:10px"><span class="muted">${t('forecast_total')}</span><b class="num">${amd(total)}</b></div>
   </div>`;
 }
 function vSupDash(){
@@ -4916,9 +5503,9 @@ function vSupDash(){
   <div class="sec">${t('dash')}</div>
   <div class="kpis">
     <div class="kpi"><div class="l">📥 ${t('orders_today')}</div><div class="v">${todayOrders.length}</div></div>
-    <div class="kpi"><div class="l">💰 ${t('revenue_today')}</div><div class="v" style="font-size:16px;color:var(--gold2)">${amd(rev)}</div></div>
+    <div class="kpi"><div class="l">💰 ${t('revenue_today')}</div><div class="v m">${amd(rev)}</div></div>
     <div class="kpi"><div class="l">🏪 ${t('active_shops')}</div><div class="v">${OTHER_SHOPS.length+1}</div></div>
-    <div class="kpi"><div class="l">🔔 ${t('alerts_n')}</div><div class="v" style="color:${alerts.length?'var(--rose)':'var(--green)'}">${alerts.length}</div></div>
+    <div class="kpi ${alerts.length?'kpi-alert':''}"><div class="l">🔔 ${t('alerts_n')}</div><div class="v">${alerts.length}</div></div>
   </div>
   ${forecastCard()}
   ${supLeadCard()}
@@ -4934,14 +5521,14 @@ function routeCard(){
   const byDay = {};
   active.forEach(o=>{ (byDay[o.deliveryDate] = byDay[o.deliveryDate]||[]).push(o); });
   const days = Object.entries(byDay).sort((a,b)=>a[0]-b[0]);
-  return `<div class="card" style="border-color:rgba(96,165,250,.3)"><h3>🗺 ${t('route')}</h3>
+  return `<div class="card" style="border-color:var(--info-line)"><h3>🗺 ${t('route')}</h3>
     ${days.map(([d, orders])=>{
       const sum = orders.reduce((a,o)=>a+o.items.reduce((x,i)=>x+i.qty*i.price,0),0);
       const shops = [...new Set(orders.map(o=>nm(o.shop)))].join(', ');
       const dn = +d===S.today ? t('today_w') : +d===S.today+DAY ? t('tomorrow_w') : fdate(+d);
       return `<div class="row" style="padding:9px 0;border-bottom:1px solid var(--sep);align-items:flex-start">
         <div><span class="badge b-cyan">🚚 ${dn}</span><div class="muted" style="margin-top:5px;max-width:340px">${shops}</div></div>
-        <div style="text-align:right"><b class="num">${orders.length}</b> <span class="muted">${t('items')}</span><div class="num" style="color:var(--gold2);margin-top:3px;font-weight:600">${sum.toLocaleString('en-US')} ֏</div></div>
+        <div style="text-align:right"><b class="num">${orders.length}</b> <span class="muted">${t('items')}</span><div class="num" style="margin-top:3px;font-weight:700">${sum.toLocaleString('en-US')}<span class="cur">֏</span></div></div>
       </div>`;}).join('')}
   </div>`;
 }
@@ -4965,15 +5552,15 @@ function shopStockChips(shopId){
     const q = stk[p.id]||0;
     const d = daysLeftShop(shopId, p.id);
     const col = q===0 || d<=1 ? 'b-rose' : d<=3 ? 'b-gold' : 'b-green';
-    return `<span class="badge ${col}" style="font-size:11px;padding:4px 8px">${p.em} ${q}</span>`;
+    return `<span class="badge ${col}" style="font-size:13px;padding:4px 8px">${p.em} ${q}</span>`;
   }).join(' ');
 }
 function shopCard(shop, sub, badge){
   const crit = critCount(shop.id);
-  return `<div class="card" ${crit>=3?'style="border-color:rgba(251,113,133,.35)"':''}>
+  return `<div class="card" ${crit>=3?'style="border-color:var(--danger-line)"':''}>
     <div class="shoprow" style="border:none;padding:0 0 10px" onclick="openShop('${shop.id}')">
       <div class="shopav">${nm(shop).replace(/[«»]/g,'').trim()[0]}</div>
-      <div class="info" style="flex:1"><div style="font-weight:600;font-size:14.5px">${nm(shop)}</div><div class="muted" style="margin-top:2px">${sub}</div></div>
+      <div class="info" style="flex:1"><div style="font-weight:600;font-size:15px">${nm(shop)}</div><div class="muted" style="margin-top:2px">${sub}</div></div>
       <span style="display:flex;gap:6px;align-items:center">${crit?`<span class="badge b-rose">🚨 ${crit}</span>`:''}${badge}</span>
     </div>
     <div style="display:flex;flex-wrap:wrap;gap:6px">${shopStockChips(shop.id)}</div>
@@ -5019,7 +5606,7 @@ function vSupCatalog(){
       PRODUCTS.filter(p=>p.sup===s.id).map(p=>`<div class="sug stack">
         <div class="pav">${p.em}</div>
         <div class="info"><div class="nm">${nm(p)}</div>
-          <div class="sub"><b>${effPrice(p).toLocaleString('en-US')} ֏</b>${isPromo(p)?` <s style="color:var(--dim)">${p.price.toLocaleString('en-US')}</s> <span class="badge b-violet">${t('promo')} −10%</span>`:''}</div></div>
+          <div class="sub"><b>${effPrice(p).toLocaleString('en-US')}<span class="cur">֏</span></b>${isPromo(p)?` <s style="color:var(--dim)">${p.price.toLocaleString('en-US')}</s> <span class="badge b-violet">${t('promo')} −10%</span>`:''}</div></div>
         <div class="sugact" style="min-width:120px;text-align:right">
           <button class="btn small ${isPromo(p)?'danger':'violet'}" onclick="togglePromo('${p.id}')">${isPromo(p)?t('promo_stop'):t('promo_start')}</button>
         </div>
@@ -5041,16 +5628,16 @@ function monthAgg(){
 function monthBars(cls){
   const rows=monthAgg(); const max=Math.max(...rows.map(r=>r[1]),1);
   return rows.map(([k,v])=>`<div class="hbar">
-    <div class="hl"><span>${monthLabel(k)}</span><b>${v.toLocaleString('en-US')} ֏</b></div>
+    <div class="hl"><span>${monthLabel(k)}</span><b>${v.toLocaleString('en-US')}<span class="cur">֏</span></b></div>
     <div class="track"><div class="fill ${cls||''}" style="width:${Math.round(v/max*100)}%"></div></div>
   </div>`).join('');
 }
 function billRows(withShop){
   const bills=[...S.bills].sort((a,b)=>b.date-a.date);
   return bills.map(b=>`<tr style="cursor:pointer" onclick="openInvoice('${b.id}')">
-    <td class="num" style="color:var(--cyan)">${b.id}</td><td>${fdate(b.date)}</td>
+    <td class="num" style="color:var(--info)">${b.id}<div class="tblsub">${fdate(b.date)}</div></td><td>${fdate(b.date)}</td>
     <td>${withShop ? nm(MY_SHOP) : SUPX(b.sup).em+' '+nm(SUPX(b.sup))}</td>
-    <td class="num">${b.amount.toLocaleString('en-US')} ֏</td>
+    <td class="num">${b.amount.toLocaleString('en-US')}<span class="cur">֏</span></td>
     <td>${b.adj
       ? `<span class="badge b-violet">${t('adj_badge')}</span>`
       : b.paid
@@ -5090,13 +5677,13 @@ function openStatement(sup){ MODAL_RE=()=>openStatement(sup); armPushOverlay();
 function payRows(){
   return [...S.payments].sort((a,b)=>b.date-a.date).map(p=>`<tr>
     <td>${fdate(p.date)}</td><td>${SUPX(p.sup).em+' '+nm(SUPX(p.sup))}</td>
-    <td class="num" style="color:var(--green)">${p.amount.toLocaleString('en-US')} ֏</td>
+    <td class="num" style="color:var(--green)">${p.amount.toLocaleString('en-US')}<span class="cur">֏</span></td>
   </tr>`).join('');
 }
 function histRows(limit){
   return [...S.history].sort((a,b)=>b.date-a.date).slice(0,limit).map(h=>`<tr>
-    <td>${fdate(h.date)}</td><td>${PX(h.productId).em} ${nm(PX(h.productId))}</td>
-    <td class="num">${h.qty}</td><td class="num">${(h.qty*h.price).toLocaleString('en-US')} ֏</td>
+    <td>${fdate(h.date)}</td><td>${PX(h.productId).em} ${nm(PX(h.productId))}<div class="tblsub">${fdate(h.date)}</div></td>
+    <td class="num">${h.qty}</td><td class="num">${(h.qty*h.price).toLocaleString('en-US')}<span class="cur">֏</span></td>
     <td>${(h.doc&&h.doc.no)?`<span class="num">${escH(h.doc.no)}</span>`:`<span class="badge b-gold">${t('doc_missing')}</span>`}</td>
   </tr>`).join('');
 }
@@ -5156,20 +5743,20 @@ function vShopData(){
   return `<div class="sec">${t('dc_title')}</div>
   ${privacyLine()}
   <div class="kpis">
-    <div class="kpi"><div class="l">📦 ${t('dc_stock_value')}</div><div class="v" style="font-size:16px;color:var(--cyan)">${amd(Math.round(val.total))}</div></div>
-    <div class="kpi"><div class="l">🛒 ${t('dc_spend_m')}</div><div class="v" style="font-size:16px;color:var(--gold2)">${amd(st.spendM)}</div></div>
-    <div class="kpi"><div class="l">✅ ${t('dc_paid_all')}</div><div class="v" style="font-size:16px;color:var(--green)">${amd(st.paidAll)}</div></div>
-    <div class="kpi"><div class="l">⏳ ${t('dc_out')}</div><div class="v" style="font-size:16px;color:${st.out?'var(--rose)':'var(--green)'}">${amd(st.out)}</div></div>
+    <div class="kpi"><div class="l">📦 ${t('dc_stock_value')}</div><div class="v m">${amd(Math.round(val.total))}</div></div>
+    <div class="kpi"><div class="l">🛒 ${t('dc_spend_m')}</div><div class="v m">${amd(st.spendM)}</div></div>
+    <div class="kpi"><div class="l">✅ ${t('dc_paid_all')}</div><div class="v m">${amd(st.paidAll)}</div></div>
+    <div class="kpi ${st.out?'kpi-alert':''}"><div class="l">⏳ ${t('dc_out')}</div><div class="v m">${amd(st.out)}</div></div>
   </div>
   <details class="acc" open><summary>📄 ${t('dc_g_docs')}</summary>
-  <div class="card"><h3 style="justify-content:space-between">🧾 ${t('dc_bills')} <button class="btn small ghost noprint" onclick="exportCSV('bills')">⬇ CSV</button></h3><div class="muted" style="margin:-6px 0 8px">${t('tap_bill')}</div><div class="tblwrap"><table class="tbl">
+  <div class="card"><h3 style="justify-content:space-between">🧾 ${t('dc_bills')} <button class="btn small ghost noprint" onclick="exportCSV('bills')">⬇ CSV</button></h3><div class="muted" style="margin:-6px 0 8px">${t('tap_bill')}</div><div class="tblwrap"><table class="tbl tfold-b">
     <tr><th>${t('bill_col')}</th><th>${t('date')}</th><th>${t('supplier_col')}</th><th>${t('amount_col')}</th><th>${t('status_col')}</th></tr>
     ${billRows(false)}</table></div></div>
   <div class="card"><h3>💸 ${t('dc_payments')}</h3><div class="tblwrap"><table class="tbl">
     <tr><th>${t('date')}</th><th>${t('supplier_col')}</th><th>${t('amount_col')}</th></tr>
     ${payRows() || `<tr><td colspan="3" class="muted">—</td></tr>`}</table></div></div>
   <div class="card"><h3 style="justify-content:space-between">🕘 ${t('dc_history')} <button class="btn small ghost noprint" onclick="exportCSV('history')">⬇ CSV</button></h3>
-    <div class="muted" style="margin:-6px 0 8px">${t('dc_history_hint')}</div><div class="tblwrap"><table class="tbl">
+    <div class="muted" style="margin:-6px 0 8px">${t('dc_history_hint')}</div><div class="tblwrap"><table class="tbl tfold-h">
     <tr><th>${t('date')}</th><th>${t('product')}</th><th>${t('qty')}</th><th>${t('amount_col')}</th><th>${t('recv_doc_no')}</th></tr>
     ${histRows(40)}</table></div></div>
   </details>
@@ -5177,7 +5764,7 @@ function vShopData(){
   <div class="card"><h3>📦 ${t('dc_stock_value')}</h3>
     <div class="row"><span class="muted">${t('dc_stock_value_all')}</span><b class="num" style="font-size:17px">${amd(Math.round(val.total))}</b></div>
     ${Object.keys(val.byCat).sort((a,b)=>val.byCat[b]-val.byCat[a]).map(c=>`<div class="row" style="padding:6px 0;border-top:1px solid var(--sep)"><span>${catLabel(c)}</span><b class="num">${amd(Math.round(val.byCat[c]))}</b></div>`).join('')}
-    <div class="muted" style="font-size:11px;margin-top:8px">${t('dc_stock_value_note')}</div></div>
+    <div class="muted" style="font-size:13px;margin-top:8px">${t('dc_stock_value_note')}</div></div>
   <div class="card"><h3>📊 ${t('dc_by_month')}</h3>${monthBars('')}</div>
   ${vReports()}
   ${writeoffCard()}
@@ -5191,25 +5778,25 @@ function vSupData(){
   const revAll = S.history.reduce((a,h)=>a+h.qty*h.price,0);
   return `<div class="sec">${t('dc_title')}</div>
   <div class="kpis">
-    <div class="kpi"><div class="l">💰 ${t('dc_rev_m')}</div><div class="v" style="font-size:16px;color:var(--gold2)">${amd(st.spendM)}</div></div>
+    <div class="kpi"><div class="l">💰 ${t('dc_rev_m')}</div><div class="v m">${amd(st.spendM)}</div></div>
     <div class="kpi"><div class="l">📦 ${t('dc_deliv_all')}</div><div class="v">${st.deliv}</div></div>
-    <div class="kpi"><div class="l">✅ ${t('dc_payments')}</div><div class="v" style="font-size:16px;color:var(--green)">${amd(st.paidAll)}</div></div>
-    <div class="kpi"><div class="l">⏳ ${t('dc_receiv')}</div><div class="v" style="font-size:16px;color:${st.out?'var(--rose)':'var(--green)'}">${amd(st.out)}</div></div>
+    <div class="kpi"><div class="l">✅ ${t('dc_payments')}</div><div class="v m">${amd(st.paidAll)}</div></div>
+    <div class="kpi ${st.out?'kpi-alert':''}"><div class="l">⏳ ${t('dc_receiv')}</div><div class="v m">${amd(st.out)}</div></div>
   </div>
   <div class="card"><h3>📊 ${t('dc_rev_by_month')}</h3>${monthBars('cy')}</div>
   <div class="card"><h3>⏳ ${t('dc_receiv')}</h3>
     ${SUPPLIERS.map(s=>`<div class="row" style="padding:9px 0;border-bottom:1px solid var(--sep)">
       <span>${s.em} ${nm(s)} ← ${nm(MY_SHOP)}</span>
       <span style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
-        <b class="num" style="color:${(S.debts[s.id]||0)>0?'var(--rose)':'var(--green)'}">${(S.debts[s.id]||0).toLocaleString('en-US')} ֏</b>
+        <b class="num" style="color:${(S.debts[s.id]||0)>0?'var(--rose)':'var(--green)'}">${(S.debts[s.id]||0).toLocaleString('en-US')}<span class="cur">֏</span></b>
         ${(S.debts[s.id]||0)>0?`<button class="btn small green" onclick="payDebt('${s.id}')">💰 ${t('receive_pay')}</button>`:''}
         <button class="btn small ghost" onclick="openStatement('${s.id}')">📄 ${t('statement')}</button>
       </span>
     </div>`).join('')}</div>
-  <div class="card"><h3 style="justify-content:space-between">🧾 ${t('dc_bills')} <button class="btn small ghost noprint" onclick="exportCSV('bills')">⬇ CSV</button></h3><div class="muted" style="margin:-6px 0 8px">${t('tap_bill')}</div><div class="tblwrap"><table class="tbl">
+  <div class="card"><h3 style="justify-content:space-between">🧾 ${t('dc_bills')} <button class="btn small ghost noprint" onclick="exportCSV('bills')">⬇ CSV</button></h3><div class="muted" style="margin:-6px 0 8px">${t('tap_bill')}</div><div class="tblwrap"><table class="tbl tfold-b">
     <tr><th>${t('bill_col')}</th><th>${t('date')}</th><th>${t('shop_col')}</th><th>${t('amount_col')}</th><th>${t('status_col')}</th></tr>
     ${billRows(true)}</table></div></div>
-  <div class="card"><h3 style="justify-content:space-between">🕘 ${t('dc_sales')} <button class="btn small ghost noprint" onclick="exportCSV('history')">⬇ CSV</button></h3><div class="tblwrap"><table class="tbl">
+  <div class="card"><h3 style="justify-content:space-between">🕘 ${t('dc_sales')} <button class="btn small ghost noprint" onclick="exportCSV('history')">⬇ CSV</button></h3><div class="tblwrap"><table class="tbl tfold-h">
     <tr><th>${t('date')}</th><th>${t('product')}</th><th>${t('qty')}</th><th>${t('amount_col')}</th></tr>
     ${histRows(40)}</table></div></div>`;
 }
@@ -5232,7 +5819,7 @@ function openShop(id){ MODAL_RE=()=>openShop(id); armPushOverlay();
       .sort((a,b)=>{ const da=expDaysLeft(a), db=expDaysLeft(b); return (da==null?1e9:da)-(db==null?1e9:db); });
     if(eb.length){
       body += `<div class="sec" style="margin-top:16px">🗓 ${t('sup_exp_title')}</div>
-      <div class="muted" style="font-size:11px;margin:-4px 0 6px">${t('sup_exp_asked')}</div>
+      <div class="muted" style="font-size:13px;margin:-4px 0 6px">${t('sup_exp_asked')}</div>
       <table class="tbl"><tr><th>${t('product')}</th><th>${t('qty')}</th><th>${dayW()}</th></tr>` +
         eb.slice(0,10).map(b=>{ const p=P(b.pid)||{}, d=expDaysLeft(b);
           return `<tr><td>${p.em||''} ${nm(p)}</td><td class="num">${b.left}</td><td>${d==null?'—':(d<0?`<span class="badge b-rose">${t('exp_group_over')}</span>`:`<span class="num">${d}</span>`)}</td></tr>`;}).join('') + '</table>';
@@ -5260,21 +5847,21 @@ function openInvoice(bid){ MODAL_RE=()=>openInvoice(bid); armPushOverlay();
   const itemRows = b.items && b.items.length
     ? `<table class="tbl"><tr><th>${t('product')}</th><th>${t('qty')}</th><th>${t('price')}</th><th>${t('amount_col')}</th></tr>` +
       b.items.map(it=>`<tr><td>${nm(P(it.productId))}</td><td class="num">${it.qty}</td><td class="num">${it.price.toLocaleString('en-US')}</td><td class="num">${(it.qty*it.price).toLocaleString('en-US')}</td></tr>`).join('') + `</table>`
-    : `<div class="muted" style="margin-top:10px">${t('amount_col')}${VJ()} <b class="num">${b.amount.toLocaleString('en-US')} ֏</b></div>`;
+    : `<div class="muted" style="margin-top:10px">${t('amount_col')}${VJ()} <b class="num">${b.amount.toLocaleString('en-US')}<span class="cur">֏</span></b></div>`;
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody" id="invoiceBody"><div class="grabber noprint"></div>
     <h3>🧾 ${b.adj ? t('adj_doc') : t('invoice')} ${b.id}</h3>
     <div class="muted">${fdateY(b.date)}</div>
     <hr class="sep" style="border:none;border-top:1px solid var(--stroke2);margin:12px 0">
     <div class="row" style="align-items:flex-start"><div>
-      <div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:1px">${t('seller')}</div>
+      <div class="doclbl">${t('seller')}</div>
       <b>${sup.em} ${nm(sup)}</b>
     </div><div style="text-align:right">
-      <div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:1px">${t('buyer')}</div>
+      <div class="doclbl">${t('buyer')}</div>
       <b>🏪 ${nm(MY_SHOP)}</b>
     </div></div>
     ${itemRows}
-    <div class="row" style="margin-top:14px"><b>${t('total_lbl')}</b><span class="big" style="color:var(--gold2)">${amd(b.amount)}</span></div>
+    <div class="row" style="margin-top:14px"><b>${t('total_lbl')}</b><span class="big">${amd(b.amount)}</span></div>
     <div style="margin-top:8px">${b.paid?`<span class="badge b-green">${t('paid_st')}${b.paidDate?' · '+fdate(b.paidDate):''}</span>`:`<span class="badge b-rose">${t('unpaid_st')}</span>`}</div>
     <button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">🖨 ${t('print')}</button>
     <button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">${t('close')}</button></div></div>`;
@@ -5300,6 +5887,29 @@ function acceptProposal(prid){
 }
 function dismissProposal(prid){ S.proposals = S.proposals.filter(x=>x.id!==prid); saveD(); renderAll(); }
 function setPropQty(prid, q){ const pr=S.proposals.find(x=>x.id===prid); if(pr && q>0){ pr.qty=q; saveD(); renderAll(); } }
+
+/* R5 · the header yields to content while the shopkeeper scrolls, and comes back on any upward
+   flick. It hides nothing: one small scroll up restores it, exactly like the browser he uses.
+   It only ever runs in single-column mobile, it always restores in the top 64px of the page, and
+   it never touches nav — the thumb lives there and it must be unconditionally present. */
+(function autoHideTop(){
+  var last = 0, ticking = false, top = null;
+  function apply(){
+    ticking = false;
+    top = top || document.getElementById('top');
+    if(!top) return;
+    if(!document.body.classList.contains('single-mobile')){ top.classList.remove('hid'); last = 0; return; }
+    var y = window.scrollY || 0;
+    if(y < 64){ top.classList.remove('hid'); }
+    else if(y > last + 6){ top.classList.add('hid'); }
+    else if(y < last - 6){ top.classList.remove('hid'); }
+    last = y;
+  }
+  window.addEventListener('scroll', function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(apply); }
+  }, {passive:true});
+  window.addEventListener('resize', function(){ if(top) top.classList.remove('hid'); }, {passive:true});
+})();
 
 let rt=null;
 window.addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(renderAll,150); });
