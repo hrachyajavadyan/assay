@@ -23,7 +23,11 @@
   --mono:'IBM Plex Mono',menlo,monospace;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;-webkit-font-smoothing:antialiased}
+/* the canvas colour must come from BODY alone. html carrying its own background blocks CSS's
+   background-propagation rule, so body.light's #F5F6F8 never painted the area below a short
+   page and the dark :root --bg showed through as a black band on every empty screen. */
+html{margin:0;padding:0}
+body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;-webkit-font-smoothing:antialiased}
 /* bright ambient glows */
 body::before{content:"";position:fixed;inset:0;z-index:-2;background:
   radial-gradient(60vw 50vh at 12% -8%, rgba(227,154,59,.22), transparent 60%),
@@ -45,7 +49,7 @@ button{font-family:var(--font)}
 .big{font-family:var(--mono);font-size:24px;font-weight:600;letter-spacing:-.5px}
 
 /* glassy buttons */
-.btn{position:relative;border:1px solid var(--stroke2);border-radius:13px;background:linear-gradient(180deg,var(--glass2),rgba(255,255,255,.03));color:var(--ink);font-weight:700;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:hidden;transition:transform .14s,box-shadow .2s;padding:11px 15px;font-size:13.5px}
+.btn{position:relative;border:1px solid var(--stroke2);border-radius:13px;background:linear-gradient(180deg,var(--glass2),rgba(255,255,255,.03));color:var(--ink);font-weight:700;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:hidden;transition:transform .14s,box-shadow .2s;padding:13px 15px;font-size:13.5px}
 .btn::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.22),transparent 42%);opacity:.7;pointer-events:none}
 .btn:active{transform:scale(.96)}
 .btn.primary{width:100%;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1205;border-color:rgba(255,255,255,.25);padding:16px;font-size:16px;font-weight:800;box-shadow:0 10px 34px rgba(227,154,59,.4)}
@@ -53,7 +57,7 @@ button{font-family:var(--font)}
 .btn.green{background:linear-gradient(135deg,#6EE7B7,var(--green));color:#052e1c;border-color:transparent;box-shadow:0 8px 26px rgba(52,211,153,.30)}
 .btn.violet{background:linear-gradient(135deg,#C4B5FD,var(--violet));color:#1e1146;border-color:transparent;box-shadow:0 8px 26px rgba(167,139,250,.30)}
 .btn.ghost{background:var(--glass);color:var(--ink)}
-.btn.small{padding:8px 12px;font-size:12.5px;border-radius:10px}
+.btn.small{padding:10px 13px;font-size:12.5px;border-radius:10px}
 .btn.danger{background:linear-gradient(180deg,rgba(251,113,133,.18),rgba(251,113,133,.06));color:var(--rose);border-color:rgba(251,113,133,.35)}
 .btn.full{width:100%}
 
@@ -78,17 +82,54 @@ button{font-family:var(--font)}
 .sug:last-child{border-bottom:none;padding-bottom:2px}
 .sug:first-child{padding-top:2px}
 .pav{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0;background:var(--glass2);border:1px solid var(--stroke2)}
+/* the 48x48 avatar doubles as the item-card button, so the product name keeps its full column */
+button.pav{padding:0;position:relative;cursor:pointer;color:inherit;font-family:inherit}
+button.pav:active{transform:scale(.93)}
+button.pav .pavdots{position:absolute;right:3px;bottom:-1px;font-size:12px;line-height:1;font-weight:800;color:var(--muted)}
 .sug .info{flex:1;min-width:0}
-.sug .nm{font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Armenian product names run 150-190px; on a 320-412px phone the flex row can never give them
+   that on ONE line, so they used to ellipsise down to «Ջ…». Wrap to two lines instead — the
+   name is what identifies the SKU being counted, priced or sold. */
+.sug .nm{font-weight:600;font-size:14.5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere;line-height:1.3}
+/* a row action must be able to give width back to the name */
+.sug .rowact{flex:0 1 auto;min-width:0;white-space:normal}
+/* at 320px the name column is only ~76px, so two lines are not enough for the longest names */
+@media (max-width:340px){ .sug .nm{-webkit-line-clamp:3} }
+/* rows whose action carries a long sentence-length label (the promo toggle) squeezed the name
+   column down to 31px at 320px. Below 460px the action drops onto its own full-width line. */
+@media (max-width:460px){
+  .sug.stack{flex-wrap:wrap}
+  .sug.stack .info{flex:1 1 auto}
+  .sug.stack .sugact{flex:1 1 100%;min-width:0 !important;text-align:left !important;margin-top:8px}
+  .sug.stack .sugact .btn{width:100%}
+}
 .sug .sub{font-size:11.5px;color:var(--muted);margin-top:4px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
 .sug .sub b{font-family:var(--mono);color:var(--gold2);font-weight:600}
 .qtyctl{display:flex;align-items:center;gap:2px;background:var(--glass2);border:1px solid var(--stroke2);border-radius:11px;padding:3px}
-.qtyctl button{width:30px;height:30px;border-radius:9px;border:none;background:transparent;color:var(--gold2);font-size:18px;font-weight:800;cursor:pointer}
+.qtyctl button{width:38px;height:38px;border-radius:9px;border:none;background:transparent;color:var(--gold2);font-size:18px;font-weight:800;cursor:pointer}
+/* the scan tray's ± is the control reached for after a mis-scan, one-handed, mid-aisle */
+.scantray .qtyctl button{width:44px;height:44px;font-size:21px}
+.scantray .qtyctl span{min-width:30px}
 .qtyctl button:active{background:rgba(247,197,114,.18)}
 .qtyctl span{min-width:26px;text-align:center;font-family:var(--mono);font-weight:600;font-size:15px}
 .addbtn{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1205;border:none;border-radius:11px;padding:9px 13px;font-weight:800;font-size:12.5px;cursor:pointer;transition:.15s;width:100%;box-shadow:0 5px 16px rgba(227,154,59,.3)}
 .addbtn:active{transform:scale(.95)}
 .addbtn.added{background:linear-gradient(135deg,#6EE7B7,var(--green));color:#052e1c;box-shadow:0 5px 16px rgba(52,211,153,.3)}
+.iconbtn{width:32px;height:32px;border-radius:10px;border:1px solid var(--stroke2);background:var(--glass);color:var(--muted);font-size:16px;font-weight:700;cursor:pointer;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.iconbtn:active{transform:scale(.92)}
+body.light .iconbtn{background:#FFFFFF}
+/* receiving discrepancy line */
+.rline{display:flex;gap:7px;align-items:center;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin:7px 0 0 60px}
+.rline .was{text-decoration:line-through;color:var(--dim);font-family:var(--mono)}
+.rline .chips{margin:0;padding:0}
+.rline .chips button{padding:5px 10px;font-size:11px}
+body.light .rline .chips button{background:#FFFFFF}
+/* barcode scanner (R2): the box always holds video, so it stays dark in both themes */
+.scanbox{position:relative;margin-top:12px;border-radius:15px;overflow:hidden;background:#000;aspect-ratio:4/3;min-height:190px}
+.scanbox video{width:100%;height:100%;object-fit:cover;display:block}
+.scanroi{position:absolute;left:6%;right:6%;top:35%;height:30%;border:2px solid var(--gold2);border-radius:10px;box-shadow:0 0 0 2000px rgba(0,0,0,.34)}
+.scanroi::after{content:"";position:absolute;left:6px;right:6px;top:50%;height:2px;background:var(--rose);opacity:.85}
+.scanhint{position:absolute;left:0;right:0;bottom:8px;text-align:center;color:#fff;font-size:11.5px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.8)}
 
 /* search & chips */
 .search{width:100%;padding:13px 16px;border:1px solid var(--stroke2);border-radius:13px;font-size:15px;font-family:var(--font);background:var(--glass);color:var(--ink);margin-bottom:12px;outline:none;transition:.15s;backdrop-filter:blur(10px)}
@@ -96,7 +137,9 @@ button{font-family:var(--font)}
 .search:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(227,154,59,.18)}
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
-.chips button{white-space:nowrap;background:var(--glass);border:1px solid var(--stroke2);border-radius:99px;padding:8px 14px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px}
+/* a mandatory choice may never hide behind a scrollbar-less swipe: wrap onto as many rows as it takes */
+.chips.wrap{flex-wrap:wrap;overflow-x:visible}
+.chips button{white-space:nowrap;background:var(--glass);border:1px solid var(--stroke2);border-radius:99px;padding:10px 14px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px}
 .chips button.active{background:linear-gradient(135deg,rgba(247,197,114,.22),rgba(227,154,59,.12));color:var(--gold2);border-color:rgba(247,197,114,.5)}
 
 /* orders */
@@ -134,18 +177,6 @@ button{font-family:var(--font)}
 .tblwrap::-webkit-scrollbar-thumb{background:var(--stroke2);border-radius:99px}
 .spark{display:inline-flex;gap:2px;align-items:flex-end;height:22px;vertical-align:middle}
 .spark i{width:5px;background:linear-gradient(180deg,#67E8F9,var(--violet));border-radius:2px;display:block;min-height:2px}
-@media print{
-  body{background:#fff !important}
-  body::before,body::after{display:none !important}
-  #top,#app,nav,#toast,.noprint,.grabber{display:none !important}
-  .modal{position:static;background:#fff;display:block;animation:none}
-  .mbody{background:#fff;color:#111;border:none;box-shadow:none;max-height:none;border-radius:0;max-width:none;animation:none}
-  .mbody .muted{color:#555}
-  .mbody .big,.mbody .osum{color:#111 !important}
-  .tbl th{color:#555;border-color:#ccc}
-  .tbl td{border-color:#ddd;color:#111}
-  .badge{border:1px solid #999;color:#111 !important;background:none !important}
-}
 
 /* supplier shop list */
 .shoprow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--sep);cursor:pointer}
@@ -166,13 +197,34 @@ button{font-family:var(--font)}
 .tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
 .tbl th{text-align:left;color:var(--dim);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:7px 5px;border-bottom:1px solid var(--stroke2)}
 .tbl td{padding:9px 5px;border-bottom:1px solid var(--sep)}
+/* ---- գույքագրման ակտ ---- */
+.actrule{border:none;border-top:1px solid var(--stroke2);margin:12px 0}
+.actsep{border-top:1px solid var(--stroke2)}
+.actsignline{border-bottom:1px solid var(--stroke2);height:26px;max-width:180px}
+.acttbl .actsub{display:none}
+/* On a phone the 7-column act is ~465px wide inside a 352px wrapper, so ՓԱՍՏԱՑԻ, Δ and ֏ —
+   the whole point of the document — scrolled off with no cue. Below 560px the two reference
+   columns (Ապրանքի կոդ, Չափման միավոր) fold into a sub-line under the product name instead;
+   print and CSV always carry the full seven. */
+@media screen and (max-width:560px){
+  .acttbl th:nth-child(2),.acttbl td:nth-child(2),
+  .acttbl th:nth-child(3),.acttbl td:nth-child(3){display:none}
+  .acttbl .actsub{display:block;font-size:10px;margin-top:3px}
+  .acttbl th,.acttbl td{padding-left:3px;padding-right:3px}
+  .acttbl{font-size:11.5px}
+}
 
 /* ---------- TOP BAR (global controls) ---------- */
-#top{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:10px;padding:calc(9px + env(safe-area-inset-top)) 14px 9px;background:rgba(9,13,26,.72);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid var(--stroke)}
+/* the six global controls + the logo cannot share one 390px row: without wrapping they pushed
+   the bell, the split toggle, the language switch and ⏭ off-screen and made the WHOLE document
+   scroll sideways. Wrap instead — every control stays reachable and nothing overflows. */
+#top{position:sticky;top:0;z-index:60;display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:calc(9px + env(safe-area-inset-top)) 14px 9px;background:rgba(9,13,26,.72);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid var(--stroke)}
 .logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.3px}
 .logomark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--gold2),var(--gold));display:flex;align-items:center;justify-content:center;color:#1a1205;font-size:16px;box-shadow:0 5px 18px rgba(227,154,59,.45)}
 .logo small{display:block;font-family:var(--font);font-weight:500;font-size:10.5px;color:var(--muted);margin-top:1px}
-#top .spacer{flex:1}
+#top .spacer{flex:1 1 0;min-width:0}
+.logo{min-width:0}
+.logo>div{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tbtn{border:1px solid var(--stroke2);background:var(--glass);color:var(--ink);border-radius:11px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;backdrop-filter:blur(10px)}
 .tbtn:active{transform:scale(.95)}
 .tbtn.on{background:linear-gradient(135deg,rgba(247,197,114,.24),rgba(227,154,59,.12));color:var(--gold2);border-color:rgba(247,197,114,.5)}
@@ -206,11 +258,32 @@ nav button.active{color:var(--gold2)}
 nav button.active .icw{background:rgba(247,197,114,.18)}
 nav .icw{width:44px;height:28px;border-radius:99px;display:flex;align-items:center;justify-content:center;font-size:18px;transition:.15s}
 .navbadge{position:absolute;top:0;left:calc(50% + 6px);background:var(--rose);color:#2a0710;font-size:9.5px;font-weight:800;border-radius:99px;padding:1.5px 6px}
+/* 8 shop tabs must fit a one-thumb phone */
+nav .icw{width:40px}
+nav button{min-width:0;overflow:hidden;white-space:nowrap}
+nav button>span:last-child{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
 body.single-mobile{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+/* Below ~460px eight full Armenian labels cannot share one row without ellipsising into
+   ambiguous stubs (Պատվ… / Պարտ…). Wrap the strip onto two rows of four instead: every
+   destination keeps its whole name and every tab keeps a comfortable touch target. */
+@media (max-width:460px){
+  nav{flex-wrap:wrap;padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
+  nav button{flex:0 0 25%;max-width:25%;font-size:10px;padding:5px 2px;gap:2px}
+  nav .icw{width:34px;height:23px;font-size:15px}
+  body.single-mobile{padding-bottom:calc(132px + env(safe-area-inset-bottom))}
+  /* the shop grew a 9th tab (🧮 Գույքագրում): 5 + 4 across the same two rows, same height */
+  nav.cols9 button{flex:0 0 20%;max-width:20%}
+}
+@media (max-width:400px){ nav.cols9 button{font-size:9px} nav.cols9 .icw{width:30px} }
+@media (max-width:340px){ nav button{font-size:9px} }
+/* at 320px a 9-tab strip gives each button ~58px of label room; «Գույքագրում» / «Ապրանքներ» /
+   «Պատվերներ» only fit whole below 8.5px. Scoped to cols9, so the supplier nav is untouched. */
+@media (max-width:340px){ nav.cols9 button{font-size:8px;letter-spacing:-.2px} }
 
 /* toast & modal */
 #toast{position:fixed;left:50%;transform:translateX(-50%) translateY(8px);bottom:calc(96px + env(safe-area-inset-bottom));background:linear-gradient(135deg,#67E8F9,var(--cyan));color:#062a30;padding:12px 20px;border-radius:13px;font-size:13.5px;font-weight:800;z-index:100;opacity:0;transition:.28s;pointer-events:none;max-width:88%;text-align:center;box-shadow:0 10px 34px rgba(34,211,238,.45)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (max-width:460px){ #toast{bottom:calc(144px + env(safe-area-inset-bottom))} }
 .modal{position:fixed;inset:0;background:rgba(4,7,14,.72);backdrop-filter:blur(6px);z-index:90;display:flex;align-items:flex-end;justify-content:center;animation:fade .2s ease}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 .mbody{background:rgba(20,26,44,.92);backdrop-filter:blur(24px);border:1px solid var(--stroke2);width:100%;max-width:680px;border-radius:24px 24px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom));max-height:84vh;overflow-y:auto;animation:slideUp .28s cubic-bezier(.2,.9,.3,1)}
@@ -316,6 +389,39 @@ body.light .langsw{color:var(--muted)}
   .kpis{grid-template-columns:repeat(4,1fr)}
   .split{gap:26px;padding:20px 32px}
 }
+
+/* ================= PRINT =================
+   MUST be the last block in the sheet. Declared earlier it lost every property that a later
+   same-specificity rule redeclared (.modal, .mbody), which pinned the գույքագրման ակտ to the
+   bottom of the sheet on a dark canvas. !important covers the theme rules (body.light .mbody),
+   which outrank a bare .mbody selector wherever they sit. */
+@media print{
+  @page{margin:14mm}
+  html,body{background:#fff !important;color:#111 !important}
+  body::before,body::after{display:none !important}
+  #top,#app,nav,#toast,.noprint,.grabber{display:none !important}
+  .modal{position:static !important;inset:auto !important;background:#fff !important;display:block !important;
+         align-items:flex-start !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;animation:none !important}
+  .mbody{background:#fff !important;color:#111 !important;border:none !important;box-shadow:none !important;
+         max-height:none !important;height:auto !important;overflow:visible !important;border-radius:0 !important;
+         max-width:none !important;width:100% !important;padding:0 !important;backdrop-filter:none !important;
+         -webkit-backdrop-filter:none !important;animation:none !important}
+  .mbody .muted{color:#555 !important}
+  .mbody .big,.mbody .osum{color:#111 !important}
+  .tblwrap{max-height:none !important;overflow:visible !important}
+  .tbl{page-break-inside:auto}
+  .tbl tr{page-break-inside:avoid}
+  .tbl th{color:#555 !important;border-color:#ccc !important}
+  .tbl td{border-color:#ddd !important;color:#111 !important}
+  .badge{border:1px solid #999 !important;color:#111 !important;background:none !important}
+  /* rules and signature lines are drawn with the THEME stroke colour, which is a near-white
+     translucent in dark mode and vanishes on paper: force ink for print. */
+  .mbody hr,.actrule,.actsep{border-color:#bbb !important}
+  .actsignline{border-bottom:1px solid #333 !important}
+  /* the act keeps all seven columns on paper — the narrow-screen column hiding is screen-only */
+  .acttbl th,.acttbl td{display:table-cell !important}
+  .acttbl .actsub{display:none !important}
+}
 </style>
 </head>
 <body>
@@ -331,7 +437,7 @@ body.light .langsw{color:var(--muted)}
 const T = {
   hy: {
     shop:'Խանութ', supplier:'Մատակարար',
-    tabs_shop:{home:'Այսօր',catalog:'Ապրանքներ',pos:'Վաճառք',basket:'Զամբյուղ',orders:'Պատվերներ',debts:'Պարտքեր',data:'Տվյալներ'},
+    tabs_shop:{home:'Այսօր',recv:'Ընդունում',count:'Գույքագրում',catalog:'Ապրանքներ',pos:'Վաճառք',basket:'Զամբյուղ',orders:'Պատվերներ',debts:'Պարտքեր',data:'Տվյալներ'},
     tabs_sup:{dash:'Վահանակ',sellout:'Պահեստ',inbox:'Պատվերներ',shops:'Խանութներ',alerts:'Ազդանշաններ',catalog:'Գնացուցակ',data:'Տվյալներ'},
     today_sug:'Առաջարկվող պատվերներ', all_ok:'Ամեն ինչ համալրված է', add:'Ավելացնել', added:'Ավելացված ✓',
     due_today:'Այսօր է ժամկետը', overdue:'Ուշացած', due_in:'օրից', last_order:'Վերջին պատվերը',
@@ -387,15 +493,92 @@ const T = {
     logged_as:'Մուտք եք գործել որպես',
     receive_pay:'Ստանալ վճարում', mark_paid:'Նշել վճարված', statement:'Համեմատման ակտ', balance:'Մնացորդ',
     days_unpaid:'օր չվճարված', doc_col:'Փաստաթուղթ', bill_doc:'Հաշիվ', pay_doc:'Վճարում',
-    pos_tab:'Վաճառք', sellout_tab:'Պահեստ', stock_lbl:'Պահեստ', sell_btn:'Վաճառել', sale_done:'Վաճառքը գրանցվեց',
+    pos_tab:'Վաճառք', sellout_tab:'Պահեստ', stock_lbl:'Մնացորդ', sell_btn:'Վաճառել', sale_done:'Վաճառքը գրանցվեց',
     today_sold:'Այսօր', velocity:'օր/միջին', days_left:'օր կմնա', stockout:'Վերջանում է', out_of_stock:'Սպառված է',
     last7:'Վերջին 7 օրը', suggest_order:'Առաջարկել', ev_stockout:'Ապրանքը վերջանում է խանութում',
     pos_hint:'Գրանցեք խանութի վաճառքները — մատակարարը կտեսնի պահեստի մնացորդն ու վաճառքի արագությունը իրական ժամանակում։',
-    sellout_hint:'Խանութի պահեստն ու վաճառքները՝ ուղիղ եթերում։ Կանխատեսեք, թե երբ ինչ կվերջանա։'
+    sellout_hint:'Խանութի պահեստն ու վաճառքները՝ ուղիղ եթերում։ Կանխատեսեք, թե երբ ինչ կվերջանա։',
+    /* --- R1: stock ledger --- */
+    mv_open:'Սկզբնական մնացորդ', mv_receipt:'Ընդունում', mv_sale:'Վաճառք', mv_return:'Վերադարձ մատակարարին',
+    mv_adjust:'Ճշգրտում', mv_count:'Գույքագրում', mv_writeoff:'Դուրսգրում',
+    led_title:'Շարժի պատմություն', led_empty:'Շարժեր չկան', led_balance:'Մնացորդ', led_type:'Տեսակ',
+    onhand_lbl:'Մնացորդ', item_card:'Ապրանքի քարտ',
+    /* --- R1: goods receipt --- */
+    recv_title:'Ընդունում', recv_pending:'Սպասում է ընդունման', recv_none:'Ընդունելու առաքում չկա',
+    recv_none_hint:'Երբ մատակարարը նշի «Առաքված», պատվերն այստեղ կհայտնվի արդեն լրացված։',
+    recv_open:'Ընդունել', recv_accept_all:'Ընդունել բոլորը', recv_accept_part:'Ընդունել ուղղումով', recv_lines:'տող',
+    unit_pcs:'հատ', unit_kg:'կգ', unit_l:'լ', unit_g:'գ', ret_max:'Կարելի է վերադարձնել', ret_none:'Վերադարձի ենթակա քանակ չկա', credit_bal:'Կանխավճար',
+    recv_shipped:'Ուղարկված', recv_received:'Ընդունված', recv_of:'-ից',
+    recv_done:'Ընդունումը գրանցվեց', recv_already:'Այս առաքումն արդեն ընդունված է',
+    recv_doc:'Հաշվարկային փաստաթուղթ', recv_doc_type:'Հաշիվ-ապրանքագիր', recv_doc_no:'Փաստաթղթի համար',
+    recv_doc_date:'Փաստաթղթի ամսաթիվ', recv_tin:'ՀՎՀՀ', recv_edit_doc:'Ուղղել փաստաթուղթը',
+    recv_waiting_days:'օր սպասում է', recv_nudge_t:'առաքում սպասում է ընդունման',
+    recv_nudge_d:'Մնացորդը սխալ է, քանի դեռ առաքումը չեք ընդունել', recv_oldest:'Ամենահինը',
+    diff_title:'Անհամապատասխանություն', diff_short:'Պակասորդ', diff_over:'Ավելցուկ', diff_damaged:'Վնասված',
+    diff_none:'Ամեն ինչ համընկնում է', adj_doc:'Ճշգրտող հաշիվ', adj_badge:'Ճշգրտող',
+    ev_recv:'Ընդունում գրանցվեց', ev_recv_due:'Չընդունված առաքում', ev_diff:'Ընդունման անհամապատասխանություն',
+    recv_scan_on:'Սկանավորման ռեժիմ', recv_scan_zeroed:'Քանակները զրոյացվեցին — սկանավորեք փաստացի ստացվածը',
+    recv_scan_hint:'Յուրաքանչյուր սկան ավելացնում է 1։ Չսկանավորված տողերը կմնան 0։',
+    recv_scan_restore:'Վերադարձնել ուղարկված քանակները', recv_scan_restored:'Ուղարկված քանակները վերականգնվեցին',
+    /* --- R1: write-off --- */
+    wo_title:'Դուրսգրում', wo_open:'📉 Դուրսգրում', wo_reason:'Պատճառը', wo_reason_req:'Ընտրեք պատճառը',
+    wo_confirm:'Հաստատել դուրսգրումը', wo_done:'Դուրսգրումը գրանցվեց', wo_note:'Նշում (ըստ ցանկության)',
+    wo_nostock:'Մնացորդ չկա',
+    wo_r_expired:'Ժամկետանց', wo_r_damaged:'Վնասված', wo_r_theft:'Գողություն',
+    wo_r_own:'Սեփական օգտագործում', wo_r_fix:'Ուղղում',
+    shrink_title:'Դուրսգրումներ', shrink_month:'Այս ամիս', shrink_units:'միավոր', shrink_total:'Ընդամենը',
+    shrink_cost:'Ինքնարժեքով', shrink_share:'ամսվա գնումների', shrink_none:'Այս ամիս դուրսգրում չկա',
+    ev_writeoff:'Դուրսգրում',
+    /* --- R1: e-HDM item card --- */
+    item_code:'Ապրանքի կոդ', item_unit:'Չափման միավոր', item_atg:'ԱՏԳ ԱԱ ծածկագիր', item_atg_short:'ԱՏԳ ԱԱ',
+    item_perish:'Պիտանիության ժամկետով', item_marked:'Դրոշմավորվող խումբ',
+    item_atg_src:'Ծածկագիրը գալիս է մատակարարի փաստաթղթից',
+    item_mark_note:'Դրոշմավորումը կատարում է ներմուծողը։ ArmTrade-ը կոդը չի հանում շրջանառությունից։',
+    /* --- R2: barcode scanner --- */
+    scan_title:'Շտրիխ կոդ', scan_btn:'Սկան', scan_ph:'Կոդը կամ վերջին 4 նիշը',
+    scan_cam_start:'Միացնել տեսախցիկը', scan_cam_stop:'Անջատել տեսախցիկը',
+    scan_cam_none:'Այս դիտարկիչը տեսախցիկով կոդ չի կարդում։ Մուտքագրեք կոդը ձեռքով։',
+    scan_cam_denied:'Տեսախցիկը հասանելի չէ', scan_aim:'Ուղղեք գիծը կոդին',
+    scan_bad:'Կոդը սխալ է', scan_unknown:'Անհայտ կոդ',
+    scan_link_hint:'Ընտրեք, թե որ ապրանքն է սա — հաջորդ անգամ կոդը միանգամից կճանաչվի։',
+    scan_linked:'Կոդը կապվեց ապրանքին', scan_weight:'Կշռային կոդ', scan_price_code:'Գնային կոդ',
+    scan_cfg:'Կշռային շտրիխ կոդ', scan_cfg_g:'գրամ', scan_cfg_amd:'դրամ',
+    scan_cfg_hint:'Կշեռքի պիտակի ձևաչափը՝ 5 նիշ ապրանքի կոդ + 5 նիշ արժեք։',
+    item_ean:'Շտրիխ կոդ (EAN)', ean_none:'Կոդ կապված չէ',
+    scan_tray:'Սկանավորված', scan_tray_empty:'Դեռ ոչինչ չի սկանավորվել',
+    scan_sell_confirm:'Գրանցել վաճառքը', scan_not_in_order:'Այս ապրանքը այս առաքման մեջ չկա',
+    /* --- R2: Գույքագրում --- */
+    count_title:'Գույքագրում',
+    count_intro:'Գույքագրման թերթիկը փաստաթուղթ է՝ ամսաթիվ, հաշվառողի անուն, հաշվապահական և փաստացի քանակ, ավելցուկ և պակասորդ։',
+    count_counter:'Հաշվառող', count_counter_ph:'Անուն Ազգանուն', count_counter_req:'Նշեք հաշվառողի անունը',
+    count_scope:'Ծավալը', count_scope_all:'Բոլորը', count_scope_risk:'Օրվա ցուցակ',
+    count_scope_out:'Այս ապրանքը ցուցակում չէ', count_risk_hint:'Օրական մինչև 20 ապրանք՝ ըստ ռիսկի։',
+    count_reason_perish:'Պիտանիության ժամկետով', count_reason_fast:'Արագ վաճառվող',
+    count_reason_wo:'Վերջերս դուրսգրում է եղել', count_reason_never:'Երբեք չի հաշվառվել',
+    count_reason_old:'օր չի հաշվառվել',
+    count_start:'Սկսել գույքագրումը', count_resume:'Շարունակել գույքագրումը', count_open:'Բաց գույքագրում',
+    count_progress:'հաշվառված', count_blind:'Հաշվապահական մնացորդը թաքնված է մինչև ավարտը։',
+    count_qty:'Փաստացի քանակ', count_qty_req:'Մուտքագրեք քանակը',
+    count_save_next:'Հաստատել և հաջորդը', count_skip:'Բաց թողնել', count_counted:'Հաշվառված',
+    count_finish:'Ավարտել', count_cancel:'Չեղարկել', count_cancel_sure:'Այո՛, չեղարկել',
+    count_cancelled:'Գույքագրումը չեղարկվեց', count_past:'Անցած գույքագրումներ',
+    count_none:'Դեռ գույքագրում չի կատարվել',
+    count_review:'Համեմատում', count_book:'Հաշվապահական', count_fact:'Փաստացի', count_diff:'Տարբերություն',
+    count_surplus:'Ավելցուկ', count_short:'Պակասորդ', count_net:'Զուտ', count_match:'Համընկնում է',
+    count_uncounted:'Չհաշվառված', count_uncounted_note:'Չհաշվառված տողերը մնացորդը չեն փոխում։',
+    count_sold_after:'վաճառք հաշվառումից հետո', count_confirm:'Հաստատել գույքագրումը',
+    count_moved_after:'Հաշվառումից հետո', count_qty_short:'Քանակ',
+    count_qty_max:'Չափազանց մեծ քանակ — ստուգեք մուտքագրումը',
+    count_back:'Վերադառնալ հաշվառմանը', count_done:'Գույքագրումը գրանցվեց',
+    count_act:'Գույքագրման ակտ', count_act_sign:'Հաշվառող', count_act_resp:'Պատասխանատու անձ',
+    count_act_basis:'Գույքագրումն իրականացվել է փաստացի ստուգմամբ։',
+    count_act_note:'Փաստաթուղթը ձևավորվել է ArmTrade-ում։ Տպել և ստորագրել։',
+    ev_count:'Գույքագրում գրանցվեց',
+    unit_pcs:'հատ'
   },
   en: {
     shop:'Shop', supplier:'Supplier',
-    tabs_shop:{home:'Today',catalog:'Products',pos:'Sales',basket:'Basket',orders:'Orders',debts:'Debts',data:'Data'},
+    tabs_shop:{home:'Today',recv:'Receiving',count:'Count',catalog:'Products',pos:'Sales',basket:'Basket',orders:'Orders',debts:'Debts',data:'Data'},
     tabs_sup:{dash:'Dashboard',sellout:'Stock',inbox:'Orders',shops:'Shops',alerts:'Alerts',catalog:'Price list',data:'Data'},
     today_sug:'Suggested reorders', all_ok:'Everything is stocked', add:'Add', added:'Added ✓',
     due_today:'Due today', overdue:'Overdue', due_in:'days left', last_order:'Last order',
@@ -451,15 +634,95 @@ const T = {
     logged_as:'Signed in as',
     receive_pay:'Receive payment', mark_paid:'Mark paid', statement:'Statement', balance:'Balance',
     days_unpaid:'days unpaid', doc_col:'Document', bill_doc:'Invoice', pay_doc:'Payment',
-    pos_tab:'Sales', sellout_tab:'Stock', stock_lbl:'Stock', sell_btn:'Sell', sale_done:'Sale recorded',
+    pos_tab:'Sales', sellout_tab:'Stock', stock_lbl:'On hand', sell_btn:'Sell', sale_done:'Sale recorded',
     today_sold:'Today', velocity:'per day', days_left:'days left', stockout:'Running out', out_of_stock:'Out of stock',
     last7:'Last 7 days', suggest_order:'Suggest order', ev_stockout:'Product running out at the shop',
     pos_hint:'Record store sales — the supplier sees stock levels and sales velocity in real time.',
-    sellout_hint:'Live store stock and sales. Forecast what runs out and when.'
+    sellout_hint:'Live store stock and sales. Forecast what runs out and when.',
+    /* --- R1: stock ledger --- */
+    mv_open:'Opening balance', mv_receipt:'Goods receipt', mv_sale:'Sale', mv_return:'Return to supplier',
+    mv_adjust:'Adjustment', mv_count:'Stock count', mv_writeoff:'Write-off',
+    led_title:'Stock movements', led_empty:'No movements yet', led_balance:'Balance', led_type:'Type',
+    onhand_lbl:'On hand', item_card:'Item card',
+    /* --- R1: goods receipt --- */
+    recv_title:'Goods receipt', recv_pending:'Waiting to be received', recv_none:'No deliveries to receive',
+    recv_none_hint:'When the supplier marks an order Delivered, it appears here already filled in.',
+    recv_open:'Receive', recv_accept_all:'Accept all', recv_accept_part:'Accept as corrected', recv_lines:'lines',
+    unit_pcs:'pcs', unit_kg:'kg', unit_l:'L', unit_g:'g', ret_max:'Returnable', ret_none:'Nothing left to return', credit_bal:'Credit',
+    recv_shipped:'Shipped', recv_received:'Received', recv_of:'of',
+    recv_done:'Goods receipt recorded', recv_already:'This delivery has already been received',
+    recv_doc:'Settlement document', recv_doc_type:'Invoice / consignment note', recv_doc_no:'Document number',
+    recv_doc_date:'Document date', recv_tin:'TIN', recv_edit_doc:'Edit document',
+    recv_waiting_days:'days waiting', recv_nudge_t:'delivery waiting to be received',
+    recv_nudge_d:'Stock stays wrong until you receive this delivery', recv_oldest:'Oldest',
+    diff_title:'Discrepancy', diff_short:'Short', diff_over:'Over', diff_damaged:'Damaged',
+    diff_none:'Everything matches', adj_doc:'Adjusting invoice', adj_badge:'Adjusting',
+    ev_recv:'Goods receipt recorded', ev_recv_due:'Delivery not received', ev_diff:'Receiving discrepancy',
+    recv_scan_on:'Scanning mode', recv_scan_zeroed:'Quantities reset to 0 — scan what actually arrived',
+    recv_scan_hint:'Every scan adds 1. Lines you do not scan stay at 0.',
+    recv_scan_restore:'Restore shipped quantities', recv_scan_restored:'Shipped quantities restored',
+    /* --- R1: write-off --- */
+    wo_title:'Write-off', wo_open:'📉 Write-off', wo_reason:'Reason', wo_reason_req:'Choose a reason',
+    wo_confirm:'Confirm write-off', wo_done:'Write-off recorded', wo_note:'Note (optional)',
+    wo_nostock:'Nothing on hand',
+    wo_r_expired:'Expired', wo_r_damaged:'Damaged', wo_r_theft:'Theft',
+    wo_r_own:'Own use', wo_r_fix:'Correction',
+    shrink_title:'Write-offs', shrink_month:'This month', shrink_units:'units', shrink_total:'Total',
+    shrink_cost:'At cost', shrink_share:"of this month's purchases", shrink_none:'No write-offs this month',
+    ev_writeoff:'Write-off',
+    /* --- R1: e-HDM item card --- */
+    item_code:'Item code', item_unit:'Unit of measure', item_atg:'HS code', item_atg_short:'HS',
+    item_perish:'Perishable', item_marked:'Marking category',
+    item_atg_src:"The code is inherited from the supplier's document",
+    item_mark_note:'Marking codes are issued by the importer. ArmTrade does not decommission them.',
+    /* --- R2: barcode scanner --- */
+    scan_title:'Barcode', scan_btn:'Scan', scan_ph:'Code or last 4 digits',
+    scan_cam_start:'Start camera', scan_cam_stop:'Stop camera',
+    scan_cam_none:'This browser cannot read barcodes with the camera. Enter the code by hand.',
+    scan_cam_denied:'Camera unavailable', scan_aim:'Aim the line at the barcode',
+    scan_bad:'Invalid code', scan_unknown:'Unknown code',
+    scan_link_hint:'Choose which product this is — next time the code is recognised instantly.',
+    scan_linked:'Barcode linked', scan_weight:'Weight barcode', scan_price_code:'Price barcode',
+    scan_cfg:'Weight barcode', scan_cfg_g:'grams', scan_cfg_amd:'AMD',
+    scan_cfg_hint:'Scale label layout: 5-digit item code + 5-digit value.',
+    item_ean:'Barcode (EAN)', ean_none:'No barcode linked',
+    scan_tray:'Scanned', scan_tray_empty:'Nothing scanned yet',
+    scan_sell_confirm:'Record sale', scan_not_in_order:'This item is not in this delivery',
+    /* --- R2: stock count --- */
+    count_title:'Stock count',
+    count_intro:"A stock count produces a document: date, counter's name, book and counted quantity, surplus and shortage.",
+    count_counter:'Counted by', count_counter_ph:'Name and surname', count_counter_req:"Enter the counter's name",
+    count_scope:'Scope', count_scope_all:'All items', count_scope_risk:"Today's list",
+    count_scope_out:'Not in this count', count_risk_hint:'Up to 20 items a day, ranked by risk.',
+    count_reason_perish:'Perishable', count_reason_fast:'Fast mover',
+    count_reason_wo:'Recent write-off', count_reason_never:'Never counted',
+    count_reason_old:'days since last count',
+    count_start:'Start count', count_resume:'Resume count', count_open:'Count in progress',
+    count_progress:'counted', count_blind:'The book quantity stays hidden until you finish.',
+    count_qty:'Counted quantity', count_qty_req:'Enter a quantity',
+    count_save_next:'Save and next', count_skip:'Skip', count_counted:'Counted',
+    count_finish:'Finish', count_cancel:'Cancel', count_cancel_sure:'Yes, cancel',
+    count_cancelled:'Count cancelled', count_past:'Past counts',
+    count_none:'No counts yet',
+    count_review:'Variance', count_book:'Book', count_fact:'Counted', count_diff:'Difference',
+    count_surplus:'Surplus', count_short:'Shortage', count_net:'Net', count_match:'Matches',
+    count_uncounted:'Not counted', count_uncounted_note:'Skipped lines do not change stock.',
+    count_sold_after:'sold after counting', count_confirm:'Confirm count',
+    count_moved_after:'After counting', count_qty_short:'Qty',
+    count_qty_max:'Quantity too large — check what you typed',
+    count_back:'Back to counting', count_done:'Stock count recorded',
+    count_act:'Stock count act', count_act_sign:'Counted by', count_act_resp:'Responsible person',
+    count_act_basis:'The count was performed by physical verification.',
+    count_act_note:'Generated in ArmTrade. Print and sign.',
+    ev_count:'Stock count recorded',
+    unit_pcs:'pcs'
   },
   ru: {
     shop:'Магазин', supplier:'Поставщик',
-    tabs_shop:{home:'Сегодня',catalog:'Товары',pos:'Продажи',basket:'Корзина',orders:'Заказы',debts:'Долги',data:'Данные'},
+    /* nav chip only: «Инвентаризация» is 14 characters and does not fit a 9-tab bottom strip at
+       ANY phone width (measured 320/360/390/412 — all ellipsise to «Инвентариза…»). An explicit
+       abbreviation reads better than a CSS ellipsis; every screen it leads to spells it in full. */
+    tabs_shop:{home:'Сегодня',recv:'Приёмка',count:'Инвент.',catalog:'Товары',pos:'Продажи',basket:'Корзина',orders:'Заказы',debts:'Долги',data:'Данные'},
     tabs_sup:{dash:'Панель',sellout:'Склад',inbox:'Заказы',shops:'Магазины',alerts:'Сигналы',catalog:'Прайс',data:'Данные'},
     today_sug:'Рекомендуемые заказы', all_ok:'Всё в наличии', add:'Добавить', added:'Добавлено ✓',
     due_today:'Срок сегодня', overdue:'Просрочено', due_in:'дн. осталось', last_order:'Последний заказ',
@@ -519,7 +782,84 @@ const T = {
     today_sold:'Сегодня', velocity:'в день', days_left:'дн. осталось', stockout:'Заканчивается', out_of_stock:'Нет в наличии',
     last7:'Последние 7 дней', suggest_order:'Предложить заказ', ev_stockout:'Товар заканчивается в магазине',
     pos_hint:'Записывайте продажи магазина — поставщик видит остатки и скорость продаж в реальном времени.',
-    sellout_hint:'Остатки и продажи магазина в прямом эфире. Прогнозируйте, что и когда закончится.'
+    sellout_hint:'Остатки и продажи магазина в прямом эфире. Прогнозируйте, что и когда закончится.',
+    /* --- R1: stock ledger --- */
+    mv_open:'Начальный остаток', mv_receipt:'Приёмка', mv_sale:'Продажа', mv_return:'Возврат поставщику',
+    mv_adjust:'Корректировка', mv_count:'Инвентаризация', mv_writeoff:'Списание',
+    led_title:'Движение товара', led_empty:'Движений пока нет', led_balance:'Остаток', led_type:'Тип',
+    onhand_lbl:'Остаток', item_card:'Карточка товара',
+    /* --- R1: goods receipt --- */
+    recv_title:'Приёмка', recv_pending:'Ожидает приёмки', recv_none:'Нет поставок для приёмки',
+    recv_none_hint:'Когда поставщик отметит «Доставлен», заказ появится здесь уже заполненным.',
+    recv_open:'Принять', recv_accept_all:'Принять всё', recv_accept_part:'Принять с корректировкой', recv_lines:'позиций',
+    unit_pcs:'шт', unit_kg:'кг', unit_l:'л', unit_g:'г', ret_max:'Можно вернуть', ret_none:'Возвращать нечего', credit_bal:'Аванс',
+    recv_shipped:'Отгружено', recv_received:'Принято', recv_of:'из',
+    recv_done:'Приёмка оформлена', recv_already:'Эта поставка уже принята',
+    recv_doc:'Расчётный документ', recv_doc_type:'Накладная', recv_doc_no:'Номер документа',
+    recv_doc_date:'Дата документа', recv_tin:'ИНН', recv_edit_doc:'Изменить документ',
+    recv_waiting_days:'дн. ожидает', recv_nudge_t:'поставка ожидает приёмки',
+    recv_nudge_d:'Остаток неверен, пока поставка не принята', recv_oldest:'Самая старая',
+    diff_title:'Расхождение', diff_short:'Недостача', diff_over:'Излишек', diff_damaged:'Повреждено',
+    diff_none:'Всё совпадает', adj_doc:'Корректировочный счёт', adj_badge:'Корректир.',
+    ev_recv:'Приёмка оформлена', ev_recv_due:'Поставка не принята', ev_diff:'Расхождение при приёмке',
+    recv_scan_on:'Режим сканирования', recv_scan_zeroed:'Количества обнулены — сканируйте фактически прибывшее',
+    recv_scan_hint:'Каждое сканирование добавляет 1. Несканированные позиции останутся 0.',
+    recv_scan_restore:'Вернуть отгруженные количества', recv_scan_restored:'Отгруженные количества восстановлены',
+    /* --- R1: write-off --- */
+    wo_title:'Списание', wo_open:'📉 Списание', wo_reason:'Причина', wo_reason_req:'Выберите причину',
+    wo_confirm:'Подтвердить списание', wo_done:'Списание оформлено', wo_note:'Примечание (необязательно)',
+    wo_nostock:'Остатка нет',
+    wo_r_expired:'Просрочен', wo_r_damaged:'Повреждён', wo_r_theft:'Кража',
+    wo_r_own:'Собственное потребление', wo_r_fix:'Корректировка',
+    shrink_title:'Списания', shrink_month:'За месяц', shrink_units:'ед.', shrink_total:'Итого',
+    shrink_cost:'По себестоимости', shrink_share:'от закупок за месяц', shrink_none:'Списаний в этом месяце нет',
+    ev_writeoff:'Списание',
+    /* --- R1: e-HDM item card --- */
+    item_code:'Код товара', item_unit:'Единица измерения', item_atg:'Код ТН ВЭД', item_atg_short:'ТН ВЭД',
+    item_perish:'Скоропортящийся', item_marked:'Подлежит маркировке',
+    item_atg_src:'Код наследуется из документа поставщика',
+    item_mark_note:'Коды маркировки выпускает импортёр. ArmTrade не выводит их из оборота.',
+    /* --- R2: barcode scanner --- */
+    scan_title:'Штрихкод', scan_btn:'Скан', scan_ph:'Код или последние 4 цифры',
+    scan_cam_start:'Включить камеру', scan_cam_stop:'Выключить камеру',
+    scan_cam_none:'Этот браузер не читает штрихкоды камерой. Введите код вручную.',
+    scan_cam_denied:'Камера недоступна', scan_aim:'Наведите линию на штрихкод',
+    scan_bad:'Неверный код', scan_unknown:'Неизвестный код',
+    scan_link_hint:'Выберите товар — в следующий раз код распознается сразу.',
+    scan_linked:'Штрихкод привязан', scan_weight:'Весовой код', scan_price_code:'Ценовой код',
+    scan_cfg:'Весовой штрихкод', scan_cfg_g:'граммы', scan_cfg_amd:'драмы',
+    scan_cfg_hint:'Формат этикетки весов: 5 цифр кода товара + 5 цифр значения.',
+    item_ean:'Штрихкод (EAN)', ean_none:'Штрихкод не привязан',
+    scan_tray:'Отсканировано', scan_tray_empty:'Пока ничего не отсканировано',
+    scan_sell_confirm:'Записать продажу', scan_not_in_order:'Этого товара нет в этой поставке',
+    /* --- R2: инвентаризация --- */
+    count_title:'Инвентаризация',
+    count_intro:'Инвентаризация — это документ: дата, имя ответственного, учётное и фактическое количество, излишек и недостача.',
+    count_counter:'Ответственный', count_counter_ph:'Имя и фамилия', count_counter_req:'Укажите имя ответственного',
+    count_scope:'Объём', count_scope_all:'Все товары', count_scope_risk:'Список на сегодня',
+    count_scope_out:'Товара нет в этом списке', count_risk_hint:'До 20 товаров в день по уровню риска.',
+    count_reason_perish:'Скоропортящийся', count_reason_fast:'Быстро продаётся',
+    count_reason_wo:'Недавнее списание', count_reason_never:'Ни разу не проверялся',
+    count_reason_old:'дн. без инвентаризации',
+    count_start:'Начать инвентаризацию', count_resume:'Продолжить инвентаризацию', count_open:'Инвентаризация идёт',
+    count_progress:'учтено', count_blind:'Учётный остаток скрыт до завершения.',
+    count_qty:'Фактическое количество', count_qty_req:'Введите количество',
+    count_save_next:'Сохранить и далее', count_skip:'Пропустить', count_counted:'Учтено',
+    count_finish:'Завершить', count_cancel:'Отменить', count_cancel_sure:'Да, отменить',
+    count_cancelled:'Инвентаризация отменена', count_past:'Прошлые инвентаризации',
+    count_none:'Инвентаризаций пока не было',
+    count_review:'Сверка', count_book:'Учётное', count_fact:'Фактическое', count_diff:'Разница',
+    count_surplus:'Излишек', count_short:'Недостача', count_net:'Итого', count_match:'Совпадает',
+    count_uncounted:'Не учтено', count_uncounted_note:'Непроверенные позиции не меняют остаток.',
+    count_sold_after:'продано после подсчёта', count_confirm:'Подтвердить инвентаризацию',
+    count_moved_after:'После подсчёта', count_qty_short:'Кол-во',
+    count_qty_max:'Слишком большое количество — проверьте ввод',
+    count_back:'Вернуться к подсчёту', count_done:'Инвентаризация оформлена',
+    count_act:'Акт инвентаризации', count_act_sign:'Ответственный', count_act_resp:'Материально ответственное лицо',
+    count_act_basis:'Инвентаризация проведена путём фактической проверки.',
+    count_act_note:'Сформировано в ArmTrade. Распечатать и подписать.',
+    ev_count:'Инвентаризация оформлена',
+    unit_pcs:'шт'
   }
 };
 
@@ -527,29 +867,41 @@ const DAY = 86400000;
 const START = new Date('2026-08-05T09:00:00').getTime();
 
 const SUPPLIERS = [
-  {id:'s1', name:'Ակվա Դիստրիբյուշն', nameEn:'Aqua Distribution', em:'💧'},
-  {id:'s2', name:'Կաթնաղբյուր', nameEn:'Katnaghbyur Dairy', em:'🥛'},
-  {id:'s3', name:'Շանթ Թրեյդ', nameEn:'Shant Trade', em:'🍫'},
+  {id:'s1', name:'Ակվա Դիստրիբյուշն', nameEn:'Aqua Distribution', nameRu:'Аква Дистрибьюшн', em:'💧', tin:'02845571'},
+  {id:'s2', name:'Կաթնաղբյուր', nameEn:'Katnaghbyur Dairy', nameRu:'Катнахбюр', em:'🥛', tin:'01276643'},
+  {id:'s3', name:'Շանթ Թրեյդ', nameEn:'Shant Trade', nameRu:'Шант Трейд', em:'🍫', tin:'00419852'},
 ];
+/* Item card is e-HDM shaped (market brief §1.2–§1.3): goodName ≤50, goodCode ≤50, unit,
+   4-digit ԱՏԳ ԱԱ (HS), adgCode slot (SRC classifier — never guessed), perishable + marking
+   category flags, and an EAN slot reserved for barcode scanning in a later round. */
 const PRODUCTS = [
-  {id:'p1', sup:'s1', name:'Ջերմուկ 0.5լ (12 հատ)', nameEn:'Jermuk 0.5L (12-pack)', price:1450, em:'💧', cycle:6,  qty:4},
-  {id:'p2', sup:'s1', name:'Կոկա-Կոլա 1.5լ (6 հատ)', nameEn:'Coca-Cola 1.5L (6-pack)', price:3200, em:'🥤', cycle:5,  qty:3},
-  {id:'p3', sup:'s1', name:'Հյութ Yan 1լ (8 հատ)', nameEn:'Yan Juice 1L (8-pack)', price:4800, em:'🧃', cycle:9,  qty:2},
-  {id:'p4', sup:'s2', name:'Մածուն 1կգ', nameEn:'Matsun 1kg', price:750, em:'🥛', cycle:3,  qty:10, promo:true},
-  {id:'p5', sup:'s2', name:'Պանիր Լոռի 1կգ', nameEn:'Lori Cheese 1kg', price:2900, em:'🧀', cycle:5,  qty:4},
-  {id:'p6', sup:'s2', name:'Կարագ 82% 200գ', nameEn:'Butter 82% 200g', price:1350, em:'🧈', cycle:7,  qty:6},
-  {id:'p7', sup:'s3', name:'Շոկոլադ Grand Candy', nameEn:'Grand Candy chocolate', price:520, em:'🍫', cycle:8,  qty:20},
-  {id:'p8', sup:'s3', name:'Չիպս 90գ (բլոկ)', nameEn:'Chips 90g (block)', price:5400, em:'🍟', cycle:10, qty:2},
-  {id:'p9', sup:'s3', name:'Լվացող միջոց 1լ', nameEn:'Detergent 1L', price:1800, em:'🧴', cycle:14, qty:3},
+  {id:'p1', sup:'s1', name:'Ջերմուկ 0.5լ (12 հատ)', nameEn:'Jermuk 0.5L (12-pack)', nameRu:'Джермук 0,5 л (12 шт)', price:1450, em:'💧', cycle:6,  qty:4,
+   goodName:'Ջերմուկ 0.5լ (12 հատ)', goodCode:'JER-05-12', unit:'հատ', atg:'2201', adgCode:'', perishable:false, marked:true,  ean:'4850010000110'},
+  {id:'p2', sup:'s1', name:'Կոկա-Կոլա 1.5լ (6 հատ)', nameEn:'Coca-Cola 1.5L (6-pack)', nameRu:'Кока-Кола 1,5 л (6 шт)', price:3200, em:'🥤', cycle:5,  qty:3,
+   goodName:'Կոկա-Կոլա 1.5լ (6 հատ)', goodCode:'CC-15-06', unit:'հատ', atg:'2202', adgCode:'', perishable:false, marked:true,  ean:'4850010000288'},
+  {id:'p3', sup:'s1', name:'Հյութ Yan 1լ (8 հատ)', nameEn:'Yan Juice 1L (8-pack)', nameRu:'Сок Yan 1 л (8 шт)', price:4800, em:'🧃', cycle:9,  qty:2,
+   goodName:'Հյութ Yan 1լ (8 հատ)', goodCode:'YAN-1L-08', unit:'հատ', atg:'2009', adgCode:'', perishable:false, marked:true,  ean:'4850010000356'},
+  {id:'p4', sup:'s2', name:'Մածուն 1կգ', nameEn:'Matsun 1kg', nameRu:'Мацун 1 кг', price:750, em:'🥛', cycle:3,  qty:10, promo:true,
+   goodName:'Մածուն 1կգ', goodCode:'MAC-1KG', unit:'հատ', atg:'0403', adgCode:'', perishable:true,  marked:true,  ean:'4850020000124'},
+  {id:'p5', sup:'s2', name:'Պանիր Լոռի 1կգ', nameEn:'Lori Cheese 1kg', nameRu:'Сыр Лори 1 кг', price:2900, em:'🧀', cycle:5,  qty:4,
+   goodName:'Պանիր Լոռի 1կգ', goodCode:'PAN-LOR-1', unit:'հատ', atg:'0406', adgCode:'', perishable:true,  marked:true,  ean:'4850020000292', scaleCode:'00050'},
+  {id:'p6', sup:'s2', name:'Կարագ 82% 200գ', nameEn:'Butter 82% 200g', nameRu:'Масло сливочное 82% 200 г', price:1350, em:'🧈', cycle:7,  qty:6,
+   goodName:'Կարագ 82% 200գ', goodCode:'KAR-82-200', unit:'հատ', atg:'0405', adgCode:'', perishable:true,  marked:true,  ean:'4850020000360'},
+  {id:'p7', sup:'s3', name:'Շոկոլադ Grand Candy', nameEn:'Grand Candy chocolate', nameRu:'Шоколад Grand Candy', price:520, em:'🍫', cycle:8,  qty:20,
+   goodName:'Շոկոլադ Grand Candy', goodCode:'GC-CHOC', unit:'հատ', atg:'1806', adgCode:'', perishable:false, marked:true,  ean:'4850030000138'},
+  {id:'p8', sup:'s3', name:'Չիպս 90գ (բլոկ)', nameEn:'Chips 90g (block)', nameRu:'Чипсы 90 г (блок)', price:5400, em:'🍟', cycle:10, qty:2,
+   goodName:'Չիպս 90գ (բլոկ)', goodCode:'CHIPS-90', unit:'հատ', atg:'2005', adgCode:'', perishable:false, marked:false, ean:'4601002000157'},
+  {id:'p9', sup:'s3', name:'Լվացող միջոց 1լ', nameEn:'Detergent 1L', nameRu:'Моющее средство 1 л', price:1800, em:'🧴', cycle:14, qty:3,
+   goodName:'Լվացող միջոց 1լ', goodCode:'DET-1L', unit:'հատ', atg:'3402', adgCode:'', perishable:false, marked:true,  ean:'8691003000177'},
 ];
 const OTHER_SHOPS = [
-  {id:'o1', name:'Մինի Մարկետ Կոմիտաս', nameEn:'Mini Market Komitas'},
-  {id:'o2', name:'Խանութ Արաբկիր 23', nameEn:'Shop Arabkir 23'},
-  {id:'o3', name:'Նուռ Մարկետ', nameEn:'Nur Market'},
-  {id:'o4', name:'Սուպերմարկետ Էրեբունի', nameEn:'Supermarket Erebuni'},
-  {id:'o5', name:'Խանութ Դավթաշեն', nameEn:'Shop Davtashen'},
+  {id:'o1', name:'Մինի Մարկետ Կոմիտաս', nameEn:'Mini Market Komitas', nameRu:'Мини Маркет Комитас'},
+  {id:'o2', name:'Խանութ Արաբկիր 23', nameEn:'Shop Arabkir 23', nameRu:'Магазин Арабкир 23'},
+  {id:'o3', name:'Նուռ Մարկետ', nameEn:'Nur Market', nameRu:'Нур Маркет'},
+  {id:'o4', name:'Սուպերմարկետ Էրեբունի', nameEn:'Supermarket Erebuni', nameRu:'Супермаркет Эребуни'},
+  {id:'o5', name:'Խանութ Դավթաշեն', nameEn:'Shop Davtashen', nameRu:'Магазин Давташен'},
 ];
-const MY_SHOP = {id:'me', name:'Խանութ «Նռան այգի»', nameEn:'Shop "Nran Aygi"'};
+const MY_SHOP = {id:'me', name:'Խանութ «Նռան այգի»', nameEn:'Shop "Nran Aygi"', nameRu:'Магазин «Нран Айги»', tin:'02710459'};
 
 /* ---------- state: S = shared data (localStorage), U = per-tab UI (sessionStorage) ---------- */
 let S = null, U = null;
@@ -597,6 +949,19 @@ function freshState(){
       if(q>0) st.sales.push({date: START - d*DAY, productId: p.id, qty: q});
     }
   });
+  /* ---- immutable stock ledger (R1): an opening balance per SKU plus one sale move per
+     seeded sell-out entry, so rebuildStock() reproduces st.stock exactly on day one. ---- */
+  st.moves = []; st.moveSeq = 0; st.itemMeta = {}; st.ledgerV = 1;
+  PRODUCTS.forEach(p=>{
+    const sold = st.sales.filter(s=>s.productId===p.id).reduce((a,s)=>a+s.qty,0);
+    st.moves.push({n:++st.moveSeq, uuid:'seed-'+p.id, ts:START-11*DAY, rts:0, pid:p.id, type:'open',
+      dq:(st.stock[p.id]||0)+sold, cost:p.price, ref:'', reason:'', actor:'system', note:''});
+  });
+  st.sales.slice().sort((a,b)=>a.date-b.date).forEach((s,i)=>{
+    const pr = PRODUCTS.find(x=>x.id===s.productId);
+    st.moves.push({n:++st.moveSeq, uuid:'seedsale-'+i, ts:s.date, rts:0, pid:s.productId, type:'sale',
+      dq:-s.qty, cost:pr?pr.price:0, ref:'', reason:'', actor:'sim', note:''});
+  });
   // richer multi-shop history: past orders from other shops
   OTHER_SHOPS.forEach((o,i)=>{
     if(o.id==='o3') return; // the churned shop stays silent
@@ -610,52 +975,149 @@ function freshState(){
     }
   });
   OTHER_SHOPS.forEach((o,i)=>{ st.otherLast[o.id] = START - (i===2? 12 : (1+i%4))*DAY; });
+  // seeded deliveries are historical: mark them already received so they never look pending
+  st.orders.forEach(o=>{ if(o.status==='delivered' && !o.receipt)
+    o.receipt = {ts:o.deliveryDate||o.date, rts:0, auto:true, doc:null, lines:[], diff:0, actor:'system'}; });
   return st;
 }
 const DKEY='armtrade_v4_data', UKEY='armtrade_v4_ui';
 function loadD(){ try{ const x=localStorage.getItem(DKEY); if(x) return JSON.parse(x); }catch(e){} return null; }
+/* ---------- state migration ----------
+   Idempotent and STRICTLY ADDITIVE. Runs on load AND on every state adopted from the sync
+   room, so a peer running an older build can never white-screen us. Never deletes or rewrites
+   an existing key; never rebuilds S.stock from S.sales/S.history (that would double-count —
+   the cached number IS the truth at migration time).
+   NOTE: this runs before the `const` helpers below exist, so it may only use PRODUCTS /
+   OTHER_SHOPS / START / DAY, never P(), SUP() or costOf().                                   */
+function migrate(st){
+  if(!st || typeof st!=='object') return st;
+  if(!st.bills){ st.bills=[]; Object.entries(st.debts||{}).forEach(([sup,amt])=>{ if(amt>0) st.bills.push({id:'INV-'+sup.toUpperCase(), sup, date:st.today-14*DAY, amount:amt, paid:false}); }); }
+  if(!st.payments) st.payments=[];
+  if(!st.proposals) st.proposals=[];
+  if(!st.promos) st.promos={p4:true};
+  if(!st.creditLimit) st.creditLimit={s1:100000, s2:80000, s3:60000};
+  if(!st.events){ st.events=[]; st.evCounter=0; }
+  if(!st.stock){
+    st.stock={}; st.sales=st.sales||[]; st.stockoutFlag={};
+    PRODUCTS.forEach((p,i)=>{
+      const vel = Math.max(0.5, p.qty / p.cycle);
+      st.stock[p.id] = Math.max(1, Math.round(vel * (i%3===1 ? 1.5 : 3 + (i%4))));
+      for(let d=10; d>=1; d--){
+        const q = Math.round(vel * (0.5 + Math.random()*0.9));
+        if(q>0) st.sales.push({date: st.today - d*DAY, productId: p.id, qty: q});
+      }
+    });
+  }
+  if(!st.stockoutFlag) st.stockoutFlag={};
+  if(!st.shopStock){
+    st.shopStock={};
+    OTHER_SHOPS.forEach((o,i)=>{
+      st.shopStock[o.id]={};
+      PRODUCTS.forEach((p,j)=>{
+        const vel = Math.max(0.4, p.qty/p.cycle) * [1.3,0.8,0.5,1.6,1.0][i%5];
+        st.shopStock[o.id][p.id] = o.id==='o3' ? Math.round(vel*(j%3)) : Math.max(1, Math.round(vel*(2+(i+j)%6)));
+      });
+    });
+  }
+  /* these keys are read with .filter/.forEach all over the app: a truncated or partially
+     merged room payload must never white-screen us, so coerce them back to their shape */
+  if(!Array.isArray(st.orders)) st.orders=[];
+  if(!Array.isArray(st.history)) st.history=[];
+  if(!Array.isArray(st.sales)) st.sales=[];
+  if(!Array.isArray(st.bills)) st.bills=[];
+  if(!Array.isArray(st.payments)) st.payments=[];
+  if(!Array.isArray(st.proposals)) st.proposals=[];
+  if(!Array.isArray(st.events)) st.events=[];
+  if(!st.debts || typeof st.debts!=='object') st.debts={};
+  if(!st.basket || typeof st.basket!=='object') st.basket={};
+  if(!st.reminded || typeof st.reminded!=='object') st.reminded={};
+  if(!st.dismissed || typeof st.dismissed!=='object') st.dismissed={};
+  if(!st.promos || typeof st.promos!=='object') st.promos={p4:true};
+  if(!st.stockoutFlag || typeof st.stockoutFlag!=='object') st.stockoutFlag={};
+  /* --- R1: the stock ledger --- */
+  // one malformed row must not be able to brick postMove / movesFor / costOf / shrinkSummary
+  if(Array.isArray(st.moves)) st.moves = st.moves.filter(m=>m && typeof m==='object' && m.pid && m.type);
+  if(!Array.isArray(st.moves)){
+    st.moves=[]; st.moveSeq=0;
+    const base=(st.today||START)-30*DAY;
+    Object.entries(st.stock||{}).forEach(([pid,q])=>{
+      const pr = PRODUCTS.find(x=>x.id===pid);
+      if(!pr) return;                       // unknown SKU from a future build: skip, don't crash
+      st.moves.push({n:++st.moveSeq, uuid:'mig-'+pid, ts:base, rts:0, pid, type:'open',
+                     dq:(+q||0), cost:pr.price, ref:'', reason:'migration', actor:'system', note:''});
+    });
+  } else {
+    // a peer on the old build may have written S.stock directly; the cache stays the truth,
+    // so close the gap with one signed adjust move instead of replaying anything.
+    const reb={}; st.moves.forEach(m=>{ if(m&&m.pid) reb[m.pid]=(reb[m.pid]||0)+(+m.dq||0); });
+    Object.entries(st.stock||{}).forEach(([pid,q])=>{
+      const pr = PRODUCTS.find(x=>x.id===pid); if(!pr) return;
+      const d = (+q||0) - (reb[pid]||0);
+      if(!d) return;
+      st.moveSeq = (st.moveSeq||st.moves.length);
+      st.moves.push({n:++st.moveSeq, uuid:'fix-'+pid+'-'+st.moves.length, ts:st.today||START, rts:0, pid,
+                     type:'adjust', dq:d, cost:pr.price, ref:'', reason:'migration', actor:'system', note:''});
+    });
+  }
+  if(st.moveSeq==null) st.moveSeq=st.moves.length;
+  if(!st.itemMeta) st.itemMeta={};
+  /* ONE-TIME back-fill: deliveries made by a pre-ledger build already added their stock, so we
+     stamp them as auto-received and never re-add it. Gated on ledgerV — migrate() runs on every
+     adopted state (reload, sync poll, BroadcastChannel), and without this gate it would also
+     swallow fresh deliveries of the CURRENT build and destroy their pending Ընդունում. */
+  if(!st.ledgerV){
+    (st.orders||[]).forEach(o=>{ if(o&&o.shop&&o.shop.id==='me'&&o.status==='delivered'&&!o.receipt)
+      o.receipt={ts:o.deliveryDate||o.date, rts:0, auto:true, doc:null, lines:[], diff:0, actor:'system'}; });
+  }
+  /* --- R2: barcode scanner config + shopkeeper-linked codes (every branch is idempotent) --- */
+  if(!st.scaleCfg || typeof st.scaleCfg!=='object') st.scaleCfg={valueIs:'grams'};
+  if(st.scaleCfg.valueIs!=='amd') st.scaleCfg.valueIs='grams';
+  if(!st.itemMeta || typeof st.itemMeta!=='object') st.itemMeta={};
+  Object.keys(st.itemMeta).forEach(pid=>{
+    const m=st.itemMeta[pid];
+    if(!m || typeof m!=='object'){ delete st.itemMeta[pid]; return; }
+    if(m.eans!=null && !Array.isArray(m.eans)) m.eans=[];
+    if(Array.isArray(m.eans)) m.eans=m.eans.filter(x=>typeof x==='string' && /^\d{6,14}$/.test(x));
+    if(m.scaleCode!=null && typeof m.scaleCode!=='string') delete m.scaleCode;
+  });
+  /* --- R2: Գույքագրում — archived acts + the single open session --- */
+  if(!Array.isArray(st.counts)) st.counts=[];
+  st.counts = st.counts.filter(c=>c && typeof c==='object' && c.id)
+                       .map(c=>{ if(!Array.isArray(c.lines)) c.lines=[]; return c; });
+  if(typeof st.countSeq!=='number') st.countSeq = st.counts.length;
+  if(typeof st.counterName!=='string') st.counterName='';
+  if(st.count && typeof st.count==='object'){
+    if(!st.count.lines || typeof st.count.lines!=='object') st.count.lines={};
+    Object.keys(st.count.lines).forEach(pid=>{
+      const l=st.count.lines[pid];
+      if(!l || typeof l!=='object' || typeof l.counted!=='number' || !PRODUCTS.some(p=>p.id===pid)) delete st.count.lines[pid];
+      else if(typeof l.mn!=='number') l.mn = 0;      // pre-mn line: treat everything as posted after it
+    });
+    if(!st.count.scope || typeof st.count.scope!=='object') st.count.scope={kind:'all', sup:null};
+    if(Array.isArray(st.count.pids)) st.count.pids = st.count.pids.filter(x=>PRODUCTS.some(p=>p.id===x));
+    else delete st.count.pids;
+    if(!st.count.id) st.count=null;                  // half-written session: drop rather than guess
+  } else st.count = null;   // null, undefined, or a string/number from a peer: all mean "no session"
+  if(st.count===undefined) st.count=null;
+  st.ledgerV=1;
+  return st;
+}
+function adopt(d){ try{ return migrate(d); }catch(e){ console.warn('ArmTrade: migrate failed', e); return d; } }
 function freshU(){ return {split:true, role:'shop', tab:{shop:'home', supplier:'dash'}, lang:'hy'}; }
 function loadU(){ try{ const x=sessionStorage.getItem(UKEY); if(x) return Object.assign(freshU(), JSON.parse(x)); }catch(e){} return freshU(); }
 let bc=null; try{ bc=new BroadcastChannel('armtrade_v4'); }catch(e){}
 function saveD(){ try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} try{ bc && bc.postMessage('sync'); }catch(e){} schedulePush(); }
 function saveU(){ try{ sessionStorage.setItem(UKEY, JSON.stringify(U)); }catch(e){} }
-S = loadD() || freshState();
-// migrate older saved states to the data-centre model
-if(!S.bills){ S.bills=[]; Object.entries(S.debts||{}).forEach(([sup,amt])=>{ if(amt>0) S.bills.push({id:'INV-'+sup.toUpperCase(), sup, date:S.today-14*DAY, amount:amt, paid:false}); }); }
-if(!S.payments) S.payments=[];
-if(!S.proposals) S.proposals=[];
-if(!S.promos) S.promos={p4:true};
-if(!S.creditLimit) S.creditLimit={s1:100000, s2:80000, s3:60000};
-if(!S.events){ S.events=[]; S.evCounter=0; }
-if(!S.stock){
-  S.stock={}; S.sales=S.sales||[]; S.stockoutFlag={};
-  PRODUCTS.forEach((p,i)=>{
-    const vel = Math.max(0.5, p.qty / p.cycle);
-    S.stock[p.id] = Math.max(1, Math.round(vel * (i%3===1 ? 1.5 : 3 + (i%4))));
-    for(let d=10; d>=1; d--){
-      const q = Math.round(vel * (0.5 + Math.random()*0.9));
-      if(q>0) S.sales.push({date: S.today - d*DAY, productId: p.id, qty: q});
-    }
-  });
-}
-if(!S.stockoutFlag) S.stockoutFlag={};
-if(!S.shopStock){
-  S.shopStock={};
-  OTHER_SHOPS.forEach((o,i)=>{
-    S.shopStock[o.id]={};
-    PRODUCTS.forEach((p,j)=>{
-      const vel = Math.max(0.4, p.qty/p.cycle) * [1.3,0.8,0.5,1.6,1.0][i%5];
-      S.shopStock[o.id][p.id] = o.id==='o3' ? Math.round(vel*(j%3)) : Math.max(1, Math.round(vel*(2+(i+j)%6)));
-    });
-  });
-}
+S = adopt(loadD() || freshState());
+// the ledger is the source of truth; if the cache ever drifts, silently heal it
+try{ const bad = verifyLedger(); if(bad.length){ console.warn('ArmTrade: ledger/cache mismatch', bad); S.stock = rebuildStock(); } }catch(e){}
 U = loadU();
 if(U.lastSeenEv==null) U.lastSeenEv = 0;
 let lang = U.lang;
 const t = k => T[lang][k];
 
-if(bc) bc.onmessage = ()=>{ const d=loadD(); if(d){ S=d; renderAll(true); } };
-window.addEventListener('storage', e=>{ if(e.key===DKEY){ const d=loadD(); if(d){ S=d; renderAll(true); } } });
+if(bc) bc.onmessage = ()=>{ const d=loadD(); if(d){ S=adopt(d); renderAll(true); } };
+window.addEventListener('storage', e=>{ if(e.key===DKEY){ const d=loadD(); if(d){ S=adopt(d); renderAll(true); } } });
 
 /* ---------- accounts (demo-grade: client-side hash check, shared sync room) ---------- */
 const AUTH_HASH = {
@@ -743,7 +1205,7 @@ async function doLogin(){
     const r = await fetch('/api/room/'+encodeURIComponent(ROOM));
     if(r.ok){
       const j = await r.json();
-      if(j.v > 0 && looksLikeState(j.data)){ S = j.data; S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} }
+      if(j.v > 0 && looksLikeState(j.data)){ S = adopt(j.data); S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} }
       else await pushState();
     }
   }catch(e){}
@@ -781,7 +1243,7 @@ async function pushState(){
     else if(r.status===409){
       // someone else wrote first — adopt their state instead of overwriting it
       const j = await r.json();
-      if(looksLikeState(j.data)){ S = j.data; S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} toast('🔄'); renderAll(true); }
+      if(looksLikeState(j.data)){ S = adopt(j.data); S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} toast('🔄'); renderAll(true); }
     }
     else throw new Error('http '+r.status);
   }catch(e){ if(!syncErrShown){ syncErrShown = true; toast(t('sync_err')); } }
@@ -797,7 +1259,7 @@ async function pollSync(){
       const r2 = await fetch('/api/room/'+encodeURIComponent(ROOM));
       if(!r2.ok) return;
       const full = await r2.json();
-      if(looksLikeState(full.data)){ S = full.data; S.v = full.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} renderAll(true); }
+      if(looksLikeState(full.data)){ S = adopt(full.data); S.v = full.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} renderAll(true); }
     }
   }catch(e){}
 }
@@ -817,7 +1279,7 @@ function openSync(){
     document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
       <div class="mbody"><div class="grabber"></div><h3>🔗 ${t('sync')}</h3>
       <div class="muted" style="margin-bottom:12px"><span class="badge b-green">● ${t('sync_on')}</span></div>
-      <div class="notice">${t('logged_as')}՝ <b>${AUTHD.role==='sup'?'🚚 '+t('supplier'):'🏪 '+t('shop')}</b></div>
+      <div class="notice">${t('logged_as')}${VJ()} <b>${AUTHD.role==='sup'?'🚚 '+t('supplier'):'🏪 '+t('shop')}</b></div>
       <button class="btn danger full" style="margin-top:10px" onclick="logout()">🚪 ${t('logout')}</button>
       <button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">${t('close')}</button></div></div>`;
     return;
@@ -843,17 +1305,23 @@ function genRoom(){
 async function joinRoom(){
   const code = (document.getElementById('roomInput').value||'').trim().toUpperCase();
   if(code.length < 4) return;
+  const prev = ROOM;
   ROOM = code;
   try{ localStorage.setItem('armtrade_room', ROOM); }catch(e){}
   try{
     const r = await fetch('/api/room/'+encodeURIComponent(ROOM));
     if(r.ok){
       const j = await r.json();
-      if(j.v > 0 && looksLikeState(j.data)){ S = j.data; S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} }
+      if(j.v > 0 && looksLikeState(j.data)){ S = adopt(j.data); S.v = j.v; try{ localStorage.setItem(DKEY, JSON.stringify(S)); }catch(e){} }
       else await pushState();
       toast('🔗 ' + t('sync_on') + ' · ' + ROOM);
     } else throw new Error('http '+r.status);
-  }catch(e){ toast(t('sync_err')); }
+  }catch(e){
+    /* the handshake failed, so the room was never joined: the chip must not claim otherwise */
+    ROOM = prev;
+    try{ if(prev) localStorage.setItem('armtrade_room', prev); else localStorage.removeItem('armtrade_room'); }catch(e2){}
+    toast(t('sync_err'));
+  }
   closeModal(); renderAll();
 }
 function leaveRoom(){
@@ -865,7 +1333,12 @@ function leaveRoom(){
 /* ---------- helpers ---------- */
 const P = id => PRODUCTS.find(p=>p.id===id);
 const SUP = id => SUPPLIERS.find(s=>s.id===id);
-const nm = o => lang==='hy' ? o.name : o.nameEn;
+/* Russian is the brief's second language; falling back to the English name made every Russian
+   screen read 'not for me'. nameRu is optional, so an object without one still degrades to en. */
+const nm = o => !o ? '' : (lang==='ru' ? (o.nameRu || o.nameEn || o.name)
+                        : lang==='hy' ? (o.name || o.nameEn) : (o.nameEn || o.name));
+/* Armenian verjaket is script-specific: Latin and Cyrillic sentences take a plain colon. */
+const VJ = () => lang==='hy' ? '՝' : ':';
 const isPromo = p => !!S.promos[p.id];
 const effPrice = p => isPromo(p) ? Math.round(p.price*0.9) : p.price;
 function togglePromo(pid){
@@ -888,13 +1361,18 @@ function evText(e){
     order:     ['📦', `${t('ev_order')} ${d.oid||''} · ${shn}`],
     confirmed: ['✅', `${t('ev_confirmed')} ${d.oid||''}`],
     delivered: ['🚚', `${t('ev_delivered')} ${d.oid||''}`],
-    promo_on:  ['🎉', `${t('ev_promo_on')}՝ ${pn}`],
-    promo_off: ['🏷', `${t('ev_promo_off')}՝ ${pn}`],
-    proposal:  ['📨', `${t('ev_proposal')}՝ ${pn}`],
-    payment:   ['💸', `${t('ev_payment')}՝ ${sn} · ${(d.amount||0).toLocaleString('en-US')} ֏`],
+    promo_on:  ['🎉', `${t('ev_promo_on')}${VJ()} ${pn}`],
+    promo_off: ['🏷', `${t('ev_promo_off')}${VJ()} ${pn}`],
+    proposal:  ['📨', `${t('ev_proposal')}${VJ()} ${pn}`],
+    payment:   ['💸', `${t('ev_payment')}${VJ()} ${sn} · ${(d.amount||0).toLocaleString('en-US')} ֏`],
     ret:       ['↩', `${t('ev_return')} ${d.oid||''}`],
     chat:      ['💬', `${t('ev_chat')} · ${d.oid||''}`],
-    stockout:  ['🚨', `${t('ev_stockout')}՝ ${pn}`],
+    stockout:  ['🚨', `${t('ev_stockout')}${VJ()} ${pn}`],
+    recv:      ['📥', `${t('ev_recv')} ${d.oid||''}`],
+    recv_due:  ['⏰', `${t('ev_recv_due')} ${d.oid||''}`],
+    diff:      ['⚠', `${t('ev_diff')} ${d.oid||''}`],
+    writeoff:  ['📉', `${t('ev_writeoff')}${VJ()} ${pn} × ${d.qty||''}`],
+    count:     ['🧮', `${t('ev_count')} ${d.id||''} · ${(d.amd||0).toLocaleString('en-US')} ֏`],
   };
   return map[e.type] || ['🔔', e.type];
 }
@@ -913,6 +1391,9 @@ function openEvents(){
   renderAll();
 }
 const amd = n => `<span class="num">${n.toLocaleString('en-US')}</span> ֏`;
+/* anything the shopkeeper typed (a scanned code, a counter's name) goes through this before
+   it is interpolated into a template — the app has no other user-authored HTML sink. */
+const escH = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function fdate(ts){ const d = new Date(ts); const m = lang==='hy'
   ? ['հնվ','փտվ','մրտ','ապր','մյս','հնս','հլս','օգս','սեպ','հոկ','նոյ','դեկ']
   : lang==='ru'
@@ -922,6 +1403,111 @@ function fdate(ts){ const d = new Date(ts); const m = lang==='hy'
 function daysAgo(ts){ return Math.round((S.today - ts)/DAY); }
 function toast(msg){ const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('show'), 2200); }
 
+/* ---------- immutable stock ledger (R1 · G1) ----------
+   S.moves is append-only: never edited, never re-ordered. On-hand is SUM(dq) and S.stock is
+   only a cache of that sum. postMove() is the ONLY way stock is ever allowed to change. */
+function uuid4(){ return 'm-'+Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4); }
+function postMove(m){
+  if(!m || !m.pid || !m.type) return false;
+  if(!Array.isArray(S.moves)){ S.moves=[]; S.moveSeq=S.moveSeq||0; }
+  const uuid = m.uuid || uuid4();
+  if(S.moves.some(x=>x && x.uuid===uuid)) return false;   // replaying the same move is a no-op
+  const mv = {
+    n: ++S.moveSeq,
+    uuid,
+    ts: m.ts==null ? S.today : m.ts,
+    rts: Date.now(),
+    pid: m.pid,
+    type: m.type,
+    dq: +m.dq || 0,
+    cost: m.cost==null ? costOf(m.pid) : m.cost,
+    ref: m.ref || '',
+    reason: m.reason || '',
+    actor: m.actor || 'shop',
+    note: m.note || ''
+  };
+  S.moves.push(mv);
+  S.stock[mv.pid] = (S.stock[mv.pid]||0) + mv.dq;    // cache, rebuildable at any time
+  compactMoves();
+  return true;
+}
+function postMoves(arr){ let n=0; (arr||[]).forEach(m=>{ if(postMove(m)) n++; }); return n; }
+function rebuildStock(){ const c={}; (S.moves||[]).forEach(m=>{ if(m&&m.pid) c[m.pid]=(c[m.pid]||0)+(+m.dq||0); }); return c; }
+function verifyLedger(){
+  const rb = rebuildStock(), out=[];
+  const pids = {}; Object.keys(S.stock||{}).forEach(k=>pids[k]=1); Object.keys(rb).forEach(k=>pids[k]=1);
+  Object.keys(pids).forEach(pid=>{
+    const cached = (S.stock||{})[pid]||0, rebuilt = rb[pid]||0;
+    if(cached!==rebuilt) out.push({pid, cached, rebuilt});
+  });
+  return out;
+}
+const onHand = pid => (S.stock||{})[pid]||0;
+function movesFor(pid, limit){
+  // oldest first: ts is the business date, n only breaks ties inside the same day. Sorting by ts
+  // first is what keeps a collapsed opening balance (see compactMoves) at the top of the list.
+  const all = (S.moves||[]).filter(m=>m && m.pid===pid).slice()
+    .sort((a,b)=>((a.ts||0)-(b.ts||0)) || ((a.n||0)-(b.n||0)));
+  let bal = 0;
+  const rows = all.map(m=>{ bal += (+m.dq||0); return Object.assign({}, m, {bal}); });
+  return rows.slice(-(limit||50)).reverse();
+}
+const moveLabel = type => T[lang]['mv_'+type] ? t('mv_'+type) : type;
+const REASON_KEY = {expired:'wo_r_expired', damaged:'wo_r_damaged', theft:'wo_r_theft', own:'wo_r_own',
+                    fix:'wo_r_fix', short:'diff_short', over:'diff_over'};
+function reasonLabel(code){ return code && REASON_KEY[code] ? t(REASON_KEY[code]) : ''; }
+function costOf(pid){
+  const rec = (S.moves||[]).filter(m=>m && m.pid===pid && m.type==='receipt');
+  if(rec.length) return rec[rec.length-1].cost || 0;
+  const h = (S.history||[]).filter(x=>x.productId===pid);
+  if(h.length) return h[h.length-1].price || 0;
+  const p = P(pid); return p ? p.price : 0;
+}
+/* keeps localStorage and the D1 sync payload bounded: moves older than 90 days collapse into
+   one opening balance per SKU. Totals are preserved exactly, so on-hand never changes. */
+function compactMoves(){
+  if(!Array.isArray(S.moves) || S.moves.length <= 1500) return;
+  const cutoff = S.today - 90*DAY;
+  const old = S.moves.filter(m=>m && m.ts < cutoff);
+  if(old.length < 2) return;
+  const keep = S.moves.filter(m=>m && !(m.ts < cutoff));
+  const sums = {}, costs = {};
+  old.forEach(m=>{ sums[m.pid] = (sums[m.pid]||0) + (+m.dq||0); if(costs[m.pid]==null) costs[m.pid]=m.cost||0; });
+  const opens = [];
+  // the collapsed opening balance IS the oldest event for its SKU, so it must sort BEFORE every
+  // retained move: number it below the smallest kept n instead of taking a fresh ++S.moveSeq.
+  let base = keep.reduce((mn,m)=>Math.min(mn, +m.n||0), 0);
+  Object.keys(sums).forEach(pid=>{
+    if(!sums[pid]) return;
+    opens.push({n:--base, uuid:uuid4(), ts:cutoff, rts:0, pid, type:'open', dq:sums[pid],
+                cost:costs[pid]||0, ref:'', reason:'compact', actor:'system', note:''});
+  });
+  S.moves = opens.concat(keep);
+}
+/* ---------- e-HDM shaped item card (R1 · F4) ----------
+   Every read of the item card goes through itemMeta(), so a later round can let the shopkeeper
+   override a field by writing S.itemMeta[pid] with no schema migration at all. */
+function itemMeta(pid){
+  const p = P(pid) || {};
+  return Object.assign({goodName:p.name||'', goodCode:'', unit:'հատ', atg:'', adgCode:'', perishable:false, marked:false,
+                        ean:'', scaleCode:'', eans:[]},
+                       p, ((S.itemMeta||{})[pid]||{}));
+}
+const atgOf = pid => itemMeta(pid).atg || '—';
+/* The shop-facing name follows the language toggle like every other screen (nm()); the e-HDM
+   goodName on the catalogue row is only used when the shopkeeper has overridden it by hand. */
+const goodNameOf = pid => {
+  const ov = ((S.itemMeta||{})[pid]||{}).goodName;
+  const p = P(pid) || {};
+  return String(ov || nm(p) || p.name || '').slice(0,50);   // e-HDM caps goodName at 50
+};
+// units are stored in Armenian on the catalogue row; show them in the active language
+const UNIT_KEY = {'հատ':'unit_pcs', 'կգ':'unit_kg', 'լ':'unit_l', 'գ':'unit_g'};
+function unitOf(pid){
+  const u = itemMeta(pid).unit || 'հատ';
+  return UNIT_KEY[u] ? t(UNIT_KEY[u]) : u;
+}
+
 /* ---------- VMI: store stock & sell-out ---------- */
 function velOf(pid){
   const cut = S.today - 7*DAY;
@@ -929,7 +1515,7 @@ function velOf(pid){
   if(recent.length){ return Math.max(0.2, recent.reduce((a,s)=>a+s.qty,0)/7); }
   const p = P(pid); return Math.max(0.2, p.qty/p.cycle);
 }
-function stockDays(pid){ return (S.stock[pid]||0) / velOf(pid); }
+function stockDays(pid){ return onHand(pid) / velOf(pid); }
 function todaySold(pid){ return S.sales.filter(s=>s.productId===pid && s.date===S.today).reduce((a,s)=>a+s.qty,0); }
 function last7Bars(pid){
   const days = [];
@@ -950,9 +1536,10 @@ function velOfShop(shopId, pid){
 function daysLeftShop(shopId, pid){ return (shopStockOf(shopId)[pid]||0) / velOfShop(shopId, pid); }
 function critCount(shopId){ return PRODUCTS.filter(p=>daysLeftShop(shopId, p.id)<=2).length; }
 function recordSale(pid, qty){
-  qty = Math.max(1, Math.min(qty, S.stock[pid]||0));
-  if(!qty){ toast(t('out_of_stock')); return; }
-  S.stock[pid] = (S.stock[pid]||0) - qty;
+  const have = onHand(pid);
+  if(have<=0){ toast(t('out_of_stock')); return; }
+  qty = Math.max(1, Math.min(isFinite(+qty) ? Math.floor(+qty) : 1, have));
+  postMove({pid, type:'sale', dq:-qty, ref:'', actor:'shop'});
   S.sales.push({date:S.today, productId:pid, qty});
   if(S.sales.length>600) S.sales = S.sales.slice(-500);
   checkStockouts();
@@ -1039,8 +1626,10 @@ function deliverOrder(oid, qtyMap){
   o.status='delivered';
   o.items.forEach(it=>{ it.delivered = qtyMap ? Math.max(0, Math.min(it.qty, qtyMap[it.productId]??it.qty)) : it.qty; });
   if(o.shop.id==='me'){
-    o.items.forEach(it=>{ if(it.delivered>0){ S.history.push({date:S.today, productId:it.productId, sup:o.sup, qty:it.delivered, price:it.price}); S.stock[it.productId]=(S.stock[it.productId]||0)+it.delivered; } });
-    checkStockouts();
+    /* R1: shipping no longer moves the shop's stock — that would be phantom stock until the
+       boxes are actually in the shop. Stock and the purchase-history record are created by
+       confirmReceipt() («Ընդունում»). The supplier still issues the հաշիվ-ապրանքագիր here,
+       which is how it works in practice; the receipt then matches it or raises a ճշգրտող հաշիվ. */
     const sum = o.items.reduce((a,x)=>a+x.delivered*x.price,0);
     if(sum>0){
       S.debts[o.sup] = (S.debts[o.sup]||0) + sum;
@@ -1064,12 +1653,12 @@ function renderPartial(){
     <div class="mbody"><div class="grabber"></div><h3>✂ ${t('partial_title')}</h3><div class="muted">${o.id} · 🏪 ${nm(o.shop)}</div>
     ${o.items.map(it=>{const p=P(it.productId);const q=PARTIAL.q[it.productId];return `<div class="sug">
       <div class="pav">${p.em}</div>
-      <div class="info"><div class="nm">${nm(p)}</div><div class="sub">${t('qty')}՝ ${it.qty} · ${amd(it.price)}</div></div>
+      <div class="info"><div class="nm">${nm(p)}</div><div class="sub">${t('qty')}${VJ()} ${it.qty} · ${amd(it.price)}</div></div>
       <div class="qtyctl">
         <button onclick="partQty('${it.productId}',-1)">−</button><span style="${q<it.qty?'color:var(--rose)':''}">${q}</span>
         <button onclick="partQty('${it.productId}',1)">+</button>
       </div></div>`;}).join('')}
-    <div class="osum">${t('sum')}՝ ${amd(sum)}</div>
+    <div class="osum">${t('sum')}${VJ()} ${amd(sum)}</div>
     <button class="btn green full" style="margin-top:14px" onclick="confirmPartial()">🚚 ${t('confirm_deliv')}</button>
     <button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">${t('close')}</button></div></div>`;
 }
@@ -1083,22 +1672,28 @@ function confirmPartial(){ const p=PARTIAL; PARTIAL=null; closeModal(); deliverO
 function remindFix(k){ S.reminded[k]=true; saveD(); toast(t('reminded')); renderAll(); }
 function payDebt(sup){
   const amt = S.debts[sup]||0;
+  if(amt<=0) return;                     // a credit balance is not payable
   S.debts[sup] = 0;
   S.bills.forEach(b=>{ if(b.sup===sup && !b.paid){ b.paid=true; b.paidDate=S.today; } });
   if(amt>0){ S.payments.push({date:S.today, sup, amount:amt}); logEv('payment',{sup, amount:amt}); }
   saveD(); toast(t('paid')); renderAll();
 }
-function resetDemo(){ S = freshState(); saveD(); toast(t('reset_done')); renderAll(); }
+function resetDemo(){ S = adopt(freshState()); RECV=null; WO=null;
+  try{ scanCamStop(); }catch(e){} SCAN=null;
+  COUNTUI={review:false, cancelArm:false, q:'', entry:null};
+  saveD(); toast(t('reset_done')); renderAll(); }
 
 function advanceDay(){
   S.today += DAY;
   // simulate the store's consumer sales for the new day
   PRODUCTS.forEach(p=>{
-    const q = Math.min(S.stock[p.id]||0, Math.round(velOf(p.id) * (0.6 + Math.random()*0.8)));
-    if(q>0){ S.stock[p.id] -= q; S.sales.push({date:S.today, productId:p.id, qty:q}); }
+    const q = Math.min(onHand(p.id), Math.round(velOf(p.id) * (0.6 + Math.random()*0.8)));
+    if(q>0){ postMove({pid:p.id, type:'sale', dq:-q, actor:'sim'}); S.sales.push({date:S.today, productId:p.id, qty:q}); }
   });
   if(S.sales.length>600) S.sales = S.sales.slice(-500);
   checkStockouts();
+  // nudge once, on day 2 — an unreceived delivery is the #1 source of phantom stock
+  S.orders.forEach(o=>{ if(o.shop && o.shop.id==='me' && o.status==='delivered' && !o.receipt && recvAge(o)===2) logEv('recv_due',{oid:o.id}); });
   // other shops' shelves sell down too
   OTHER_SHOPS.forEach(o=>{
     const stk = S.shopStock[o.id]; if(!stk) return;
@@ -1132,7 +1727,7 @@ let curRole='shop';
 function viewFor(role, tab){
   curRole = role;
   const views = role==='shop'
-    ? {home:vShopHome, catalog:vShopCatalog, pos:vShopPOS, basket:vShopBasket, orders:vShopOrders, debts:vShopDebts, data:vShopData}
+    ? {home:vShopHome, recv:vShopRecv, count:vShopCount, catalog:vShopCatalog, pos:vShopPOS, basket:vShopBasket, orders:vShopOrders, debts:vShopDebts, data:vShopData}
     : {dash:vSupDash, sellout:vSupSellout, inbox:vSupInbox, shops:vSupShops, alerts:vSupAlerts, catalog:vSupCatalog, data:vSupData};
   return (views[tab] || views[Object.keys(views)[0]])();
 }
@@ -1151,29 +1746,29 @@ function topBar(){
 function unreadEv(){ return S.events.filter(e=>e.n>(U.lastSeenEv||0)).length; }
 function paneHead(role){
   const labels = role==='shop'?T[lang].tabs_shop:T[lang].tabs_sup;
-  const tabs = role==='shop'?['home','catalog','pos','basket','orders','debts','data']:['dash','sellout','inbox','shops','alerts','catalog','data'];
-  const icons = role==='shop'?{home:'📋',catalog:'🛒',pos:'💵',basket:'🧺',orders:'📦',debts:'💳',data:'📈'}:{dash:'📊',sellout:'📉',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷',data:'📈'};
+  const tabs = role==='shop'?['home','recv','count','catalog','pos','basket','orders','debts','data']:['dash','sellout','inbox','shops','alerts','catalog','data'];
+  const icons = role==='shop'?{home:'📋',recv:'📥',count:'🧮',catalog:'🛒',pos:'💵',basket:'🧺',orders:'📦',debts:'💳',data:'📈'}:{dash:'📊',sellout:'📉',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷',data:'📈'};
   const cur=U.tab[role];
   const badges = role==='shop'
-    ? {home:S.proposals.length, basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
-    : {inbox:S.orders.filter(o=>o.status==='new').length, alerts:supAlerts().length};
+    ? {home:S.proposals.length, recv:pendingReceipts().length, count:countNavBadge(), basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
+    : {inbox:S.orders.filter(o=>o.status==='new').length, alerts:supAlerts().length+recvDiffAlerts().length};
   return `<div class="panehead">
     <div class="panetitle">${role==='shop'?'🏪 '+t('shop'):'🚚 '+t('supplier')}<span class="tag">${role==='shop'?nm(MY_SHOP).replace(/[«»]/g,''):nm(SUPPLIERS[0])+' +2'}</span></div>
-    <div class="chips panetabs">${tabs.map(tb=>`<button class="${cur===tb?'active':''}" onclick="paneTab('${role}','${tb}')">${icons[tb]} ${labels[tb]}${badges[tb]?` <span class="dot">${badges[tb]}</span>`:''}</button>`).join('')}</div>
+    <div class="chips panetabs wrap">${tabs.map(tb=>`<button class="${cur===tb?'active':''}" onclick="paneTab('${role}','${tb}')">${icons[tb]} ${labels[tb]}${badges[tb]?` <span class="dot">${badges[tb]}</span>`:''}</button>`).join('')}</div>
   </div>`;
 }
 
 function singleTabs(role){
   const r = role==='supplier' ? 'supplier' : 'shop';
   const labels = r==='shop'?T[lang].tabs_shop:T[lang].tabs_sup;
-  const tabs = r==='shop'?['home','catalog','pos','basket','orders','debts','data']:['dash','sellout','inbox','shops','alerts','catalog','data'];
-  const icons = r==='shop'?{home:'📋',catalog:'🛒',pos:'💵',basket:'🧺',orders:'📦',debts:'💳',data:'📈'}:{dash:'📊',sellout:'📉',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷',data:'📈'};
+  const tabs = r==='shop'?['home','recv','count','catalog','pos','basket','orders','debts','data']:['dash','sellout','inbox','shops','alerts','catalog','data'];
+  const icons = r==='shop'?{home:'📋',recv:'📥',count:'🧮',catalog:'🛒',pos:'💵',basket:'🧺',orders:'📦',debts:'💳',data:'📈'}:{dash:'📊',sellout:'📉',inbox:'📥',shops:'🏪',alerts:'🔔',catalog:'🏷',data:'📈'};
   const badges = r==='shop'
-    ? {home:S.proposals.length, basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
-    : {inbox:S.orders.filter(o=>o.status==='new').length, alerts:supAlerts().length};
+    ? {home:S.proposals.length, recv:pendingReceipts().length, count:countNavBadge(), basket:Object.keys(S.basket).length, orders:S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length}
+    : {inbox:S.orders.filter(o=>o.status==='new').length, alerts:supAlerts().length+recvDiffAlerts().length};
   const cur = U.tab[r];
   return `<div style="max-width:1400px;margin:14px auto 0;padding:0 16px">
-    <div class="chips panetabs">${tabs.map(tb=>`<button class="${cur===tb?'active':''}" onclick="paneTab('${r}','${tb}')">${icons[tb]} ${labels[tb]}${badges[tb]?` <span class="dot">${badges[tb]}</span>`:''}</button>`).join('')}</div>
+    <div class="chips panetabs wrap">${tabs.map(tb=>`<button class="${cur===tb?'active':''}" onclick="paneTab('${r}','${tb}')">${icons[tb]} ${labels[tb]}${badges[tb]?` <span class="dot">${badges[tb]}</span>`:''}</button>`).join('')}</div>
   </div>`;
 }
 let prevInboxN = null;
@@ -1253,16 +1848,18 @@ function notifyShop(msg){
 function renderNav(role){
   const basketN = Object.keys(S.basket).length;
   const inboxN = S.orders.filter(o=>o.status==='new').length;
-  const alertsN = supAlerts().length;
+  const alertsN = supAlerts().length + recvDiffAlerts().length;
   const myActiveN = S.orders.filter(o=>o.shop.id==='me'&&o.status!=='delivered').length;
   const items = role==='shop'
-    ? [['home','📋',S.proposals.length],['catalog','🛒'],['pos','💵'],['basket','🧺',basketN],['orders','📦',myActiveN],['debts','💳'],['data','📈']]
+    ? [['home','📋',S.proposals.length],['recv','📥',pendingReceipts().length],['count','🧮',countNavBadge()],['catalog','🛒'],['pos','💵'],['basket','🧺',basketN],['orders','📦',myActiveN],['debts','💳'],['data','📈']]
     : [['dash','📊'],['sellout','📉',PRODUCTS.filter(p=>stockDays(p.id)<=2).length],['inbox','📥',inboxN],['shops','🏪'],['alerts','🔔',alertsN],['catalog','🏷'],['data','📈']];
   const labels = role==='shop' ? T[lang].tabs_shop : T[lang].tabs_sup;
-  document.getElementById('nav').innerHTML = items.map(([k,ic,badge])=>`
+  const nv = document.getElementById('nav');
+  nv.className = 'cols'+items.length;   // shop=cols9 (5+4), supplier=cols7 (unchanged 4+3)
+  nv.innerHTML = items.map(([k,ic,badge])=>`
     <button class="${U.tab[role]===k?'active':''}" onclick="paneTab('${role}','${k}')">
       ${badge?`<span class="navbadge">${badge}</span>`:''}
-      <span class="icw">${ic}</span>${labels[k]}
+      <span class="icw">${ic}</span><span>${labels[k]}</span>
     </button>`).join('');
 }
 
@@ -1283,7 +1880,7 @@ function sugCard(x){
     <div class="info">
       <div class="nm">${nm(p)}</div>
       <div class="sub">${sup.em} ${nm(sup)} · <b>${effPrice(p).toLocaleString('en-US')} ֏</b>${isPromo(p)?` <s style="color:var(--dim)">${p.price.toLocaleString('en-US')}</s> <span class="badge b-violet">${t('promo')} −10%</span>`:''}</div>
-      <div class="sub">${st?`${t('every')} ${st.cycle} ${t('days')} · ${t('last_order')}՝ ${fdate(st.last)}`:''} ${badge}</div>
+      <div class="sub">${st?`${t('every')} ${st.cycle} ${t('days')} · ${t('last_order')}${VJ()} ${fdate(st.last)}`:''} ${badge}</div>
     </div>
     <div style="text-align:right;min-width:100px">
       <div class="qtyctl">
@@ -1302,7 +1899,7 @@ function propCard(pr){
       <div class="pav">${p.em}</div>
       <div class="info">
         <div class="nm">📨 ${nm(p)}</div>
-        <div class="sub">${sup.em} ${nm(sup)} · <b>${effPrice(p).toLocaleString('en-US')} ֏</b> · ${t('sum')}՝ <b>${sum.toLocaleString('en-US')} ֏</b></div>
+        <div class="sub">${sup.em} ${nm(sup)} · <b>${effPrice(p).toLocaleString('en-US')} ֏</b> · ${t('sum')}${VJ()} <b>${sum.toLocaleString('en-US')} ֏</b></div>
       </div>
       <div class="qtyctl">
         <button onclick="setPropQty('${pr.id}', ${pr.qty-1})">−</button><span>${pr.qty}</span>
@@ -1320,6 +1917,8 @@ function vShopHome(){
   const basketN = Object.keys(S.basket).length;
   return `
   <div class="notice">${t('demo_note')}</div>
+  ${recvNudgeCard()}
+  ${countNudgeCard()}
   ${S.proposals.length?`<div class="sec">📨 ${t('prop_title')} (${S.proposals.length})</div>`+S.proposals.map(propCard).join(''):''}
   <div class="sec">${t('today_sug')} (${sugs.length})</div>
   <div class="card">
@@ -1356,8 +1955,8 @@ function vShopBasket(){
           <button onclick="setBasketQty('${pid}', ${S.basket[pid]-1})">−</button><span>${S.basket[pid]}</span>
           <button onclick="setBasketQty('${pid}', ${S.basket[pid]+1})">+</button>
         </div></div>`;}).join('')}
-      <div class="osum">${t('sum')}՝ ${amd(sum)}</div>
-      ${(S.debts[sup]||0)+sum > (S.creditLimit[sup]||Infinity) ? `<div style="margin-top:9px;font-size:12px;color:var(--rose);font-weight:700">${t('over_warn')} (${t('credit_limit')}՝ ${(S.creditLimit[sup]).toLocaleString('en-US')} ֏)</div>`:''}
+      <div class="osum">${t('sum')}${VJ()} ${amd(sum)}</div>
+      ${(S.debts[sup]||0)+sum > (S.creditLimit[sup]||Infinity) ? `<div style="margin-top:9px;font-size:12px;color:var(--rose);font-weight:700">${t('over_warn')} (${t('credit_limit')}${VJ()} ${(S.creditLimit[sup]).toLocaleString('en-US')} ֏)</div>`:''}
     </div>`;
   }).join('');
   const dayChips = [0,1,2,3].map(d=>{
@@ -1385,10 +1984,18 @@ function orderTracker(status){
 function orderCard(o, side){
   const dq = it => it.delivered!=null ? it.delivered : it.qty;
   const sum = o.items.reduce((a,x)=>a+dq(x)*x.price,0);
+  const mine = o.shop && o.shop.id==='me';
+  // supplier sees receipt status only — never a selling price or a margin
+  const recvBadge = (side==='sup' && o.status==='delivered' && mine)
+    ? (o.receipt && !o.receipt.auto
+        ? (o.receipt.diff ? ` <span class="badge b-rose">⚠ ${t('diff_title')}</span>`
+                          : ` <span class="badge b-green">✓ ${t('recv_received')} · ${fdate(o.receipt.ts)}</span>`)
+        : (o.receipt ? '' : ` <span class="badge b-gold">${t('recv_pending')}</span>`))
+    : '';
   return `<div class="order st-${o.status}">
     <div class="oh">
       <b>${side==='shop' ? SUP(o.sup).em+' '+nm(SUP(o.sup)) : '🏪 '+nm(o.shop)}</b>
-      <span>${o.overLimit?`<span class="badge b-rose">⚠ ${t('over_limit')}</span> `:''}${statusBadge(o.status)}</span>
+      <span>${o.overLimit?`<span class="badge b-rose">⚠ ${t('over_limit')}</span> `:''}${statusBadge(o.status)}${recvBadge}</span>
     </div>
     <div class="oid">${o.id} · ${fdate(o.date)}${o.deliveryDate?` · <span style="color:#7DE9F7">🚚 ${fdate(o.deliveryDate)}</span>`:''}</div>
     <div class="oitems">${o.items.map(it=>{
@@ -1396,12 +2003,13 @@ function orderCard(o, side){
       return `${nm(P(it.productId))} <span class="num" ${shorted?'style="color:var(--rose);font-weight:700"':''}>× ${shorted?it.delivered+'/'+it.qty:it.qty}</span>${shorted?` <span class="badge b-rose">${t('short_lbl')}</span>`:''}`;
     }).join('<br>')}</div>
     ${o.returns ? `<div class="oitems" style="color:var(--rose)">↩ ${t('returned')}: ${Object.entries(o.returns).filter(([,q])=>q>0).map(([pid,q])=>`${nm(P(pid))} × ${q}`).join(', ')}</div>`:''}
+    ${o.receipt && o.receipt.diff ? `<div class="oitems" style="color:var(--rose)">⚠ ${diffLineTxt(o)}</div>`:''}
     <div class="osum">${amd(sum)}</div>
     ${side==='shop' ? orderTracker(o.status) : ''}
     ${side==='sup' && o.status==='new' ? `<div class="obtns"><button class="btn cyan" onclick="confirmOrder('${o.id}')">✓ ${t('confirm')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openChat('${o.id}','${side}')">💬${o.messages&&o.messages.length?' '+o.messages.length:''}</button></div>`:''}
     ${side==='sup' && o.status==='confirmed' ? `<div class="obtns"><button class="btn green" onclick="deliverOrder('${o.id}')">🚚 ${t('deliver')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openPartial('${o.id}')">✂ ${t('deliver_partial')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openChat('${o.id}','${side}')">💬${o.messages&&o.messages.length?' '+o.messages.length:''}</button></div>`:''}
     ${side==='sup' && o.status==='delivered' ? `<div class="obtns"><button class="btn ghost" style="flex:0 0 auto" onclick="openChat('${o.id}','${side}')">💬${o.messages&&o.messages.length?' '+o.messages.length:''}</button></div>`:''}
-    ${side==='shop' ? `<div class="obtns"><button class="btn ghost" style="flex:1" onclick="openChat('${o.id}','${side}')">💬 ${t('chat')}${o.messages&&o.messages.length?' ('+o.messages.length+')':''}</button>${o.status==='delivered'&&!o.returns&&o.shop.id==='me'?`<button class="btn danger" style="flex:0 0 auto" onclick="openReturn('${o.id}')">↩ ${t('ret_btn')}</button>`:''}</div>`:''}
+    ${side==='shop' ? `<div class="obtns">${o.status==='delivered'&&mine&&!o.receipt?`<button class="btn green" onclick="openReceipt('${o.id}')">📥 ${t('recv_open')}</button>`:''}<button class="btn ghost" style="flex:1" onclick="openChat('${o.id}','${side}')">💬 ${t('chat')}${o.messages&&o.messages.length?' ('+o.messages.length+')':''}</button>${o.status==='delivered'&&!o.returns&&mine&&o.receipt?`<button class="btn danger" style="flex:0 0 auto" onclick="openReturn('${o.id}')">↩ ${t('ret_btn')}</button>`:''}</div>`:''}
   </div>`;
 }
 /* ----- chat ----- */
@@ -1445,38 +2053,1123 @@ function openReturn(oid){
   RET = {oid, q:{}}; o.items.forEach(it=>RET.q[it.productId]=0);
   renderReturn();
 }
+/* You can only send back what you actually took in AND still have on the shelf: the ceiling is
+   the RECEIVED quantity (o.receipt.lines) minus anything already returned, capped by on-hand. */
+function retMax(o, it){
+  const pid = it.productId;
+  const shipped = it.delivered!=null ? it.delivered : it.qty;
+  let got = shipped;
+  const lines = o.receipt && Array.isArray(o.receipt.lines) ? o.receipt.lines : null;
+  if(lines && lines.length){
+    const l = lines.find(x=>x && x.pid===pid);
+    got = l ? Math.max(0, +l.received||0) : 0;
+  }
+  const already = Math.max(0, +((o.returns||{})[pid]) || 0);
+  return Math.max(0, Math.min(got - already, onHand(pid)));
+}
 function renderReturn(){
   const o = S.orders.find(x=>x.id===RET.oid); if(!o) return;
-  const sum = o.items.reduce((a,it)=>a+(RET.q[it.productId]||0)*it.price,0);
+  const sum = o.items.reduce((a,it)=>a+Math.min(RET.q[it.productId]||0, retMax(o,it))*it.price,0);
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this){RET=null;closeModal()}">
     <div class="mbody"><div class="grabber"></div><h3>↩ ${t('ret_title')}</h3><div class="muted">${o.id}</div>
-    ${o.items.map(it=>{const p=P(it.productId);const max=it.delivered!=null?it.delivered:it.qty;const q=RET.q[it.productId];return `<div class="sug">
+    ${o.items.map(it=>{const p=P(it.productId);const max=retMax(o,it);const q=Math.min(RET.q[it.productId]||0,max);return `<div class="sug">
       <div class="pav">${p.em}</div>
-      <div class="info"><div class="nm">${nm(p)}</div><div class="sub">${t('qty')}՝ ${max} · ${amd(it.price)}</div></div>
+      <div class="info"><div class="nm">${nm(p)}</div><div class="sub">${t('ret_max')}${VJ()} ${max} · ${amd(it.price)}</div></div>
       <div class="qtyctl">
         <button onclick="retQty('${it.productId}',-1)">−</button><span style="${q>0?'color:var(--rose)':''}">${q}</span>
-        <button onclick="retQty('${it.productId}',1)">+</button>
+        <button ${max<=0?'disabled style="opacity:.35"':''} onclick="retQty('${it.productId}',1)">+</button>
       </div></div>`;}).join('')}
     <div class="osum" style="color:var(--rose)">−${amd(sum)}</div>
     <button class="btn danger full" style="margin-top:14px" onclick="confirmReturn()">↩ ${t('ret_confirm')}</button>
     <button class="btn ghost full" style="margin-top:9px" onclick="RET=null;closeModal()">${t('close')}</button></div></div>`;
 }
 function retQty(pid, d){
-  const o = S.orders.find(x=>x.id===RET.oid);
-  const it = o.items.find(x=>x.productId===pid);
-  const max = it.delivered!=null?it.delivered:it.qty;
-  RET.q[pid] = Math.max(0, Math.min(max, (RET.q[pid]||0)+d));
+  const o = S.orders.find(x=>x.id===RET.oid); if(!o) return;
+  const it = o.items.find(x=>x.productId===pid); if(!it) return;
+  RET.q[pid] = Math.max(0, Math.min(retMax(o,it), (RET.q[pid]||0)+d));
   renderReturn();
 }
 function confirmReturn(){
   const o = S.orders.find(x=>x.id===RET.oid); if(!o) return;
-  const sum = o.items.reduce((a,it)=>a+(RET.q[it.productId]||0)*it.price,0);
-  if(sum<=0){ RET=null; closeModal(); return; }
-  o.returns = RET.q;
-  Object.entries(RET.q).forEach(([pid,q])=>{ if(q>0) S.stock[pid] = Math.max(0, (S.stock[pid]||0) - q); });
-  S.debts[o.sup] = Math.max(0, (S.debts[o.sup]||0) - sum);
+  // re-clamp at confirm time: the sheet may have been open while another tab sold the stock
+  const q = {};
+  o.items.forEach(it=>{ q[it.productId] = Math.max(0, Math.min(RET.q[it.productId]||0, retMax(o,it))); });
+  const sum = o.items.reduce((a,it)=>a+q[it.productId]*it.price,0);
+  if(sum<=0){ RET=null; closeModal(); toast(t('ret_none')); renderAll(); return; }
+  const prev = o.returns||{};
+  o.returns = {}; o.items.forEach(it=>{ o.returns[it.productId] = (+prev[it.productId]||0) + q[it.productId]; });
+  Object.entries(q).forEach(([pid,n])=>{
+    if(n>0){ const it=o.items.find(x=>x.productId===pid);
+      postMove({pid, type:'return', dq:-n, cost:it?it.price:undefined, ref:o.id, actor:'shop'}); }
+  });
+  S.debts[o.sup] = (S.debts[o.sup]||0) - sum;
   logEv('ret',{oid:o.id});
   RET=null; closeModal(); saveD(); toast(t('ret_done')); renderAll();
+}
+/* ----- Ընդունում · goods receipt from the delivered order (R1 · F2) ----- */
+let RECV = null;
+function pendingReceipts(){
+  return S.orders.filter(o=>o && o.shop && o.shop.id==='me' && o.status==='delivered' && !o.receipt)
+    .sort((a,b)=>(a.deliveryDate||a.date)-(b.deliveryDate||b.date));
+}
+function recvAge(o){ return Math.round((S.today - (o.deliveryDate||o.date))/DAY); }
+const recvShipped = it => it.delivered!=null ? it.delivered : it.qty;
+/* an over-receipt is real (Ավելցուկ), but a runaway one is a mis-tap: cap generously, and never
+   at exactly double — that is the value a double-count lands on and it hid the R2 blocker. */
+const recvCap = shipped => Math.max(shipped*2, shipped+20, 20);
+/* Ընդունում opens pre-filled with the SHIPPED quantity, which is right for the tap-to-correct
+   flow but fatal for a scanner that increments. Entering scanning mode zeroes the document once
+   so each scan records one real carton; recvRestoreShipped() puts the shipped figures back. */
+function recvEnterScanMode(){
+  if(!RECV || RECV.scanMode) return false;
+  RECV.preScan = Object.assign({}, RECV.q);
+  Object.keys(RECV.q).forEach(k=>{ RECV.q[k] = 0; });
+  RECV.r = {};
+  RECV.scanMode = true;
+  return true;
+}
+function recvRestoreShipped(){
+  if(!RECV) return;
+  const o = S.orders.find(x=>x.id===RECV.oid); if(!o) return;
+  o.items.forEach(it=>{ RECV.q[it.productId] = recvShipped(it); });
+  RECV.r = {}; RECV.scanMode = false; RECV.preScan = null;
+  toast(t('recv_scan_restored')); renderAll();
+}
+function openReceipt(oid){
+  const o = S.orders.find(x=>x.id===oid);
+  if(!o || !o.shop || o.shop.id!=='me' || o.status!=='delivered' || o.receipt){
+    RECV = null; toast(t('recv_already'));
+    U.tab.shop='recv'; saveU(); renderAll(); return;
+  }
+  const q = {}, r = {};
+  o.items.forEach(it=>{ q[it.productId] = recvShipped(it); });
+  RECV = {oid, q, r, editDoc:false, scanMode:false, preScan:null,
+    doc:{type:'invoice', no:String(oid).replace('ORD','INV'), date:S.today, tin:(SUP(o.sup)||{}).tin||'', sup:o.sup}};
+  U.tab.shop='recv'; saveU(); renderAll();
+}
+function closeReceipt(){ RECV = null; renderAll(); }
+function recvQty(pid, d){
+  if(!RECV) return;
+  const o = S.orders.find(x=>x.id===RECV.oid); if(!o) return;
+  const it = o.items.find(x=>x.productId===pid); if(!it) return;
+  const shipped = recvShipped(it);
+  const v = Math.max(0, Math.min(recvCap(shipped), (RECV.q[pid]||0) + d));
+  RECV.q[pid] = v;
+  if(v < shipped){ if(!RECV.r[pid]) RECV.r[pid] = 'short'; }
+  else delete RECV.r[pid];
+  renderAll();
+}
+function recvReason(pid, code){ if(!RECV) return; RECV.r[pid] = code; renderAll(); }
+function recvEditDoc(){ if(!RECV) return; RECV.editDoc = !RECV.editDoc; renderAll(); }
+function recvDocSet(k, v){ if(RECV) RECV.doc[k] = v; }
+const recvDocDate = d => typeof d === 'number' ? fdate(d)+' 2026' : String(d||'');
+function confirmReceipt(){
+  if(!RECV) return;
+  const o = S.orders.find(x=>x.id===RECV.oid);
+  if(!o || o.receipt){ RECV=null; toast(t('recv_already')); renderAll(); return; }
+  const lines = o.items.map(it=>{
+    const pid = it.productId, shipped = recvShipped(it);
+    const received = Math.max(0, RECV.q[pid]!=null ? RECV.q[pid] : shipped);
+    const diff = received - shipped;
+    return {pid, shipped, received, diff, price:it.price,
+      reason: diff<0 ? (RECV.r[pid]||'short') : diff>0 ? 'over' : ''};
+  });
+  lines.forEach(l=>{
+    if(l.received > 0){
+      // this is the moment a purchase becomes a DOCUMENTED purchase (market brief §0)
+      S.history.push({date:S.today, productId:l.pid, sup:o.sup, qty:l.received, price:l.price});
+      postMove({pid:l.pid, type:'receipt', dq:l.received, cost:l.price, ref:o.id, reason:l.reason, actor:'shop'});
+    }
+  });
+  const diffAmd = lines.reduce((a,l)=>a + l.diff*l.price, 0);
+  o.receipt = {ts:S.today, rts:Date.now(), doc:Object.assign({}, RECV.doc), lines, diff:diffAmd, actor:'shop'};
+  if(diffAmd !== 0){
+    S.bills.push({id:'ADJ-'+(S.seq++), sup:o.sup, date:S.today, amount:diffAmd, adj:true, paid:true, paidDate:S.today,
+      ref:RECV.doc.no, items:lines.filter(l=>l.diff!==0).map(l=>({productId:l.pid, qty:l.diff, price:l.price}))});
+    // never clamp at 0: on a fully-paid account a short receipt leaves a real credit, and the
+    // Պարտքեր tab must agree with the Համեմատման ակտ down to the last dram
+    S.debts[o.sup] = (S.debts[o.sup]||0) + diffAmd;
+  }
+  checkStockouts();
+  logEv('recv',{oid:o.id});
+  if(diffAmd) logEv('diff',{oid:o.id});
+  RECV = null; saveD(); toast('📥 '+t('recv_done')); renderAll();
+}
+function recvDiffAlerts(){
+  return S.orders.filter(o=>o && o.receipt && o.receipt.diff && !S.reminded['diff_'+o.id]);
+}
+function diffLineTxt(o){
+  return (o.receipt.lines||[]).filter(l=>l.diff!==0)
+    .map(l=>`${nm(P(l.pid))} ${l.shipped}→${l.received}${l.reason?' · '+reasonLabel(l.reason):''}`).join(' · ');
+}
+function diffAlertCard(o){
+  return `<div class="alert bad">
+    <div class="t">⚠ ${o.id} · ${t('ev_diff')}</div>
+    <div class="d">${diffLineTxt(o)}</div>
+    <div class="act"><button class="btn small ghost" onclick="remindFix('diff_${o.id}')">${t('close')}</button></div>
+  </div>`;
+}
+function recvNudgeCard(){
+  const list = pendingReceipts();
+  if(!list.length) return '';
+  const oldest = recvAge(list[0]);
+  const nLines = list.reduce((a,o)=>a+o.items.length, 0);
+  const act = list.length===1 ? `openReceipt('${list[0].id}')` : `paneTab('shop','recv')`;
+  return `<div class="alert ${oldest>=2?'bad':''}">
+    <div class="t">📥 ${list.length} ${t('recv_nudge_t')} · ${nLines} ${t('recv_lines')}</div>
+    <div class="d">${t('recv_nudge_d')}${oldest>=2?` · ${t('recv_oldest')}${VJ()} ${oldest} ${dayW()}`:''}</div>
+    <div class="act"><button class="btn green full" onclick="${act}">📥 ${t('recv_open')}</button></div>
+  </div>`;
+}
+function vShopRecv(){
+  if(RECV) return vShopRecvSheet();
+  const list = pendingReceipts();
+  if(!list.length) return `<div class="sec">📥 ${t('recv_title')}</div>
+    <div class="card"><div class="empty"><span class="em">📥</span>${t('recv_none')}</div>
+      <div class="muted" style="text-align:center">${t('recv_none_hint')}</div></div>`;
+  return `<div class="sec">📥 ${t('recv_title')} (${list.length})</div>` + list.map(o=>{
+    const age = recvAge(o);
+    const badge = age>=2 ? `<span class="badge b-rose">${age} ${t('recv_waiting_days')}</span>`
+                         : `<span class="badge b-gold">${t('recv_pending')}</span>`;
+    const sum = o.items.reduce((a,it)=>a + recvShipped(it)*it.price, 0);
+    return `<div class="order st-delivered">
+      <div class="oh"><b>${SUP(o.sup).em} ${nm(SUP(o.sup))}</b>${badge}</div>
+      <div class="oid">${o.id} · 🚚 ${fdate(o.deliveryDate||o.date)}</div>
+      <div class="oitems">${o.items.map(it=>`${nm(P(it.productId))} <span class="num">× ${recvShipped(it)}</span>`).join('<br>')}</div>
+      <div class="osum">${amd(sum)}</div>
+      <button class="btn primary" style="margin-top:12px" onclick="openReceipt('${o.id}')">📥 ${t('recv_open')}</button>
+    </div>`;
+  }).join('');
+}
+function vShopRecvSheet(){
+  const o = S.orders.find(x=>x.id===RECV.oid);
+  if(!o){ RECV=null; return vShopRecv(); }
+  const sup = SUP(o.sup);
+  let total = 0, diffAmd = 0, nDiff = 0, nGot = 0;
+  const rows = o.items.map(it=>{
+    const pid = it.productId, p = P(pid), im = itemMeta(pid);
+    const shipped = recvShipped(it);
+    const got = RECV.q[pid]!=null ? RECV.q[pid] : shipped;
+    const d = got - shipped;
+    total += got*it.price; diffAmd += d*it.price; if(d!==0) nDiff++; if(got>0) nGot++;
+    let rl = '';
+    if(d < 0){
+      const cur = RECV.r[pid] || 'short';
+      rl = `<div class="rline">${t('recv_shipped')} <span class="was">${shipped}</span> → ${t('recv_received')} <b class="num">${got}</b>
+        <span class="chips"><button class="${cur==='short'?'active':''}" onclick="recvReason('${pid}','short')">${t('diff_short')}</button><button class="${cur==='damaged'?'active':''}" onclick="recvReason('${pid}','damaged')">${t('diff_damaged')}</button></span></div>`;
+    } else if(d > 0){
+      rl = `<div class="rline">${t('recv_shipped')} <span class="was">${shipped}</span> → ${t('recv_received')} <b class="num">${got}</b>
+        <span class="badge b-gold">${t('diff_over')}</span></div>`;
+    }
+    return `<div class="sug">
+      <div class="pav">${p.em}</div>
+      <div class="info">
+        <div class="nm">${goodNameOf(pid)}</div>
+        <div class="sub"><span class="badge b-neutral">${t('item_atg_short')} ${im.atg||'—'}</span> · ${amd(it.price)}</div>
+      </div>
+      <div class="qtyctl">
+        <button onclick="recvQty('${pid}',-1)">−</button><span style="${d<0?'color:var(--rose)':(d>0?'color:var(--gold2)':'')}">${got}</span>
+        <button onclick="recvQty('${pid}',1)">+</button>
+      </div></div>${rl}`;
+  }).join('');
+  const docVal = (lbl, val) => `<div class="row" style="padding:7px 0"><span class="muted">${lbl}</span><b class="num">${val}</b></div>`;
+  const docEdit = (lbl, val, key, numeric) => `<div class="row" style="padding:7px 0;gap:12px"><span class="muted" style="flex:0 0 auto">${lbl}</span>
+    <input class="search" style="margin:0;flex:1;text-align:right" ${numeric?'inputmode="numeric"':''} value="${String(val).replace(/"/g,'&quot;')}" oninput="recvDocSet('${key}',this.value)"></div>`;
+  return `<div class="row" style="margin-bottom:12px">
+    <button class="btn small ghost" onclick="closeReceipt()">← ${t('close')}</button>
+    <span class="muted">${sup.em} ${nm(sup)} · <span class="num">${o.id}</span></span>
+  </div>
+  <div class="card">
+    <h3 style="justify-content:space-between">📄 ${t('recv_doc')}
+      <button class="btn small ghost" onclick="recvEditDoc()">✎ ${t('recv_edit_doc')}</button></h3>
+    <div class="row" style="padding:7px 0"><span class="muted">${t('status_col')}</span><b>${t('recv_doc_type')}</b></div>
+    ${RECV.editDoc
+      ? docEdit(t('recv_doc_no'), RECV.doc.no, 'no', true) + docEdit(t('recv_doc_date'), recvDocDate(RECV.doc.date), 'date', false) + docEdit(t('recv_tin'), RECV.doc.tin, 'tin', true)
+      : docVal(t('recv_doc_no'), RECV.doc.no) + docVal(t('recv_doc_date'), recvDocDate(RECV.doc.date)) + docVal(t('recv_tin'), RECV.doc.tin)}
+  </div>
+  ${RECV.scanMode?`<div class="notice" style="margin-bottom:12px">📷 <b>${t('recv_scan_on')}</b> · ${t('recv_scan_hint')}
+    <button class="btn small ghost full" style="margin-top:10px" onclick="recvRestoreShipped()">↺ ${t('recv_scan_restore')}</button></div>`:''}
+  <button class="btn cyan full" style="margin-bottom:14px" onclick="openScanner('recv','${o.id}')">📷 ${t('scan_btn')}</button>
+  <div class="card">${rows}</div>
+  <div class="card">
+    <div class="row"><span class="muted">${t('recv_received')}</span>
+      <b>${lang==='hy'
+          ? `${o.items.length} ${t('recv_lines')}${t('recv_of')} ${nGot}`
+          : `${nGot} ${t('recv_of')} ${o.items.length} ${t('recv_lines')}`} · <span class="num">${Math.round(total).toLocaleString('en-US')}</span> ֏</b></div>
+    ${nDiff?`<div class="row" style="margin-top:9px"><span class="badge b-rose">⚠ ${nDiff} ${t('diff_title')}</span>
+      <span class="muted">${t('adj_doc')}${VJ()} <b class="num" style="color:var(--rose)">${diffAmd>0?'+':'−'}${Math.abs(Math.round(diffAmd)).toLocaleString('en-US')}</b> ֏</span></div>`
+      :`<div class="row" style="margin-top:9px"><span class="badge b-green">✓ ${t('diff_none')}</span></div>`}
+  </div>
+  <button class="btn primary" onclick="confirmReceipt()">✓ ${nDiff
+      ? `${t('recv_accept_part')} · <span class="num">${Math.round(total).toLocaleString('en-US')}</span> ֏`
+      : `${t('recv_accept_all')} · ${o.items.length} ${t('recv_lines')}`}</button>`;
+}
+
+/* ----- item sheet + movement history (R1 · F1) ----- */
+function openItemSheet(pid){
+  const p = P(pid); if(!p) return;
+  const im = itemMeta(pid);
+  const chips = [`<span class="badge b-neutral">${t('item_atg_short')} ${im.atg||'—'}</span>`];
+  if(im.perishable) chips.push(`<span class="badge b-gold">${t('item_perish')}</span>`);
+  if(im.marked) chips.push(`<span class="badge b-violet">${t('item_marked')}</span>`);
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="mbody"><div class="grabber"></div>
+    <h3>${p.em} ${goodNameOf(pid)}</h3>
+    <div class="muted">${im.goodCode||'—'} · ${unitOf(pid)}</div>
+    <div class="row" style="padding:7px 0"><span class="muted">${t('item_ean')}</span>
+      ${eansOf(pid).length ? `<b class="num">${eansOf(pid).map(escH).join(', ')}</b>` : `<span class="muted">${t('ean_none')}</span>`}</div>
+    <div class="row" style="margin:14px 0 12px"><span class="muted">${t('onhand_lbl')}</span>
+      <span><span class="big num">${onHand(pid)}</span> <span class="muted">${unitOf(pid)}</span></span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">${chips.join('')}</div>
+    <div class="muted" style="font-size:11px;margin-top:8px">${t('item_atg_src')}</div>
+    ${im.marked?`<div class="muted" style="font-size:11px;margin-top:5px">${t('item_mark_note')}</div>`:''}
+    <button class="btn danger full" style="margin-top:16px" onclick="openWriteoff('${pid}')">${t('wo_open')}</button>
+    <button class="btn ghost full" style="margin-top:9px" onclick="openItemLedger('${pid}')">📜 ${t('led_title')}</button>
+    <button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">${t('close')}</button>
+    </div></div>`;
+}
+function openItemLedger(pid){
+  const p = P(pid); if(!p) return;
+  const rows = movesFor(pid, 50).map(m=>{
+    const up = (+m.dq||0) > 0;
+    const sub = [reasonLabel(m.reason), m.ref, m.note].filter(Boolean).join(' · ');
+    return `<tr><td>${fdate(m.ts)}</td>
+      <td>${moveLabel(m.type)}${sub?`<div class="muted" style="font-size:10.5px">${sub}</div>`:''}</td>
+      <td class="num" style="color:${up?'var(--green)':'var(--rose)'};font-weight:700">${up?'+':'−'}${Math.abs(+m.dq||0)}</td>
+      <td class="num">${m.bal}</td></tr>`;
+  }).join('');
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="mbody"><div class="grabber"></div><h3>📜 ${t('led_title')}</h3>
+    <div class="muted">${p.em} ${goodNameOf(pid)}</div>
+    ${rows ? `<div class="tblwrap"><table class="tbl">
+      <tr><th>${t('date')}</th><th>${t('led_type')}</th><th>±</th><th>${t('led_balance')}</th></tr>${rows}</table></div>`
+      : `<div class="empty"><span class="em">📜</span>${t('led_empty')}</div>`}
+    <button class="btn ghost full" style="margin-top:12px" onclick="closeModal()">${t('close')}</button></div></div>`;
+}
+
+/* ----- Դուրսգրում · write-off with mandatory reason codes (R1 · F3) ----- */
+let WO = null;
+const WO_CODES = ['expired','damaged','theft','own','fix'];
+function openWriteoff(pid){ WO = {pid, qty:1, reason:'', note:'', err:false}; renderWriteoff(); }
+function renderWriteoff(){
+  if(!WO) return;
+  const pid = WO.pid, p = P(pid); if(!p) return;
+  const im = itemMeta(pid), have = onHand(pid);
+  const body = have<=0
+    ? `<div class="empty"><span class="em">📦</span>${t('wo_nostock')}</div>`
+    : `<div class="row" style="margin:12px 0 2px"><span class="muted">${t('onhand_lbl')}</span>
+        <span><span class="big num">${have}</span> <span class="muted">${unitOf(pid)}</span></span></div>
+      <div class="qtyctl" style="transform:scale(1.15);margin:14px auto;width:max-content">
+        <button onclick="woQty(-1)">−</button><span>${WO.qty}</span><button onclick="woQty(1)">+</button></div>
+      <div class="sec">${t('wo_reason')}</div>
+      ${WO.err?`<div style="color:var(--rose);font-size:12px;font-weight:700;margin:-6px 0 8px">${t('wo_reason_req')}</div>`:''}
+      <div class="chips wrap">${WO_CODES.map(c=>`<button class="${WO.reason===c?'active':''}" onclick="woReason('${c}')">${t(REASON_KEY[c])}</button>`).join('')}</div>
+      <input id="woNote" class="search" style="margin-top:8px" maxlength="80" placeholder="${t('wo_note')}" value="${String(WO.note||'').replace(/"/g,'&quot;')}" oninput="woNote(this.value)">
+      <button class="btn danger full" style="margin-top:6px" onclick="confirmWriteoff()">✓ ${t('wo_confirm')}</button>`;
+  // the note input is recreated on every render, so hand focus + caret back to it
+  const ae = document.activeElement;
+  const keepNote = !!(ae && ae.id==='woNote');
+  const caret = keepNote ? ae.selectionStart : null;
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this){WO=null;closeModal()}">
+    <div class="mbody"><div class="grabber"></div><h3>📉 ${t('wo_title')}</h3>
+    <div class="muted">${p.em} ${goodNameOf(pid)}</div>
+    ${body}
+    <button class="btn ghost full" style="margin-top:9px" onclick="WO=null;closeModal()">${t('close')}</button></div></div>`;
+  if(keepNote){ const el = document.getElementById('woNote');
+    if(el){ el.focus(); try{ el.setSelectionRange(caret, caret); }catch(e){} } }
+}
+function woQty(d){ if(!WO) return; WO.qty = Math.max(1, Math.min(Math.max(1,onHand(WO.pid)), WO.qty + d)); renderWriteoff(); }
+function woReason(code){ if(!WO) return; WO.reason = code; WO.err = false; renderWriteoff(); }
+function woNote(v){ if(WO) WO.note = v; }   // no re-render: keeps the caret where the user left it
+function confirmWriteoff(){
+  if(!WO) return;
+  if(!WO.reason){ WO.err = true; toast(t('wo_reason_req')); renderWriteoff(); return; }
+  const pid = WO.pid, have = onHand(pid);
+  // another tab may have sold the last unit while this sheet sat open — refuse, never post −1
+  if(have<=0){ WO = null; closeModal(); toast(t('wo_nostock')); renderAll(); return; }
+  const qty = Math.max(1, Math.min(have, WO.qty));
+  postMove({pid, type:'writeoff', dq:-qty, cost:costOf(pid), ref:'', reason:WO.reason, note:String(WO.note||'').slice(0,80), actor:'shop'});
+  /* NEVER push to S.sales here. Spoilage is not demand — keeping it out of S.sales is what
+     stops a broken bottle from inflating velOf() and every future order suggestion. */
+  logEv('writeoff',{pid, qty, reason:WO.reason});
+  checkStockouts();
+  WO = null; closeModal(); saveD(); toast('−'+qty+' · '+t('wo_done')); renderAll();
+}
+function shrinkSummary(mk){
+  mk = mk || monthKey(S.today);
+  const byReason = {}; let units = 0, val = 0;
+  (S.moves||[]).forEach(m=>{
+    if(!m || m.type!=='writeoff' || monthKey(m.ts)!==mk) return;
+    const u = Math.abs(+m.dq||0), a = u*(+m.cost||0), r = m.reason||'fix';
+    byReason[r] = byReason[r] || {units:0, amd:0};
+    byReason[r].units += u; byReason[r].amd += a;
+    units += u; val += a;
+  });
+  const spend = (S.history||[]).filter(h=>monthKey(h.date)===mk).reduce((a,h)=>a+h.qty*h.price, 0);
+  return {byReason, units, amd:val, pct: spend ? val/spend*100 : 0};
+}
+function writeoffCard(){
+  const s = shrinkSummary();
+  if(!s.units) return `<div class="card"><h3>📉 ${t('shrink_title')} · ${t('shrink_month')}</h3>
+    <div class="empty"><span class="em">✅</span>${t('shrink_none')}</div></div>`;
+  const rows = WO_CODES.filter(c=>s.byReason[c]).map(c=>`<div class="row" style="padding:7px 0">
+    <span class="muted">${t(REASON_KEY[c])}</span>
+    <span><b class="num">${s.byReason[c].units}</b> ${t('shrink_units')} · <b class="num">${Math.round(s.byReason[c].amd).toLocaleString('en-US')}</b> ֏</span></div>`).join('');
+  return `<div class="card"><h3>📉 ${t('shrink_title')} · ${t('shrink_month')}</h3>${rows}
+    <div class="row" style="border-top:1px solid var(--stroke2);padding-top:10px;margin-top:8px">
+      <b>${t('shrink_total')}</b>
+      <span><b class="num">${s.units}</b> ${t('shrink_units')} · <b class="num">${Math.round(s.amd).toLocaleString('en-US')}</b> ֏</span></div>
+    <div class="muted" style="margin-top:7px">${t('shrink_cost')} · ${s.pct.toFixed(1)}% ${t('shrink_share')}</div></div>`;
+}
+
+/* ================= R2 · F1 — Շտրիխ կոդ: one scanner, three call sites =================
+   Native BarcodeDetector only (zero bytes, works offline, present on Android Chrome). A browser
+   without it degrades to the manual numeric row, which is ALWAYS the first control in the sheet —
+   that is also what makes the whole feature driveable from a headless browser with no camera:
+   every path funnels through the single global onScanCode(code, fromCam).                       */
+let SCAN=null, scanStream=null, scanTimer=null, scanDet=null, scanCanvas=null;
+const WEIGHT_PREFIXES = ['02','20','21','22','23','24','25','26','27','28','29'];
+/* one GS1 mod-10 for every GTIN length: weight 3 on the digit nearest the check digit. */
+function gtinCheck(body){
+  let s = 0, w = 3;
+  for(let i=body.length-1; i>=0; i--, w = (w===3?1:3)) s += (+body[i]||0) * w;
+  return (10 - s%10)%10;
+}
+function ean13Valid(c){
+  if(!/^\d{13}$/.test(c)) return false;
+  return gtinCheck(c.slice(0,12)) === +c[12];
+}
+/* Receiving happens at the carton, and an Armenian carton carries an ITF-14 / GTIN-14. Strip the
+   indicator digit and re-derive the GTIN-13 check digit so the case resolves to the same SKU as
+   the consumer EAN — but only when the 14-digit code's own check digit is sound. */
+const PLAUSIBLE_LEN = {8:1, 13:1};
+function normCode(raw){
+  const d = String(raw||'').replace(/\D/g,'');
+  if(d.length===12) return '0'+d;                       // UPC-A → EAN-13, same check digit
+  if(d.length===14 && gtinCheck(d.slice(0,13))===+d[13]){
+    const base = d.slice(1,13);
+    return base + gtinCheck(base);
+  }
+  return d;
+}
+/* Weight/price-embedded scale labels: 2-digit restricted prefix + 5-digit item code + 5-digit
+   value + check digit. Only grams-vs-drams varies by scale vendor, so only that is configurable. */
+function parseEmbedded(code){
+  if(!/^\d{13}$/.test(code) || WEIGHT_PREFIXES.indexOf(code.slice(0,2))<0) return null;
+  return {itemCode:code.slice(2,7), value:parseInt(code.slice(7,12),10), unit:(S.scaleCfg||{}).valueIs||'grams'};
+}
+function embLabel(emb){
+  if(!emb) return '';
+  if(emb.unit==='amd') return t('scan_price_code')+' · '+(emb.value||0).toLocaleString('en-US')+' ֏';
+  const kg = ((+emb.value||0)/1000).toFixed(3).replace(/\.?0+$/,'') || '0';
+  return t('scan_weight')+' · '+kg+' '+t('unit_kg');
+}
+/* the catalogue EAN stays on PRODUCTS[].ean and is never copied into state, so linking a code
+   needs no seeding migration at all — S.itemMeta[pid].eans only ever holds LEARNED codes. */
+function eansOf(pid){
+  return [itemMeta(pid).ean].concat(((S.itemMeta||{})[pid]||{}).eans||[]).filter(Boolean);
+}
+function eanIndex(){
+  const ix = {};
+  PRODUCTS.forEach(p=>{ eansOf(p.id).forEach(c=>{ const k=String(c); if(k && ix[k]==null) ix[k]=p.id; }); });
+  return ix;                              // 9 SKUs: rebuilt per call, no cache to invalidate
+}
+function findByCode(code){
+  const emb = parseEmbedded(code);
+  if(emb){
+    const hit = PRODUCTS.find(x=>itemMeta(x.id).scaleCode && itemMeta(x.id).scaleCode===emb.itemCode);
+    if(hit) return {pid:hit.id, kind:'scale', emb, code};
+  }
+  const ix = eanIndex();
+  if(ix[code]) return {pid:ix[code], kind:'ean', code};
+  return null;
+}
+function scanBlank(mode, oid){
+  return {mode:(mode==='recv'||mode==='count')?mode:'pos', oid:oid||null, cam:false, err:'', q:'',
+          linkQ:'', last:null, tray:{}, trayEmb:{}, unknown:null, unknownEmb:null};
+}
+function beepHit(){ beep(); try{ navigator.vibrate && navigator.vibrate(30); }catch(e){} }
+function openScanner(mode, oid){
+  if(mode==='recv' && RECV && recvEnterScanMode()){ renderAll(); toast(t('recv_scan_zeroed')); }
+  SCAN = scanBlank(mode, oid);
+  renderScanner();
+  const el = document.getElementById('scanInput'); if(el){ try{ el.focus(); }catch(e){} }
+}
+function closeScanner(){
+  try{ scanCamStop(); }catch(e){}
+  SCAN = null;
+  closeModal();
+}
+/* THE single ingestion point. Callable from a console/test with no camera and no user gesture. */
+function onScanCode(raw, fromCam){
+  const code = normCode(raw);
+  if(!SCAN) SCAN = scanBlank('pos');
+  if(!code) return null;
+  const now = Date.now();
+  // same code twice inside 1200 ms is one scan; a DIFFERENT code is accepted instantly
+  if(fromCam && SCAN.last && SCAN.last.code===code && (now - SCAN.last.ts) < 1200) return null;
+  SCAN.last = {code, ts:now};
+  /* A QR / GS1-128 / marking-code payload strips down to a 19-digit run that is not a barcode.
+     Offering it in the link ladder taught the app a one-off serial that would never scan again,
+     so anything that is not a plausible GTIN length is refused before it can be linked. */
+  if(!PLAUSIBLE_LEN[code.length]){
+    if(fromCam) return null;
+    SCAN.err = t('scan_bad'); renderScanner(); return null;
+  }
+  if(code.length===13 && !ean13Valid(code)){
+    if(fromCam) return null;                       // camera misreads are discarded silently
+    SCAN.err = t('scan_bad'); renderScanner(); return null;
+  }
+  if(SCAN.err){ SCAN.err=''; const ee=document.getElementById('scanErr'); if(ee) ee.innerHTML=''; }
+  const hit = findByCode(code);
+  if(hit){
+    if(SCAN.unknown){ SCAN.unknown=null; SCAN.unknownEmb=null; renderScanner(); }
+    scanHit(hit.pid, hit);
+    return hit;
+  }
+  SCAN.unknown = code; SCAN.unknownEmb = parseEmbedded(code); SCAN.linkQ='';
+  renderScanner();
+  return null;
+}
+function scanHit(pid, info){
+  if(!SCAN) SCAN = scanBlank('pos');
+  if(!P(pid)) return;
+  beepHit();
+  const emb = info && info.emb ? info.emb : null;
+  const el = emb ? embLabel(emb) : '';
+  if(SCAN.mode==='recv'){
+    if(!RECV){ closeScanner(); return; }
+    const o = S.orders.find(x=>x.id===RECV.oid);
+    if(!o || o.receipt){ closeScanner(); return; }
+    if(!o.items.some(x=>x.productId===pid)){ toast(t('scan_not_in_order')); return; }
+    recvQty(pid, 1);                       // renderAll() rewrites #app, never #modalRoot
+    toast(`${goodNameOf(pid)} · ${RECV.q[pid]}`);
+    return;
+  }
+  if(SCAN.mode==='count'){
+    if(!S.count){ closeScanner(); return; }
+    if(countScopeList().indexOf(pid) < 0){ toast(t('count_scope_out')); return; }
+    closeScanner();
+    openCountEntry(pid, true);
+    return;
+  }
+  // POS: a mis-scan must never silently sell stock, so hits land in a tray and wait for a confirm
+  if(onHand(pid) <= 0){ toast(t('out_of_stock')); return; }
+  SCAN.tray[pid] = Math.min((SCAN.tray[pid]||0) + 1, onHand(pid));
+  if(el) SCAN.trayEmb[pid] = el; 
+  scanRenderTray();
+  toast(`＋1 · ${goodNameOf(pid)}${el?' · '+el:''}`);
+}
+function scanManualSubmit(){
+  const el = document.getElementById('scanInput'); if(!el) return;
+  const hit = onScanCode(el.value||'', false);
+  if(hit){
+    const el2 = document.getElementById('scanInput');
+    if(el2){ el2.value=''; if(SCAN){ SCAN.q=''; } const sg=document.getElementById('scanSug'); if(sg) sg.innerHTML=''; }
+  }
+}
+function scanSetQ(v){                      // NEVER re-renders: that would kill the <video>
+  if(!SCAN) return;
+  SCAN.q = v;
+  const el = document.getElementById('scanSug'); if(el) el.innerHTML = scanSugHtml();
+}
+function scanSugHtml(){
+  const q = String((SCAN&&SCAN.q)||'').trim();
+  if(q.length < 2) return '';
+  const ql = q.toLowerCase(), out = [];
+  PRODUCTS.forEach(p=>{
+    if(out.length >= 6) return;
+    const codes = eansOf(p.id).concat([itemMeta(p.id).goodCode]).filter(Boolean).map(String);
+    const m = codes.find(c=>c.toLowerCase().indexOf(ql) >= 0);
+    if(!m) return;
+    const i = m.toLowerCase().indexOf(ql);
+    const shown = escH(m.slice(0,i)) + '<b>' + escH(m.slice(i, i+q.length)) + '</b>' + escH(m.slice(i+q.length));
+    out.push(`<div class="sug" style="cursor:pointer" onclick="scanSugPick('${p.id}')">
+      <div class="pav">${p.em}</div>
+      <div class="info"><div class="nm">${goodNameOf(p.id)}</div>
+        <div class="sub"><span class="num muted">${shown}</span></div></div></div>`);
+  });
+  return out.join('');
+}
+function scanSugPick(pid){ scanHit(pid, {kind:'manual'}); }
+function scanRenderTray(){ const el = document.getElementById('scanTray'); if(el) el.innerHTML = scanTrayHtml(); }
+function scanTrayHtml(){
+  if(!SCAN || SCAN.mode!=='pos') return '';
+  const ids = Object.keys(SCAN.tray).filter(pid=>(SCAN.tray[pid]||0) > 0 && P(pid));
+  if(!ids.length) return `<div class="sec">🧾 ${t('scan_tray')} (0)</div><div class="muted">${t('scan_tray_empty')}</div>`;
+  const n = ids.reduce((a,pid)=>a + SCAN.tray[pid], 0);
+  return `<div class="sec">🧾 ${t('scan_tray')} (${ids.length})</div>` + ids.map(pid=>{
+    const p = P(pid), st = onHand(pid), d = stockDays(pid);
+    const badge = st===0 ? `<span class="badge b-rose">${t('out_of_stock')}</span>`
+      : d<=2 ? `<span class="badge b-rose">${t('stock_lbl')}${VJ()} ${st} · ${t('stockout')}</span>`
+      : d<=4 ? `<span class="badge b-gold">${t('stock_lbl')}${VJ()} ${st}</span>`
+      : `<span class="badge b-green">${t('stock_lbl')}${VJ()} ${st}</span>`;
+    return `<div class="sug scantray">
+      <div class="pav">${p.em}</div>
+      <div class="info"><div class="nm">${goodNameOf(pid)}</div>
+        <div class="sub">${badge}${SCAN.trayEmb[pid]?` <span class="muted">${escH(SCAN.trayEmb[pid])}</span>`:''}</div></div>
+      <div class="qtyctl">
+        <button onclick="scanTrayQty('${pid}',-1)">−</button><span>${SCAN.tray[pid]}</span>
+        <button onclick="scanTrayQty('${pid}',1)">+</button>
+      </div></div>`;
+  }).join('') + `<button class="btn primary" style="margin-top:12px" onclick="scanConfirmSale()">💵 ${t('scan_sell_confirm')} · ${n} ${t('pcs')}</button>`;
+}
+function scanTrayQty(pid, d){
+  if(!SCAN) return;
+  const v = Math.max(0, Math.min(onHand(pid), (SCAN.tray[pid]||0) + d));
+  if(v<=0){ delete SCAN.tray[pid]; delete SCAN.trayEmb[pid]; } else SCAN.tray[pid]=v;
+  scanRenderTray();
+}
+function scanConfirmSale(){
+  if(!SCAN) return;
+  const entries = Object.keys(SCAN.tray).map(pid=>({pid, qty:SCAN.tray[pid]})).filter(e=>e.qty>0);
+  SCAN.tray = {}; SCAN.trayEmb = {};
+  closeScanner();
+  recordSaleBatch(entries);
+}
+/* Clamping happens HERE, at post time, not in the tray: the sheet may have sat open while another
+   tab sold the last unit. recordSale() (the per-row 💵 button) is deliberately left untouched. */
+function recordSaleBatch(entries){
+  let n = 0;
+  (entries||[]).forEach(e=>{
+    if(!e || !e.pid || !P(e.pid)) return;
+    const have = onHand(e.pid), qty = +e.qty||0;
+    if(have<=0 || qty<=0) return;
+    const q = Math.min(qty, have);
+    postMove({pid:e.pid, type:'sale', dq:-q, ref:'scan', actor:'shop'});
+    S.sales.push({date:S.today, productId:e.pid, qty:q});
+    n += q;
+  });
+  if(S.sales.length>600) S.sales = S.sales.slice(-500);
+  checkStockouts();
+  saveD();
+  toast(n ? `💵 −${n} · ${t('sale_done')}` : t('out_of_stock'));
+  renderAll();
+  return n;
+}
+function scanLinkQ(v){
+  if(!SCAN) return;
+  SCAN.linkQ = v;
+  const el = document.getElementById('scanLinkList'); if(el) el.innerHTML = scanLinkListHtml();
+}
+function scanLinkListHtml(){
+  const q = String((SCAN&&SCAN.linkQ)||'').trim().toLowerCase();
+  return PRODUCTS.filter(p=>!q || nm(p).toLowerCase().indexOf(q)>=0 || goodNameOf(p.id).toLowerCase().indexOf(q)>=0)
+    .map(p=>`<div class="sug" style="cursor:pointer" onclick="scanLinkPick('${p.id}')">
+      <div class="pav">${p.em}</div>
+      <div class="info"><div class="nm">${goodNameOf(p.id)}</div>
+        <div class="sub">${SUP(p.sup).em} ${nm(SUP(p.sup))}</div></div></div>`).join('')
+    || `<div class="empty">—</div>`;
+}
+/* The shop cannot invent a supplier SKU, but it CAN say "this bottle is Ջերմուկ" — and the tap
+   that teaches the app also counts as the scan, so the shopkeeper never repeats the motion. */
+function scanLinkPick(pid){
+  if(!SCAN || !SCAN.unknown || !P(pid)) return;
+  if(!S.itemMeta || typeof S.itemMeta!=='object') S.itemMeta = {};
+  const m = S.itemMeta[pid] = (S.itemMeta[pid] && typeof S.itemMeta[pid]==='object') ? S.itemMeta[pid] : {};
+  const emb = SCAN.unknownEmb;
+  if(emb){ m.scaleCode = emb.itemCode; }          // a weight code differs every time: learn the item code
+  else { if(!Array.isArray(m.eans)) m.eans=[]; if(m.eans.indexOf(SCAN.unknown)<0) m.eans.push(SCAN.unknown); }
+  SCAN.unknown = null; SCAN.unknownEmb = null; SCAN.linkQ = '';
+  saveD(); toast('🔗 '+t('scan_linked'));
+  renderScanner();
+  scanHit(pid, {kind: emb?'scale':'ean', emb});
+}
+function scanClearUnknown(){ if(!SCAN) return; SCAN.unknown=null; SCAN.unknownEmb=null; SCAN.linkQ=''; renderScanner(); }
+function setScaleUnit(v){
+  if(!S.scaleCfg || typeof S.scaleCfg!=='object') S.scaleCfg = {valueIs:'grams'};
+  S.scaleCfg.valueIs = v==='amd' ? 'amd' : 'grams';
+  saveD(); renderAll();
+}
+async function scanCamStart(){
+  if(!SCAN) return;
+  if(!('BarcodeDetector' in window)) return;
+  try{
+    if(!scanDet){
+      let formats = ['ean_13','ean_8','upc_a','upc_e','code_128','itf','qr_code'];
+      try{
+        const sup = await window.BarcodeDetector.getSupportedFormats();
+        if(Array.isArray(sup) && sup.length){ const f = formats.filter(x=>sup.indexOf(x)>=0); if(f.length) formats = f; }
+      }catch(e){}
+      scanDet = new window.BarcodeDetector({formats});
+    }
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('no getUserMedia');
+    scanStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},
+      width:{ideal:1920}, height:{ideal:1080}}});
+    if(!SCAN){ try{ scanStream.getTracks().forEach(x=>x.stop()); }catch(e){} scanStream=null; return; }
+    SCAN.cam = true; SCAN.err = '';
+    renderScanner();
+    scanLoop();
+  }catch(e){
+    try{ if(scanStream) scanStream.getTracks().forEach(x=>x.stop()); }catch(e2){}
+    scanStream = null;
+    if(SCAN){ SCAN.cam = false; SCAN.err = t('scan_cam_denied'); renderScanner(); }
+  }
+}
+function scanCamStop(){
+  clearTimeout(scanTimer); scanTimer = null;
+  try{ if(scanStream) scanStream.getTracks().forEach(tr=>{ try{ tr.stop(); }catch(e){} }); }catch(e){}
+  scanStream = null;
+  if(SCAN){ SCAN.cam = false; }
+}
+/* ~10 fps setTimeout chain (NOT rAF) over the centre band only: ~6× less CPU than full frames,
+   and the human aims at the band anyway. Every step is try/caught so one bad frame never stops it. */
+function scanLoop(){
+  clearTimeout(scanTimer);
+  scanTimer = setTimeout(async ()=>{
+    if(!SCAN || !SCAN.cam || !scanStream || !scanDet) return;
+    try{
+      const v = document.getElementById('scanVideo');
+      if(v && v.videoWidth > 0){
+        const w = v.videoWidth, h = v.videoHeight;
+        const y = Math.round(h*0.35), bh = Math.round(h*0.30);
+        if(!scanCanvas) scanCanvas = document.createElement('canvas');
+        if(scanCanvas.width!==w || scanCanvas.height!==bh){ scanCanvas.width = w; scanCanvas.height = bh; }
+        const ctx = scanCanvas.getContext('2d');
+        ctx.drawImage(v, 0, y, w, bh, 0, 0, w, bh);
+        const res = await scanDet.detect(scanCanvas);
+        if(res && res.length && res[0] && res[0].rawValue) onScanCode(res[0].rawValue, true);
+      }
+    }catch(e){}
+    if(SCAN && SCAN.cam && scanStream) scanLoop();
+  }, 100);
+}
+/* renderScanner() rewrites #modalRoot and therefore DESTROYS the <video>. It may only run on
+   open, on a camera state change, on an error, and on entering/leaving the unknown-code state. */
+function renderScanner(){
+  if(!SCAN){ closeModal(); return; }
+  const ctxLbl = SCAN.mode==='recv' ? `${t('recv_title')}${SCAN.oid?' · '+escH(SCAN.oid):''}`
+    : SCAN.mode==='count' ? `${t('count_title')}${S.count?' · '+escH(S.count.id):''}`
+    : t('pos_tab');
+  const hasBD = ('BarcodeDetector' in window);
+  const camBlock = !hasBD
+    ? `<div class="notice" style="margin-top:12px">📷 ${t('scan_cam_none')}</div>`
+    : (SCAN.cam
+      ? `<div class="scanbox"><video id="scanVideo" playsinline muted autoplay></video>
+           <div class="scanroi"></div><div class="scanhint">${t('scan_aim')}</div></div>
+         <button class="btn ghost full" style="margin-top:10px" onclick="scanCamStop();renderScanner()">${t('scan_cam_stop')}</button>`
+      : `${SCAN.err===t('scan_cam_denied')?`<div class="alert bad" style="margin-top:12px"><div class="t">📷 ${t('scan_cam_denied')}</div></div>`:''}
+         <button class="btn cyan full" style="margin-top:12px" onclick="scanCamStart()">📷 ${t('scan_cam_start')}</button>`);
+  const unknownBlock = SCAN.unknown ? `
+    <div class="alert bad" style="margin-top:12px">
+      <div class="t">❓ ${t('scan_unknown')} · <span class="num">${escH(SCAN.unknown)}</span>${SCAN.unknownEmb?` <span class="badge b-gold">${escH(embLabel(SCAN.unknownEmb))}</span>`:''}</div>
+      <div class="d">${t('scan_link_hint')}</div>
+    </div>
+    <input class="search" id="scanLinkInput" placeholder="${t('search')}" value="${escH(SCAN.linkQ)}" oninput="scanLinkQ(this.value)">
+    <div id="scanLinkList">${scanLinkListHtml()}</div>
+    <button class="btn ghost full" style="margin-top:9px" onclick="scanClearUnknown()">✕ ${t('close')}</button>` : '';
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeScanner()">
+    <div class="mbody"><div class="grabber"></div>
+    <h3>📷 ${t('scan_title')}</h3>
+    <div class="muted">${ctxLbl}</div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <input class="search" id="scanInput" inputmode="numeric" autocomplete="off" placeholder="${t('scan_ph')}"
+        style="margin:0;flex:1" value="" oninput="scanSetQ(this.value)" onkeydown="if(event.key==='Enter')scanManualSubmit()">
+      <button class="btn cyan" id="scanGo" style="flex:0 0 auto" onclick="scanManualSubmit()">✓</button>
+    </div>
+    <div id="scanSug">${scanSugHtml()}</div>
+    ${SCAN.unknown ? '' : camBlock}
+    <div id="scanErr" style="color:var(--rose);font-size:12px;font-weight:700;margin-top:8px">${SCAN.err && SCAN.err!==t('scan_cam_denied') ? escH(SCAN.err) : ''}</div>
+    ${unknownBlock}
+    <div id="scanTray">${scanTrayHtml()}</div>
+    <button class="btn ghost full" style="margin-top:12px" onclick="closeScanner()">${t('close')}</button>
+    </div></div>`;
+  const inp = document.getElementById('scanInput');
+  if(inp && SCAN.q){ inp.value = SCAN.q; }
+  if(SCAN.cam && scanStream){
+    const v = document.getElementById('scanVideo');
+    if(v){ v.srcObject = scanStream; v.play().catch(()=>{}); }
+  }
+}
+
+/* ================= R2 · F3/F4 — «Գույքագրում»: blind, resumable, non-blocking =================
+   MoF order N 102 makes a count a legal act, so it ends in a document, not a screen. Blind by
+   default: showing the expected number first is how counts become confirmations of a wrong book. */
+let COUNTUI = {review:false, cancelArm:false, q:'', entry:null};
+function countScopePids(scope){
+  scope = scope || {kind:'all'};
+  if(scope.kind==='sup'){
+    const ids = PRODUCTS.filter(p=>p.sup===scope.sup).map(p=>p.id);
+    return ids.length ? ids : PRODUCTS.map(p=>p.id);   // supplier gone: fall back, never empty
+  }
+  if(scope.kind==='risk') return countRisk().map(r=>r.pid);
+  return PRODUCTS.map(p=>p.id);
+}
+// the scope is frozen into the session at start, so progress can never move under the counter
+function countScopeList(){
+  if(!S.count) return [];
+  if(Array.isArray(S.count.pids) && S.count.pids.length) return S.count.pids.filter(pid=>P(pid));
+  return countScopePids(S.count.scope);
+}
+function lastCountTs(pid){
+  let mx = 0;
+  (S.moves||[]).forEach(m=>{ if(m && m.pid===pid && m.type==='count' && (+m.ts||0) > mx) mx = +m.ts||0; });
+  return mx;
+}
+/* Anti-pattern 4: the daily list is capped at 20 and every row carries a human reason. */
+function countRisk(){
+  const cut = S.today - 30*DAY, rows = [];
+  PRODUCTS.forEach(p=>{
+    const pid = p.id; let sc = 0; const why = [];
+    if(itemMeta(pid).perishable){ sc += 3; why.push(t('count_reason_perish')); }
+    const lc = lastCountTs(pid);
+    if(!lc){ sc += 2; why.push(t('count_reason_never')); }
+    else { const d = Math.max(0, Math.round((S.today - lc)/DAY));
+           if(d > 30){ sc += 2; why.push(d + ' ' + t('count_reason_old')); } }
+    if((S.moves||[]).some(m=>m && m.pid===pid && m.type==='writeoff' && (+m.ts||0) >= cut)){ sc += 2; why.push(t('count_reason_wo')); }
+    if(stockDays(pid) <= 3){ sc += 2; why.push(t('stockout')); }
+    if(velOf(pid) >= 1){ sc += 1; why.push(t('count_reason_fast')); }
+    if(sc > 0) rows.push({pid, score:sc, why: why.slice(0,2).join(' · ')});
+  });
+  rows.sort((a,b)=>b.score - a.score);
+  return rows.slice(0,20);
+}
+const countedN = ()=> S.count ? Object.keys(S.count.lines||{}).length : 0;
+// an open session with nothing counted yet still shows a mark, so it can never be forgotten
+const countNavBadge = ()=> S.count ? (countedN() || '●') : 0;
+function countSetName(v){ COUNTUI.name = v; }        // no re-render: keeps the caret, like woNote()
+function countSetScope(kind, sup){ COUNTUI.scope = {kind, sup: sup||null}; COUNTUI.nameErr=false; renderAll(); }
+function countSetQ(v){ COUNTUI.q = v; renderAll(); }
+function startCount(){
+  const el = document.getElementById('cntName');
+  const name = String((el ? el.value : (COUNTUI.name!=null?COUNTUI.name:S.counterName))||'').trim();
+  if(!name){ COUNTUI.nameErr = true; renderAll(); toast(t('count_counter_req')); return; }
+  const scope = COUNTUI.scope ? {kind:COUNTUI.scope.kind, sup:COUNTUI.scope.sup||null} : {kind:'all', sup:null};
+  S.countSeq = (+S.countSeq||0) + 1;
+  S.count = {id:'GG-'+S.countSeq, date:S.today, rts:Date.now(), counter:name.slice(0,60),
+             scope, pids:countScopePids(scope), lines:{}};
+  S.counterName = name.slice(0,60);
+  COUNTUI = {review:false, cancelArm:false, q:'', entry:null, name:name.slice(0,60), scope};
+  saveD(); renderAll();
+}
+function cancelCount(){ COUNTUI.cancelArm = true; renderAll(); }
+function confirmCancelCount(){
+  if(!S.count) return;
+  S.count = null;                      // posts NOTHING: S.stock and S.moves stay byte-identical
+  COUNTUI.cancelArm = false; COUNTUI.review = false; COUNTUI.entry = null;
+  saveD(); toast(t('count_cancelled')); renderAll();
+}
+function countDisarm(){ if(COUNTUI.cancelArm){ COUNTUI.cancelArm = false; renderAll(); } }
+const COUNT_QTY_MAX = 999999;
+function openCountEntry(pid, fromScan){
+  if(!S.count || !P(pid)) return;
+  const l = (S.count.lines||{})[pid];
+  COUNTUI.entry = {pid, fromScan:!!fromScan, v: l ? String(l.counted) : '', err:false, errMsg:''};
+  renderCountEntry();
+}
+function closeCountEntry(){ COUNTUI.entry = null; closeModal(); renderAll(); }
+function countEntrySet(v){
+  if(!COUNTUI.entry) return;
+  COUNTUI.entry.v = v;                                  // no re-render: keeps the caret
+  const sp = document.getElementById('cntStep'); if(sp) sp.textContent = (String(v).trim()===''?'—':v);
+}
+function countEntryStep(d){
+  if(!COUNTUI.entry) return;
+  const el = document.getElementById('cntQty');
+  const cur = String((el ? el.value : COUNTUI.entry.v)||'').trim();
+  const n = /^\d+$/.test(cur) ? parseInt(cur,10) : 0;
+  COUNTUI.entry.v = String(Math.max(0, Math.min(COUNT_QTY_MAX, n + d)));
+  COUNTUI.entry.err = false; COUNTUI.entry.errMsg = '';
+  renderCountEntry();
+}
+function renderCountEntry(){
+  const e = COUNTUI.entry; if(!e) return;
+  const p = P(e.pid); if(!p){ COUNTUI.entry = null; closeModal(); return; }
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeCountEntry()">
+    <div class="mbody"><div class="grabber"></div>
+    <h3>${p.em} ${goodNameOf(e.pid)}</h3>
+    <div class="muted">${t('count_qty')} · ${unitOf(e.pid)}</div>
+    ${e.err?`<div style="color:var(--rose);font-size:12px;font-weight:700;margin-top:10px">${escH(e.errMsg||t('count_qty_req'))}</div>`:''}
+    <input id="cntQty" class="search" inputmode="numeric" autocomplete="off" maxlength="6"
+      style="font-size:32px;text-align:center;font-family:var(--mono);margin-top:14px"
+      value="${escH(e.v)}" oninput="countEntrySet(this.value)" onkeydown="if(event.key==='Enter')saveCountLine()">
+    <div class="qtyctl" style="transform:scale(1.15);margin:14px auto;width:max-content">
+      <button onclick="countEntryStep(-1)">−</button><span id="cntStep">${escH(String(e.v).trim()===''?'—':e.v)}</span><button onclick="countEntryStep(1)">+</button></div>
+    <button class="btn primary" onclick="saveCountLine()">✓ ${t('count_save_next')}</button>
+    <button class="btn ghost full" style="margin-top:9px" onclick="skipCountLine()">${t('count_skip')}</button>
+    <button class="btn ghost full" style="margin-top:9px" onclick="closeCountEntry()">${t('close')}</button>
+    </div></div>`;
+  const el = document.getElementById('cntQty');
+  if(el){ try{ el.focus(); el.select(); }catch(err){} }
+}
+function saveCountLine(){
+  const e = COUNTUI.entry; if(!e || !S.count) return;
+  const el = document.getElementById('cntQty');
+  const s = String((el ? el.value : e.v)||'').trim();
+  if(!/^\d+$/.test(s)){ e.err = true; e.errMsg = ''; renderCountEntry(); toast(t('count_qty_req')); return; }
+  const n = parseInt(s,10);
+  if(!isFinite(n) || n < 0){ e.err = true; renderCountEntry(); toast(t('count_qty_req')); return; }
+  /* a գույքագրման ակտ is a legal document and an aisle mistype used to post a count move of
+     1e21 straight into the ledger. 999 999 of one SKU is already far past any Armenian shop. */
+  if(n > COUNT_QTY_MAX){ e.err = true; e.errMsg = t('count_qty_max'); renderCountEntry(); toast(t('count_qty_max')); return; }
+  /* mn is S.moveSeq at the instant the shelf was counted: everything posted AFTER it is known to
+     be later than the physical count. Wall-clock is deliberately not used — clocks drift across
+     synced devices, S.moveSeq does not. */
+  S.count.lines[e.pid] = {counted:n, mn:(+S.moveSeq||0), ts:Date.now()};
+  const again = e.fromScan;
+  COUNTUI.entry = null; closeModal(); saveD(); renderAll();
+  if(again) openScanner('count');         // the next item is one motion away
+}
+function skipCountLine(){ COUNTUI.entry = null; closeModal(); renderAll(); }
+function movesSince(pid, mn){
+  const m0 = +mn||0; let s = 0;
+  (S.moves||[]).forEach(m=>{ if(m && m.pid===pid && (+m.n||0) > m0) s += (+m.dq||0); });
+  return s;
+}
+/* Ընդունում / Դուրսգրում / Վաճառք are three distinct legal acts: a line on a signed
+   գույքագրման ակտ may not call a goods receipt a sale, so the note names each type it sums. */
+function movesSinceByType(pid, mn){
+  const m0 = +mn||0, agg = {}, order = [];
+  (S.moves||[]).forEach(m=>{
+    if(!m || m.pid!==pid || (+m.n||0) <= m0 || !(+m.dq||0)) return;
+    const ty = m.type || 'adjust';
+    if(agg[ty]==null){ agg[ty]=0; order.push(ty); }
+    agg[ty] += (+m.dq||0);
+  });
+  return order.map(ty=>({type:ty, dq:agg[ty]})).filter(x=>x.dq!==0);
+}
+function movesSinceLabel(pid, mn){
+  const parts = movesSinceByType(pid, mn);
+  if(!parts.length) return '';
+  return escH(t('count_moved_after')) + VJ() + ' ' +
+    parts.map(x=>`${escH(moveLabel(x.type))} ${x.dq>0?'+':''}${x.dq}`).join(' · ');
+}
+/* book = the on-hand AT THE MOMENT OF COUNTING — which is the figure the act must compare
+   against, and what makes a mid-session sale apply ON TOP of the counted figure, not over it. */
+function countRows(){
+  if(!S.count) return [];
+  const rows = [];
+  Object.keys(S.count.lines||{}).forEach(pid=>{
+    const l = S.count.lines[pid];
+    if(!l || !P(pid)) return;
+    const after = movesSince(pid, l.mn);
+    const book = onHand(pid) - after;
+    const counted = +l.counted||0;
+    const diff = counted - book;
+    const cost = costOf(pid);
+    rows.push({pid, counted, after, book, diff, cost, amd: diff*cost});
+  });
+  rows.sort((a,b)=>Math.abs(b.amd) - Math.abs(a.amd));
+  return rows;
+}
+function openCountReview(){ COUNTUI.review = true; COUNTUI.cancelArm = false; renderAll(); }
+function closeCountReview(){ COUNTUI.review = false; renderAll(); }
+function confirmCount(){
+  const c = S.count; if(!c) return;
+  const rows = countRows();
+  rows.filter(r=>r.diff!==0).forEach(r=>postMove({pid:r.pid, type:'count', dq:r.diff,
+      cost:r.cost, ref:c.id, reason:'', actor:'shop', note:c.counter}));
+  /* NEVER push to S.sales — a correction is not demand and must not move velOf() (same
+     discipline as Դուրսգրում, and for the same reason). */
+  const surplus = rows.reduce((a,r)=>a + (r.amd>0 ? r.amd : 0), 0);
+  const short   = rows.reduce((a,r)=>a + (r.amd<0 ? r.amd : 0), 0);
+  const net = surplus + short;
+  const skipped = countScopeList().filter(pid=>!(c.lines||{})[pid]);
+  const arch = {id:c.id, date:c.date, rts:Date.now(), counter:c.counter,
+    scope:{kind:(c.scope||{}).kind||'all', sup:(c.scope||{}).sup||null},
+    n:rows.length, surplus:Math.round(surplus), short:Math.round(short), net:Math.round(net),
+    lines: rows.map(r=>({pid:r.pid, book:r.book, counted:r.counted, diff:r.diff, cost:r.cost,
+                         amd:Math.round(r.amd), after:r.after})),
+    skipped};
+  if(!Array.isArray(S.counts)) S.counts = [];
+  S.counts.unshift(arch);
+  if(S.counts.length > 50) S.counts.length = 50;
+  S.counterName = c.counter;
+  S.count = null;
+  COUNTUI.review = false; COUNTUI.cancelArm = false; COUNTUI.entry = null;
+  logEv('count', {id:c.id, n:rows.length, amd:Math.round(net)});
+  checkStockouts();
+  saveD(); toast('🧮 '+t('count_done')); renderAll();
+  openCountAct(c.id);
+}
+function countNudgeCard(){
+  if(!S.count) return '';
+  const total = countScopeList().length, done = countedN();
+  return `<div class="alert">
+    <div class="t">🧮 ${t('count_open')} · ${escH(S.count.id)} — ${done} / ${total} ${t('count_progress')}</div>
+    <div class="d">${t('count_counter')}${VJ()} ${escH(S.count.counter)} · ${fdate(S.count.date)}</div>
+    <div class="act"><button class="btn green full" onclick="paneTab('shop','count')">🧮 ${t('count_resume')}</button></div>
+  </div>`;
+}
+function vShopCount(){
+  if(COUNTUI.review && S.count) return vShopCountReview();
+  if(S.count) return vShopCountSession();
+  return vShopCountIntro();
+}
+function vShopCountIntro(){
+  const scope = COUNTUI.scope || {kind:'all', sup:null};
+  const nameV = COUNTUI.name!=null ? COUNTUI.name : (S.counterName||'');
+  const risk = countRisk();
+  const past = (S.counts||[]).map(c=>{
+    const cls = (c.net||0) > 0 ? 'b-green' : (c.net||0) < 0 ? 'b-rose' : 'b-neutral';
+    return `<div class="card" style="cursor:pointer" onclick="openCountAct('${escH(c.id)}')">
+      <div class="row"><div><b>${escH(c.id)}</b>
+        <div class="muted" style="margin-top:3px">${fdate(c.date)} · ${escH(c.counter||'')} · ${(c.lines||[]).length} ${t('recv_lines')}</div></div>
+        <span class="badge ${cls}">${(c.net||0)>0?'+':''}${(c.net||0).toLocaleString('en-US')} ֏</span></div></div>`;
+  }).join('');
+  return `<div class="sec">🧮 ${t('count_title')}</div>
+  <div class="card">
+    <div class="muted">${t('count_intro')}</div>
+    <div class="sec">${t('count_counter')}</div>
+    <input class="search" id="cntName" maxlength="60" placeholder="${t('count_counter_ph')}" value="${escH(nameV)}" oninput="countSetName(this.value)">
+    ${COUNTUI.nameErr?`<div style="color:var(--rose);font-size:12px;font-weight:700;margin:-6px 0 8px">${t('count_counter_req')}</div>`:''}
+    <div class="sec">${t('count_scope')}</div>
+    <div class="chips wrap">
+      <button class="${scope.kind==='all'?'active':''}" onclick="countSetScope('all')">${t('count_scope_all')} (${PRODUCTS.length})</button>
+      <button class="${scope.kind==='risk'?'active':''}" onclick="countSetScope('risk')">🎯 ${t('count_scope_risk')} (${risk.length})</button>
+      ${SUPPLIERS.map(s=>`<button class="${scope.kind==='sup'&&scope.sup===s.id?'active':''}" onclick="countSetScope('sup','${s.id}')">${s.em} ${nm(s)} (${PRODUCTS.filter(p=>p.sup===s.id).length})</button>`).join('')}
+    </div>
+    ${scope.kind==='risk'?`<div class="muted">${t('count_risk_hint')}</div>`:''}
+    <button class="btn primary" style="margin-top:14px" onclick="startCount()">▶ ${t('count_start')}</button>
+  </div>
+  <div class="sec">${t('count_past')}</div>
+  ${past || `<div class="card"><div class="empty"><span class="em">🧮</span>${t('count_none')}</div></div>`}`;
+}
+function vShopCountSession(){
+  const c = S.count;
+  const pids = countScopeList();
+  const done = countedN(), total = pids.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  const scopeLbl = c.scope.kind==='risk' ? t('count_scope_risk')
+    : c.scope.kind==='sup' ? ((SUP(c.scope.sup)||{}).name ? nm(SUP(c.scope.sup)) : t('count_scope_all'))
+    : t('count_scope_all');
+  const riskWhy = {};
+  if(c.scope.kind==='risk') countRisk().forEach(r=>{ riskWhy[r.pid] = r.why; });
+  const q = String(COUNTUI.q||'').trim().toLowerCase();
+  const visible = pids.filter(pid=>P(pid) && (!q || nm(P(pid)).toLowerCase().indexOf(q)>=0 || goodNameOf(pid).toLowerCase().indexOf(q)>=0));
+  const row = pid=>{
+    const p = P(pid), l = (c.lines||{})[pid];
+    const sub = c.scope.kind==='risk' ? (riskWhy[pid] || nm(SUP(p.sup))) : nm(SUP(p.sup));
+    const right = l
+      ? `<span class="badge b-green" style="cursor:pointer" onclick="openCountEntry('${pid}')">✓ <b class="num">${l.counted}</b> ${unitOf(pid)}</span>`
+      : `<button class="btn small ghost rowact" style="padding:12px 13px" onclick="openCountEntry('${pid}')">${t('count_qty_short')}</button>`;
+    return `<div class="sug">
+      <div class="pav">${p.em}</div>
+      <div class="info"><div class="nm">${goodNameOf(pid)}</div><div class="sub">${SUP(p.sup).em} ${escH(sub)}</div></div>
+      ${right}</div>`;
+  };
+  const un = visible.filter(pid=>!(c.lines||{})[pid]);
+  const cn = visible.filter(pid=>(c.lines||{})[pid]);
+  return `<div onclick="countDisarm()">
+  <div class="card">
+    <div class="row" style="align-items:flex-start"><div style="min-width:0"><b>${escH(c.id)}</b>
+      <div class="muted" style="margin-top:3px">${t('count_counter')}${VJ()} ${escH(c.counter)} · ${t('count_scope')}${VJ()} ${escH(scopeLbl)}</div></div>
+      ${COUNTUI.cancelArm
+        ? `<button class="btn small danger" style="flex:0 0 auto;white-space:nowrap" onclick="event.stopPropagation();confirmCancelCount()">${t('count_cancel_sure')}</button>`
+        : `<button class="btn small danger" style="flex:0 0 auto;white-space:nowrap" onclick="event.stopPropagation();cancelCount()">${t('count_cancel')}</button>`}
+    </div>
+    <div class="hbar" style="margin:14px 0 0">
+      <div class="hl"><span>${done} / ${total} ${t('count_progress')}</span></div>
+      <div class="track"><div class="fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="muted" style="margin-top:9px">🙈 ${t('count_blind')}</div>
+  </div>
+  <button class="btn primary" onclick="openScanner('count')">📷 ${t('scan_btn')}</button>
+  <input class="search" style="margin-top:12px" placeholder="${t('search')}" value="${escH(COUNTUI.q||'')}" oninput="countSetQ(this.value)">
+  <div class="card">${un.map(row).join('') || `<div class="empty"><span class="em">✅</span>${t('count_counted')}</div>`}</div>
+  ${cn.length?`<div class="sec">✓ ${t('count_counted')} (${cn.length})</div><div class="card">${cn.map(row).join('')}</div>`:''}
+  <button class="btn primary" style="${done?'':'opacity:.35;pointer-events:none'}" onclick="openCountReview()">✓ ${t('count_finish')} · ${done} ${t('recv_lines')}</button>
+  </div>`;
+}
+function vShopCountReview(){
+  const c = S.count; if(!c) return vShopCountIntro();
+  const rows = countRows();
+  const surplus = rows.reduce((a,r)=>a + (r.amd>0?r.amd:0), 0);
+  const short   = rows.reduce((a,r)=>a + (r.amd<0?r.amd:0), 0);
+  const net = surplus + short;
+  const skipped = countScopeList().filter(pid=>!(c.lines||{})[pid] && P(pid));
+  const tbl = rows.map(r=>{
+    const zero = r.diff===0;
+    return `<tr style="${zero?'opacity:.55':''}">
+      <td>${goodNameOf(r.pid)}${r.after?`<div class="muted" style="font-size:10.5px">${movesSinceLabel(r.pid, ((c.lines||{})[r.pid]||{}).mn)}</div>`:''}</td>
+      <td class="num">${r.book}</td><td class="num">${r.counted}</td>
+      <td class="num" style="font-weight:700;color:${r.diff>0?'var(--green)':(r.diff<0?'var(--rose)':'var(--muted)')}">${zero?`<span class="badge b-neutral">${t('count_match')}</span>`:(r.diff>0?'+':'')+r.diff}</td>
+      <td class="num" style="color:${r.amd>0?'var(--green)':(r.amd<0?'var(--rose)':'var(--muted)')}">${r.amd>0?'+':''}${Math.round(r.amd).toLocaleString('en-US')}</td></tr>`;
+  }).join('');
+  return `<div class="sec">🧮 ${t('count_review')} · ${escH(c.id)}</div>
+  <div class="card">
+    <div class="row" style="padding:6px 0"><span class="muted">${t('count_surplus')}</span>
+      <b class="num" style="color:var(--green)">${surplus>0?'+':''}${Math.round(surplus).toLocaleString('en-US')} ֏</b></div>
+    <div class="row" style="padding:6px 0"><span class="muted">${t('count_short')}</span>
+      <b class="num" style="color:var(--rose)">${Math.round(short).toLocaleString('en-US')} ֏</b></div>
+    <div class="row" style="border-top:1px solid var(--stroke2);padding-top:10px;margin-top:6px">
+      <b>${t('count_net')}</b><span class="big" style="color:${net>0?'var(--green)':(net<0?'var(--rose)':'var(--ink)')}">${net>0?'+':''}${Math.round(net).toLocaleString('en-US')} ֏</span></div>
+    <div class="muted" style="margin-top:8px">${rows.length} ${t('recv_lines')} · ${t('count_counter')}${VJ()} ${escH(c.counter)} · ${fdate(c.date)}</div>
+  </div>
+  <div class="card"><div class="tblwrap"><table class="tbl">
+    <tr><th>${t('product')}</th><th>${t('count_book')}</th><th>${t('count_fact')}</th><th>Δ</th><th>֏</th></tr>
+    ${tbl || `<tr><td colspan="5" class="muted">—</td></tr>`}</table></div></div>
+  ${skipped.length?`<div class="card"><div class="sec" style="margin-top:0">${t('count_uncounted')} (${skipped.length})</div>
+    ${skipped.map(pid=>`<div class="row" style="padding:6px 0"><span>${P(pid).em} ${goodNameOf(pid)}</span></div>`).join('')}
+    <div class="muted" style="margin-top:8px">${t('count_uncounted_note')}</div></div>`:''}
+  <button class="btn primary" onclick="confirmCount()">✓ ${t('count_confirm')}</button>
+  <button class="btn ghost full" style="margin-top:9px" onclick="closeCountReview()">← ${t('count_back')}</button>`;
+}
+function countActHtml(c){
+  const scopeLbl = c.scope && c.scope.kind==='risk' ? t('count_scope_risk')
+    : (c.scope && c.scope.kind==='sup' && SUP(c.scope.sup)) ? nm(SUP(c.scope.sup))
+    : t('count_scope_all');
+  const rows = (c.lines||[]).map(l=>{
+    const im = itemMeta(l.pid);
+    return `<tr>
+      <td>${goodNameOf(l.pid)}<div class="muted actsub"><span class="num">${escH(im.goodCode||'—')}</span> · ${unitOf(l.pid)}</div></td>
+      <td class="num">${escH(im.goodCode||'—')}</td><td>${unitOf(l.pid)}</td>
+      <td class="num">${l.book}</td><td class="num">${l.counted}</td>
+      <td class="num" style="font-weight:700;color:${l.diff>0?'var(--green)':(l.diff<0?'var(--rose)':'var(--muted)')}">${l.diff>0?'+':''}${l.diff}</td>
+      <td class="num">${l.amd>0?'+':''}${(l.amd||0).toLocaleString('en-US')}</td></tr>`;
+  }).join('');
+  const sign = lbl => `<div style="flex:1;min-width:150px"><div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:1px">${lbl}</div>
+      <div class="actsignline"></div></div>`;
+  return `<h3>🧮 ${t('count_act')} ${escH(c.id)}</h3>
+    <div class="muted">${fdate(c.date)} 2026</div>
+    <hr class="actrule">
+    <div class="row" style="align-items:flex-start">
+      <div><div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:1px">${t('shop_col')}</div>
+        <b>🏪 ${nm(MY_SHOP)}</b><div class="muted">${t('recv_tin')} <span class="num">${escH(MY_SHOP.tin||'')}</span></div></div>
+      <div style="text-align:right"><div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:1px">${t('count_counter')}</div>
+        <b>${escH(c.counter||'')}</b><div class="muted">${t('count_scope')}${VJ()} ${escH(scopeLbl)}</div></div>
+    </div>
+    <div class="tblwrap" style="max-height:none"><table class="tbl acttbl">
+      <tr><th>${t('product')}</th><th>${t('item_code')}</th><th>${t('item_unit')}</th><th>${t('count_book')}</th><th>${t('count_fact')}</th><th>Δ</th><th>֏</th></tr>
+      ${rows || `<tr><td colspan="7" class="muted">—</td></tr>`}</table></div>
+    <div class="row" style="margin-top:12px"><span class="muted">${t('count_surplus')}</span><b class="num" style="color:var(--green)">${(c.surplus||0)>0?'+':''}${(c.surplus||0).toLocaleString('en-US')} ֏</b></div>
+    <div class="row" style="margin-top:5px"><span class="muted">${t('count_short')}</span><b class="num" style="color:var(--rose)">${(c.short||0).toLocaleString('en-US')} ֏</b></div>
+    <div class="row actsep" style="margin-top:9px;padding-top:9px"><b>${t('count_net')}</b>
+      <span class="big">${(c.net||0)>0?'+':''}${(c.net||0).toLocaleString('en-US')} ֏</span></div>
+    <div class="muted" style="font-size:11px;margin-top:12px">${t('count_act_basis')}</div>
+    <div style="display:flex;gap:20px;margin-top:20px;flex-wrap:wrap">${sign(t('count_act_sign'))}${sign(t('count_act_resp'))}</div>
+    <div class="muted" style="font-size:11px;margin-top:14px">${t('count_act_note')}</div>`;
+}
+function openCountAct(id){
+  const c = (S.counts||[]).find(x=>x && x.id===id);
+  if(!c) return;
+  document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="mbody"><div class="grabber noprint"></div>
+    ${countActHtml(c)}
+    <button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">🖨 ${t('print')}</button>
+    <button class="btn small ghost noprint" style="margin-top:9px" onclick="exportCountCSV('${escH(c.id)}')">⬇ CSV</button>
+    <button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">${t('close')}</button>
+    </div></div>`;
+}
+function exportCountCSV(id){
+  const c = (S.counts||[]).find(x=>x && x.id===id); if(!c) return;
+  const rows = [['doc_id','date','counter','scope','product','good_code','unit','book_qty','counted_qty','diff_qty','unit_cost','diff_amd']];
+  (c.lines||[]).forEach(l=>{
+    const p = P(l.pid) || {}, im = itemMeta(l.pid);
+    rows.push([c.id, new Date(c.date).toISOString().slice(0,10), c.counter||'', (c.scope||{}).kind||'all',
+      p.nameEn || l.pid, im.goodCode||'', im.unit||'', l.book, l.counted, l.diff, l.cost, l.amd]);
+  });
+  downloadCSV('count-'+c.id+'.csv', rows);
+}
+
+/* the label LAYOUT (2-digit prefix + 5-digit item code + 5-digit value) is a constant; only
+   grams-vs-drams is per shop, because that is the only part that genuinely varies by scale vendor. */
+function scaleCfgCard(){
+  const g = ((S.scaleCfg||{}).valueIs||'grams') !== 'amd';
+  return `<div class="card"><h3>⚖ ${t('scan_cfg')}</h3>
+    <div class="chips"><button class="${g?'active':''}" onclick="setScaleUnit('grams')">${t('scan_cfg_g')}</button>
+    <button class="${g?'':'active'}" onclick="setScaleUnit('amd')">${t('scan_cfg_amd')}</button></div>
+    <div class="muted">${t('scan_cfg_hint')}</div></div>`;
 }
 function vShopOrders(){
   const mine = S.orders.filter(o=>o.shop.id==='me');
@@ -1485,14 +3178,15 @@ function vShopOrders(){
 function vShopDebts(){
   const total = Object.values(S.debts).reduce((a,b)=>a+b,0);
   return `
-  <div class="card"><div class="muted">${t('total_debt')}</div><div class="big" style="color:${total?'var(--rose)':'var(--green)'};margin-top:6px">${amd(total)}</div></div>
+  <div class="card"><div class="muted">${t('total_debt')}</div><div class="big" style="color:${total>0?'var(--rose)':'var(--green)'};margin-top:6px">${amd(total)}</div></div>
   ${SUPPLIERS.map(s=>{
     const debt=S.debts[s.id]||0, lim=S.creditLimit[s.id]||0;
-    const pct=lim?Math.min(100,Math.round(debt/lim*100)):0;
+    const pct=lim?Math.max(0,Math.min(100,Math.round(debt/lim*100))):0;
     return `<div class="card"><div class="row">
-    <div><b>${s.em} ${nm(s)}</b><div class="muted" style="margin-top:3px">${t('credit_limit')}՝ <span class="num">${lim.toLocaleString('en-US')} ֏</span></div></div>
-    <div style="text-align:right"><div class="num" style="font-weight:600;font-size:15px;color:${debt>lim?'var(--rose)':'var(--ink)'}">${amd(debt)}</div>
-    ${debt?`<button class="btn small" style="margin-top:7px" onclick="payDebt('${s.id}')">${t('pay')}</button>`:''}</div>
+    <div><b>${s.em} ${nm(s)}</b><div class="muted" style="margin-top:3px">${t('credit_limit')}${VJ()} <span class="num">${lim.toLocaleString('en-US')} ֏</span></div></div>
+    <div style="text-align:right"><div class="num" style="font-weight:600;font-size:15px;color:${debt>lim?'var(--rose)':(debt<0?'var(--green)':'var(--ink)')}">${amd(debt)}</div>
+    ${debt<0?`<div class="badge b-green" style="margin-top:6px">${t('credit_bal')}</div>`:''}
+    ${debt>0?`<button class="btn small" style="margin-top:7px" onclick="payDebt('${s.id}')">${t('pay')}</button>`:''}</div>
   </div>
   <div class="hbar" style="margin:10px 0 0"><div class="track"><div class="fill" style="width:${pct}%;${pct>=90?'background:linear-gradient(90deg,#FDA4B4,var(--rose));box-shadow:0 0 14px rgba(251,113,133,.45)':''}"></div></div></div>
   </div>`;}).join('')}`;
@@ -1500,20 +3194,21 @@ function vShopDebts(){
 
 let posQty = {};
 function vShopPOS(){
-  return `<div class="notice">💵 ${t('pos_hint')}</div>
+  return `<button class="btn primary" onclick="openScanner('pos')">📷 ${t('scan_btn')}</button>
+  <div class="notice" style="margin-top:14px">💵 ${t('pos_hint')}</div>
   <div class="card">${PRODUCTS.map(p=>{
-    const st = S.stock[p.id]||0;
+    const st = onHand(p.id);
     const q = Math.min(posQty[p.id]||1, Math.max(1,st));
     const d = stockDays(p.id);
     const badge = st===0 ? `<span class="badge b-rose">${t('out_of_stock')}</span>`
-      : d<=2 ? `<span class="badge b-rose">${t('stock_lbl')}՝ ${st} · ${t('stockout')}</span>`
-      : d<=4 ? `<span class="badge b-gold">${t('stock_lbl')}՝ ${st}</span>`
-      : `<span class="badge b-green">${t('stock_lbl')}՝ ${st}</span>`;
+      : d<=2 ? `<span class="badge b-rose">${t('stock_lbl')}${VJ()} ${st} · ${t('stockout')}</span>`
+      : d<=4 ? `<span class="badge b-gold">${t('stock_lbl')}${VJ()} ${st}</span>`
+      : `<span class="badge b-green">${t('stock_lbl')}${VJ()} ${st}</span>`;
     return `<div class="sug">
-      <div class="pav">${p.em}</div>
+      <button class="pav" title="${t('item_card')}" onclick="openItemSheet('${p.id}')">${p.em}<span class="pavdots">⋯</span></button>
       <div class="info">
         <div class="nm">${nm(p)}</div>
-        <div class="sub">${badge} <span class="muted">${t('today_sold')}՝ <b>${todaySold(p.id)}</b></span></div>
+        <div class="sub">${badge} <span class="muted">${t('today_sold')}${VJ()} <b>${todaySold(p.id)}</b></span></div>
       </div>
       <div style="text-align:right;min-width:110px">
         <div class="qtyctl">
@@ -1540,7 +3235,7 @@ function vSupSellout(){
           <div class="pav">${x.p.em}</div>
           <div>
             <div class="nm" style="font-weight:600">${nm(x.p)}</div>
-            <div class="sub muted" style="margin-top:4px">🏪 ${nm(MY_SHOP)} · ${t('today_sold')}՝ <b class="num">${todaySold(x.p.id)}</b> · ${x.vel.toFixed(1)} ${t('velocity')}</div>
+            <div class="sub muted" style="margin-top:4px">🏪 ${nm(MY_SHOP)} · ${t('today_sold')}${VJ()} <b class="num">${todaySold(x.p.id)}</b> · ${x.vel.toFixed(1)} ${t('velocity')}</div>
           </div>
         </div>
         <div style="text-align:right;flex-shrink:0">
@@ -1645,12 +3340,12 @@ function shopCard(shop, sub, badge){
 function vSupShops(){
   const myLast = Math.max(...S.history.map(h=>h.date), 0);
   return `<div class="sec">${t('shops')} (${OTHER_SHOPS.length+1}) · ${t('stock_lbl')}</div>`
-    + shopCard(MY_SHOP, `${t('last_order')}՝ ${fdate(myLast)} · LIVE`, `<span class="badge b-cyan">● LIVE</span>`)
+    + shopCard(MY_SHOP, `${t('last_order')}${VJ()} ${fdate(myLast)} · LIVE`, `<span class="badge b-cyan">● LIVE</span>`)
     + OTHER_SHOPS.map((o)=>{
       const last = S.otherLast[o.id]; const ago = daysAgo(last);
       const b = o.id==='o3' ? `<span class="badge b-rose">${ago} ${lang==='hy'?'օր լռություն':(lang==='ru'?'дн. молчания':'days silent')}</span>`
         : ago>3 ? `<span class="badge b-gold">${ago} ${dayW()}</span>` : `<span class="badge b-green">${t('ok_status')}</span>`;
-      return shopCard(o, `${t('last_order')}՝ ${fdate(last)}`, b);
+      return shopCard(o, `${t('last_order')}${VJ()} ${fdate(last)}`, b);
     }).join('');
 }
 function alertCard(a){
@@ -1660,23 +3355,26 @@ function alertCard(a){
     : `${nm(a.shop)} — ${nm(a.p)} · ${t('overdue_alert')} (${-a.st.dueIn} ${dayW()})`;
   return `<div class="alert ${isChurn?'bad':''}">
     <div class="t">${isChurn?'🚨':'⏰'} ${txt}</div>
-    <div class="d">${t('cycle')}՝ ${t('every')} ${a.st.cycle} ${t('days')} · ${t('avg_qty')}՝ ${a.st.avgQty}</div>
+    <div class="d">${t('cycle')}${VJ()} ${t('every')} ${a.st.cycle} ${t('days')} · ${t('avg_qty')}${VJ()} ${a.st.avgQty}</div>
     <div class="act"><button class="btn small violet" onclick="remind('${a.shop.id}','${a.p.id}','${a.type}')">📨 ${t('remind')}</button></div>
   </div>`;
 }
 function vSupAlerts(){
   const alerts = supAlerts();
-  return `<div class="sec">${t('alerts')} (${alerts.length})</div>` +
-    (alerts.length ? alerts.map(alertCard).join('') : `<div class="card"><div class="empty"><span class="em">✅</span>${t('all_ok')}</div></div>`);
+  const diffs = recvDiffAlerts();
+  return `<div class="sec">${t('alerts')} (${alerts.length + diffs.length})</div>` +
+    diffs.map(diffAlertCard).join('') +
+    (alerts.length ? alerts.map(alertCard).join('')
+      : (diffs.length ? '' : `<div class="card"><div class="empty"><span class="em">✅</span>${t('all_ok')}</div></div>`));
 }
 function vSupCatalog(){
   return `<div class="sec">${t('catalog_sup')}</div>` +
     SUPPLIERS.map(s=>`<div class="card"><h3>${s.em} ${nm(s)}</h3>` +
-      PRODUCTS.filter(p=>p.sup===s.id).map(p=>`<div class="sug">
+      PRODUCTS.filter(p=>p.sup===s.id).map(p=>`<div class="sug stack">
         <div class="pav">${p.em}</div>
         <div class="info"><div class="nm">${nm(p)}</div>
           <div class="sub"><b>${effPrice(p).toLocaleString('en-US')} ֏</b>${isPromo(p)?` <s style="color:var(--dim)">${p.price.toLocaleString('en-US')}</s> <span class="badge b-violet">${t('promo')} −10%</span>`:''}</div></div>
-        <div style="min-width:120px;text-align:right">
+        <div class="sugact" style="min-width:120px;text-align:right">
           <button class="btn small ${isPromo(p)?'danger':'violet'}" onclick="togglePromo('${p.id}')">${isPromo(p)?t('promo_stop'):t('promo_start')}</button>
         </div>
       </div>`).join('') + `</div>`
@@ -1707,13 +3405,15 @@ function billRows(withShop){
     <td class="num" style="color:var(--cyan)">${b.id}</td><td>${fdate(b.date)}</td>
     <td>${withShop ? nm(MY_SHOP) : SUP(b.sup).em+' '+nm(SUP(b.sup))}</td>
     <td class="num">${b.amount.toLocaleString('en-US')} ֏</td>
-    <td>${b.paid
+    <td>${b.adj
+      ? `<span class="badge b-violet">${t('adj_badge')}</span>`
+      : b.paid
       ? `<span class="badge b-green">${t('paid_st')}${b.paidDate?' · '+fdate(b.paidDate):''}</span>`
       : `<span class="badge b-rose">${t('unpaid_st')} · ${daysAgo(b.date)} ${dayW()}</span>${withShop?` <button class="btn small green noprint" onclick="event.stopPropagation();markBillPaid('${b.id}')">✓ ${t('mark_paid')}</button>`:''}`}</td>
   </tr>`).join('');
 }
 function markBillPaid(bid){
-  const b = S.bills.find(x=>x.id===bid); if(!b || b.paid) return;
+  const b = S.bills.find(x=>x.id===bid); if(!b || b.paid || b.adj) return;
   b.paid = true; b.paidDate = S.today;
   S.debts[b.sup] = Math.max(0, (S.debts[b.sup]||0) - b.amount);
   S.payments.push({date:S.today, sup:b.sup, amount:b.amount});
@@ -1722,7 +3422,7 @@ function markBillPaid(bid){
 }
 function openStatement(sup){
   const s = SUP(sup);
-  const entries = S.bills.filter(b=>b.sup===sup).map(b=>({date:b.date, doc:`${t('bill_doc')} ${b.id}`, amt:b.amount}))
+  const entries = S.bills.filter(b=>b.sup===sup).map(b=>({date:b.date, doc:`${b.adj?t('adj_doc'):t('bill_doc')} ${b.id}`, amt:b.amount}))
     .concat(S.payments.filter(p=>p.sup===sup).map(p=>({date:p.date, doc:t('pay_doc'), amt:-p.amount})))
     .sort((a,b)=>a.date-b.date);
   let bal = 0;
@@ -1757,15 +3457,20 @@ function exportCSV(kind){
   let rows;
   if(kind==='bills'){
     rows = [['id','date','supplier','amount','status','paid_date']]
-      .concat(S.bills.map(b=>[b.id, new Date(b.date).toISOString().slice(0,10), SUP(b.sup).nameEn, b.amount, b.paid?'paid':'unpaid', b.paidDate?new Date(b.paidDate).toISOString().slice(0,10):'']));
+      .concat(S.bills.map(b=>[b.id, new Date(b.date).toISOString().slice(0,10), SUP(b.sup).nameEn, b.amount, b.adj?'adjustment':(b.paid?'paid':'unpaid'), b.paidDate?new Date(b.paidDate).toISOString().slice(0,10):'']));
   } else {
     rows = [['date','product','supplier','qty','price','amount']]
       .concat([...S.history].sort((a,b)=>b.date-a.date).map(h=>[new Date(h.date).toISOString().slice(0,10), P(h.productId).nameEn, SUP(h.sup).nameEn, h.qty, h.price, h.qty*h.price]));
   }
-  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  downloadCSV(kind+'.csv', rows);
+}
+/* the app's single CSV writer: UTF-8 BOM (so Excel on the accountant's Windows machine opens
+   Armenian text correctly), quoted cells, LF rows. */
+function downloadCSV(name, rows){
+  const csv = (rows||[]).map(r=>r.map(c=>`"${String(c==null?'':c).replace(/"/g,'""')}"`).join(',')).join('\n');
   const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = kind+'.csv';
+  a.href = URL.createObjectURL(blob); a.download = name;
   document.body.appendChild(a); a.click(); a.remove();
 }
 function dcStats(){
@@ -1786,6 +3491,8 @@ function vShopData(){
     <div class="kpi"><div class="l">⏳ ${t('dc_out')}</div><div class="v" style="font-size:16px;color:${st.out?'var(--rose)':'var(--green)'}">${amd(st.out)}</div></div>
   </div>
   <div class="card"><h3>📊 ${t('dc_by_month')}</h3>${monthBars('')}</div>
+  ${writeoffCard()}
+  ${scaleCfgCard()}
   <div class="card"><h3 style="justify-content:space-between">🧾 ${t('dc_bills')} <button class="btn small ghost noprint" onclick="exportCSV('bills')">⬇ CSV</button></h3><div class="muted" style="margin:-6px 0 8px">${t('tap_bill')}</div><div class="tblwrap"><table class="tbl">
     <tr><th>${t('bill_col')}</th><th>${t('date')}</th><th>${t('supplier_col')}</th><th>${t('amount_col')}</th><th>${t('status_col')}</th></tr>
     ${billRows(false)}</table></div></div>
@@ -1811,8 +3518,8 @@ function vSupData(){
     ${SUPPLIERS.map(s=>`<div class="row" style="padding:9px 0;border-bottom:1px solid var(--sep)">
       <span>${s.em} ${nm(s)} ← ${nm(MY_SHOP)}</span>
       <span style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
-        <b class="num" style="color:${S.debts[s.id]?'var(--rose)':'var(--green)'}">${(S.debts[s.id]||0).toLocaleString('en-US')} ֏</b>
-        ${S.debts[s.id]?`<button class="btn small green" onclick="payDebt('${s.id}')">💰 ${t('receive_pay')}</button>`:''}
+        <b class="num" style="color:${(S.debts[s.id]||0)>0?'var(--rose)':'var(--green)'}">${(S.debts[s.id]||0).toLocaleString('en-US')} ֏</b>
+        ${(S.debts[s.id]||0)>0?`<button class="btn small green" onclick="payDebt('${s.id}')">💰 ${t('receive_pay')}</button>`:''}
         <button class="btn small ghost" onclick="openStatement('${s.id}')">📄 ${t('statement')}</button>
       </span>
     </div>`).join('')}</div>
@@ -1833,7 +3540,7 @@ function openShop(id){
         const cls = st.dueIn<0?'style="color:var(--rose);font-weight:700"':'';
         return `<tr><td>${nm(p)}</td><td class="num">${st.cycle} ${dayW()}</td><td class="num">${st.avgQty}</td><td ${cls}>${st.dueIn<0?(t('overdue')+' '+(-st.dueIn)+(' '+dayW())):fdate(st.due)}</td></tr>`;}).join('') + '</table>';
   } else {
-    body = `<div class="muted">${t('last_order')}՝ ${fdate(S.otherLast[id])} (${daysAgo(S.otherLast[id])} ${lang==='hy'?'օր առաջ':(lang==='ru'?'дн. назад':'days ago')})</div>`;
+    body = `<div class="muted">${t('last_order')}${VJ()} ${fdate(S.otherLast[id])} (${daysAgo(S.otherLast[id])} ${lang==='hy'?'օր առաջ':(lang==='ru'?'дн. назад':'days ago')})</div>`;
   }
   // live stock table for every shop
   body += `<div class="sec" style="margin-top:16px">📦 ${t('stock_lbl')}</div>
@@ -1855,10 +3562,10 @@ function openInvoice(bid){
   const itemRows = b.items && b.items.length
     ? `<table class="tbl"><tr><th>${t('product')}</th><th>${t('qty')}</th><th>${t('price')}</th><th>${t('amount_col')}</th></tr>` +
       b.items.map(it=>`<tr><td>${nm(P(it.productId))}</td><td class="num">${it.qty}</td><td class="num">${it.price.toLocaleString('en-US')}</td><td class="num">${(it.qty*it.price).toLocaleString('en-US')}</td></tr>`).join('') + `</table>`
-    : `<div class="muted" style="margin-top:10px">${t('amount_col')}՝ <b class="num">${b.amount.toLocaleString('en-US')} ֏</b></div>`;
+    : `<div class="muted" style="margin-top:10px">${t('amount_col')}${VJ()} <b class="num">${b.amount.toLocaleString('en-US')} ֏</b></div>`;
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody" id="invoiceBody"><div class="grabber noprint"></div>
-    <h3>🧾 ${t('invoice')} ${b.id}</h3>
+    <h3>🧾 ${b.adj ? t('adj_doc') : t('invoice')} ${b.id}</h3>
     <div class="muted">${fdate(b.date)} 2026</div>
     <hr class="sep" style="border:none;border-top:1px solid var(--stroke2);margin:12px 0">
     <div class="row" style="align-items:flex-start"><div>
