@@ -8,7 +8,7 @@
    - /api/room/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armtrade-shell-v7';   /* R9: shell changed (nav, type scale, statement act, zxing fallback) */
+const CACHE = 'armtrade-shell-v13';   /* round D: a merge can no longer drop the opening balances, ledger quantities clamped, CSPRNG room key, existence oracle closed in body AND state AND timing, no unauthenticated side effect, Armenian report CSV headers, signature block on every printed invoice */
 const SHELL = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
