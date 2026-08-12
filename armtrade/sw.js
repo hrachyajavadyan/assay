@@ -8,15 +8,66 @@
    - /api/room/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armtrade-shell-v13';   /* round D: a merge can no longer drop the opening balances, ledger quantities clamped, CSPRNG room key, existence oracle closed in body AND state AND timing, no unauthenticated side effect, Armenian report CSV headers, signature block on every printed invoice */
-const SHELL = ['./', './index.html', './manifest.json'];
+const CACHE = 'armtrade-shell-v17';   /* round H: the demo's deterministic ids are content-addressed, so two paired demo phones can no longer hand one uuid to two different ledger rows, and a merge that rewrites a surviving row now throws; the Cyrillic face is no longer precached for an Armenian-only user; an incomplete shell no longer counts as installed; round G: the display fonts are self-hosted and precached, so the offline app is the same product as the online one; the count act's CSV names its scope in the shopkeeper's language; the demo simulator mints deterministic ids, so a demo bug report replays; round F: the migration question no longer publishes before the other device agrees, a distributor can no longer evict the shop's own messages or wedge the room with an oversized half, batches and swap requests merge by id, the pre-split snapshot expires; round E: the sync rooms are split — one room per distributor plus the shop's own `self` room, a whitelisted supplier contribution channel that the shop audits and rolls back, the twelve private keys merged at last, key rotation and revocation, and a sync sheet that is a list of named connections */
+/* R16 · the display-font subsets are part of the SHELL, not of /vendor/'s fetch-on-first-use
+   policy. The ZXing reader is genuinely optional (most Androids have a native barcode detector)
+   and 824 KB; there is no such thing as an optional typeface — an app that opens offline in
+   fallback fonts is a different product from the one that was designed and reviewed.
+
+   R17 · BUT «THE SHELL» IS NOT THE SAME SET IN EVERY LANGUAGE. The page has always requested
+   only latin + armenian in hy/en — the Cyrillic face is behind a unicode-range and a Russian
+   user is the only one who paints a character from it — and the argument for keeping Cyrillic at
+   all was that it costs the Armenian shopkeeper nothing. It did not: SHELL listed all three, so
+   an `hy` install unconditionally downloaded and stored the 18,748-byte Cyrillic file. It is now
+   in neither the install nor the cache of a shopkeeper who never reads Russian:
+     - CORE (latin + armenian, 75,068 B) is precached in every language. Inter latin carries the
+       digits of every money figure and Noto Sans Armenian carries ֏ itself, so both are needed
+       on any screen in any language, and their absence is what «fallback fonts» means.
+     - the Cyrillic face is pulled into the same cache the first time it is actually wanted:
+       either by the /vendor/ cache-first branch below when the page requests it, or ahead of
+       that by the {type:'shellfont'} message the page posts when its language IS ru — so a
+       Russian user who installs in Russian has it offline from the first run, and everyone else
+       never fetches it at all. Exactly the ZXing policy, for exactly the ZXing reason.
+
+   R17 · AND AN INCOMPLETE SHELL IS NOT AN INSTALL. `Promise.all(SHELL.map(u => c.add(u).catch()))`
+   resolved whatever happened, so a partial deploy (index.html live, one woff2 not yet uploaded)
+   activated a service worker whose cache was missing a face — and the offline app rendered in the
+   system stack with no signal to anyone, which is the exact defect precaching exists to close.
+   addAll() is all-or-nothing: one retry for a flaky first byte, then the install FAILS, the old
+   worker stays in charge, and the next load tries again. */
+const F_LATIN = './vendor/fonts/inter-latin-wght-normal.woff2';
+const F_ARM   = './vendor/fonts/noto-sans-armenian-armenian-wght-normal.woff2';
+const F_CYR   = './vendor/fonts/inter-cyrillic-wght-normal.woff2';
+const SHELL = ['./', './index.html', './manifest.json', F_LATIN, F_ARM];
 
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE)
-      .then(c => Promise.all(SHELL.map(u => c.add(u).catch(() => {}))))
-      .then(() => self.skipWaiting())
-  );
+  e.waitUntil((async () => {
+    const c = await caches.open(CACHE);
+    try {
+      try { await c.addAll(SHELL); }
+      catch (err) {
+        await new Promise(r => setTimeout(r, 1200));
+        await c.addAll(SHELL);        // still failing: rethrow, so this worker never activates
+      }
+    } catch (err) {
+      /* and leave nothing half-built behind: caches.open() created the bucket, so an aborted
+         install would otherwise hand the NEXT worker a cache that looks like this version's. */
+      await caches.delete(CACHE).catch(() => {});
+      throw err;
+    }
+    await self.skipWaiting();
+  })());
+});
+
+/* the page asks for the Cyrillic face when — and only when — it is showing Russian. Narrow by
+   construction: one hard-coded URL, no path travels from the message into the cache. */
+self.addEventListener('message', e => {
+  const d = e.data;
+  if (!d || d.type !== 'shellfont' || d.subset !== 'cyrillic') return;
+  const job = caches.open(CACHE)
+    .then(c => c.match(F_CYR, { ignoreSearch: true }).then(hit => hit ? null : c.add(F_CYR)))
+    .catch(() => {});
+  if (e.waitUntil) e.waitUntil(job);
 });
 
 self.addEventListener('activate', e => {
