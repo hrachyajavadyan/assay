@@ -64,6 +64,9 @@
 // resolves it — it binds a free code, and is refused with the same 404 on a code owned by
 // someone else. That is what keeps «create a room» and «join a room» one button in the client.
 
+/* R14 · a sentinel that is 64 hex characters like a real SHA-256 and cannot be the hash of
+   anything we compute, so an absent key slot costs exactly the same compare as a present one. */
+const NOKEY = '0'.repeat(64);
 const TTL_MS = 180 * 24 * 60 * 60 * 1000;
 const BIND_MAX = 30;                       // new rooms one caller may create per window
 const BIND_WINDOW_MS = 60 * 60 * 1000;
@@ -82,7 +85,12 @@ async function ensureTable(db){
   for(const sql of [
     "ALTER TABLE rooms ADD COLUMN keyh TEXT",
     "ALTER TABLE rooms ADD COLUMN fails INTEGER DEFAULT 0",
-    "ALTER TABLE rooms ADD COLUMN lock INTEGER DEFAULT 0"
+    "ALTER TABLE rooms ADD COLUMN lock INTEGER DEFAULT 0",
+    /* R14 · the SECOND key slot. Same pattern, same swallowed duplicate-column error, so a
+       deployed database needs no migration. Every SELECT that reads keyh now reads keyh2 too —
+       ONE COLUMN MORE ON A STATEMENT THAT ALREADY RUNS, not one statement more. */
+    "ALTER TABLE rooms ADD COLUMN keyh2 TEXT",
+    "ALTER TABLE rooms ADD COLUMN keyh2ts INTEGER"
   ]){ try{ await db.prepare(sql).run(); }catch(e){} }
   /* R13 · the same table R12 created, now holding one thing only: how many rooms this caller
      has created in the current window. `k` is a hash of the client address, never the address
@@ -196,16 +204,25 @@ async function bindNote(db, rl, now){
 async function authorize(code, key, row, hashPromise){
   if(!validKey(key)) return {err: bad(401, 'room key required')};
   const h = await hashPromise;
+  /* R14 · BOTH SLOTS ARE COMPARED ON EVERY PATH, IN THE SAME ORDER, including the no-row path and
+     the dead pre-R8 path. A missing slot is compared against NOKEY, which is 64 characters like a
+     real hash, so sameHash() can never short-circuit on length in one branch and not another. The
+     work is identical on all four outcomes: one SELECT (which already read both columns), one
+     SHA-256, TWO fixed-length compares. If you add a branch, an early return or a log line to any
+     one of them, you re-open the existence oracle R13 closed. */
+  const a = sameHash(h, (row && row.keyh)  || NOKEY);
+  const b = sameHash(h, (row && row.keyh2) || NOKEY);
   // No room is bound to this code — the caller may create it (POST only). The hash has already
-  // been computed and awaited above, so this branch has cost exactly what the next two cost.
-  if(!row) return {row: null};
+  // been computed and awaited above, so this branch has cost exactly what the next three cost.
+  if(!row) return {row: null, slot: 0};
   /* a pre-R8 row: it was world-readable for its whole life and no key can match it now. R8 and
      R12 DELETED it here — on the read path, with no credential — which destroyed a shop's ledger
      for anyone who knew the code and, once R12 reported the code as free, let that same stranger
      re-bind it with the next POST. It is inert instead: unreadable, unwritable, undeletable,
      unbindable, and purged with everything else after 180 days. */
   if(!row.keyh) return {err: noRoom()};
-  if(sameHash(h, row.keyh)) return {row};
+  if(a) return {row, slot: 1};
+  if(b) return {row, slot: 2};
   return {err: noRoom()};
 }
 
@@ -219,16 +236,18 @@ export async function onRequestGet({request, env, params}){
   const now = Date.now();
   await maybePurge(env.DB, now);
   const hp = keyHash(key, code);
-  const row = await env.DB.prepare('SELECT v, data, keyh FROM rooms WHERE code = ?').bind(code).first();
+  const row = await env.DB.prepare('SELECT v, data, keyh, keyh2 FROM rooms WHERE code = ?').bind(code).first();
   const a = await authorize(code, key, row, hp);
   if(a.err) return a.err;
   // an unbound code and a code that is not yours are the same answer: 404 {v:0}
   if(!a.row) return noRoom();
   const url = new URL(request.url);
-  if(url.searchParams.has('probe')) return ok({v: a.row.v});
+  /* `slot` rides only on SUCCESS responses — every refusal is byte-identical as before — and is
+     how a device learns whether it is the owner or the guest of this room. */
+  if(url.searchParams.has('probe')) return ok({v: a.row.v, slot: a.slot});
   let data = null;
   try{ data = JSON.parse(a.row.data); }catch(e){}
-  return ok({v: a.row.v, data});
+  return ok({v: a.row.v, data, slot: a.slot});
 }
 
 export async function onRequestPost({request, env, params}){
@@ -245,15 +264,30 @@ export async function onRequestPost({request, env, params}){
      one failure mode merge-by-uuid exists to prevent. */
   const hasBase = body.base !== undefined && body.base !== null;
   if(hasBase && (typeof body.base !== 'number' || !isFinite(body.base))) return bad(400, 'bad base');
+  /* R14 · the guest key hash may be set on the BINDING write and nowhere else, which keeps
+     pairing at one round trip instead of two. Only the hash travels, so a proxy log or a D1
+     backup never contains a usable credential. */
+  const hasGuest = body.guest !== undefined && body.guest !== null;
+  if(hasGuest && !/^[0-9a-f]{64}$/.test(body.guest)) return bad(400, 'bad guest');
   const payload = JSON.stringify(body.data);
   if(payload.length > 1_000_000) return bad(413, 'state too large');
   await ensureTable(env.DB);
   const now = Date.now();
   await maybePurge(env.DB, now);
   const hp = keyHash(key, code);
-  const cur = await env.DB.prepare('SELECT v, data, keyh FROM rooms WHERE code = ?').bind(code).first();
+  const cur = await env.DB.prepare('SELECT v, data, keyh, keyh2 FROM rooms WHERE code = ?').bind(code).first();
   const a = await authorize(code, key, cur, hp);
-  if(a.err) return a.err;
+  if(a.err){
+    /* R14 · POST is the ONE verb whose two refusals did not cost the same. «This code is free»
+       falls through to bindAllowed() — a second SELECT and a SHA-256 of the caller address —
+       before it can be refused over budget, while «this code is not yours» returned after one.
+       Two D1 round trips on one side only is the same clock oracle R13 closed on GET. Pay it on
+       both. This costs nothing in normal operation: it is on the REFUSAL path only, never on a
+       successful push. */
+    const rl0 = await callerId(request);
+    await bindAllowed(env.DB, rl0, now);
+    return a.err;
+  }
   const h = await hp;
   if(!a.row){
     /* first write binds the room to this key, for good. This is the one path that treats an
@@ -265,14 +299,14 @@ export async function onRequestPost({request, env, params}){
     if(!(await bindAllowed(env.DB, rl, now))) return noRoom();
     try{
       await env.DB.prepare(
-        'INSERT INTO rooms (code, v, data, updated, keyh, fails, lock) VALUES (?, 1, ?, ?, ?, 0, 0)'
-      ).bind(code, payload, now, h).first();
+        'INSERT INTO rooms (code, v, data, updated, keyh, keyh2, keyh2ts, fails, lock) VALUES (?, 1, ?, ?, ?, ?, ?, 0, 0)'
+      ).bind(code, payload, now, h, hasGuest ? body.guest : null, hasGuest ? now : null).first();
       await bindNote(env.DB, rl, now);
-      return ok({v: 1});
+      return ok({v: 1, slot: 1});
     }catch(e){
       // lost the race to another device: fall through and treat it as a normal conflicting write
-      const again = await env.DB.prepare('SELECT v, data, keyh FROM rooms WHERE code = ?').bind(code).first();
-      if(!again || !sameHash(h, again.keyh || '')) return noRoom();
+      const again = await env.DB.prepare('SELECT v, data, keyh, keyh2 FROM rooms WHERE code = ?').bind(code).first();
+      if(!again || !(sameHash(h, again.keyh || NOKEY) || sameHash(h, again.keyh2 || NOKEY))) return noRoom();
       let data = null; try{ data = JSON.parse(again.data); }catch(e2){}
       return new Response(JSON.stringify({v: again.v, data}), {status: 409, headers:{'Content-Type':'application/json', 'Cache-Control':'no-store'}});
     }
@@ -285,7 +319,7 @@ export async function onRequestPost({request, env, params}){
   const res = await env.DB.prepare(
     'UPDATE rooms SET v = v + 1, data = ?, updated = ? WHERE code = ? RETURNING v'
   ).bind(payload, now, code).first();
-  return ok({v: res ? res.v : a.row.v + 1});
+  return ok({v: res ? res.v : a.row.v + 1, slot: a.slot});
 }
 
 /* R8 · a customer must be able to remove their business from the server. R13 · reachable at
@@ -301,12 +335,64 @@ export async function onRequestDelete({request, env, params}){
   const now = Date.now();
   await maybePurge(env.DB, now);
   const hp = keyHash(key, code);
-  const row = await env.DB.prepare('SELECT v, keyh FROM rooms WHERE code = ?').bind(code).first();
+  const row = await env.DB.prepare('SELECT v, keyh, keyh2 FROM rooms WHERE code = ?').bind(code).first();
   const a = await authorize(code, key, row, hp);
   if(a.err) return a.err;
   /* R12 · "there was nothing to delete" used to answer 200 {deleted:0} while someone else's room
      answered 403 — the same oracle by another verb. Both are noRoom() now. */
   if(!a.row) return noRoom();
+  /* R14 · OWNER ONLY. A distributor deleting a shop's room is a denial of service that is
+     available today. This does not re-open the oracle: every path to this 403 required a hash
+     that matched a stored slot, so the caller already holds a valid credential for this exact
+     room. An unauthenticated DELETE still runs SELECT -> hash -> two compares -> noRoom(). */
+  if(a.slot !== 1) return bad(403, 'owner only');
   await env.DB.prepare('DELETE FROM rooms WHERE code = ? AND keyh = ?').bind(code, await hp).run();
   return ok({deleted: 1});
+}
+
+/* R14 · KEY ADMINISTRATION. Three primitives, owner only:
+     invite — issue a fresh guest key (hand a distributor a new string; the old one dies at once)
+     rotate — replace the OWNER's own key (a lost shop phone)
+     revoke — null the guest slot: cut a distributor off AND stay connected yourself.
+   Revoke is the one the state report is actually asking for, and only two slots can express it.
+   Only the HASH of new key material is ever sent, so the credential never leaves the device.
+
+   WHY 403 'owner only' DOES NOT RE-OPEN THE ORACLE. The oracle R13 closed is about an
+   UNAUTHENTICATED caller distinguishing «this code is free» from «this code is not yours». Every
+   path to the 403 below requires a hash that matched a stored slot — the caller already holds a
+   valid credential for that exact room. An unauthenticated PATCH runs the identical preamble to
+   GET/POST/DELETE — one SELECT, one SHA-256, two compares — and ends in the same noRoom().
+   PATCH creates no rows, so it is not metered. */
+export async function onRequestPatch({request, env, params}){
+  if(!env.DB) return bad(503, 'D1 binding "DB" is not configured');
+  const code = (params.code || '').toUpperCase();
+  if(!validCode(code)) return bad(400, 'bad room code');
+  const key = readKey(request);
+  if(!validKey(key)) return bad(401, 'room key required');
+  let body;
+  try{ body = await request.json(); }catch(e){ return bad(400, 'bad json'); }
+  await ensureTable(env.DB);
+  const now = Date.now();
+  await maybePurge(env.DB, now);
+  const hp = keyHash(key, code);
+  const row = await env.DB.prepare('SELECT v, keyh, keyh2 FROM rooms WHERE code = ?').bind(code).first();
+  const a = await authorize(code, key, row, hp);
+  if(a.err) return a.err;
+  if(!a.row) return noRoom();
+  if(a.slot !== 1) return bad(403, 'owner only');
+  const op = body && body.op;
+  if(op === 'invite' || op === 'rotate'){
+    if(!/^[0-9a-f]{64}$/.test(body.keyh)) return bad(400, 'bad key hash');
+    if(op === 'rotate'){
+      // never collapse the two slots into one: that would silently make the guest the owner
+      if(sameHash(body.keyh, a.row.keyh2 || NOKEY)) return bad(400, 'bad key hash');
+      await env.DB.prepare('UPDATE rooms SET keyh = ?, updated = ? WHERE code = ?').bind(body.keyh, now, code).run();
+    } else {
+      if(sameHash(body.keyh, a.row.keyh || NOKEY)) return bad(400, 'bad key hash');
+      await env.DB.prepare('UPDATE rooms SET keyh2 = ?, keyh2ts = ?, updated = ? WHERE code = ?').bind(body.keyh, now, now, code).run();
+    }
+  } else if(op === 'revoke'){
+    await env.DB.prepare('UPDATE rooms SET keyh2 = NULL, keyh2ts = NULL, updated = ? WHERE code = ?').bind(now, code).run();
+  } else return bad(400, 'bad op');
+  return ok({ok: 1});
 }
