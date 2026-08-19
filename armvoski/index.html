@@ -1957,7 +1957,6 @@ T.hy = {
   /* ---- honest empty screens ---- */
   stub_title:'Այս էկրանը դեռ պատրաստ չէ',
   stub_recv:'Մատակարարից ընդունումը՝ քաշերով և ինքնարժեքով։',
-  stub_repair:'Հաճախորդի իրերի պահպանման մատյան — երբեք պաշարի մեջ։',
   stub_debts:'Մատակարարների մնացորդները՝ հաշիվներից և վճարումներից։',
   /* ---- Վաճառք (spec 2.2, 2.3, 5.3) ---- */
   sl_search:'Որոնել կոդով կամ անվանումով',
@@ -2105,6 +2104,36 @@ T.hy = {
   hm_days_note:'Սա ձեր սեփական հիշեցման շեմն է։ Տեսչության ժամկետների մասին ծրագիրը ոչինչ չի պնդում։',
   hm_sends:'Նախորդ ցուցակները',
   al_hm_late:'{n} իր՝ տեսչությունում {d} օրից ավելի',
+  /* ---- Վերանորոգում — պահպանման մատյան (spec 8) ---- */
+  rp_intro:'Վերանորոգումը պահպանության հարց է, ոչ թե պաշարի։ Հաճախորդի մետաղը մտնում և դուրս է գալիս խանութից՝ երբեք չդառնալով խանութի պաշար։',
+  rp_custody:'Այս իրը հաճախորդինն է։ Այն չի մտնում ո՛չ մնացորդի, ո՛չ արժեքի, ո՛չ գույքագրման մեջ և ոչ մի շարժ չի գրանցում։',
+  rp_oncount:'Գույքագրման ակտում այս իրերը նշվում են առանձին՝ «Հաճախորդի իրեր» բաժնում, քանակով և ընդհանուր քաշով։',
+  rp_novalue:'Հաճախորդի մետաղը չի գնահատվում դրամով — այն խանութինը չէ։',
+  rp_here:'Խանութում կա', rp_here_g:'Ընդհանուր քաշը',
+  rp_owed_all:'Չվճարված մնացորդը',
+  rp_take:'Ընդունել իր', rp_intake_t:'Իրի ընդունում',
+  rp_cust:'Հաճախորդը', rp_phone:'Հեռախոս', rp_descr:'Ի՞նչ է իրը և ի՞նչ է պետք անել',
+  rp_gross_note:'Կշռվում է ամբողջ իրը՝ քարերով միասին։ Հաճախորդի իրը չի քանդվում կշռելու համար։',
+  rp_photonote:'Նկարագրություն (նշաններ, վնասվածքներ)',
+  rp_photonote_d:'Լուսանկարներ չեն պահվում — համաժամացման ծավալը թույլ չի տալիս։ Գրեք տարբերակիչ նշանները։',
+  rp_price:'Գինը (֏)',
+  rp_price_note:'Գինը ազատ է լրացվում։ Ծրագիրը վերանորոգման գին չի հաշվարկում — թե ինչպես է այն հաշվարկվում գործնականում, ճշտված չէ։',
+  rp_prepaid:'Կանխավճար (֏)', rp_paid:'Վճարված', rp_owed:'Մնացորդ',
+  rp_owed_why:'Գին − վճարված',
+  rp_duedays:'Պատրաստ կլինի (օրից)', rp_due_on:'Խոստացված ժամկետը՝ {d}',
+  rp_dueTs:'Ժամկետը', rp_in:'Ընդունվել է',
+  rp_money:'Հաշվարկ', rp_status:'Կարգավիճակ', rp_sheet:'Վերանորոգում',
+  rp_st_in:'Ընդունված', rp_st_ready:'Պատրաստ', rp_st_out:'Հանձնված',
+  rp_mark_ready:'Նշել որպես պատրաստ', rp_give_back:'Հանձնել հաճախորդին',
+  rp_ready_done:'Նշվեց որպես պատրաստ', rp_out_on:'Հանձնվել է {d}',
+  rp_overdue:'Ժամկետն անցել է',
+  rp_none:'Այստեղ դեռ ոչինչ չկա',
+  rp_taken:'Իրն ընդունվեց՝ {r}',
+  rp_slip_in:'Ընդունման անդորրագիր', rp_slip_out:'Հանձնման անդորրագիր',
+  rp_slip_in_t:'ԸՆԴՈՒՆՄԱՆ ԱՆԴՈՐՐԱԳԻՐ', rp_slip_out_t:'ՀԱՆՁՆՄԱՆ ԱՆԴՈՐՐԱԳԻՐ',
+  rp_slip_in_note:'Իրը մնում է հաճախորդի սեփականությունը։ Անդորրագիրը կազմված է երկու օրինակից՝ մեկական կողմերին։',
+  rp_slip_out_note:'Իրը վերադարձվել է սեփականատիրոջը։ Անդորրագիրը կազմված է երկու օրինակից՝ մեկական կողմերին։',
+  rp_sign_cust:'Հաճախորդ', rp_sign_shop:'Խանութ',
   /* ---- the recovery net (ArmTrade's own strings) ---- */
   rec_title:'Ծրագիրը չկարողացավ բացել էջը',
   rec_body:'Տվյալների մի մասը վնասված է։ Կարող եք վերականգնել վերջին ճիշտ վիճակը՝ առանց հեռախոսից որևէ բան ջնջելու։',
@@ -2202,7 +2231,6 @@ T.en = {
   data_ns:'Data is stored on this device, separately from ARMGOLD.',
   stub_title:'This screen is not built yet',
   stub_recv:'Goods receipt from a supplier, by weight, capturing cost basis.',
-  stub_repair:"A custody register for the customer's metal — never in stock.",
   stub_debts:'Supplier balances, derived from bills and payments.',
   sl_search:'Search by code or name',
   sl_avail:'{n} items available to sell',
@@ -2343,6 +2371,35 @@ T.en = {
   hm_days_note:"This is your own reminder threshold. The app asserts nothing about the office's turnaround.",
   hm_sends:'Previous lists',
   al_hm_late:'{n} items at the assay office longer than {d} days',
+  rp_intro:'A repair is a custody problem, not an inventory one. The customer\'s metal enters and leaves the shop without ever becoming the shop\'s stock.',
+  rp_custody:"This item belongs to the customer. It is in no on-hand figure, no valuation and no count, and it posts no movement.",
+  rp_oncount:'On the count act these are listed separately, in a «Customer\'s items» block, with a count and a total weight.',
+  rp_novalue:"The customer's metal is not valued in dram — it is not the shop's.",
+  rp_here:'In the shop', rp_here_g:'Total weight',
+  rp_owed_all:'Outstanding balance',
+  rp_take:'Take an item in', rp_intake_t:'Intake',
+  rp_cust:'Customer', rp_phone:'Phone', rp_descr:'What is it, and what needs doing?',
+  rp_gross_note:"The whole item is weighed, stones included. A customer's item is not taken apart to be weighed.",
+  rp_photonote:'Description (marks, damage)',
+  rp_photonote_d:'No photographs are stored — the sync payload cannot carry them. Write down the distinguishing marks.',
+  rp_price:'Price (֏)',
+  rp_price_note:'The price is free-form. The app computes no repair price — how repairs are priced in practice is unverified.',
+  rp_prepaid:'Paid up front (֏)', rp_paid:'Paid', rp_owed:'Outstanding',
+  rp_owed_why:'price − paid',
+  rp_duedays:'Ready in (days)', rp_due_on:'Promised for {d}',
+  rp_dueTs:'Due', rp_in:'Taken in',
+  rp_money:'Money', rp_status:'Status', rp_sheet:'Repair',
+  rp_st_in:'Taken in', rp_st_ready:'Ready', rp_st_out:'Given back',
+  rp_mark_ready:'Mark as ready', rp_give_back:'Give back to the customer',
+  rp_ready_done:'Marked as ready', rp_out_on:'Given back on {d}',
+  rp_overdue:'Past due',
+  rp_none:'Nothing here yet',
+  rp_taken:'Item taken in: {r}',
+  rp_slip_in:'Intake slip', rp_slip_out:'Return slip',
+  rp_slip_in_t:'INTAKE SLIP', rp_slip_out_t:'RETURN SLIP',
+  rp_slip_in_note:'The item remains the property of the customer. Drawn up in two copies, one for each party.',
+  rp_slip_out_note:'The item has been returned to its owner. Drawn up in two copies, one for each party.',
+  rp_sign_cust:'Customer', rp_sign_shop:'Shop',
   rec_title:'The app could not open this screen',
   rec_body:'Part of the data is damaged. You can restore the last good state without deleting anything from the phone.',
   rec_restore:'Restore the last good state',
@@ -2439,7 +2496,6 @@ T.ru = {
   data_ns:'Данные хранятся на этом устройстве, отдельно от ARMGOLD.',
   stub_title:'Этот экран ещё не готов',
   stub_recv:'Приёмка от поставщика — по весу, с себестоимостью.',
-  stub_repair:'Журнал хранения изделий клиента — никогда не в запасе.',
   stub_debts:'Остатки поставщиков — из счетов и платежей.',
   sl_search:'Поиск по коду или названию',
   sl_avail:'{n} изделий к продаже',
@@ -2580,6 +2636,35 @@ T.ru = {
   hm_days_note:'Это ваш собственный порог напоминания. О сроках инспекции приложение ничего не утверждает.',
   hm_sends:'Прежние списки',
   al_hm_late:'{n} изделий в инспекции дольше {d} дней',
+  rp_intro:'Ремонт — вопрос хранения, а не запаса. Металл клиента входит в магазин и выходит из него, ни разу не становясь запасом магазина.',
+  rp_custody:'Это изделие принадлежит клиенту. Оно не входит ни в остаток, ни в оценку, ни в инвентаризацию и не создаёт ни одного движения.',
+  rp_oncount:'В акте инвентаризации такие изделия указываются отдельно, в блоке «Изделия клиентов», с количеством и общим весом.',
+  rp_novalue:'Металл клиента не оценивается в драмах — он не принадлежит магазину.',
+  rp_here:'В магазине', rp_here_g:'Общий вес',
+  rp_owed_all:'Непогашенный остаток',
+  rp_take:'Принять изделие', rp_intake_t:'Приём изделия',
+  rp_cust:'Клиент', rp_phone:'Телефон', rp_descr:'Что за изделие и что нужно сделать?',
+  rp_gross_note:'Взвешивается изделие целиком, вместе с камнями. Изделие клиента не разбирают ради взвешивания.',
+  rp_photonote:'Описание (отметки, повреждения)',
+  rp_photonote_d:'Фотографии не хранятся — объём синхронизации их не выдержит. Запишите отличительные признаки.',
+  rp_price:'Цена (֏)',
+  rp_price_note:'Цена заполняется свободно. Приложение не рассчитывает цену ремонта — как её считают на практике, не подтверждено.',
+  rp_prepaid:'Предоплата (֏)', rp_paid:'Оплачено', rp_owed:'Остаток',
+  rp_owed_why:'цена − оплачено',
+  rp_duedays:'Будет готово через (дней)', rp_due_on:'Обещанный срок: {d}',
+  rp_dueTs:'Срок', rp_in:'Принято',
+  rp_money:'Расчёт', rp_status:'Статус', rp_sheet:'Ремонт',
+  rp_st_in:'Принято', rp_st_ready:'Готово', rp_st_out:'Выдано',
+  rp_mark_ready:'Отметить готовым', rp_give_back:'Выдать клиенту',
+  rp_ready_done:'Отмечено готовым', rp_out_on:'Выдано {d}',
+  rp_overdue:'Срок прошёл',
+  rp_none:'Здесь пока ничего нет',
+  rp_taken:'Изделие принято: {r}',
+  rp_slip_in:'Квитанция о приёме', rp_slip_out:'Квитанция о выдаче',
+  rp_slip_in_t:'КВИТАНЦИЯ О ПРИЁМЕ', rp_slip_out_t:'КВИТАНЦИЯ О ВЫДАЧЕ',
+  rp_slip_in_note:'Изделие остаётся собственностью клиента. Составлено в двух экземплярах, по одному каждой стороне.',
+  rp_slip_out_note:'Изделие возвращено владельцу. Составлено в двух экземплярах, по одному каждой стороне.',
+  rp_sign_cust:'Клиент', rp_sign_shop:'Магазин',
   rec_title:'Приложение не смогло открыть экран',
   rec_body:'Часть данных повреждена. Можно восстановить последнее исправное состояние, ничего не удаляя с телефона.',
   rec_restore:'Восстановить последнее исправное состояние',
@@ -3784,7 +3869,7 @@ function closeModal(){ document.getElementById('modalRoot').innerHTML = ''; }
 function escClose(){
   const r = document.getElementById('modalRoot');
   if(!r || !r.innerHTML) return false;
-  NI = null; SL = null; CN_SHEET = null;
+  NI = null; SL = null; CN_SHEET = null; RP = null; RP_SHEET = null; HM_SHEET = null;
   closeModal();
   return true;
 }
@@ -4298,6 +4383,7 @@ function viewFor(k){
   if(k === 'tray') return viewTray();
   if(k === 'count') return viewCount();
   if(k === 'mark')  return viewMark();
+  if(k === 'repair') return viewRepair();
   if(k === 'data') return viewData();
   return stubView(k);
 }
@@ -6089,6 +6175,340 @@ function openHmList(id){
 }
 
 /* =====================================================================================
+   ՎԵՐԱՆՈՐՈԳՈՒՄ — a custody register, not a quoting engine (spec 8)
+
+   A REPAIR IS A CUSTODY PROBLEM, NOT AN INVENTORY PROBLEM: the customer's metal enters and
+   leaves the shop WITHOUT EVER BECOMING STOCK. Getting this wrong inflates the jeweller's
+   inventory — and, under the margin scheme, his tax position — with metal he does not own.
+
+   So, stated as rules this file obeys and voskiSelfTest() asserts:
+
+   1. NO REPAIR IS EVER A LEDGER SUBJECT. Nothing in this section calls postMove(), nothing here
+      writes S.stock, no repair id is ever prefixed `i:` or `b:`, and a repair changes neither
+      valuation() nor pieceCount(). The register is a list beside the ledger, not inside it.
+   2. IT IS OUT OF EVERY COUNT — but ON the count act, in its own «Հաճախորդի իրեր» block with a
+      count and a total weight, so the person signing knows what is physically in the shop that
+      is not the shop's. (cnFinish() reads repairsInShop(); the act prints it in no total.)
+   3. THERE IS NO QUOTING FORMULA. How repairs are priced in Armenian practice is unverified
+      (register item 13), so the price is a free-form number the jeweller types. Building a
+      formula on a guess would be exactly the confident nonsense the spec warns against.
+   4. A SLIP PRINTS ON INTAKE AND ON RETURN, because a shop holding a stranger's gold and a
+      customer handing it over both need the same piece of paper.
+   ===================================================================================== */
+let RP = null;          /* the intake draft, outside S until it is committed */
+let RP_SHEET = null;    /* the repair whose sheet is open */
+
+function nextRepairNo(){
+  const y = new Date(safeInt(S.today, Date.now())).getUTCFullYear();
+  const re = /^ՎՆ-(\d{4})-(\d+)$/;
+  let max = 0;
+  (S.repairs||[]).forEach(r => { const m = re.exec(String(r && r.id || '')); if(m && +m[1] === y) max = Math.max(max, +m[2]); });
+  return 'ՎՆ-' + y + '-' + ('0000' + (max + 1)).slice(-4);
+}
+const repairById = id => (S.repairs||[]).find(r => r && r.id === id) || null;
+/* the customer's metal that is physically here. `out` has gone home with its owner. */
+const repairWeight = () => repairsInShop().reduce((a,r) => round3(a + num(r.grossG)), 0);
+/* WHAT THE CUSTOMER STILL OWES — derived from the two numbers on the record, never a running
+   counter. Same instinct as debtsFromBooks(). */
+const repairDue = r => Math.max(0, safeAmd(r.priceAmd,0) - safeAmd(r.paid,0));
+const repairsDue = () => (S.repairs||[]).reduce((a,r) => a + repairDue(r), 0);
+
+/* THE ONE WRITER of the register. It returns the new id, and it posts NOTHING. */
+function rpIntake(o){
+  const id = nextRepairNo();
+  const rec = {
+    id: id,
+    custName: String(o.custName||'').slice(0,80),
+    custPhone: String(o.custPhone||'').slice(0,32),
+    inTs: safeInt(o.inTs, S.today),
+    dueTs: Math.max(0, safeInt(o.dueTs, 0)),
+    outTs: 0,
+    descr: String(o.descr||'').slice(0,200),
+    metal: METALS.indexOf(o.metal) >= 0 ? o.metal : 'au',
+    fineness: safeInt(o.fineness, 0),
+    grossG: Math.max(0, round3(num(o.grossG))),
+    photoNote: String(o.photoNote||'').slice(0,200),
+    priceAmd: safeAmd(o.priceAmd, 0),
+    paid: safeAmd(o.paid, 0),
+    status: 'in'
+  };
+  S.repairs.push(rec);
+  /* NO postMove, NO S.stock, NO lot, NO piece. If a later change adds one here, rule 1 is gone. */
+  saveState();
+  return id;
+}
+
+function rpFresh(){
+  return { custName:'', custPhone:'', descr:'', metal:'au', fineness:'', grossG:'',
+           photoNote:'', priceAmd:'', paid:'', dueDays:'7' };
+}
+function rpOpenIntake(){ RP = rpFresh(); rpRender(); }
+function rpSet(k, v){ if(!RP) return; RP[k] = v; rpRender(); }
+function rpNum(k, v){ if(!RP) return; RP[k] = v; rpPaint(); }
+const rpValid = () => !!RP && String(RP.custName||'').trim() !== '' && round3(num(RP.grossG)) > EPS;
+function rpPaint(){
+  try{
+    const b = document.getElementById('rpGo');
+    if(b) b.className = 'btn primary' + (rpValid() ? '' : ' off');
+    const d = document.getElementById('rpDue');
+    if(d) d.innerHTML = escH(fmt('rp_due_on', { d: fdate(rpDueTs()) }));
+  }catch(e){}
+}
+function rpDueTs(){
+  const n = Math.max(0, Math.min(365, safeInt(RP && RP.dueDays, 0)));
+  return n ? safeInt(S.today,0) + n*DAY : 0;
+}
+function rpRender(){
+  if(!RP) return;
+  const chip = (on, fn, label) => '<button class="tbtn wide' + (on ? ' on' : '') + '" onclick="' + fn + '">'
+    + escH(label) + '</button>';
+  openModal('<h3>' + escH(t('rp_intake_t')) + '</h3>'
+    /* SAID ON THE SHEET THAT COMMITS IT: this metal is not becoming stock. */
+    + '<div class="notice">' + escH(t('rp_custody')) + '</div>'
+    + '<label class="fieldlbl" for="rpNm">' + escH(t('rp_cust')) + '</label>'
+    + '<input id="rpNm" type="text" maxlength="80" value="' + escH(RP.custName)
+      + '" oninput="rpNum(' + jsArg('custName') + ',this.value)">'
+    + '<label class="fieldlbl" for="rpPh" style="margin-top:12px">' + escH(t('rp_phone')) + '</label>'
+    + '<input id="rpPh" type="tel" maxlength="32" value="' + escH(RP.custPhone)
+      + '" oninput="rpNum(' + jsArg('custPhone') + ',this.value)">'
+    + '<label class="fieldlbl" for="rpDs" style="margin-top:12px">' + escH(t('rp_descr')) + '</label>'
+    + '<input id="rpDs" type="text" maxlength="200" value="' + escH(RP.descr)
+      + '" oninput="rpNum(' + jsArg('descr') + ',this.value)">'
+
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('w_metal')) + '</div>'
+    + '<div class="chips">' + METALS.map(m =>
+        chip(RP.metal === m, 'rpSet(' + jsArg('metal') + ',' + jsArg(m) + ')', metalLabel(m))).join('') + '</div>'
+    /* THE FINENESS IS OPTIONAL HERE and it is not an assay: the shop is recording what the
+       customer says the item is, not determining it. «—» is a legitimate answer. */
+    + '<div class="fieldlbl">' + escH(t('w_harg')) + ' <span class="mlbl">('
+      + escH(t('by_optional')) + ')</span></div>'
+    + '<div class="chips wrap">'
+      + chip(!safeInt(RP.fineness,0), 'rpSet(' + jsArg('fineness') + ',' + jsArg('') + ')', '—')
+      + FINENESS[RP.metal].map(f => chip(safeInt(RP.fineness,0) === f,
+          'rpSet(' + jsArg('fineness') + ',' + f + ')', String(f))).join('') + '</div>'
+    /* GROSS, and only gross. The shop does not take a stranger's ring apart to weigh its stones. */
+    + '<label class="fieldlbl" for="rpW">' + escH(t('w_gross')) + ' (' + escH(t('u_g')) + ')</label>'
+    + '<input id="rpW" type="number" inputmode="decimal" min="0" step="0.001" value="' + escH(RP.grossG)
+      + '" oninput="rpNum(' + jsArg('grossG') + ',this.value)">'
+    + '<div class="notice">' + escH(t('rp_gross_note')) + '</div>'
+    /* NO PHOTOS (spec 9): the sync blob has a 1 MB ceiling and there is nowhere to put them. A
+       short written note takes their place and the field says so. */
+    + '<label class="fieldlbl" for="rpPn" style="margin-top:12px">' + escH(t('rp_photonote')) + '</label>'
+    + '<input id="rpPn" type="text" maxlength="200" value="' + escH(RP.photoNote)
+      + '" oninput="rpNum(' + jsArg('photoNote') + ',this.value)">'
+    + '<div class="notice">' + escH(t('rp_photonote_d')) + '</div>'
+
+    + '<label class="fieldlbl" for="rpPr" style="margin-top:12px">' + escH(t('rp_price')) + '</label>'
+    + '<input id="rpPr" type="number" inputmode="numeric" min="0" step="1" value="' + escH(RP.priceAmd)
+      + '" oninput="rpNum(' + jsArg('priceAmd') + ',this.value)">'
+    /* NO FORMULA (spec 8, 11). This line is the product refusing to guess, out loud. */
+    + '<div class="notice">' + escH(t('rp_price_note')) + '</div>'
+    + '<label class="fieldlbl" for="rpPd" style="margin-top:12px">' + escH(t('rp_prepaid')) + '</label>'
+    + '<input id="rpPd" type="number" inputmode="numeric" min="0" step="1" value="' + escH(RP.paid)
+      + '" oninput="rpNum(' + jsArg('paid') + ',this.value)">'
+    + '<label class="fieldlbl" for="rpDd" style="margin-top:12px">' + escH(t('rp_duedays')) + '</label>'
+    + '<input id="rpDd" type="number" inputmode="numeric" min="0" max="365" step="1" value="' + escH(RP.dueDays)
+      + '" oninput="rpNum(' + jsArg('dueDays') + ',this.value)">'
+    + '<div class="notice" id="rpDue">' + escH(fmt('rp_due_on', { d: fdate(rpDueTs()) })) + '</div>'
+
+    + '<button id="rpGo" class="btn primary' + (rpValid() ? '' : ' off') + '" style="margin-top:16px" onclick="rpSave()">'
+      + escH(t('rp_take')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="RP=null;closeModal()">'
+      + escH(t('cancel')) + '</button>');
+}
+function rpSave(){
+  if(!rpValid()) return;
+  const id = rpIntake({ custName:RP.custName, custPhone:RP.custPhone, descr:RP.descr,
+    metal:RP.metal, fineness:RP.fineness, grossG:RP.grossG, photoNote:RP.photoNote,
+    priceAmd:RP.priceAmd, paid:RP.paid, inTs:S.today, dueTs:rpDueTs() });
+  RP = null;
+  migrate(S); saveState(); closeModal(); renderAll(); toast(fmt('rp_taken', { r: id }));
+  openRepairSlip(id, 'in');
+}
+
+/* ---- the repair's own sheet: status, money, and the two slips ---- */
+function openRepair(id){
+  const r = repairById(id);
+  if(!r) return;
+  RP_SHEET = id;
+  const due = repairDue(r);
+  openModal('<h3>🔧 ' + escH(t('rp_sheet')) + ' · ' + escH(r.id) + '</h3>'
+    + '<div class="row"><span style="font-size:17px;font-weight:700">' + escH(r.custName || '—') + '</span>'
+      + '<span class="badge ' + (r.status === 'out' ? 'b-neutral' : (r.status === 'ready' ? 'b-green' : 'b-gold')) + '">'
+      + escH(t('rp_st_' + r.status)) + '</span></div>'
+    + '<div class="muted" style="margin-top:4px">' + escH([r.custPhone, r.descr].filter(Boolean).join(' · ')) + '</div>'
+    + '<div class="dl">'
+      + '<div><div class="l">' + escH(t('w_gross_s')) + '</div><div class="v">'
+        + gramTxt(r.grossG,3) + escH(t('u_g')) + '</div></div>'
+      + '<div><div class="l">' + escH(t('w_metal')) + '</div><div class="v">'
+        + escH(metalLabel(r.metal) + (r.fineness ? ' ' + r.fineness : '')) + '</div></div>'
+      + '<div><div class="l">' + escH(t('rp_in')) + '</div><div class="v">' + escH(fdate(r.inTs)) + '</div></div>'
+      + '<div><div class="l">' + escH(t('rp_dueTs')) + '</div><div class="v">'
+        + escH(r.dueTs ? fdate(r.dueTs) : '—') + '</div></div>'
+    + '</div>'
+    + (r.photoNote ? '<div class="notice">' + escH(r.photoNote) + '</div>' : '')
+    /* THE CUSTODY RULE, ON THE SHEET, EVERY TIME. */
+    + '<div class="notice">' + escH(t('rp_custody')) + '</div>'
+
+    + '<div class="sec">' + escH(t('rp_money')) + '</div>'
+    + '<div class="dl">'
+      + '<div><div class="l">' + escH(t('rp_price')) + '</div><div class="v">'
+        + safeAmd(r.priceAmd,0).toLocaleString('en-US') + ' ֏</div></div>'
+      + '<div><div class="l">' + escH(t('rp_paid')) + '</div><div class="v">'
+        + safeAmd(r.paid,0).toLocaleString('en-US') + ' ֏</div></div>'
+    + '</div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('rp_owed')) + '</span>'
+      + '<span class="big">' + due.toLocaleString('en-US') + '<span class="cur">֏</span></span></div>'
+    /* DERIVED, NEVER A RUNNING COUNTER: price minus what has been paid, computed at read time. */
+    + '<div class="brk"><b>' + safeAmd(r.priceAmd,0).toLocaleString('en-US') + '</b>'
+      + '<span class="op">−</span><b>' + safeAmd(r.paid,0).toLocaleString('en-US') + '</b>'
+      + '<span class="eq">=</span><b>' + due.toLocaleString('en-US') + ' ֏</b>'
+      + '<span class="why">' + escH(t('rp_owed_why')) + '</span></div>'
+    + '<label class="fieldlbl" for="rpEp" style="margin-top:12px">' + escH(t('rp_price')) + '</label>'
+    + '<input id="rpEp" type="number" inputmode="numeric" min="0" step="1" value="' + safeAmd(r.priceAmd,0) + '">'
+    + '<div class="notice">' + escH(t('rp_price_note')) + '</div>'
+    + '<label class="fieldlbl" for="rpEd" style="margin-top:12px">' + escH(t('rp_paid')) + '</label>'
+    + '<input id="rpEd" type="number" inputmode="numeric" min="0" step="1" value="' + safeAmd(r.paid,0) + '">'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="rpSaveMoney()">'
+      + escH(t('save')) + '</button>'
+
+    + '<div class="sec">' + escH(t('rp_status')) + '</div>'
+    + (r.status === 'in'
+        ? '<button class="btn primary" onclick="rpStatus(' + jsArg('ready') + ')">'
+          + escH(t('rp_mark_ready')) + '</button>' : '')
+    + (r.status === 'ready'
+        ? '<button class="btn primary" onclick="rpStatus(' + jsArg('out') + ')">'
+          + escH(t('rp_give_back')) + '</button>' : '')
+    + (r.status === 'out'
+        ? '<div class="notice">' + escH(fmt('rp_out_on', { d: fdate(r.outTs) })) + '</div>' : '')
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="openRepairSlip('
+      + jsArg(r.id) + ',' + jsArg('in') + ')">' + escH(t('rp_slip_in')) + '</button>'
+    + (r.status === 'out'
+        ? '<button class="btn ghost full" style="margin-top:9px" onclick="openRepairSlip('
+          + jsArg(r.id) + ',' + jsArg('out') + ')">' + escH(t('rp_slip_out')) + '</button>' : '')
+    + '<button class="btn ghost full" style="margin-top:16px" onclick="RP_SHEET=null;closeModal()">'
+      + escH(t('close')) + '</button>');
+}
+function rpSaveMoney(){
+  const r = repairById(RP_SHEET);
+  if(!r) return;
+  r.priceAmd = safeAmd((document.getElementById('rpEp')||{}).value, 0);
+  r.paid = safeAmd((document.getElementById('rpEd')||{}).value, 0);
+  saveState(); renderAll(); openRepair(r.id); toast(t('rate_saved'));
+}
+function rpStatus(st){
+  const r = repairById(RP_SHEET);
+  if(!r) return;
+  r.status = ['in','ready','out'].indexOf(st) >= 0 ? st : r.status;
+  /* HANDING IT BACK IS NOT A MOVEMENT EITHER: it was never the shop's metal to move. */
+  if(r.status === 'out'){ r.outTs = S.today; }
+  saveState(); closeModal(); renderAll();
+  if(r.status === 'out') openRepairSlip(r.id, 'out'); else toast(t('rp_ready_done'));
+}
+
+/* ---- the screen ---- */
+function rpRow(r){
+  const bits = [];
+  if(r.custPhone) bits.push('<span>' + escH(r.custPhone) + '</span>');
+  bits.push('<span>' + escH(metalLabel(r.metal) + (r.fineness ? ' ' + r.fineness : '')) + '</span>');
+  if(r.status !== 'out' && r.dueTs && r.dueTs < safeInt(S.today,0))
+    bits.push('<span class="badge b-rose">' + escH(t('rp_overdue')) + '</span>');
+  if(repairDue(r)) bits.push('<span class="badge b-gold">' + repairDue(r).toLocaleString('en-US') + ' ֏</span>');
+  return '<button class="prow" onclick="openRepair(' + jsArg(r.id) + ')">'
+    + '<div class="pi"><div class="pnm">' + escH(r.custName || r.id) + '</div>'
+    + '<div class="psub"><span>' + escH(r.descr || r.id) + '</span>' + bits.join('') + '</div></div>'
+    + '<div class="pw"><div class="a">' + gramTxt(r.grossG,3) + '<span class="g">' + escH(t('u_g')) + '</span></div>'
+    + '<div class="b">' + escH(fdate(r.inTs)) + '</div></div></button>';
+}
+function viewRepair(){
+  const all = (S.repairs||[]);
+  const inn = all.filter(r => r.status === 'in').slice().reverse();
+  const ready = all.filter(r => r.status === 'ready').slice().reverse();
+  const out = all.filter(r => r.status === 'out').slice(-8).reverse();
+  const here = repairsInShop();
+  const grp = (title, rows, empty) => '<div class="sec">' + escH(title) + '</div>'
+    + (rows.length ? '<div class="fgrp"><div class="fbody">' + rows.map(rpRow).join('') + '</div></div>'
+      : '<div class="card"><div class="muted">' + escH(empty) + '</div></div>');
+  return '<main class="anim">'
+    + '<div class="sec">' + escH(t('tab_repair')) + '</div>'
+    + '<div class="card rail rail-info"><div class="muted" style="line-height:1.55">'
+      + escH(t('rp_intro')) + '</div>'
+      + '<div class="notice" style="margin-top:10px">' + escH(t('rp_custody')) + '</div>'
+      + '<div class="notice">' + escH(t('rp_oncount')) + '</div></div>'
+    + '<div class="kpis kpi2">'
+      + '<div class="kpi"><div class="l">' + escH(t('rp_here')) + '</div><div class="v">'
+        + here.length + '</div></div>'
+      + '<div class="kpi"><div class="l">' + escH(t('rp_here_g')) + '</div><div class="v m">'
+        + gramTxt(repairWeight(),3) + '<span class="cur">' + escH(t('u_g')) + '</span></div></div>'
+    + '</div>'
+    /* THE CUSTOMER'S METAL IS NOT VALUED. There is deliberately no dram figure for this weight:
+       it is not the shop's to value, and a number here would be the exact mistake spec 8 warns
+       against. The only money on this screen is what the customer owes for the WORK. */
+    + '<div class="notice">' + escH(t('rp_novalue')) + '</div>'
+    + '<div class="row" style="margin-top:12px"><span class="mlbl">' + escH(t('rp_owed_all')) + '</span>'
+      + '<span class="num" style="font-size:17px;font-weight:700">'
+      + repairsDue().toLocaleString('en-US') + '<span class="cur">֏</span></span></div>'
+
+    /* the screen's ONE accent-filled button: taking a customer's item in. */
+    + '<button class="btn primary" style="margin-top:16px" onclick="rpOpenIntake()">+ '
+      + escH(t('rp_take')) + '</button>'
+
+    + grp(t('rp_st_in'), inn, t('rp_none'))
+    + grp(t('rp_st_ready'), ready, t('rp_none'))
+    + grp(t('rp_st_out'), out, t('rp_none'))
+    + '</main>';
+}
+
+/* ---- the hand-over slip, printed on intake AND on return (spec 8) ---- */
+function openRepairSlip(id, kind){
+  const r = repairById(id);
+  if(!r) return;
+  const back = kind === 'out';
+  const sign = lbl => '<div style="flex:1;min-width:150px"><div class="doclbl">' + escH(lbl) + '</div>'
+    + '<div class="actsignline"></div></div>';
+  openModal('<h3>🧾 ' + escH(back ? t('rp_slip_out_t') : t('rp_slip_in_t')) + ' № ' + escH(r.id) + '</h3>'
+    + '<div class="muted">' + escH(fdate(back ? (r.outTs || S.today) : r.inTs)) + '</div>'
+    + '<hr class="actrule">'
+    + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
+      + '<div style="min-width:150px"><div class="doclbl">' + escH(t('data_shop')) + '</div>'
+        + '<b>🏪 ' + escH(S.cfg.shopName || t('app_name')) + '</b>'
+        + '<div class="muted">' + escH(t('data_tin')) + ' <span class="num">' + escH(S.cfg.tin || '—') + '</span></div></div>'
+      + '<div style="min-width:150px"><div class="doclbl">' + escH(t('rp_cust')) + '</div>'
+        + '<b>👤 ' + escH(r.custName || '—') + '</b>'
+        + '<div class="muted">' + escH(r.custPhone || '') + '</div></div>'
+    + '</div>'
+    + '<div class="tblwrap" style="max-height:none"><table class="tbl"><thead><tr>'
+      + '<th>' + escH(t('rp_descr')) + '</th>'
+      + '<th class="num">' + escH(t('w_gross_s')) + ', ' + escH(t('u_g')) + '</th></tr></thead><tbody>'
+      + '<tr><td>' + escH(r.descr || '—')
+        + '<span class="tblsub">' + escH(metalLabel(r.metal) + (r.fineness ? ' · ' + r.fineness : '')
+          + (r.photoNote ? ' · ' + r.photoNote : '')) + '</span></td>'
+      + '<td class="num">' + gramTxt(r.grossG,3) + '</td></tr>'
+      + '</tbody></table></div>'
+    + '<div class="row actsep" style="margin-top:12px;padding-top:10px"><b>' + escH(t('rp_price')) + '</b>'
+      + '<span class="big">' + safeAmd(r.priceAmd,0).toLocaleString('en-US') + '<span class="cur">֏</span></span></div>'
+    + (safeAmd(r.paid,0) ? '<div class="row"><span class="mlbl">' + escH(t('rp_paid')) + '</span>'
+        + '<span>' + amd(r.paid) + '</span></div>' : '')
+    + (repairDue(r) ? '<div class="row"><span class="mlbl">' + escH(t('rp_owed')) + '</span>'
+        + '<span>' + amd(repairDue(r)) + '</span></div>' : '')
+    /* IN ARMENIAN ON EVERY LANGUAGE OF THE UI — the slip is signed in Armenian, same rule as the
+       գնման ակտ. */
+    + '<div class="muted" style="margin-top:6px">' + escH(t('act_words')) + '՝ <b>'
+      + escH(amWords(r.priceAmd)) + '</b></div>'
+    + (!back && r.dueTs ? '<div class="muted" style="margin-top:6px">'
+        + escH(fmt('rp_due_on', { d: fdate(r.dueTs) })) + '</div>' : '')
+    + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
+      + sign(back ? t('rp_sign_shop') : t('rp_sign_cust'))
+      + sign(back ? t('rp_sign_cust') : t('rp_sign_shop')) + '</div>'
+    + '<div class="muted" style="font-size:14px;margin-top:14px">'
+      + escH(back ? t('rp_slip_out_note') : t('rp_slip_in_note')) + '</div>'
+    + '<button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">🖨 '
+      + escH(t('print')) + '</button>'
+    + '<button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">'
+      + escH(t('close')) + '</button>');
+}
+
+/* =====================================================================================
    RENDER + THE RECOVERY NET
    renderAll() is a try/catch around the whole paint. If a screen throws, the shopkeeper gets a
    card that offers him the last known-good state — never a white page, and never a lost shop.
@@ -6768,6 +7188,27 @@ function voskiSelfTest(){
       const d = hmDaysOut(p);
       p.location = keepL; p.hallmark.sentTs = keepT; S.cfg.hmDays = keepD;
       return d === 20 && late14 === true && late30 === false;
+    })());
+
+    /* ---- ՎԵՐԱՆՈՐՈԳՈՒՄ: the customer's metal is NEVER the shop's (spec 8) ----
+       Getting this wrong inflates the jeweller's inventory, and his tax position, with metal he
+       does not own. The register is asserted against the ledger, the valuation and the count. */
+    ok('a repair is in no ledger, no valuation and no count', (()=>{
+      const val0 = valuation(), pcs0 = pieceCount(), moves0 = (S.moves||[]).length;
+      const stock0 = Object.keys(S.stock||{}).length;
+      const id = rpIntake({ custName:'Հ. Պետրոսյան', custPhone:'077', descr:'Կոտրված շղթա',
+                            metal:'au', fineness:585, grossG:9.400, priceAmd:12000, dueTs:S.today });
+      const r = !!id
+        && valuation() === val0 && pieceCount() === pcs0
+        && (S.moves||[]).length === moves0
+        && Object.keys(S.stock||{}).length === stock0
+        && !(S.pieces||[]).some(p => p.id === id)
+        && !Object.keys(S.stock||{}).some(k => k.indexOf(id) >= 0)
+        && cnInScope('all').every(x => x.subject.indexOf(id) < 0)
+        && repairsInShop().some(x => x.id === id)
+        && verifyLedger().length === 0;
+      S.repairs = (S.repairs||[]).filter(x => x.id !== id);
+      return r;
     })());
 
     /* trilingual parity */
