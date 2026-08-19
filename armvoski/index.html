@@ -1785,6 +1785,7 @@ T.hy = {
   w_code:'Կոդ', w_cat:'Տեսակ', w_note:'Նշում', w_loc:'Տեղը', w_value:'Արժեքը',
   w_sellrate:'Վաճառքի գին, 999', w_buyrate:'Գնման գին, 999',
   w_acqn:'{n} ձեռքբերում', badge_nocost:'Ինքնարժեք չկա',
+  buydisc_unset:'Գնման զեղչը դեռ նշված չէ — մուտքագրեք Տվյալներ բաժնում',
   brk_val:'Մաքուր մետաղ × 999 գին',
   /* ---- categories (ARMGOLD's practitioner list) ---- */
   cat_ring:'Մատանի', cat_chain:'Շղթա', cat_bracelet:'Ապարանջան', cat_earring:'Ականջօղ',
@@ -1897,6 +1898,7 @@ T.en = {
   w_code:'Code', w_cat:'Category', w_note:'Note', w_loc:'Location', w_value:'Value',
   w_sellrate:'Sell rate, 999', w_buyrate:'Buy rate, 999',
   w_acqn:'{n} acquisitions', badge_nocost:'no cost basis',
+  buydisc_unset:'The buy-in discount has not been set — enter it under Data',
   brk_val:'pure metal × the 999 rate',
   cat_ring:'Ring', cat_chain:'Chain', cat_bracelet:'Bracelet', cat_earring:'Earrings',
   cat_pendant:'Pendant', cat_cross:'Cross', cat_watch:'Watch', cat_scrap:'Scrap', cat_other:'Other',
@@ -1995,6 +1997,7 @@ T.ru = {
   w_code:'Код', w_cat:'Вид', w_note:'Примечание', w_loc:'Место', w_value:'Стоимость',
   w_sellrate:'Цена продажи, 999', w_buyrate:'Цена закупки, 999',
   w_acqn:'{n} приобретений', badge_nocost:'нет себестоимости',
+  buydisc_unset:'Дисконт закупки не задан — укажите его в разделе «Данные»',
   brk_val:'чистый металл × цена 999',
   cat_ring:'Кольцо', cat_chain:'Цепь', cat_bracelet:'Браслет', cat_earring:'Серьги',
   cat_pendant:'Подвеска', cat_cross:'Крест', cat_watch:'Часы', cat_scrap:'Лом', cat_other:'Прочее',
@@ -2157,12 +2160,15 @@ function freshCfg(){
     shopName:'', tin:'',
     /* THE MARGIN SITS ON THE METAL RATE, NOT ON THE FINISHED TOTAL. Owner decision, settled.
        The setting is one number and the breakdown line names it, so if a jeweller ever comes
-       back with a different answer the change is one function. */
-    marginPct: 4,
-    /* what the shop pays for scrap, as a discount off the 999 base. Ships with a conservative
-       number the owner is expected to replace: the typical Yerevan discount is unverified and a
-       confident wrong default is worse than an obvious placeholder. */
-    buyDiscPct: 12,
+       back with a different answer the change is one function. A REAL new shop starts at zero —
+       the shop's own markup is not something this product is entitled to guess. */
+    marginPct: 0,
+    /* WHAT THE SHOP PAYS FOR SCRAP, as a discount off the 999 base. IT SHIPS UNSET, AND null IS
+       NOT ZERO. The typical Yerevan discount off market is explicitly unverified in the research
+       (register item 11) and the buy rate is a number a jeweller QUOTES ACROSS A COUNTER to a
+       walk-in — an invented default here would put a made-up figure in front of a customer. Until
+       the owner sets it, the rate card shows a dash and says the setting is missing. */
+    buyDiscPct: null,
     /* the making charge multiplies GROSS. Owner decision, settled. The workmanship was done on
        the whole object. The breakdown line names which weight it used either way. */
     makingBase: 'gross',
@@ -2377,7 +2383,10 @@ function reconcileLots(mv){
 const base999 = () => safeAmd(S.rate && S.rate.base999, 0);
 const rateFor = f => Math.round(base999() * safeInt(f,0) / 999);
 const sellRate = () => Math.round(base999() * (1 + num(S.cfg.marginPct)/100));
-const buyRate  = () => Math.round(base999() * (1 - num(S.cfg.buyDiscPct)/100));
+const buyDiscSet = () => S.cfg.buyDiscPct != null;
+/* 0 when the discount has never been set: there is no honest buy rate to show, and a caller that
+   renders 0 renders a dash (see rateCard) rather than a number nobody chose. */
+const buyRate  = () => buyDiscSet() ? Math.round(base999() * (1 - num(S.cfg.buyDiscPct)/100)) : 0;
 
 /* which weight the making charge multiplies. Owner decision: GROSS. The setting exists and the
    breakdown line names it, so the answer is visible rather than buried. */
@@ -2394,6 +2403,7 @@ function priceOf(p){
 /* what the shop pays a walk-in for metal. NO MAKING CHARGE — the shop is buying metal, not
    workmanship — and stones default to zero because a shop buying scrap does not pay for them. */
 function buyPriceOf(netG, fineness){
+  if(!buyDiscSet()) return 0;
   return Math.round(num(netG) * buyRate() * safeInt(fineness,0) / 999);
 }
 
@@ -2485,7 +2495,11 @@ function migrate(st){
   st.cfg.shopName = String(st.cfg.shopName == null ? d.shopName : st.cfg.shopName).slice(0,80);
   st.cfg.tin = String(st.cfg.tin == null ? d.tin : st.cfg.tin).replace(/[^0-9]/g,'').slice(0,12);
   st.cfg.marginPct = Math.max(0, Math.min(200, num(st.cfg.marginPct != null ? st.cfg.marginPct : d.marginPct)));
-  st.cfg.buyDiscPct = Math.max(0, Math.min(90, num(st.cfg.buyDiscPct != null ? st.cfg.buyDiscPct : d.buyDiscPct)));
+  /* null means UNSET and must survive migration as null; 0 means "we pay spot", which is a
+     different (and legitimate) answer. Collapsing the two would invent the number this setting
+     exists to avoid inventing. */
+  st.cfg.buyDiscPct = (st.cfg.buyDiscPct == null || st.cfg.buyDiscPct === '' || !isFinite(+st.cfg.buyDiscPct))
+    ? null : Math.max(0, Math.min(90, num(st.cfg.buyDiscPct)));
   st.cfg.makingBase = st.cfg.makingBase === 'net' ? 'net' : 'gross';
   st.cfg.gramDp = st.cfg.gramDp === 3 ? 3 : 2;
   st.cfg.regime = ['micro','turnover','vat'].indexOf(st.cfg.regime) >= 0 ? st.cfg.regime : '';
@@ -2658,6 +2672,10 @@ function seedState(){
   /* the 999 rate on 18 August 2026 per b24.am, sourced to the Central Bank. Entered by hand,
      which is what the product supports; the age and provenance are shown on the rate card. */
   st.rate = { base999: 51738, silver999: 620, at: st.today + 9*3600000 + 14*60000, src:'cb', by:'shop' };
+  /* the demo shop's own markup. It is named on EVERY breakdown line the product renders, so it
+     is visible and adjustable rather than baked in — which is the whole reason the margin is a
+     setting. The buy-in discount stays null even here: see freshCfg(). */
+  st.cfg.marginPct = 4;
   st.cfg.shopName = 'Ոսկերչական խանութ';
   st.cfg.tin = '02710459';
 
@@ -3033,8 +3051,11 @@ function rateCard(){
     + '<div class="rrow">'
       + '<div class="rsub"><div class="l">' + escH(t('w_sellrate')) + ' (+' + pctTxt(S.cfg.marginPct) + '%)</div>'
         + '<div class="v">' + sellRate().toLocaleString('en-US') + '<span class="cur">֏</span></div></div>'
-      + '<div class="rsub"><div class="l">' + escH(t('w_buyrate')) + ' (−' + pctTxt(S.cfg.buyDiscPct) + '%)</div>'
-        + '<div class="v">' + buyRate().toLocaleString('en-US') + '<span class="cur">֏</span></div></div>'
+      + '<div class="rsub"><div class="l">' + escH(t('w_buyrate'))
+        + (buyDiscSet() ? ' (−' + pctTxt(S.cfg.buyDiscPct) + '%)' : '') + '</div>'
+        + (buyDiscSet()
+            ? '<div class="v">' + buyRate().toLocaleString('en-US') + '<span class="cur">֏</span></div>'
+            : '<div class="v">—</div><div class="mlbl">' + escH(t('buydisc_unset')) + '</div>') + '</div>'
     + '</div>'
     /* the ONE accent-filled button rule: updating the rate is the screen's next action only
        when the rate is stale or missing. On a normal morning it is a quiet ghost button and the
@@ -3314,7 +3335,9 @@ function viewData(){
       + '<label class="fieldlbl" for="cfgM">' + escH(t('w_margin')) + '</label>'
       + '<input id="cfgM" type="number" inputmode="decimal" min="0" max="200" step="0.1" value="' + num(S.cfg.marginPct) + '" oninput="cfgSet(\'marginPct\',this.value)">'
       + '<label class="fieldlbl" for="cfgB" style="margin-top:12px">' + escH(t('w_buydisc')) + '</label>'
-      + '<input id="cfgB" type="number" inputmode="decimal" min="0" max="90" step="0.1" value="' + num(S.cfg.buyDiscPct) + '" oninput="cfgSet(\'buyDiscPct\',this.value)">'
+      + '<input id="cfgB" type="number" inputmode="decimal" min="0" max="90" step="0.1" placeholder="—" value="'
+        + (buyDiscSet() ? num(S.cfg.buyDiscPct) : '') + '" oninput="cfgSet(\'buyDiscPct\',this.value)">'
+      + (buyDiscSet() ? '' : '<div class="notice">' + escH(t('buydisc_unset')) + '</div>')
       + '<div class="fieldlbl" style="margin-top:14px">' + escH(t('data_making_base')) + '</div>'
       + '<div class="chips">'
         + '<button class="tbtn wide' + (S.cfg.makingBase==='gross' ? ' on' : '') + '" onclick="cfgSet(\'makingBase\',\'gross\')">' + escH(t('data_mb_gross')) + '</button>'
@@ -3352,7 +3375,8 @@ function viewData(){
     + '</main>';
 }
 function cfgSet(k, v){
-  if(k==='marginPct' || k==='buyDiscPct') S.cfg[k] = num(v);
+  if(k==='buyDiscPct') S.cfg[k] = (String(v).trim()==='' ? null : num(v));
+  else if(k==='marginPct') S.cfg[k] = num(v);
   else if(k==='gramDp') S.cfg[k] = safeInt(v,2)===3 ? 3 : 2;
   else S.cfg[k] = v;
   migrate(S); saveState();
@@ -3761,7 +3785,15 @@ function voskiSelfTest(){
     /* pricing */
     ok('rateFor is pro rata', rateFor(585) === Math.round(base999()*585/999));
     ok('sellRate applies the margin to the RATE', sellRate() === Math.round(base999()*(1+S.cfg.marginPct/100)));
-    ok('buyRate applies the discount', buyRate() === Math.round(base999()*(1-S.cfg.buyDiscPct/100)));
+    /* the buy-in discount is UNSET on a fresh shop and must stay unset — a default here would be
+       an invented figure quoted to a walk-in customer. */
+    ok('buy discount ships unset', freshCfg().buyDiscPct === null);
+    ok('unset buy rate is not a number to quote', (()=>{ const k=S.cfg.buyDiscPct; S.cfg.buyDiscPct=null;
+        const r = buyRate()===0 && buyPriceOf(10,585)===0; S.cfg.buyDiscPct=k; return r; })());
+    ok('buyRate applies the discount once set', (()=>{ const k=S.cfg.buyDiscPct; S.cfg.buyDiscPct=12;
+        const r = buyRate()===Math.round(base999()*0.88); S.cfg.buyDiscPct=k; return r; })());
+    ok('null survives migrate', (()=>{ const snap=JSON.parse(JSON.stringify(S)); snap.cfg.buyDiscPct=null;
+        return migrate(snap).cfg.buyDiscPct === null; })());
     const pi = pieceById('i1');
     const expect = Math.round(pi.netG*sellRate()*pi.fineness/999 + pi.stonesAmd + pi.makingG*pi.grossG);
     ok('price uses NET metal and GROSS making', priceOf(pi) === expect, priceOf(pi) + ' vs ' + expect);
