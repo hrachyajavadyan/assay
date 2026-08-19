@@ -7465,6 +7465,19 @@ function voskiSelfTest(){
     /* the buy-in discount is UNSET on a fresh shop and must stay unset — a default here would be
        an invented figure quoted to a walk-in customer. */
     ok('buy discount ships unset', freshCfg().buyDiscPct === null);
+    /* A RATE OF NOTHING IS NOT A RATE. Without this the sell sheet priced a 168,972 ֏ ring at
+       59,320 ֏ — the making charge and the stones — and committed the sale. */
+    ok('a zero metal rate blocks the sale rather than pricing the metal at nothing', (()=>{
+      const keep = S.rate.base999;
+      S.rate.base999 = 0;
+      const p = (S.pieces||[]).find(x => x.metal === 'au' && onHand(pieceSubj(x.id)) > EPS);
+      const before = (S.sales||[]).length;
+      SL = { id: p.id, price: String(priceOf(p)), touched:false, hdm:'' };
+      slConfirm();
+      const blocked = (S.sales||[]).length === before;
+      SL = null; S.rate.base999 = keep;
+      return blocked && metalRate999('au') === keep;
+    })());
     ok('unset buy rate is not a number to quote', (()=>{ const k=S.cfg.buyDiscPct; S.cfg.buyDiscPct=null;
         const r = buyRate('au')===0 && buyPriceOf(10,585,'au')===0; S.cfg.buyDiscPct=k; return r; })());
     ok('buyRate applies the discount once set', (()=>{ const k=S.cfg.buyDiscPct; S.cfg.buyDiscPct=12;
@@ -7910,15 +7923,82 @@ function voskiSelfTest(){
       const a = (S.counts||[])[(S.counts||[]).length-1];
       return a.out.length > 0 && a.out.every(o => o.netG > 0 && ['assay','workshop','out'].indexOf(o.location) >= 0);
     })());
-    /* NOT REACHED IS NOT MISSING. An unvisited row must post nothing and show no difference —
-       recording it as a shortage would put a fiction in front of the person who signs. */
+    /* NOT REACHED IS NOT MISSING, AND NOT REACHED IS NOT FOUND EITHER. An unvisited subject must
+       post nothing, show no difference, AND appear in neither actual column — it belongs to the
+       act's own «Չհաշվառված» table, with its metal, its հարգ, its piece count and its book
+       weight, so the two halves of the document add back up to the books. */
     ok('an uncounted row is neither surplus nor shortage', (()=>{
       const a = (S.counts||[])[(S.counts||[]).length-1];
       if(!a.skipped.length) return false;
-      const names = a.skipped.map(x => x.name);
-      return names.length > 0
-        && !(S.moves||[]).some(m => m.ref === a.id && m.type === 'count'
-              && a.skipped.length && false);
+      const subs = {};
+      (S.moves||[]).forEach(m => { if(m.ref === a.id && m.type === 'count') subs[m.subject] = 1; });
+      /* not one uncounted subject may carry a movement from this act */
+      return a.skipped.every(x => !x.code || !subs['i:' + x.code]);
+    })());
+    ok('an uncounted subject is in NO actual column, and the act says how many', (()=>{
+      S.count = null; CNNEW = { scope:'all', counter:'X', mrp:'Y' };
+      cnStart();
+      const rows = cnInScope('all');
+      const one = rows.find(r => r.kind === 'piece');
+      cnMark(one.subject, true);                       /* exactly one subject looked at */
+      const built = cnBuildAct();
+      S.count = null;
+      const uncPcs   = built.unc.reduce((n,u) => n + u.pcs, 0);
+      const uncG     = round3(built.unc.reduce((n,u) => n + num(u.g), 0));
+      const skipPcs  = built.skipped.filter(x => x.kind !== 'pool').length;
+      const skipG    = round3(built.skipped.reduce((n,x) => n + num(x.bookG), 0));
+      const bookPcs  = built.rows.reduce((n,r) => n + r.bookPcs, 0);
+      const actPcs   = built.rows.reduce((n,r) => n + r.actPcs, 0);
+      const bookG    = round3(built.rows.reduce((n,r) => n + num(r.bookG), 0));
+      const scopeG   = round3(rows.reduce((n,r) => n + round3(r.on), 0));
+      const scopePcs = rows.filter(r => r.kind === 'piece').length;
+      /* THE TWO HALVES ADD BACK UP TO THE BOOKS, in pieces and in grams; the counted half holds
+         exactly the one subject that was visited; and nothing was posted for the rest. */
+      return uncPcs === skipPcs && eqG(uncG, skipG)
+             && bookPcs === 1 && actPcs === 1 && (bookPcs + uncPcs) === scopePcs
+             && eqG(round3(bookG + uncG), scopeG)
+             && built.posts.length === 0;
+    })());
+    /* A MOVEMENT DURING THE SESSION IS NOT A SHORTAGE. The screen invites the jeweller to leave
+       the count and trade, so the difference must be taken against the book figure the
+       OBSERVATION was made against — not the one the books hold when «Ավարտել» is pressed. */
+    ok('a mid-session buy-in on a weighed pool is not a shortage', (()=>{
+      S.count = null; CNNEW = { scope:'all', counter:'X', mrp:'Y' };
+      cnStart();
+      const sub = 'b:au:585';
+      const before = round3(onHand(sub));
+      cnPoolW(sub, String(before));                    /* weighed at exactly the book figure */
+      postMove({ subject:sub, type:'buyin', dq:10, ts:S.today, ref:'MID', actor:'shop' });
+      const built = cnBuildAct();
+      const posted = built.posts.filter(m => m.subject === sub);
+      const moved  = built.moved.filter(m => m.metal === 'au' && m.fineness === 585);
+      S.count = null;
+      return posted.length === 0 && moved.length === 1
+             && eqG(moved[0].atG, before) && eqG(moved[0].nowG, round3(before + 10))
+             && eqG(onHand(sub), round3(before + 10));
+    })());
+    ok('a real shortage on a pool that also moved is still posted, against the weighing', (()=>{
+      S.count = null; CNNEW = { scope:'all', counter:'X', mrp:'Y' };
+      cnStart();
+      const sub = 'b:ag:925';
+      const before = round3(onHand(sub));
+      cnPoolW(sub, String(round3(before - 5)));        /* 5 g genuinely missing */
+      postMove({ subject:sub, type:'buyin', dq:3, ts:S.today, ref:'MID2', actor:'shop' });
+      const built = cnBuildAct();
+      const m = built.posts.filter(x => x.subject === sub);
+      S.count = null;
+      return m.length === 1 && eqG(m[0].dq, -5);
+    })());
+    /* THE CACHE IS DECIMAL GRAMS TO 3 dp ON BOTH WRITERS (spec 4, DOMAIN.ledger.clamp) — it is
+       what gets persisted and, per spec 9, synced as an opaque blob. */
+    ok('the on-hand cache is clamped by both writers', (()=>{
+      S.pools.push({ id:'b:au:916', metal:'au', fineness:916 });
+      [0.1,0.2,0.3,1.005,2.675].forEach(d =>
+        postMove({ subject:'b:au:916', type:'receipt', dq:d, ts:S.today, actor:'shop' }));
+      const cached = S.stock['b:au:916'];
+      const naive  = [0.1,0.2,0.3,1.005,2.675].reduce((a,x) => a + x, 0);
+      const rebuilt = rebuildStock()['b:au:916'];
+      return cached === 4.28 && rebuilt === 4.28 && naive !== 4.28;
     })());
     /* the open session is state, not a variable: it has to survive a reload mid-cabinet */
     ok('an open count survives migrate', (()=>{
