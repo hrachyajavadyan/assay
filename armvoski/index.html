@@ -1546,6 +1546,14 @@ tr.hlflash{animation:none;background:var(--acc-tint)}
   overflow-wrap:break-word}
 .prow .psub{font-size:var(--fs-micro);line-height:var(--lh-micro);color:var(--muted);
   margin-top:2px;display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
+/* A LOCATION IS A PHRASE, NOT A FIGURE. «Հարգորոշման տեսչությունում» is one badge and badges are
+   white-space:nowrap by design, so at 320px it ran 92px past the row's info column and was
+   clipped — on the sell list, where «the ring is across town» is exactly the thing the row exists
+   to say. Inside a row's sub-line a badge may break between words rather than be cut; the same
+   call .badgerow already makes, for the same reason. Figures are untouched: only the sub-line's
+   badges are affected, and nothing in a sub-line is a number. */
+.prow .psub .badge,.cnrow .cnnm .s .badge{white-space:normal;text-align:left}
+.prow .psub>span,.cnrow .cnnm .s>span{min-width:0;overflow-wrap:anywhere}
 .prow .pw{flex:0 0 auto;text-align:right}
 .prow .pw .a{font-size:var(--fs-body-l);font-weight:700;
   font-variant-numeric:tabular-nums lining-nums;white-space:nowrap}
