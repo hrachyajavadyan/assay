@@ -744,6 +744,21 @@ input.err,textarea.err{border-color:var(--danger)}
    actually something to scroll to, and costs no JS. */
 .tbl td,.tbl th{overflow-wrap:break-word}
 .tblsub{display:none}
+/* .tblsub IS A FOLD: at wide widths the datum has its own column and the sub-line is redundant,
+   so it is hidden — on screen AND on paper. .subkeep is the opposite case: the sub-line is the
+   ONLY carrier of the datum, so it is always shown and always printed. Five signed documents
+   used .tblsub for data that has no column — the hand-over list's metal and հարգ, the count
+   act's out-of-shop piece codes and days, the customer-items block's metal, the repair
+   receipt's metal, հարգ AND distinguishing marks (the only identification of the customer's
+   gold on the custody receipt both parties sign, on a product that stores no photographs), and
+   the statement's bill and payment reference numbers, which are what an accountant reconciles
+   on. Every one of them vanished the moment the document was printed. */
+/* the unit-of-measure label that rides with a weight in a list row: small, dim, and never
+   competing with the figure — but always present, because a weight without its kind is a number
+   the scale can contradict. */
+.wlbl{font-size:var(--fs-micro);font-weight:600;color:var(--dim);letter-spacing:0}
+.subkeep{display:block;font-size:var(--fs-micro);font-weight:500;color:var(--dim);margin-top:2px;
+         letter-spacing:0;white-space:normal;overflow-wrap:normal;word-break:normal;line-height:1.3}
 .tfoldq{display:none}
 .tbl .badge{white-space:normal;text-align:left;line-height:1.25}
 /* On a phone a 5-column Armenian table can never be 324px wide by measuring its content, so it
@@ -820,11 +835,20 @@ input.err,textarea.err{border-color:var(--danger)}
    columns (Ապրանքի կոդ, Չափման միավոր) fold into a sub-line under the product name instead;
    print and CSV always carry the full seven. */
 @media screen and (max-width:560px){
+  /* THREE piece columns fold into the sub-line, not two. With only the two book/actual counts
+     folded, «Գումար, ֏» — the figure spec 5.4 says is what makes the count matter to the person
+     signing it — still sat two horizontal swipes off the right edge at 390px, on a table most
+     people never discover scrolls. Book, actual AND the piece difference now ride in the
+     sub-line under the metal and հարգ, which leaves five columns: հարգ, both weights, the gram
+     difference and the dram. Print carries all eight. */
   .acttbl th:nth-child(2),.acttbl td:nth-child(2),
-  .acttbl th:nth-child(3),.acttbl td:nth-child(3){display:none}
+  .acttbl th:nth-child(3),.acttbl td:nth-child(3),
+  .acttbl th:nth-child(6),.acttbl td:nth-child(6){display:none}
   .acttbl .actsub{display:block;font-size:var(--fs-micro);margin-top:3px}
   .acttbl th,.acttbl td{padding-left:3px;padding-right:3px}
   .acttbl{font-size:var(--fs-micro)}
+  /* the buy act has its own fold (columns 4 and 5) and only seven columns, so it keeps its Δ */
+  .acttbl.buyact th:nth-child(6),.acttbl.buyact td:nth-child(6){display:table-cell}
 }
 
 /* ---------- TOP BAR: one 52px row ---------- */
@@ -1391,6 +1415,8 @@ tr.hlflash{animation:none;background:var(--acc-tint)}
   .tbl{table-layout:auto !important}
   .tbl th,.tbl td{width:auto !important;display:table-cell !important;white-space:normal !important}
   .tblsub{display:none !important}
+  /* data, not a fold — see the .subkeep note above */
+  .subkeep{display:block !important;color:#333 !important;font-size:11px !important}
   /* the dram sign is INSIDE the .num it belongs to, so the td colour rule never reached it and
      it printed 8px light-grey on both documents. On paper every mark is ink. */
   .cur{color:#111 !important;font-size:max(.72em,12px) !important;font-weight:600 !important}
@@ -1877,7 +1903,10 @@ T.hy = {
   w_pure:'Մաքուր մետաղ', w_pure_s:'մաքուր', w_rate:'Շուկայի գին, 999 (֏/գ)', w_rate_s:'Շուկայի գին',
   w_margin:'Հավելագին %', w_buydisc:'Գնման զեղչ %', w_acq:'Ինքնարժեք',
   w_code:'Կոդ', w_cat:'Տեսակ', w_note:'Նշում', w_loc:'Տեղը', w_value:'Արժեքը',
-  w_sellrate:'Վաճառքի գին, 999', w_buyrate:'Գնման գին, 999',
+  w_sellrate:'Վաճառքի գին, 999', w_buyrate:'Գնման գին, 999', w_rate999:'Շուկայի գին, 999',
+  rate_zero:'Գինը չի կարող 0 լինել', rate_zero_d:'Առանց 999-ի գնի ամեն գին կորցնում է մետաղի բաժինը։ Մուտքագրե՛ք այսօրվա գինը ձեռքով։',
+  al_norate:'Օրվա գինը մուտքագրված չէ', al_norate_m:'{m}՝ օրվա գինը մուտքագրված չէ',
+  sl_norate:'{m}-ի 999 գինը մուտքագրված չէ։ Առանց դրա այս իրի գինը մետաղի բաժին չունի — վաճառքն արգելափակված է։',
   w_acqn:'{n} ձեռքբերում', badge_nocost:'Ինքնարժեք չկա',
   buydisc_unset:'Գնման զեղչը դեռ նշված չէ — մուտքագրեք Տվյալներ բաժնում',
   buydisc_unset_f:'Գնման զեղչը դեռ նշված չէ',
@@ -2046,6 +2075,7 @@ T.hy = {
   cn_left:'{n} դեռ չհաշվառված',
   cn_present:'Կա', cn_absent:'Չկա', cn_reweigh:'Կշռել',
   cn_reweigh_t:'Վերակշռում', cn_reweigh_lbl:'Փաստացի զուտ քաշը (գ)',
+  cn_reweigh_lbl_g:'Փաստացի համախառն քաշը (գ)',
   cn_reweigh_note:'Վերակշռումը գրանցվում է որպես ճշգրտում՝ իրի քաշը կհետևի հաշվեկշռին։',
   cn_reweigh_save:'Գրանցել կշիռը', cn_reweigh_clear:'Չեղարկել կշիռը',
   cn_pool_w:'Կշռված (գ)',
@@ -2058,8 +2088,9 @@ T.hy = {
   cn_marked_w:'կշռված',
   cn_act:'ԳՈՒՅՔԱԳՐՄԱՆ ԱԿՏ',
   cn_act_basis:'Հիմք՝ խանութի ղեկավարի որոշում',
-  cn_col_harg:'Հարգ', cn_col_bpcs:'Հաշվապ. հատ', cn_col_apcs:'Փաստ. հատ',
-  cn_col_bg:'Հաշվապ. քաշ, գ', cn_col_ag:'Փաստ. քաշ, գ',
+  cn_col_harg:'Մետաղ · Հարգ', cn_col_bpcs:'Հաշվապ. հատ', cn_col_apcs:'Փաստ. հատ',
+  cn_col_bg:'Հաշվապ. զուտ քաշ, գ', cn_col_ag:'Փաստ. զուտ քաշ, գ',
+  cn_col_atw:'Կշռման պահին, գ', cn_col_now:'Այժմ, գ',
   cn_col_dpcs:'Տարբ. հատ', cn_col_dg:'Տարբ. գ', cn_col_amd:'Գումար, ֏',
   cn_out:'Դուրս գտնվող իրեր',
   cn_out_note:'Այս իրերը խանութի պաշարն են, բայց խանութում չեն։ Հաշվառման շրջանակում չեն և պակասորդ չեն։',
@@ -2067,7 +2098,15 @@ T.hy = {
   cn_cust:'Հաճախորդի իրեր',
   cn_cust_note:'Հաճախորդի սեփականությունն է՝ խանութի պաշար չէ, արժեքի և գույքագրման մեջ չի մտնում։ Նշվում է, որպեսզի ստորագրողը իմանա՝ ինչ կա խանութում, որ իրենը չէ։',
   cn_uncounted:'Չհաշվառված',
-  cn_uncounted_note:'Այս իրերը չեն հասցվել հաշվառել։ Տարբերություն չի գրանցվել — դրանք ո՛չ ավելցուկ են, ո՛չ պակասորդ։',
+  cn_uncounted_note:'Այս միավորները չեն հասցվել հաշվառել։ Դրանց փաստացի քանակը չի դիտարկվել, ուստի ակտի «Փաստ.» սյուները դրանց չեն վերաբերում և տարբերություն չի գրանցվել — դրանք ո՛չ ավելցուկ են, ո՛չ պակասորդ։',
+  cn_counted_t:'Հաշվառված միավորներ', cn_counted_only:'միայն հաշվառված մասը',
+  cn_nodiff_part:'Հաշվառված մասում տարբերություն չկա',
+  cn_unc_warn:'{n} միավոր չի հաշվառվել։ Ակտի «Փաստ.» սյուները դրանց չեն վերաբերում։',
+  cn_pure_d:'Տարբ. մաքուր մետաղ',
+  cn_pure_note:'Մաքուր մետաղը ցուցադրվում է 3 տասնորդականով։ Դրամային գումարը վերևի տողերի գումարն է, ոչ թե այս երկու թվերի տարբերության արտադրյալը։',
+  cn_moved_t:'Շարժ հաշվառման ընթացքում',
+  cn_moved_note:'Այս մնացորդները փոխվել են կշռման և ակտի կազմման միջև։ «Հաշվապ.» սյունը կշռման պահի մնացորդն է. ակտը դրանից հետո եղած շարժը չի ճշգրտում։',
+  cn_moved_refused:'Ճշգրտումը չի կիրառվել',
   cn_surplus:'Ավելցուկ', cn_short:'Պակասորդ', cn_nodiff:'Տարբերություն չկա',
   cn_pure_book:'Հաշվապ. մաքուր մետաղ', cn_pure_act:'Փաստ. մաքուր մետաղ', cn_pure_diff:'Տարբերությունը',
   cn_val_diff:'Տարբերության արժեքն այսօրվա 999 գնով',
@@ -2157,6 +2196,8 @@ T.hy = {
   db_norows:'Այս մատակարարի համար գրառումներ չկան',
   db_owes:'Պարտք կա', db_settled:'Փակված է', db_prepaid:'Կանխավճար',
   db_nbills:'{n} հաշիվ', db_npays:'{n} վճարում',
+  db_prepaid_tot:'Կանխավճարներ', db_why_owing:'միայն պարտք ունեցողները',
+  db_why_credit:'Վճարումներ − հաշիվներ · {n} մատակարար կանխավճարով',
   /* ---- the recovery net (ArmTrade's own strings) ---- */
   rec_title:'Ծրագիրը չկարողացավ բացել էջը',
   rec_body:'Տվյալների մի մասը վնասված է։ Կարող եք վերականգնել վերջին ճիշտ վիճակը՝ առանց հեռախոսից որևէ բան ջնջելու։',
@@ -2182,8 +2223,11 @@ T.en = {
   w_pure:'Pure metal', w_pure_s:'pure', w_rate:'Market rate, 999 (֏/g)', w_rate_s:'Market rate',
   w_margin:'Margin %', w_buydisc:'Buy-in discount %', w_acq:'Acquisition cost',
   w_code:'Code', w_cat:'Category', w_note:'Note', w_loc:'Location', w_value:'Value',
-  w_sellrate:'Sell rate, 999', w_buyrate:'Buy rate, 999',
-  w_acqn:'{n} acquisitions', badge_nocost:'no cost basis',
+  w_sellrate:'Sell rate, 999', w_buyrate:'Buy rate, 999', w_rate999:'Market rate, 999',
+  rate_zero:'A rate of nothing is not a rate', rate_zero_d:'Without the 999 rate every price loses its metal component. Enter today\'s rate by hand.',
+  al_norate:'Today\'s rate has not been entered', al_norate_m:'{m}: today\'s rate has not been entered',
+  sl_norate:'The 999 rate for {m} has not been entered. Without it this piece\'s price carries no metal — selling is blocked.',
+  w_acqn:'{n} acquisition|{n} acquisitions', badge_nocost:'no cost basis',
   buydisc_unset:'The buy-in discount has not been set — enter it under Data',
   buydisc_unset_f:'The buy-in discount has not been set',
   brk_val:'pure metal × the 999 rate',
@@ -2208,7 +2252,7 @@ T.en = {
   acq_locked:'Acquisition cost is locked — it is a tax position, not a note. A correction is recorded as its own movement.',
   rate_title:"Today's rate", rate_src_cb:'CB', rate_src_manual:'entered by hand',
   rate_age_now:'just now', rate_age_h:'{n} h ago', rate_age_d:'{n} d ago',
-  rate_stale:'The rate is {n} days old — update it',
+  rate_stale:'The rate is {n} day old — update it|The rate is {n} days old — update it',
   rate_edit:'Change the rate', rate_ask:'Enter the price of 1 gram of 999 gold, in dram',
   rate_saved:'Rate recorded',
   rate_unavail:'Market rate unavailable — enter it by hand',
@@ -2222,8 +2266,8 @@ T.en = {
   home_title:'Today', home_stock:'Stock in the tray', home_pure:'Pure metal',
   home_val:"Value at today's rate", home_pieces:'Items in the tray',
   home_alerts:'Needs attention', home_ok:'Nothing needs attention',
-  al_nocost:'{n} items with no documented acquisition cost',
-  al_assay:'{n} items out at the assay office',
+  al_nocost:'{n} item with no documented acquisition cost|{n} items with no documented acquisition cost',
+  al_assay:'{n} item out at the assay office|{n} items out at the assay office',
   al_rate:"Today's rate has not been updated",
   tray_title:'Tray', tray_bulk:'Bulk pools', tray_pcs:'Items',
   tray_sub:'{n} pcs', tray_pure_lbl:'Total pure metal',
@@ -2238,7 +2282,7 @@ T.en = {
   ni_weighed:'Which weight did you put on the scale?', acq_nodoc:'No document',
   led_title:'Stock movements', led_actor:'By', actor_shop:'Shop', actor_system:'System',
   led_verify_ok:'Ledger is consistent — {n} movements, {m} subjects',
-  led_verify_bad:'Ledger disagrees on {n} subjects',
+  led_verify_bad:'Ledger disagrees on {n} subject|Ledger disagrees on {n} subjects',
   led_rejected:'Movement refused: {r}',
   rej_piece_whole:'a piece cannot be partially sold',
   rej_negative:'on-hand cannot go negative',
@@ -2255,7 +2299,7 @@ T.en = {
   stub_title:'This screen is not built yet',
   stub_recv:'Goods receipt from a supplier, by weight, capturing cost basis.',
   sl_search:'Search by code or name',
-  sl_avail:'{n} items available to sell',
+  sl_avail:'{n} item available to sell|{n} items available to sell',
   sl_noresult:'No item matches that code or name',
   sl_sheet:'Sell an item',
   sl_yourprice:'Your price (֏)',
@@ -2311,9 +2355,9 @@ T.en = {
   home_takings:'Taken in today', home_payouts:'Paid out today',
   home_no_sales:'No sales recorded today', home_no_buys:'No buy-ins recorded today',
   home_hdm:'Fiscal receipt coverage',
-  home_hdm_sub:"{k} of this month's {n} sales carry a fiscal receipt number",
+  home_hdm_sub:"{k} of this month's {n} sale carries a fiscal receipt number|{k} of this month's {n} sales carry a fiscal receipt number",
   home_hdm_none:'No sales this month yet',
-  al_hdm:'{n} sales with no fiscal receipt number',
+  al_hdm:'{n} sale with no fiscal receipt number|{n} sales with no fiscal receipt number',
   al_hdm_d:'The number is recorded on this device only — nothing is transmitted.',
   cn_scope:'What are we counting?',
   cn_scope_all:'Everything', cn_scope_tray:'Display case', cn_scope_safe:'Safe',
@@ -2329,6 +2373,7 @@ T.en = {
   cn_left:'{n} still to count',
   cn_present:'Here', cn_absent:'Missing', cn_reweigh:'Weigh',
   cn_reweigh_t:'Re-weigh', cn_reweigh_lbl:'Actual net weight (g)',
+  cn_reweigh_lbl_g:'Actual gross weight (g)',
   cn_reweigh_note:'A re-weigh is recorded as an adjustment — the item\'s weight then follows the ledger.',
   cn_reweigh_save:'Record the weight', cn_reweigh_clear:'Drop the weight',
   cn_pool_w:'Weighed (g)',
@@ -2341,8 +2386,9 @@ T.en = {
   cn_marked_w:'weighed',
   cn_act:'STOCK COUNT ACT',
   cn_act_basis:"Basis: the shop owner's decision",
-  cn_col_harg:'Fineness', cn_col_bpcs:'Book pcs', cn_col_apcs:'Actual pcs',
-  cn_col_bg:'Book weight, g', cn_col_ag:'Actual weight, g',
+  cn_col_harg:'Metal · Fineness', cn_col_bpcs:'Book pcs', cn_col_apcs:'Actual pcs',
+  cn_col_bg:'Book net weight, g', cn_col_ag:'Actual net weight, g',
+  cn_col_atw:'At weighing, g', cn_col_now:'Now, g',
   cn_col_dpcs:'Diff. pcs', cn_col_dg:'Diff. g', cn_col_amd:'Amount, ֏',
   cn_out:'Pieces out of the shop',
   cn_out_note:'These are the shop\'s stock but are not in the shop. They are outside the count scope and are not a shortage.',
@@ -2350,7 +2396,15 @@ T.en = {
   cn_cust:"Customer's items",
   cn_cust_note:"The customer's property — not the shop's stock, and in neither the valuation nor the count. Listed so the person signing knows what is in the shop that is not the shop's.",
   cn_uncounted:'Not counted',
-  cn_uncounted_note:'These were not reached. No difference was recorded — they are neither a surplus nor a shortage.',
+  cn_uncounted_note:'These subjects were not reached. Nobody observed them, so the act\'s “Actual” columns do not cover them and no difference was recorded — they are neither a surplus nor a shortage.',
+  cn_counted_t:'Counted subjects', cn_counted_only:'counted part only',
+  cn_nodiff_part:'No difference in the counted part',
+  cn_unc_warn:'{n} subject was not counted. The act\'s “Actual” columns do not cover it.|{n} subjects were not counted. The act\'s “Actual” columns do not cover them.',
+  cn_pure_d:'Pure metal difference',
+  cn_pure_note:'Pure metal is shown to 3 dp. The dram figure is the sum of the rows above, not the product of these two figures.',
+  cn_moved_t:'Stock moved during the count',
+  cn_moved_note:'These balances changed between the weighing and the act. The “Book” column is the balance at the moment of weighing; the act does not adjust for movements after it.',
+  cn_moved_refused:'Adjustment not applied',
   cn_surplus:'Surplus', cn_short:'Shortage', cn_nodiff:'No difference',
   cn_pure_book:'Book pure metal', cn_pure_act:'Actual pure metal', cn_pure_diff:'Difference',
   cn_val_diff:"Value of the difference at today's 999 rate",
@@ -2393,7 +2447,7 @@ T.en = {
   hm_days_cfg:'Remind me if a piece is at the office longer than (days)',
   hm_days_note:"This is your own reminder threshold. The app asserts nothing about the office's turnaround.",
   hm_sends:'Previous lists',
-  al_hm_late:'{n} items at the assay office longer than {d} days',
+  al_hm_late:'{n} item at the assay office longer than {d} days|{n} items at the assay office longer than {d} days',
   rp_intro:'A repair is a custody problem, not an inventory one. The customer\'s metal enters and leaves the shop without ever becoming the shop\'s stock.',
   rp_custody:"This item belongs to the customer. It is in no on-hand figure, no valuation and no count, and it posts no movement.",
   rp_oncount:'On the count act these are listed separately, in a «Customer\'s items» block, with a count and a total weight.',
@@ -2436,7 +2490,9 @@ T.en = {
   db_stmt_note:'Drawn up in two copies, one for each party. The figures come from the books on this device.',
   db_norows:'No entries for this supplier',
   db_owes:'Owing', db_settled:'Settled', db_prepaid:'Paid ahead',
-  db_nbills:'{n} bills', db_npays:'{n} payments',
+  db_nbills:'{n} bill|{n} bills', db_npays:'{n} payment|{n} payments',
+  db_prepaid_tot:'Prepayments', db_why_owing:'suppliers in debit only',
+  db_why_credit:'Payments − bills · {n} supplier in credit|Payments − bills · {n} suppliers in credit',
   rec_title:'The app could not open this screen',
   rec_body:'Part of the data is damaged. You can restore the last good state without deleting anything from the phone.',
   rec_restore:'Restore the last good state',
@@ -2461,8 +2517,11 @@ T.ru = {
   w_pure:'Чистый металл', w_pure_s:'чистый', w_rate:'Рыночная цена, 999 (֏/г)', w_rate_s:'Рыночная цена',
   w_margin:'Наценка %', w_buydisc:'Дисконт закупки %', w_acq:'Себестоимость',
   w_code:'Код', w_cat:'Вид', w_note:'Примечание', w_loc:'Место', w_value:'Стоимость',
-  w_sellrate:'Цена продажи, 999', w_buyrate:'Цена закупки, 999',
-  w_acqn:'{n} приобретений', badge_nocost:'нет себестоимости',
+  w_sellrate:'Цена продажи, 999', w_buyrate:'Цена закупки, 999', w_rate999:'Рыночная цена, 999',
+  rate_zero:'Цена не может быть нулевой', rate_zero_d:'Без цены 999 каждая цена теряет металлическую часть. Введите сегодняшнюю цену вручную.',
+  al_norate:'Цена дня не введена', al_norate_m:'{m}: цена дня не введена',
+  sl_norate:'Цена 999 для «{m}» не введена. Без неё цена изделия не содержит металла — продажа заблокирована.',
+  w_acqn:'{n} приобретение|{n} приобретения|{n} приобретений', badge_nocost:'нет себестоимости',
   buydisc_unset:'Дисконт закупки не задан — укажите его в разделе «Данные»',
   buydisc_unset_f:'Дисконт закупки не задан',
   brk_val:'чистый металл × цена 999',
@@ -2501,8 +2560,8 @@ T.ru = {
   home_title:'Сегодня', home_stock:'Запас в витрине', home_pure:'Чистый металл',
   home_val:'Стоимость по сегодняшней цене', home_pieces:'Изделий в витрине',
   home_alerts:'Требует внимания', home_ok:'Всё в порядке',
-  al_nocost:'{n} изделий без документированной себестоимости',
-  al_assay:'{n} изделий в пробирной',
+  al_nocost:'{n} изделие без документированной себестоимости|{n} изделия без документированной себестоимости|{n} изделий без документированной себестоимости',
+  al_assay:'{n} изделие в пробирной|{n} изделия в пробирной|{n} изделий в пробирной',
   al_rate:'Цена дня не обновлена',
   tray_title:'Витрина', tray_bulk:'Накопления', tray_pcs:'Изделия',
   tray_sub:'{n} шт', tray_pure_lbl:'Итого чистого металла',
@@ -2517,7 +2576,7 @@ T.ru = {
   ni_weighed:'Какой вес вы взвесили?', acq_nodoc:'Нет документа',
   led_title:'История движений', led_actor:'Кто', actor_shop:'Магазин', actor_system:'Система',
   led_verify_ok:'Баланс сходится — {n} движений, {m} объектов',
-  led_verify_bad:'Баланс не сходится по {n} объектам',
+  led_verify_bad:'Баланс не сходится по {n} объекту|Баланс не сходится по {n} объектам|Баланс не сходится по {n} объектам',
   led_rejected:'Движение отклонено: {r}',
   rej_piece_whole:'изделие нельзя продать частично',
   rej_negative:'остаток не может быть отрицательным',
@@ -2534,7 +2593,7 @@ T.ru = {
   stub_title:'Этот экран ещё не готов',
   stub_recv:'Приёмка от поставщика — по весу, с себестоимостью.',
   sl_search:'Поиск по коду или названию',
-  sl_avail:'{n} изделий к продаже',
+  sl_avail:'{n} изделие к продаже|{n} изделия к продаже|{n} изделий к продаже',
   sl_noresult:'Изделие с таким кодом или названием не найдено',
   sl_sheet:'Продажа изделия',
   sl_yourprice:'Ваша цена (֏)',
@@ -2590,9 +2649,9 @@ T.ru = {
   home_takings:'Поступило за день', home_payouts:'Выплачено за день',
   home_no_sales:'Продаж сегодня не зарегистрировано', home_no_buys:'Закупок сегодня не зарегистрировано',
   home_hdm:'Покрытие чеками ККМ',
-  home_hdm_sub:'{k} из {n} продаж этого месяца имеют номер чека ККМ',
+  home_hdm_sub:'{k} из {n} продажи этого месяца имеет номер чека ККМ|{k} из {n} продаж этого месяца имеют номер чека ККМ|{k} из {n} продаж этого месяца имеют номер чека ККМ',
   home_hdm_none:'Продаж в этом месяце пока нет',
-  al_hdm:'{n} продаж без номера чека ККМ',
+  al_hdm:'{n} продажа без номера чека ККМ|{n} продажи без номера чека ККМ|{n} продаж без номера чека ККМ',
   al_hdm_d:'Номер записывается только на этом устройстве — ничего не передаётся.',
   cn_scope:'Что считаем?',
   cn_scope_all:'Всё', cn_scope_tray:'Витрина', cn_scope_safe:'Сейф',
@@ -2608,6 +2667,7 @@ T.ru = {
   cn_left:'{n} ещё не посчитано',
   cn_present:'Есть', cn_absent:'Нет', cn_reweigh:'Взвесить',
   cn_reweigh_t:'Перевзвешивание', cn_reweigh_lbl:'Фактический вес нетто (г)',
+  cn_reweigh_lbl_g:'Фактический вес брутто (г)',
   cn_reweigh_note:'Перевзвешивание записывается как корректировка — вес изделия последует за реестром.',
   cn_reweigh_save:'Записать вес', cn_reweigh_clear:'Убрать вес',
   cn_pool_w:'Взвешено (г)',
@@ -2620,8 +2680,9 @@ T.ru = {
   cn_marked_w:'взвешено',
   cn_act:'АКТ ИНВЕНТАРИЗАЦИИ',
   cn_act_basis:'Основание: решение руководителя магазина',
-  cn_col_harg:'Проба', cn_col_bpcs:'Учёт. шт', cn_col_apcs:'Факт. шт',
-  cn_col_bg:'Учёт. вес, г', cn_col_ag:'Факт. вес, г',
+  cn_col_harg:'Металл · Проба', cn_col_bpcs:'Учёт. шт', cn_col_apcs:'Факт. шт',
+  cn_col_bg:'Учёт. вес нетто, г', cn_col_ag:'Факт. вес нетто, г',
+  cn_col_atw:'На момент взвешивания, г', cn_col_now:'Сейчас, г',
   cn_col_dpcs:'Разн. шт', cn_col_dg:'Разн. г', cn_col_amd:'Сумма, ֏',
   cn_out:'Изделия вне магазина',
   cn_out_note:'Это запас магазина, но его нет в магазине. В объём инвентаризации не входит и недостачей не является.',
@@ -2629,7 +2690,15 @@ T.ru = {
   cn_cust:'Изделия клиентов',
   cn_cust_note:'Собственность клиента — не запас магазина, не входит ни в оценку, ни в инвентаризацию. Указано, чтобы подписывающий знал, что в магазине лежит чужое.',
   cn_uncounted:'Не посчитано',
-  cn_uncounted_note:'До них не дошли. Разница не зафиксирована — это ни излишек, ни недостача.',
+  cn_uncounted_note:'До этих позиций не дошли. Их фактическое наличие никто не наблюдал, поэтому колонки «Факт.» акта к ним не относятся и разница не зафиксирована — это ни излишек, ни недостача.',
+  cn_counted_t:'Посчитанные позиции', cn_counted_only:'только посчитанная часть',
+  cn_nodiff_part:'В посчитанной части разницы нет',
+  cn_unc_warn:'{n} позиция не посчитана. Колонки «Факт.» акта к ней не относятся.|{n} позиции не посчитаны. Колонки «Факт.» акта к ним не относятся.|{n} позиций не посчитано. Колонки «Факт.» акта к ним не относятся.',
+  cn_pure_d:'Разница чистого металла',
+  cn_pure_note:'Чистый металл показан с 3 знаками. Сумма в драмах — это сумма строк выше, а не произведение разницы этих двух чисел на цену.',
+  cn_moved_t:'Движение во время инвентаризации',
+  cn_moved_note:'Эти остатки изменились между взвешиванием и составлением акта. Колонка «Учёт.» — остаток на момент взвешивания; акт не корректирует движения после него.',
+  cn_moved_refused:'Корректировка не применена',
   cn_surplus:'Излишек', cn_short:'Недостача', cn_nodiff:'Разницы нет',
   cn_pure_book:'Учёт. чистый металл', cn_pure_act:'Факт. чистый металл', cn_pure_diff:'Разница',
   cn_val_diff:'Стоимость разницы по сегодняшней цене 999',
@@ -2672,7 +2741,7 @@ T.ru = {
   hm_days_cfg:'Напомнить, если изделие в инспекции дольше (дней)',
   hm_days_note:'Это ваш собственный порог напоминания. О сроках инспекции приложение ничего не утверждает.',
   hm_sends:'Прежние списки',
-  al_hm_late:'{n} изделий в инспекции дольше {d} дней',
+  al_hm_late:'{n} изделие в инспекции дольше {d} дней|{n} изделия в инспекции дольше {d} дней|{n} изделий в инспекции дольше {d} дней',
   rp_intro:'Ремонт — вопрос хранения, а не запаса. Металл клиента входит в магазин и выходит из него, ни разу не становясь запасом магазина.',
   rp_custody:'Это изделие принадлежит клиенту. Оно не входит ни в остаток, ни в оценку, ни в инвентаризацию и не создаёт ни одного движения.',
   rp_oncount:'В акте инвентаризации такие изделия указываются отдельно, в блоке «Изделия клиентов», с количеством и общим весом.',
@@ -2715,7 +2784,9 @@ T.ru = {
   db_stmt_note:'Составлен в двух экземплярах, по одному каждой стороне. Данные взяты из книг на этом устройстве.',
   db_norows:'Записей по этому поставщику нет',
   db_owes:'Есть долг', db_settled:'Закрыт', db_prepaid:'Аванс',
-  db_nbills:'{n} счетов', db_npays:'{n} платежей',
+  db_nbills:'{n} счёт|{n} счёта|{n} счетов', db_npays:'{n} платёж|{n} платежа|{n} платежей',
+  db_prepaid_tot:'Авансы', db_why_owing:'только должники',
+  db_why_credit:'Платежи − счета · {n} поставщик с авансом|Платежи − счета · {n} поставщика с авансом|Платежи − счета · {n} поставщиков с авансом',
   rec_title:'Приложение не смогло открыть экран',
   rec_body:'Часть данных повреждена. Можно восстановить последнее исправное состояние, ничего не удаляя с телефона.',
   rec_restore:'Восстановить последнее исправное состояние',
@@ -2726,7 +2797,32 @@ let lang = 'hy';
 /* the lookup falls back hy -> en rather than returning the raw key: a missing key must degrade to
    a real word in a language the reader may still know, never to `tray_pure_lbl` on the screen. */
 const t = k => { const v = T[lang][k]; return v!=null ? v : (T.hy[k]!=null ? T.hy[k] : (T.en[k]!=null ? T.en[k] : '')); };
-const fmt = (k, vals) => String(t(k)).replace(/\{(\w+)\}/g, (_,x)=> (vals && vals[x]!=null) ? vals[x] : '');
+/* PLURALS. Every {n}-bearing string used to be one hard-coded form, so English read
+   «1 items with no documented acquisition cost» and Russian «1 изделий …» — on the home screen,
+   the first thing a non-Armenian user sees. Armenian has no count inflection here, so the defect
+   was invisible in the language the build is reviewed in. A T value may now carry its forms
+   separated by «|» and fmt picks by the active language's own rule: Armenian one form, English
+   two (1 / other), Russian three (1 / 2–4 / 5+, with 11–14 taking the many form). A key with no
+   «|» is unaffected, which is every other string in the table. */
+const PLURAL = {
+  hy: () => 0,
+  en: n => (Math.abs(n) === 1 ? 0 : 1),
+  ru: n => { const a = Math.abs(Math.round(n)) % 100, b = a % 10;
+             if(a >= 11 && a <= 14) return 2;
+             if(b === 1) return 0;
+             if(b >= 2 && b <= 4) return 1;
+             return 2; }
+};
+const fmt = (k, vals) => {
+  let str = String(t(k));
+  if(str.indexOf('|') >= 0){
+    const forms = str.split('|');
+    const n = (vals && vals.n != null) ? num(vals.n) : 0;
+    const i = (PLURAL[lang] || PLURAL.hy)(n);
+    str = forms[Math.min(Math.max(0,i), forms.length - 1)];
+  }
+  return str.replace(/\{(\w+)\}/g, (_,x)=> (vals && vals[x]!=null) ? vals[x] : '');
+};
 /* the movement label reads straight out of the table, exactly as ArmTrade's moveLabel() does */
 const moveLabel = type => T[lang]['mv_'+type] ? t('mv_'+type) : String(type||'');
 const catLabel = c => T[lang]['cat_'+c] ? t('cat_'+c) : String(c||'');
@@ -2994,10 +3090,15 @@ function postMove(m){
   mv.uuid = uuid;
   mv.n = ++S.moveSeq;
   S.moves.push(mv);
-  /* THE ONLY WRITE TO THE ON-HAND CACHE IN THE WHOLE PRODUCT. Not rounded: rebuildStock() folds
-     the same numbers in the same order, and eqG() covers a cache that came back through
-     migrate()'s clamp. */
-  S.stock[mv.subject] = LEDGER.fold(onHand(mv.subject), LEDGER.delta(mv));
+  /* THE ONLY WRITE TO THE ON-HAND CACHE IN THE WHOLE PRODUCT, and it goes through
+     LEDGER.clamp — which spec 4 registers as round3 precisely so the persisted cache is decimal
+     grams to 3 dp on every path. It used to fold raw floats, so `128.4` came back from a reload
+     as `128.39999999999998`: verifyLedger()'s epsilon and pieceRows()' `on > EPS` hid it on the
+     screen, but the cache is what gets PERSISTED and (spec 9) synced as an opaque blob, and two
+     devices folding the same log in a different order then produce different bytes for the same
+     shop. rebuildStock() clamps at every step for the same reason and in the same order, so the
+     two writers agree exactly rather than within an epsilon. */
+  S.stock[mv.subject] = LEDGER.clamp(LEDGER.fold(onHand(mv.subject), LEDGER.delta(mv)));
   /* the piece record follows the ledger, not the other way round: see syncPieceWeight. This is
      part of the write, not an annotation — leaving it out is what let on-hand and netG diverge. */
   syncPieceWeight(mv);
@@ -3009,7 +3110,9 @@ function postMoves(arr){ let n = 0; (arr||[]).forEach(m => { if(postMove(m)) n++
 
 function rebuildStock(){
   const c = {};
-  (S.moves||[]).forEach(m => { if(m && m.subject) c[m.subject] = (c[m.subject]||0) + num(m.dq); });
+  /* clamped at every step, exactly as postMove's incremental write is — see the note there. */
+  (S.moves||[]).forEach(m => { if(m && m.subject)
+    c[m.subject] = LEDGER.clamp(LEDGER.fold(c[m.subject]||LEDGER.zero, LEDGER.delta(m))); });
   return c;
 }
 /* the invariant is not "cache equals rebuild". It is "on-hand is a real number AND equals the sum
@@ -3235,7 +3338,13 @@ function fairValueWarn(computed, manual){
      so the headline asserted that the very figure it was warning about was not below the
      threshold — a ~1,500 ֏ wide band on a 300,000 ֏ piece where the warning contradicted its own
      stated reason. */
-  return { computed:c, floor: floor, manual:m, pct: Math.floor(m*100/c) };
+  /* THE PERCENTAGE IS TAKEN AGAINST THE PRINTED FLOOR, NOT AGAINST c. Flooring m*100/c is right
+     for the wider band, but at the floor itself it left a ~1 ֏ window where the headline said
+     «79%» directly above a sub-line calling the identical figure 80%: the sheet names 232,038 as
+     the floor, and floor(232038*100/290048) is 79. A price AT the printed floor is, by the
+     document's own arithmetic, 80%. */
+  const pct = m >= floor ? 80 : Math.floor(m*100/c);
+  return { computed:c, floor: floor, manual:m, pct: pct };
 }
 
 /* =====================================================================================
@@ -3342,7 +3451,12 @@ function migrate(st){
         sentTs: Math.max(0, safeInt(hm.sentTs, 0)),
         backTs: Math.max(0, safeInt(hm.backTs, 0)),
         docRef: String(hm.docRef || '').slice(0,40),
-        office: String(hm.office || '').slice(0,60)
+        office: String(hm.office || '').slice(0,60),
+        /* WHERE THE PIECE CAME FROM when it was handed over. A return used to put every piece in
+           the tray unconditionally, which silently moved safe stock into the display case — and
+           then changed what a Ցուցափեղկ-scoped count expected to find. Defaults to the tray for
+           records written before this field existed, which is what those builds did anyway. */
+        from: ['tray','safe','workshop'].indexOf(hm.from) >= 0 ? hm.from : 'tray'
       },
       /* CUSTODY, NOT A MOVEMENT. Changing this never touches the ledger. */
       location: ['tray','safe','assay','workshop','out'].indexOf(p.location) >= 0 ? p.location : 'tray',
@@ -3952,11 +4066,34 @@ function setTab(k){
    SHEETS AND TOASTS
    ===================================================================================== */
 function openModal(inner){
-  document.getElementById('modalRoot').innerHTML =
+  const r = document.getElementById('modalRoot');
+  /* keep the reader where they were: a repaint driven by a display-convention change (language,
+     gram decimals, making base) must not throw the sheet back to its top. */
+  const prev = r.querySelector('.modal');
+  const y = prev ? prev.scrollTop : 0;
+  r.innerHTML =
     '<div class="modal" onclick="if(event.target===this)closeModal()">'
     + '<div class="mbody"><div class="grabber"></div>' + inner + '</div></div>';
+  if(y){ try{ r.querySelector('.modal').scrollTop = y; }catch(e){} }
 }
-function closeModal(){ document.getElementById('modalRoot').innerHTML = ''; }
+function closeModal(){ MODAL_RE = null; document.getElementById('modalRoot').innerHTML = ''; }
+
+/* ---- AN OPEN SHEET IS PART OF THE SCREEN, so a global repaint must repaint it too ----
+   renderAll() rebuilds #top, #app and #nav and never touched #modalRoot, so switching the
+   language with a sheet open left «Իրի վաճառք» sitting in Armenian over an English screen — and,
+   worse, any in-sheet control that changes a DISPLAY CONVENTION (the gram decimal setting, the
+   making-charge base) left the sheet showing the old formatting of numbers the jeweller was
+   about to act on. Every sheet is drawn by a function that reads its state from a module global
+   rather than from the DOM, so re-invoking that function with the same arguments is a faithful
+   redraw; the wrapper records the call, closeModal() forgets it, and a redraw that throws
+   forgets itself rather than looping. */
+let MODAL_RE = null;
+function repaintSheet(){
+  const re = MODAL_RE;
+  if(!re) return;
+  if(!document.getElementById('modalRoot').innerHTML){ MODAL_RE = null; return; }
+  try{ re(); }catch(e){ MODAL_RE = null; }
+}
 /* a modal dismisses on Escape. The product targets a phone, where the backdrop tap and the Փակել
    button are the exits — but the ԳՆՄԱՆ ԱԿՏ and the hand-over lists are read and closed on a
    keyboard-attached device at the counter, and a sheet that swallows Escape reads as stuck. The
@@ -4045,6 +4182,9 @@ function openRate(){
       + escH(t('u_g')) + ')</label>'
     + '<input id="rateAg" type="number" inputmode="numeric" min="0" step="1" value="'
       + safeAmd(S.rate.silver999,0) + '">'
+    + '<div id="rateWarn">' + (base999() > 0 ? '' : '<div class="alert bad" style="margin-top:10px">'
+        + '<div class="t">' + escH(t('rate_zero')) + '</div>'
+        + '<div class="d">' + escH(t('rate_zero_d')) + '</div></div>') + '</div>'
     + '<button class="btn primary" style="margin-top:16px" onclick="saveRate()">' + escH(t('save')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('close')) + '</button>');
   setTimeout(() => { try{ document.getElementById('rateIn').focus(); }catch(e){} }, 60);
@@ -4052,6 +4192,21 @@ function openRate(){
 function saveRate(){
   const v = safeAmd(document.getElementById('rateIn').value, 0);
   const a = safeAmd(document.getElementById('rateAg').value, 0);
+  /* A RATE OF NOTHING IS NOT A RATE. safeAmd('') is 0, so a cleared field used to be stored with
+     src:'manual' and at:now — which made rateStale() false and the card read «հենց նոր», while
+     every price in the shop silently lost its metal component: a 168,972 ֏ ring priced at 59,320
+     and sold at it, on a piece whose own acquisition cost was 129,000. Spec 2.1 says a failed
+     rate is ASKED FOR BY HAND, never worked around, so this is refused at the door rather than
+     absorbed. The silver rate is a different case and may legitimately be unset (spec 11: v1
+     enters it by hand), which is why only the 999 gold anchor is guarded here — the sell sheet
+     guards the metal it is actually selling. */
+  if(!(v > 0)){
+    const w = document.getElementById('rateWarn');
+    if(w) w.innerHTML = '<div class="alert bad" style="margin-top:10px"><div class="t">'
+      + escH(t('rate_zero')) + '</div><div class="d">' + escH(t('rate_zero_d')) + '</div></div>';
+    try{ document.getElementById('rateIn').focus(); }catch(e){}
+    return;
+  }
   S.rate.base999 = v; S.rate.silver999 = a;
   S.rate.at = Math.max(Date.now(), S.today); S.rate.src = 'manual'; S.rate.by = 'shop';
   saveState(); closeModal(); renderAll(); toast(t('rate_saved'));
@@ -4093,6 +4248,12 @@ function viewHome(){
   const payouts = buys.reduce((a,x) => a + safeAmd(x.paid,0), 0);
   const cov = hdmCoverage();
   const alerts = [];
+  /* A MISSING RATE IS LOUDER THAN A STALE ONE: with no rate every price in the shop is the
+     making charge and the stones alone, and nothing else on this screen says so. */
+  const noRate = METALS.filter(m => !(metalRate999(m) > 0) && pureByMetal()[m] > EPS);
+  if(!(base999() > 0)) alerts.push({ bad:true, t: t('al_norate'), d: t('rate_zero_d') });
+  else if(noRate.length) alerts.push({ bad:true, t: fmt('al_norate_m', { m: noRate.map(metalLabel).join(', ') }),
+                                       d: t('rate_zero_d') });
   if(rateStale()) alerts.push({ bad:true, t: t('al_rate'), d: rateAgeTxt() });
   if(cov.miss) alerts.push({ bad:true, t: fmt('al_hdm', { n: cov.miss }), d: t('al_hdm_d') });
   if(noCost) alerts.push({ bad:true, t: fmt('al_nocost', { n: noCost }), d: t('acq_unknown') });
@@ -4209,7 +4370,13 @@ function viewTray(){
         /* WEIGHT AND PURE METAL ONLY. The piece's PRICE is computed money and no computed money
            appears in this product without the formula beside it — so the price lives on the item
            card, one tap away, where breakdown() renders it with the numbers substituted. */
-        + '<div class="pw"><div class="a">' + gramTxt(x.on) + '<span class="g">' + escH(t('u_g')) + '</span></div>'
+      /* EVERY WEIGHT THE JEWELLER CAN PUT ON A SCALE SAYS WHICH ONE IT IS. This figure is NET,
+         and on a stoned piece it differs from what the scale reads by the stone weight — a bare
+         «5.42 գ» on a piece the scale calls 5.800 g is the app and the counter disagreeing with
+         nothing on screen to explain it. The short label already exists in all three languages
+         and the piece card, the sell sheet and the buy form already use it. */
+        + '<div class="pw"><div class="a"><span class="wlbl">' + escH(t('w_net_s')) + '</span> '
+        + gramTxt(x.on) + '<span class="g">' + escH(t('u_g')) + '</span></div>'
         + '<div class="b">' + escH(t('w_pure_s')) + ' ' + gramTxt(pureG(x.on, p.fineness),3) + escH(t('u_g')) + '</div></div></button>';
     }).join('');
     const pools = g.pools.map(x => {
@@ -4218,7 +4385,8 @@ function viewTray(){
       + '<div class="pi"><div class="pnm">' + escH(t('w_scrap')) + ' · ' + escH(metalLabel(x.b.metal)) + '</div>'
       + '<div class="psub"><span>' + escH(t('w_pool')) + '</span>'
         + (nlots ? '<span>' + escH(fmt('w_acqn', { n: nlots })) + '</span>' : '') + '</div></div>'
-      + '<div class="pw"><div class="a">' + gramTxt(x.on) + '<span class="g">' + escH(t('u_g')) + '</span></div>'
+      + '<div class="pw"><div class="a"><span class="wlbl">' + escH(t('w_net_s')) + '</span> '
+      + gramTxt(x.on) + '<span class="g">' + escH(t('u_g')) + '</span></div>'
       + '<div class="b">' + escH(t('w_pure_s')) + ' ' + gramTxt(pureG(x.on, x.b.fineness),3) + escH(t('u_g')) + '</div></div></button>';
     }).join('');
     return '<div class="fgrp"><div class="fhead">'
@@ -4801,7 +4969,8 @@ function sellListHtml(){
       /* WEIGHT AND FINENESS ONLY. The price is computed money and no computed money appears in
          this product without the formula beside it, so it lives one tap away on the sheet where
          breakdown() renders it with the numbers substituted. */
-      + '<div class="pw"><div class="a">' + gramTxt(x.on) + '<span class="g">' + escH(t('u_g')) + '</span></div>'
+      + '<div class="pw"><div class="a"><span class="wlbl">' + escH(t('w_net_s')) + '</span> '
+      + gramTxt(x.on) + '<span class="g">' + escH(t('u_g')) + '</span></div>'
       + '<div class="b"><span class="harg ' + p.metal + '">' + safeInt(p.fineness,0) + '</span></div></div></button>';
   }).join('') + '</div></div>';
 }
@@ -4900,7 +5069,9 @@ function slPaint(){
     const w = a.manual ? fairValueWarn(a.computed, a.manual) : null;
     const wa = el('slWarn'); if(wa) wa.innerHTML = slWarnHtml(w);
     const fi = el('slFinal'); if(fi) fi.innerHTML = slFinalHtml(a);
-    const go = el('slGo'); if(go) go.className = 'btn primary' + (a.price > 0 ? '' : ' off');
+    const pp = pieceById(SL.id);
+    const nr = !pp || !(metalRate999(pp.metal) > 0);
+    const go = el('slGo'); if(go) go.className = 'btn primary' + (a.price > 0 && !nr ? '' : ' off');
     const rs = el('slResetWrap'); if(rs) rs.innerHTML = slResetHtml();
   }catch(e){}
 }
@@ -4910,6 +5081,7 @@ function slRender(){
   if(!p) return;
   const a = slAmount();
   const w = a.manual ? fairValueWarn(a.computed, a.manual) : null;
+  const noRate = !(metalRate999(p.metal) > 0);
   openModal(
     '<h3>' + escH(t('sl_sheet')) + '</h3>'
     + '<div class="row"><span style="font-size:17px;font-weight:700">' + escH(modelName(p)) + '</span>'
@@ -4925,6 +5097,17 @@ function slRender(){
       + '<div><div class="l">' + escH(t('w_gross_s')) + '</div><div class="v">'
         + gramTxt(p.grossG,3) + escH(t('u_g')) + '</div></div>'
     + '</div>'
+
+    /* NO RATE, NO SALE. Buy already refuses to proceed without a buy-in discount, with a red
+       rail and «Վճարել և կազմել ակտը» switched off; sell was not guarded at all, so a cleared
+       metal rate let the sheet print «3.480գ × 0 × 585/999 + 38,000 + 5,200 × 4.100գ = 59,320 ֏»
+       with the button fully enabled and fairValueWarn() silent (manual == computed). The metal
+       checked is THIS PIECE'S metal — a shop with no silver rate can still sell gold. */
+    + (noRate ? '<div class="card rail rail-bad" style="margin-top:12px"><h3>'
+        + escH(t('w_rate999')) + '</h3><div class="notice bad">'
+        + escH(fmt('sl_norate', { m: metalLabel(p.metal) })) + '</div>'
+        + '<button class="btn primary" style="margin-top:12px" onclick="openRate()">'
+        + escH(t('rate_edit')) + '</button></div>' : '')
 
     /* THE COMPUTED PRICE AND ITS BREAKDOWN. Never one without the other. */
     + '<div class="sec">' + escH(t('pr_title')) + '</div>'
@@ -4959,7 +5142,7 @@ function slRender(){
     + '<input id="slH" type="text" maxlength="40" value="' + escH(SL.hdm) + '" oninput="slHdm(this.value)">'
     + '<div class="notice">' + escH(t('sl_hdm_note')) + '</div>'
 
-    + '<button id="slGo" class="btn primary' + (a.price > 0 ? '' : ' off') + '" style="margin-top:16px" onclick="slConfirm()">'
+    + '<button id="slGo" class="btn primary' + (a.price > 0 && !noRate ? '' : ' off') + '" style="margin-top:16px" onclick="slConfirm()">'
       + escH(t('sl_confirm')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="SL=null;closeModal()">'
       + escH(t('cancel')) + '</button>'
@@ -4970,6 +5153,7 @@ function slConfirm(){
   const p = pieceById(SL.id);
   if(!p) return;
   const a = slAmount();
+  if(!(metalRate999(p.metal) > 0)) return toast(fmt('sl_norate', { m: metalLabel(p.metal) }));
   if(!(a.price > 0)) return toast(t('sl_price_needed'));
   const sub = pieceSubj(p.id);
   const on = round3(onHand(sub));
@@ -5162,7 +5346,11 @@ function viewBuy(){
     + '<label class="fieldlbl" for="byStA" style="margin-top:12px">' + escH(t('by_stones_lbl')) + '</label>'
     + '<input id="byStA" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="'
       + escH(BY.stonesAmd) + '" oninput="byNum(' + jsArg('stonesAmd') + ',this.value)">'
-    + '<div class="notice">' + escH(t('pr_buy_nostones')) + '</div>'
+    /* THE NOTE FOLLOWS THE TYPED AMOUNT, exactly as buyBreakdown's why-line already does. It
+       used to render «Քարերը չեն գնահատվում» unconditionally, so with a stone amount entered the
+       field note and the breakdown card four rows below it asserted opposite things — on a
+       screen designed to be turned round and shown to the customer. */
+    + '<div class="notice">' + escH(safeAmd(BY.stonesAmd,0) ? t('pr_buy_stones') : t('pr_buy_nostones')) + '</div>'
 
     + '<div id="byCalc">' + byCalcHtml() + '</div>'
 
@@ -5321,7 +5509,9 @@ function byConfirm(){
               ssn: String(BY.ssn||'').slice(0,20) }
   });
   BY = byFresh();
-  saveState(); renderAll(); toast(fmt('by_done', { r: ref }));
+  /* NO TOAST OVER A DOCUMENT — the act opens in the same tick and its own header names the
+     number, so the toast added nothing and covered the rows it was announcing. */
+  saveState(); renderAll();
   openBuyAct(ref);
 }
 
@@ -5447,7 +5637,13 @@ function cnMigrateSession(c, st){
       found: v.found !== false,
       /* null is «confirmed present, not re-weighed» and is NOT zero — zero grams on the scale is
          a different (and legitimate) answer for a pool. */
-      g: (v.g == null || !isFinite(+v.g)) ? null : Math.max(0, LEDGER.clamp(v.g))
+      g: (v.g == null || !isFinite(+v.g)) ? null : Math.max(0, LEDGER.clamp(v.g)),
+      /* THE BOOK FIGURE AT THE MOMENT OF THE OBSERVATION. A count session deliberately survives
+         a sale and a buy-in, so the books move under it; `at` is what makes the difference the
+         act posts a difference between two facts of the SAME instant. Absent on a session
+         written by an older build — cnBuildAct falls back to the current on-hand, which is what
+         that build compared against anyway. */
+      at: (v.at == null || !isFinite(+v.at)) ? null : LEDGER.clamp(v.at)
     };
   });
   return {
@@ -5469,7 +5665,12 @@ function cnInScope(scope){
     if(scope === 'scrap') return;
     if(scope === 'tray' && x.p.location !== 'tray') return;
     if(scope === 'safe' && x.p.location !== 'safe') return;
-    if(scope === 'unmarked' && x.p.hallmark.origin !== 'none') return;
+    /* hmState() is documented as THE ONE PLACE that decides whether a stamp is wanted, and this
+       scope must use it: filtering on the raw `origin` enum pulled in every piece whose stored
+       origin happened to be 'none' even when the app itself rules it exempt by weight or as
+       scrap — a 1.2 g gold earring is not «չհարգադրոշմված», it is exempt, and the screen that
+       says so and the count scope that contradicts it cannot both be right. */
+    if(scope === 'unmarked' && !hmNeeds(x.p)) return;
     out.push({ kind:'piece', subject:x.subject, p:x.p, on:x.on,
                metal:x.p.metal, fineness:safeInt(x.p.fineness,0) });
   });
@@ -5515,11 +5716,13 @@ function cnCountedN(){
 }
 /* ONE TAP, AND THE SAME TAP AGAIN UNDOES IT. A mis-tap on a 44px target next to another 44px
    target is the single likeliest thing to happen during a count, and it must not need a sheet. */
+/* every write of a line stamps the book figure it was taken against — see cnBuildAct. */
+const cnAt = subject => round3(onHand(subject));
 function cnMark(subject, found){
   if(!S.count) return;
   const cur = S.count.lines[subject];
   if(cur && cur.found === !!found && cur.g == null) delete S.count.lines[subject];
-  else S.count.lines[subject] = { found: !!found, g: (found && cur) ? cur.g : null };
+  else S.count.lines[subject] = { found: !!found, g: (found && cur) ? cur.g : null, at: cnAt(subject) };
   saveState(); cnRepaint(subject);
 }
 function cnPoolW(subject, v){
@@ -5527,7 +5730,7 @@ function cnPoolW(subject, v){
   const sv = String(v == null ? '' : v).trim();
   /* typing must not re-render — that would move the caret. Only the progress strip repaints. */
   if(sv === '') delete S.count.lines[subject];
-  else S.count.lines[subject] = { found:true, g: Math.max(0, round3(num(sv))) };
+  else S.count.lines[subject] = { found:true, g: Math.max(0, round3(num(sv))), at: cnAt(subject) };
   saveState(); cnPaintProg();
 }
 function cnRepaint(subject){
@@ -5540,6 +5743,13 @@ function cnRepaint(subject){
 function cnPaintProg(){
   const p = cnCountedN();
   const e = document.getElementById('cnProg'); if(e) e.innerHTML = cnProgInner(p);
+  /* «{n} դեռ չհաշվառված» is the ONLY «am I finished?» signal on a screen that deliberately
+     hides the book figures, and it is a SIBLING of #cnProg — so a partial repaint that touched
+     only the bar left it frozen at the session's opening total for the whole count: the bar
+     read «13 / 13» with «13 դեռ չհաշվառված» directly beneath it. It counts down with the bar
+     and disappears at k === n. */
+  const l = document.getElementById('cnLeft');
+  if(l) l.innerHTML = (p.n - p.k) ? '<div class="notice">' + escH(fmt('cn_left', { n: p.n - p.k })) + '</div>' : '';
   const f = document.getElementById('cnFin'); if(f) f.className = 'btn primary' + (p.k ? '' : ' off');
 }
 function cnSearch(v){
@@ -5556,15 +5766,35 @@ function cnReweigh(subject){
   if(!r) return;
   CN_SHEET = subject;
   const ln = S.count.lines[subject];
+  /* WHAT THE SCALE CAN ACTUALLY GIVE. A shop scale reads the whole object; on a stoned piece
+     there is no instrument in the shop that reads net. Asking for «Փաստացի զուտ քաշը» and then
+     taking the answer literally turned a correct 5.800 g gross reading on a 5.420 g net piece
+     into a +0.380 g surplus AND rewrote the piece to netG 5.800 / grossG 6.180 — a phantom
+     surplus and a corrupted record, produced by following the label. So a stoned piece is asked
+     for GROSS and the net is derived from the piece's own stored stoneG, exactly as the buy form
+     does it, with the derived figure shown locked beside it. stoneG is not the book on-hand, so
+     printing it does not break the blind rule. */
+  const stone = (r.kind === 'piece') ? round3(r.p.stoneG) : 0;
+  const asGross = stone > EPS;
+  const shown = ln && ln.g != null ? (asGross ? round3(ln.g + stone) : round3(ln.g)) : null;
   openModal('<h3>' + escH(t('cn_reweigh_t')) + '</h3>'
     + '<div class="row"><span style="font-size:17px;font-weight:700">' + escH(cnName(r)) + '</span>'
       + '<span class="harg ' + r.metal + '">' + r.fineness + '</span></div>'
     /* BLIND: the book weight is NOT shown here either. A re-weigh that told you the answer first
        is not a re-weigh. */
     + '<div class="notice">' + escH(t('cn_blind_note')) + '</div>'
-    + '<label class="fieldlbl" for="cnRw" style="margin-top:12px">' + escH(t('cn_reweigh_lbl')) + '</label>'
+    + '<label class="fieldlbl" for="cnRw" style="margin-top:12px">'
+      + escH(asGross ? t('cn_reweigh_lbl_g') : t('cn_reweigh_lbl')) + '</label>'
     + '<input id="cnRw" type="number" inputmode="decimal" min="0" step="0.001" value="'
-      + escH(ln && ln.g != null ? gramTxt(ln.g,3) : '') + '">'
+      + escH(shown == null ? '' : gramTxt(shown,3)) + '" ' + (asGross ? 'oninput="cnRwPaint()"' : '') + '>'
+    + (asGross
+        ? '<div class="row" style="margin-top:8px"><span class="mlbl">' + escH(t('w_stone')) + '</span>'
+            + '<span>' + gram(stone,3) + '</span></div>'
+          + '<label class="fieldlbl" for="cnRwNet" style="margin-top:8px">' + escH(t('w_net'))
+            + ' (' + escH(t('pc_derived')) + ')</label>'
+          + '<input id="cnRwNet" type="text" disabled value="'
+            + escH(shown == null ? '' : gramTxt(Math.max(0, round3(shown - stone)),3)) + '">'
+        : '')
     + '<div class="notice">' + escH(t('cn_reweigh_note')) + '</div>'
     + '<button class="btn primary" style="margin-top:16px" onclick="cnReweighSave()">'
       + escH(t('cn_reweigh_save')) + '</button>'
@@ -5574,18 +5804,32 @@ function cnReweigh(subject){
       + escH(t('cancel')) + '</button>');
   setTimeout(() => { try{ document.getElementById('cnRw').focus(); }catch(e){} }, 60);
 }
+/* the derived net, from the piece's own stored stone weight. One definition, used by the
+   sheet's locked field and by the save, so the two can never disagree. */
+function cnReweighNet(subject, typed){
+  const p = subject && String(subject).slice(0,2) === 'i:' ? pieceById(String(subject).slice(2)) : null;
+  const stone = p ? round3(p.stoneG) : 0;
+  return stone > EPS ? Math.max(0, round3(num(typed) - stone)) : Math.max(0, round3(num(typed)));
+}
+function cnRwPaint(){
+  if(!CN_SHEET) return;
+  const i = document.getElementById('cnRw'), o = document.getElementById('cnRwNet');
+  if(!i || !o) return;
+  const raw = String(i.value || '').trim();
+  o.value = raw === '' ? '' : gramTxt(cnReweighNet(CN_SHEET, num(raw)), 3);
+}
 function cnReweighSave(){
   if(!S.count || !CN_SHEET) return;
   const raw = String((document.getElementById('cnRw')||{}).value || '').trim();
   if(raw === '') return;
   const g = Math.max(0, round3(num(raw)));
-  S.count.lines[CN_SHEET] = { found:true, g: g };
+  S.count.lines[CN_SHEET] = { found:true, g: cnReweighNet(CN_SHEET, g), at: cnAt(CN_SHEET) };
   const sub = CN_SHEET; CN_SHEET = null;
   saveState(); closeModal(); cnRepaint(sub);
 }
 function cnReweighClear(){
   if(!S.count || !CN_SHEET) return;
-  S.count.lines[CN_SHEET] = { found:true, g:null };
+  S.count.lines[CN_SHEET] = { found:true, g:null, at: cnAt(CN_SHEET) };
   const sub = CN_SHEET; CN_SHEET = null;
   saveState(); closeModal(); cnRepaint(sub);
 }
@@ -5605,39 +5849,65 @@ function nextCountNo(){
 function cnBuildAct(){
   const c = S.count;
   const rows = cnInScope(c.scope);
-  const g = {}, skipped = [], posts = [];
+  const g = {}, skipped = [], posts = [], moved = [];
   const grp = r => {
     const k = r.metal + ':' + r.fineness;
-    if(!g[k]) g[k] = { metal:r.metal, fineness:r.fineness, bookPcs:0, actPcs:0, bookG:0, actG:0 };
+    if(!g[k]) g[k] = { metal:r.metal, fineness:r.fineness, bookPcs:0, actPcs:0, bookG:0, actG:0,
+                       uncPcs:0, uncG:0, seen:0 };
     return g[k];
   };
   rows.forEach(r => {
-    const q = grp(r), book = round3(r.on), ln = c.lines[r.subject];
-    if(r.kind === 'piece'){ q.bookPcs++; }
-    q.bookG = round3(q.bookG + book);
+    const q = grp(r), on = round3(r.on), ln = c.lines[r.subject];
     if(!ln){
-      /* NOT REACHED IS NOT MISSING. We have no fact about it, so it produces NO difference and no
-         movement; the act names it in its own block. Treating an unvisited row as a shortage
-         would put a fiction in front of the person who signs. */
+      /* NOT REACHED IS NOT COUNTED — AND A SIGNED ACT MAY NOT ASSERT A PHYSICAL FACT NOBODY
+         OBSERVED. An unvisited subject contributes to NEITHER actual column, to NO difference
+         and to NO movement. It is carried whole into the act's own «Չհաշվառված» table with its
+         metal, its հարգ, its piece count and its book weight, so the two halves of the document
+         add back up to the books and the person signing can see exactly what was not looked at.
+         Letting it inherit its own book figure into «Փաստ.» — which is what this branch used to
+         do — made «not looked at» and «verified present» the same two columns and printed
+         «Տարբերություն չկա» for a count in which 13 of 14 subjects were never touched. */
+      if(r.kind === 'piece') q.uncPcs++;
+      q.uncG = round3(q.uncG + on);
       skipped.push({ code: r.kind === 'pool' ? '' : String(r.p.code||''), name: cnName(r),
-                     metal: r.metal, fineness: r.fineness });
-      if(r.kind === 'piece') q.actPcs++;
-      q.actG = round3(q.actG + book);
+                     kind: r.kind, metal: r.metal, fineness: r.fineness, bookG: on });
       return;
     }
-    if(r.kind === 'piece' && !ln.found){
-      q.actG = round3(q.actG + 0);
-      posts.push({ subject:r.subject, dq: round3(-book), reason:'short' });
-      return;
-    }
-    const act = ln.g == null ? book : round3(ln.g);
-    if(r.kind === 'piece') q.actPcs++;
+    /* THE BOOK FIGURE THIS OBSERVATION WAS MADE AGAINST — not the one the books hold at the
+       moment «Ավարտել» is pressed. The screen itself invites the jeweller to leave the count and
+       trade («Գույքագրումը վաճառքին չի խանգարում»), so metal legitimately arrives and leaves
+       between the weighing and the act. Comparing a weight observed at 10:15 against a book
+       figure read at 17:40 turned 10 g BOUGHT during the session into a 10 g shortage and posted
+       a `count` movement that destroyed it — on an append-only log, with the գնման ակտ and the
+       lot left pointing at metal that no longer existed. Pieces were immune only by accident (a
+       sold piece leaves scope); pools were not. */
+    const book = round3(ln.at == null ? on : ln.at);
+    q.seen = 1;
+    if(r.kind === 'piece') q.bookPcs++;
+    q.bookG = round3(q.bookG + book);
+    let act;
+    if(r.kind === 'piece' && !ln.found) act = 0;
+    else { act = ln.g == null ? book : round3(ln.g); if(r.kind === 'piece') q.actPcs++; }
     q.actG = round3(q.actG + act);
-    if(!eqG(act, book)) posts.push({ subject:r.subject, dq: round3(act - book),
-                                     reason: act > book ? 'surplus' : 'short' });
+    const dq = round3(act - book);
+    /* the books moved under this observation. The correction is still correct — it is a
+       difference between two facts of the same instant — but the act must SAY the subject moved,
+       because its «Հաշվապ.» cell is then the weighing-time figure and not today's closing one. */
+    const mv = !eqG(book, on)
+      ? { code: r.kind === 'pool' ? '' : String(r.p.code||''), name: cnName(r), metal: r.metal,
+          fineness: r.fineness, atG: book, nowG: on, refused: 0 } : null;
+    if(!eqG(dq, 0)){
+      /* a correction may never drive a subject negative: a piece sold mid-session is already off
+         the books and a second deduction would invent a debt in metal. */
+      if(round3(on + dq) < -EPS){ if(mv) mv.refused = 1; else moved.push({ code:'', name: cnName(r),
+          metal:r.metal, fineness:r.fineness, atG:book, nowG:on, refused:1 }); }
+      else posts.push({ subject:r.subject, dq: dq, reason: dq > 0 ? 'surplus' : 'short' });
+    }
+    if(mv) moved.push(mv);
   });
-  const outRows = Object.keys(g).map(k => g[k]).sort((a,b) =>
-    (a.metal === b.metal ? b.fineness - a.fineness : (a.metal === 'au' ? -1 : 1))).map(q => {
+  const all = Object.keys(g).map(k => g[k]).sort((a,b) =>
+    (a.metal === b.metal ? b.fineness - a.fineness : (a.metal === 'au' ? -1 : 1)));
+  const outRows = all.filter(q => q.seen).map(q => {
       const dG = round3(q.actG - q.bookG);
       return { metal:q.metal, fineness:q.fineness, bookPcs:q.bookPcs, actPcs:q.actPcs,
                bookG:q.bookG, actG:q.actG, dPcs: q.actPcs - q.bookPcs, dG: dG,
@@ -5651,7 +5921,10 @@ function cnBuildAct(){
                   hand disagree by up to ~26 ֏ — on a document whose whole job is to be checked. */
                amd: Math.round(num(dG) * q.fineness / 1000 * metalRate999(q.metal)) };
     });
-  return { rows: outRows, posts: posts, skipped: skipped };
+  /* the uncounted half of the act, subtotalled the same way the counted half is */
+  const unc = all.filter(q => q.uncPcs || q.uncG > EPS).map(q =>
+    ({ metal:q.metal, fineness:q.fineness, pcs:q.uncPcs, g:q.uncG }));
+  return { rows: outRows, posts: posts, skipped: skipped, unc: unc, moved: moved };
 }
 
 function cnFinish(){
@@ -5682,12 +5955,20 @@ function cnFinish(){
     cust: repairsInShop().map(r => ({ name: r.custName, descr: r.descr, grossG: r.grossG,
       fineness: safeInt(r.fineness,0), metal: r.metal })),
     skipped: built.skipped,
+    /* the uncounted half, by metal and հարգ — see cnBuildAct */
+    unc: built.unc,
+    /* subjects whose books moved between the weighing and the act */
+    moved: built.moved,
     rate: { au: base999(), ag: silver999() }
   };
   S.counts.push(act);
   S.count = null; CNQ = '';
   migrate(S); saveState(); renderAll();
-  toast(refused ? fmt('led_rejected', { r: String(refused) }) : fmt('cn_done', { r: ref }));
+  /* NO TOAST OVER A DOCUMENT. The act opens in the same tick and its own header names the
+     number, so the toast added nothing and sat on top of the 750 and 585 rows for three seconds
+     — the first thing the jeweller saw of a freshly drawn act was two of its rows obscured. A
+     REFUSAL is different: nothing else says it, so that one still speaks. */
+  if(refused) toast(fmt('led_rejected', { r: String(refused) }));
   openCountAct(ref);
 }
 
@@ -5710,7 +5991,10 @@ function cnRowHtml(r){
      Only a PIECE carries it: a pool's weight is in the pool's own field, one column to the right,
      and a badge repeating it would be a second place for the same number to disagree from. */
   if(r.kind === 'piece' && ln && ln.g != null) bits.push('<span class="badge b-cyan">'
-    + escH(t('cn_marked_w')) + ' ' + gramTxt(ln.g,3) + escH(t('u_g')) + '</span>');
+    + escH(t('cn_marked_w') + ' ' + t('w_net_s')) + ' ' + gramTxt(ln.g,3) + escH(t('u_g')) + '</span>');
+  /* a stoned piece is re-weighed GROSS and the net is derived; the row says which one it holds */
+  if(r.kind === 'piece' && round3(r.p.stoneG) > EPS) bits.push('<span class="mlbl">'
+    + escH(t('w_stone_s') + ' ' + gramTxt(r.p.stoneG,3) + t('u_g')) + '</span>');
   const nm = '<div class="n">' + escH(cnName(r)) + '</div><div class="s">' + bits.join('') + '</div>';
   return '<div class="cnrow' + (ln ? ' done' : '') + '" id="cnr-' + escH(r.subject) + '">'
     /* the name is a tap target ONLY for a piece, where it opens the optional re-weigh. A pool is
@@ -5804,7 +6088,8 @@ function cnOpenView(){
       + '<div class="cnprog" id="cnProg" style="margin-top:12px">' + cnProgInner(p) + '</div>'
       + '<div class="notice">' + escH(t('cn_blind_note')) + '</div>'
       + '<div class="notice">' + escH(t('cn_noblock')) + '</div>'
-      + (p.n - p.k ? '<div class="notice">' + escH(fmt('cn_left', { n: p.n - p.k })) + '</div>' : '')
+      + '<div id="cnLeft">' + ((p.n - p.k) ? '<div class="notice">'
+          + escH(fmt('cn_left', { n: p.n - p.k })) + '</div>' : '') + '</div>'
     + '</div>'
     + '<input class="search" id="cnQ" type="text" maxlength="40" autocomplete="off"'
       + ' placeholder="' + escH(t('cn_search')) + '" aria-label="' + escH(t('cn_search')) + '"'
@@ -5830,18 +6115,36 @@ function openCountAct(id){
   const sign = lbl => '<div style="flex:1;min-width:150px"><div class="doclbl">' + escH(lbl) + '</div>'
     + '<div class="actsignline"></div></div>';
   const r999 = m => safeAmd(m === 'ag' ? a.rate.ag : a.rate.au, 0);
-  const bookPure = {}, actPure = {};
+  const unc = a.unc || [];
+  const moved = a.moved || [];
+  const uncN = (a.skipped||[]).length;
+  /* SUMMED UNROUNDED, ROUNDED ONCE — same rule breakdown(), valBreakdown() and the act's own
+     footing line already follow. Rounding each row's pure figure to 3 dp before adding them put
+     the printed book and actual pure totals up to a milligram out, which at 51,738 ֏/g is a
+     figure an accountant recomputing the act by hand cannot reconcile. The per-metal dram
+     subtotal below is the SUM OF THAT METAL'S ROWS, printed with its own arithmetic, so nothing
+     on the paper invites the reader to multiply the two pure figures by the rate instead. */
+  const bookPure = {}, actPure = {}, metalAmd = {};
   a.rows.forEach(r => {
-    bookPure[r.metal] = round3((bookPure[r.metal]||0) + pureG(r.bookG, r.fineness));
-    actPure[r.metal]  = round3((actPure[r.metal] ||0) + pureG(r.actG,  r.fineness));
+    bookPure[r.metal] = (bookPure[r.metal]||0) + num(r.bookG) * safeInt(r.fineness,0) / 1000;
+    actPure[r.metal]  = (actPure[r.metal] ||0) + num(r.actG)  * safeInt(r.fineness,0) / 1000;
+    metalAmd[r.metal] = (metalAmd[r.metal]||0) + safeInt(r.amd,0);
   });
   const metals = Object.keys(bookPure);
   const diffAmd = a.rows.reduce((s,r) => s + safeInt(r.amd,0), 0);
+  const uncPure = {};
+  unc.forEach(u => { uncPure[u.metal] = (uncPure[u.metal]||0) + num(u.g) * safeInt(u.fineness,0) / 1000; });
 
+  /* THE METAL IS INK, NOT A SCREEN AFFORDANCE. Gold and silver share 999, so a printed row
+     identified by fineness alone is not uniquely identifiable — the act carried «999 … 7.180»
+     (gold) and «999 … 40.000» (silver) as two indistinguishable rows, because the metal lived in
+     an `.actsub` the print rule hides. It now sits in the cell itself, on paper and on screen. */
   const body = a.rows.map(r => '<tr>'
-    + '<td>' + r.fineness + '<span class="actsub">' + escH(metalLabel(r.metal)
-        + (r.bookPcs || r.actPcs ? ' · ' + r.bookPcs + '/' + r.actPcs + ' ' + t('u_pcs') : ''))
-      + '</span></td>'
+    + '<td>' + escH(metalLabel(r.metal)) + ' ' + r.fineness
+      + '<span class="actsub">' + escH((r.bookPcs || r.actPcs)
+          ? r.bookPcs + '/' + r.actPcs + ' ' + t('u_pcs')
+            + (r.dPcs ? ' · ' + (r.dPcs > 0 ? '+' + r.dPcs : '−' + Math.abs(r.dPcs)) : '')
+          : '') + '</span></td>'
     + '<td class="num">' + r.bookPcs + '</td>'
     + '<td class="num">' + r.actPcs + '</td>'
     + '<td class="num">' + gramTxt(r.bookG,3) + '</td>'
@@ -5871,6 +6174,7 @@ function openCountAct(id){
     + '</div>'
     + '<div class="muted" style="margin-top:6px">' + escH(t('cn_act_basis')) + '</div>'
 
+    + (uncN ? '<div class="sec">' + escH(t('cn_counted_t')) + '</div>' : '')
     + (a.rows.length ? '<div class="tblwrap" style="max-height:none"><table class="tbl acttbl"><thead><tr>'
       + '<th>' + escH(t('cn_col_harg')) + '</th>'
       + '<th class="num">' + escH(t('cn_col_bpcs')) + '</th>'
@@ -5885,13 +6189,20 @@ function openCountAct(id){
 
     /* THE GRAND TOTAL IS IN PURE METAL, per metal, because grams of different finenesses are
        never added together (spec 1.4). */
-    + '<div class="sec">' + escH(t('cn_pure_diff')) + '</div>'
+    + '<div class="sec">' + escH(t('cn_pure_diff') + (uncN ? ' · ' + t('cn_counted_only') : '')) + '</div>'
     + '<div class="dl">'
       + metals.map(m => '<div><div class="l">' + escH(t('cn_pure_book') + ' · ' + metalLabel(m))
           + '</div><div class="v">' + gramTxt(bookPure[m],3) + escH(t('u_g')) + '</div></div>'
         + '<div><div class="l">' + escH(t('cn_pure_act') + ' · ' + metalLabel(m))
-          + '</div><div class="v">' + gramTxt(actPure[m],3) + escH(t('u_g')) + '</div></div>').join('')
+          + '</div><div class="v">' + gramTxt(actPure[m],3) + escH(t('u_g')) + '</div></div>'
+        + '<div><div class="l">' + escH(t('cn_pure_d') + ' · ' + metalLabel(m))
+          + '</div><div class="v">' + (actPure[m] - bookPure[m] < -EPS ? '−' : '')
+          + gramTxt(Math.abs(actPure[m] - bookPure[m]),3) + escH(t('u_g')) + '</div></div>'
+        + '<div><div class="l">' + escH(t('cn_val_diff') + ' · ' + metalLabel(m))
+          + '</div><div class="v">' + (metalAmd[m] < 0 ? '−' : '')
+          + Math.abs(safeInt(metalAmd[m],0)).toLocaleString('en-US') + escH(' ֏') + '</div></div>').join('')
     + '</div>'
+    + '<div class="notice">' + escH(t('cn_pure_note')) + '</div>'
     + '<div class="row actsep" style="margin-top:12px;padding-top:10px"><b>' + escH(t('cn_val_diff')) + '</b>'
       + '<span class="big">' + (diffAmd < 0 ? '−' : '') + Math.abs(diffAmd).toLocaleString('en-US')
       + '<span class="cur">֏</span></span></div>'
@@ -5915,8 +6226,16 @@ function openCountAct(id){
        product without saying where its numbers came from */
     + '<div class="muted" style="margin-top:6px">' + escH(metals.map(m =>
         metalLabel(m) + ' 999 · ' + r999(m).toLocaleString('en-US') + ' ֏/' + t('u_g')).join(' · ')) + '</div>'
-    + '<div class="muted" style="margin-top:6px">' + escH(diffAmd === 0 ? t('cn_nodiff')
-        : (diffAmd < 0 ? t('cn_short') : t('cn_surplus'))) + '</div>'
+    /* THE SUMMARY MAY NOT OVERSTATE WHAT WAS DONE. «Տարբերություն չկա» on an act where 13 of 14
+       subjects were never looked at is the document telling the person signing it something
+       nobody checked; when anything went uncounted the headline says so and the count of
+       uncounted subjects sits with it, not below the total. */
+    + '<div class="muted" style="margin-top:6px">' + escH(diffAmd === 0
+        ? (uncN ? t('cn_nodiff_part') : t('cn_nodiff'))
+        : (diffAmd < 0 ? t('cn_short') : t('cn_surplus'))
+          + (uncN ? ' · ' + t('cn_counted_only') : '')) + '</div>'
+    + (uncN ? '<div class="alert bad" style="margin-top:8px"><div class="t">'
+        + escH(fmt('cn_unc_warn', { n: uncN })) + '</div></div>' : '')
 
     /* RULE 3, ON THE DOCUMENT: a hallmark send-out is not a shortage. */
     + (a.out.length ? '<div class="sec">' + escH(t('cn_out')) + '</div>'
@@ -5924,8 +6243,8 @@ function openCountAct(id){
         + '<th>' + escH(t('w_piece')) + '</th><th>' + escH(t('w_loc')) + '</th>'
         + '<th class="num">' + escH(t('w_net_s')) + '</th></tr></thead><tbody>'
         + a.out.map(o => '<tr><td>' + escH(o.name || o.code || '—')
-            + '<span class="tblsub">' + escH([o.code && o.code !== o.name ? o.code : '', o.fineness].filter(Boolean).join(' · ')) + '</span></td>'
-          + '<td>' + escH(locLabel(o.location)) + (o.days ? '<span class="tblsub">'
+            + '<span class="subkeep">' + escH([o.code && o.code !== o.name ? o.code : '', metalLabel(o.metal), o.fineness].filter(Boolean).join(' · ')) + '</span></td>'
+          + '<td>' + escH(locLabel(o.location)) + (o.days ? '<span class="subkeep">'
               + escH(fmt('cn_days', { n: o.days })) + '</span>' : '') + '</td>'
           + '<td class="num">' + gramTxt(o.netG,3) + '</td></tr>').join('')
         + '</tbody></table></div>'
@@ -5939,15 +6258,53 @@ function openCountAct(id){
         + '<th>' + escH(t('by_name')) + '</th><th>' + escH(t('w_note')) + '</th>'
         + '<th class="num">' + escH(t('w_gross_s')) + '</th></tr></thead><tbody>'
         + a.cust.map(x => '<tr><td>' + escH(x.name || '—') + '</td><td>' + escH(x.descr || '—')
-            + '<span class="tblsub">' + escH(x.fineness ? metalLabel(x.metal) + ' ' + x.fineness : metalLabel(x.metal)) + '</span></td>'
+            + '<span class="subkeep">' + escH(x.fineness ? metalLabel(x.metal) + ' ' + x.fineness : metalLabel(x.metal)) + '</span></td>'
           + '<td class="num">' + gramTxt(x.grossG,3) + '</td></tr>').join('')
         + '</tbody></table></div>'
         + '<div class="notice">' + escH(t('cn_cust_note')) + '</div>' : '')
 
-    + (a.skipped.length ? '<div class="sec">' + escH(t('cn_uncounted')) + '</div>'
+    /* THE BOOKS MOVED UNDER THE COUNT — said on the act, because the «Հաշվապ.» cells of the
+       affected rows are then the weighing-time figures and not today's closing ones. */
+    + (moved.length ? '<div class="sec">' + escH(t('cn_moved_t')) + '</div>'
+        + '<div class="tblwrap"><table class="tbl"><thead><tr>'
+        + '<th>' + escH(t('cn_col_harg')) + '</th>'
+        + '<th class="num">' + escH(t('cn_col_atw')) + '</th>'
+        + '<th class="num">' + escH(t('cn_col_now')) + '</th></tr></thead><tbody>'
+        + moved.map(x => '<tr><td>' + escH(metalLabel(x.metal) + ' ' + x.fineness)
+            + '<span class="subkeep">' + escH([x.name, x.code && x.code !== x.name ? x.code : '',
+                x.refused ? t('cn_moved_refused') : ''].filter(Boolean).join(' · ')) + '</span></td>'
+          + '<td class="num">' + gramTxt(x.atG,3) + '</td>'
+          + '<td class="num">' + gramTxt(x.nowG,3) + '</td></tr>').join('')
+        + '</tbody></table></div>'
+        + '<div class="notice">' + escH(t('cn_moved_note')) + '</div>' : '')
+
+    /* THE UNCOUNTED HALF OF THE DOCUMENT. It used to be a muted run of names truncated at 20
+       with nothing saying so — «Ջարդոն · Ոսկի · Ջարդոն · Ոսկի · Ջարդոն · Ոսկի» for the 585, 750
+       and 999 pools, three identical strings, and 17 further items silently dropped under a
+       header that stated the true count. It is now a table on the same terms as the counted
+       half: metal, հարգ, pieces and book weight, all of them, so the two halves add back up to
+       the books. */
+    + (unc.length ? '<div class="sec">' + escH(t('cn_uncounted')) + '</div>'
+        + '<div class="tblwrap" style="max-height:none"><table class="tbl"><thead><tr>'
+        + '<th>' + escH(t('cn_col_harg')) + '</th>'
+        + '<th class="num">' + escH(t('cn_col_bpcs')) + '</th>'
+        + '<th class="num">' + escH(t('cn_col_bg')) + '</th></tr></thead><tbody>'
+        + unc.map(u => '<tr><td>' + escH(metalLabel(u.metal) + ' ' + u.fineness)
+            + '<span class="subkeep">' + escH((a.skipped||[]).filter(x =>
+                x.metal === u.metal && x.fineness === u.fineness)
+              .map(x => x.name + (x.code && x.code !== x.name ? ' ' + x.code : '')).join(' · ')) + '</span></td>'
+          + '<td class="num">' + safeInt(u.pcs,0) + '</td>'
+          + '<td class="num">' + gramTxt(u.g,3) + '</td></tr>').join('')
+        + '</tbody></table></div>'
+        + '<div class="row actsep" style="margin-top:10px;padding-top:10px">'
+          + '<span class="mlbl">' + escH(fmt('cn_pcs', { n: uncN })) + '</span>'
+          + '<span>' + escH(Object.keys(uncPure).map(m => metalLabel(m) + ' '
+              + gramTxt(uncPure[m],3) + t('u_g')).join(' · ')) + '</span></div>'
+        + '<div class="notice">' + escH(t('cn_uncounted_note')) + '</div>'
+      : (a.skipped && a.skipped.length ? '<div class="sec">' + escH(t('cn_uncounted')) + '</div>'
         + '<div class="row"><span class="mlbl">' + escH(fmt('cn_pcs', { n: a.skipped.length })) + '</span></div>'
-        + '<div class="muted">' + escH(a.skipped.slice(0,20).map(x => x.name).join(' · ')) + '</div>'
-        + '<div class="notice">' + escH(t('cn_uncounted_note')) + '</div>' : '')
+        + '<div class="muted">' + escH(a.skipped.map(x => x.name).join(' · ')) + '</div>'
+        + '<div class="notice">' + escH(t('cn_uncounted_note')) + '</div>' : ''))
 
     + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
       + sign(t('cn_counter')) + sign(t('cn_mrp')) + '</div>'
@@ -6015,7 +6372,10 @@ function hmLists(){
     if(CN_IN_SHOP.indexOf(p.location) < 0) return;            /* workshop / customer: not this screen */
     if(hmNeeds(p)) todo.push(x); else fine.push(x);
   });
-  (S.pieces||[]).forEach(p => { if(safeInt(p.hallmark.backTs,0)) back.push(p); });
+  /* ON-HAND, LIKE THE OTHER THREE LISTS. Built from S.pieces with no stock filter, this kept
+     listing a piece that had been returned and then SOLD — a piece that has left the shop, still
+     appearing on the shop's hallmarking screen. */
+  on.forEach(x => { if(safeInt(x.p.hallmark.backTs,0)) back.push(x.p); });
   back.sort((a,b) => safeInt(b.hallmark.backTs,0) - safeInt(a.hallmark.backTs,0));
   office.sort((a,b) => hmDaysOut(b.p) - hmDaysOut(a.p));
   return { todo, office, back: back.slice(0,10), fine };
@@ -6100,6 +6460,7 @@ function hmSendGo(){
                  fineness: safeInt(p.fineness,0), netG: round3(num(p.netG)) });
     /* CUSTODY, NOT A MOVEMENT — the whole point of this screen. Three fields change and the
        ledger is not touched. */
+    p.hallmark.from = ['tray','safe','workshop'].indexOf(p.location) >= 0 ? p.location : 'tray';
     p.location = 'assay';
     p.locTs = S.today;
     p.hallmark.sentTs = S.today;
@@ -6158,8 +6519,8 @@ function hmReturnGo(){
   const p = pieceById(HM_SHEET);
   if(!p) return;
   const ref = String((document.getElementById('hmRef')||{}).value || '').slice(0,40);
-  /* CUSTODY AGAIN: the piece comes home, the ledger is not touched. */
-  p.location = 'tray';
+  /* CUSTODY AGAIN: the piece comes home — TO WHERE IT CAME FROM, not to the display case. */
+  p.location = ['tray','safe','workshop'].indexOf(p.hallmark.from) >= 0 ? p.hallmark.from : 'tray';
   p.locTs = S.today;
   p.hallmark.backTs = S.today;
   p.hallmark.origin = ['am_assay','none','exempt_other'].indexOf(HM_RET) >= 0 ? HM_RET : 'am_assay';
@@ -6204,7 +6565,7 @@ function hmRow(x, mode){
   }
   return '<div class="cnrow"><div class="cnnm">' + body + '</div>'
     + '<div class="cnact"><span class="mlbl" style="align-self:center">'
-      + escH(gramTxt(p.netG,3) + t('u_g')) + '</span></div></div>';
+      + escH(t('w_net_s') + ' ' + gramTxt(p.netG,3) + t('u_g')) + '</span></div></div>';
 }
 function viewMark(){
   const L = hmLists();
@@ -6283,7 +6644,7 @@ function openHmList(id){
       + '<th>' + escH(t('hm_list_col_item')) + '</th>'
       + '<th class="num">' + escH(t('hm_list_col_g')) + '</th></tr></thead><tbody>'
       + h.items.map((i,k) => '<tr><td>' + (k+1) + '. ' + escH(i.name || i.code || '—')
-        + '<span class="tblsub">' + escH([i.code && i.code !== i.name ? i.code : '',
+        + '<span class="subkeep">' + escH([i.code && i.code !== i.name ? i.code : '',
             metalLabel(i.metal) + ' ' + i.fineness].filter(Boolean).join(' · ')) + '</span></td>'
         + '<td class="num">' + gramTxt(i.netG,3) + '</td></tr>').join('')
       + '</tbody></table></div>'
@@ -6606,7 +6967,7 @@ function openRepairSlip(id, kind){
       + '<th>' + escH(t('rp_descr')) + '</th>'
       + '<th class="num">' + escH(t('w_gross_s')) + ', ' + escH(t('u_g')) + '</th></tr></thead><tbody>'
       + '<tr><td>' + escH(r.descr || '—')
-        + '<span class="tblsub">' + escH(metalLabel(r.metal) + (r.fineness ? ' · ' + r.fineness : '')
+        + '<span class="subkeep">' + escH(metalLabel(r.metal) + (r.fineness ? ' · ' + r.fineness : '')
           + (r.photoNote ? ' · ' + r.photoNote : '')) + '</span></td>'
       + '<td class="num">' + gramTxt(r.grossG,3) + '</td></tr>'
       + '</tbody></table></div>'
@@ -6764,6 +7125,8 @@ function dbSaveEntry(){
 function viewDebts(){
   const rows = debtsFromBooks();
   const owing = rows.filter(x => x.balance > 0);
+  const credit = rows.filter(x => x.balance < 0);
+  const creditTot = credit.reduce((a,x) => a - x.balance, 0);
   const total = debtsTotal();
   return '<main class="anim">'
     + '<div class="sec">' + escH(t('tab_debts')) + '</div>'
@@ -6775,12 +7138,24 @@ function viewDebts(){
       + '<div class="kpi"><div class="l">' + escH(t('db_owing')) + '</div><div class="v">'
         + owing.length + '</div></div>'
     + '</div>'
-    /* the total is computed money, so its arithmetic sits under it like every other figure here */
-    + '<div class="brk"><b>' + (S.bills||[]).reduce((a,b) => a + safeAmd(b.amd,0), 0).toLocaleString('en-US') + '</b>'
-      + '<span class="op">−</span><b>' + (S.pays||[]).reduce((a,p) => a + safeAmd(p.amd,0), 0).toLocaleString('en-US') + '</b>'
-      + '<span class="eq">=</span><b>' + ((S.bills||[]).reduce((a,b) => a + safeAmd(b.amd,0), 0)
-          - (S.pays||[]).reduce((a,p) => a + safeAmd(p.amd,0), 0)).toLocaleString('en-US') + ' ֏</b>'
-      + '<span class="why">' + escH(t('db_why')) + '</span></div>'
+    /* THE LINE EXPLAINS THE FIGURE ABOVE IT — THE SAME FIGURE. The KPI is Σ max(0, balance): a
+       supplier in credit is not a negative debt, he is a prepayment, and the app itself names
+       and badges that state «Կանխավճար». The line under it used to be Σ all bills − Σ all
+       payments across every supplier, which is a DIFFERENT number the moment any supplier is in
+       credit — «Ընդհանուր պարտքը 267,000 ֏» sat directly above «562,800 − 345,800 = 217,000 ֏»,
+       a 50,000 ֏ contradiction on a screen whose own intro promises «էկրանի թիվը և տողերը չեն
+       կարող իրար հակասել». So the sums are taken over THE SUPPLIERS THE KPI COUNTS, and the
+       credit is stated separately, as its own figure, with its own line. */
+    + '<div class="brk"><b>' + owing.reduce((a,x) => a + x.billed, 0).toLocaleString('en-US') + '</b>'
+      + '<span class="op">−</span><b>' + owing.reduce((a,x) => a + x.paid, 0).toLocaleString('en-US') + '</b>'
+      + '<span class="eq">=</span><b>' + total.toLocaleString('en-US') + ' ֏</b>'
+      + '<span class="why">' + escH(t('db_why') + (credit.length ? ' · ' + t('db_why_owing') : '')) + '</span></div>'
+    + (credit.length ? '<div class="row" style="margin-top:10px"><span class="mlbl">'
+        + escH(t('db_prepaid_tot')) + '</span><span>' + amd(creditTot) + '</span></div>'
+        + '<div class="brk"><b>' + credit.reduce((a,x) => a + x.paid, 0).toLocaleString('en-US') + '</b>'
+        + '<span class="op">−</span><b>' + credit.reduce((a,x) => a + x.billed, 0).toLocaleString('en-US') + '</b>'
+        + '<span class="eq">=</span><b>' + creditTot.toLocaleString('en-US') + ' ֏</b>'
+        + '<span class="why">' + escH(fmt('db_why_credit', { n: credit.length })) + '</span></div>' : '')
 
     /* the screen's ONE accent-filled button: recording what a supplier has invoiced. */
     + '<button class="btn primary" style="margin-top:12px" onclick="dbOpenEntry(' + jsArg('bill') + ')">+ '
@@ -6828,9 +7203,12 @@ function openSupplier(id){
       + '<span class="cur">֏</span></span></div>'
     /* DERIVED, IN FRONT OF THE READER. Two sums and a subtraction, with the row counts, so the
        figure can be checked against the table below it. */
+    /* ONE MINUS CHARACTER THROUGHOUT A SIGNED DOCUMENT. The headline used U+2212 while
+       toLocaleString gave the breakdown result and the balance column an ASCII hyphen — three
+       different marks for the same sign on one page, beside an amount column that used U+2212. */
     + '<div class="brk"><b>' + billed.toLocaleString('en-US') + '</b>'
       + '<span class="op">−</span><b>' + paid.toLocaleString('en-US') + '</b>'
-      + '<span class="eq">=</span><b>' + bal.toLocaleString('en-US') + ' ֏</b>'
+      + '<span class="eq">=</span><b>' + (bal < 0 ? '−' : '') + Math.abs(bal).toLocaleString('en-US') + ' ֏</b>'
       + '<span class="why">' + escH(t('db_why')) + '</span></div>'
 
     + (rows.length ? '<div class="tblwrap" style="max-height:none"><table class="tbl"><thead><tr>'
@@ -6839,13 +7217,16 @@ function openSupplier(id){
         + '<th class="num">' + escH(t('db_balance')) + '</th></tr></thead><tbody>'
         + rows.slice().reverse().map(r => '<tr><td>' + escH(fdate(r.ts)) + '</td>'
           + '<td>' + escH(r.kind === 'bill' ? t('db_bill') : t('db_pay'))
-            + (r.ref ? '<span class="tblsub">' + escH(r.ref) + '</span>' : '') + '</td>'
+            + (r.ref ? '<span class="subkeep">' + escH(r.ref) + '</span>' : '') + '</td>'
           + '<td class="num">' + (r.kind === 'pay' ? '−' : '') + r.amd.toLocaleString('en-US') + '</td>'
-          + '<td class="num">' + r.bal.toLocaleString('en-US') + '</td></tr>').join('')
+          + '<td class="num">' + (r.bal < 0 ? '−' : '') + Math.abs(r.bal).toLocaleString('en-US') + '</td></tr>').join('')
         + '</tbody></table></div>'
       : '<div class="muted">' + escH(t('db_norows')) + '</div>')
+    /* THE WORDS MUST AGREE WITH THE FIGURE. «Գումարը բառերով՝ հիսուն հազար դրամ» printed
+       fifty thousand dram beside a balance of MINUS fifty thousand, with nothing saying which
+       way the money runs — on the document the supplier signs. The direction is named. */
     + '<div class="muted" style="margin-top:6px">' + escH(t('act_words')) + '՝ <b>'
-      + escH(amWords(Math.abs(bal))) + '</b></div>'
+      + escH(amWords(Math.abs(bal)) + (bal < 0 ? ' (' + t('db_prepaid') + ')' : '')) + '</b></div>'
 
     /* NOPRINT: this sheet is BOTH a working screen and a signed document. Its two actions belong
        on the screen and must not appear on the paper the supplier signs. */
@@ -6939,7 +7320,21 @@ function swWantCyrillic(){
     }).catch(() => {});
   }catch(e){}
 }
-function setLang(v){ U.lang = ['hy','en','ru'].indexOf(v) >= 0 ? v : 'hy'; lang = U.lang; saveU(); swWantCyrillic(); renderAll(); }
+function setLang(v){ U.lang = ['hy','en','ru'].indexOf(v) >= 0 ? v : 'hy'; lang = U.lang; saveU();
+  swWantCyrillic(); renderAll(); repaintSheet(); }
+/* the eleven sheet painters. Each is idempotent and reads its state from a module global, so the
+   recorded call redraws exactly what is on screen. */
+['openMoreNav','openRate','openPiece','openPool','niRender','slRender','openBuyAct','cnAbandon',
+ 'cnReweigh','openCountAct','hmStatusSheet','hmSendSheet','hmReturnSheet','openHmList','rpRender',
+ 'openRepair','openRepairSlip','dbNewSup','dbOpenEntry','openSupplier'].forEach(n => {
+  const f = window[n];
+  if(typeof f !== 'function') return;
+  window[n] = function(){
+    const args = [].slice.call(arguments);
+    MODAL_RE = function(){ f.apply(null, args); };
+    return f.apply(null, args);
+  };
+});
 function toggleLang(){ setLang({ hy:'en', en:'ru', ru:'hy' }[U.lang] || 'hy'); }
 
 /* =====================================================================================
