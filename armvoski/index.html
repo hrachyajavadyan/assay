@@ -2278,7 +2278,11 @@ function postMove(m){
   const cur = onHand(mv.subject);
   const bad = LEDGER.validate(mv, cur);
   if(bad){
+    /* diagnostic, not a record: the ledger itself is append-only, this is only what the UI
+       needs to say WHY a movement was refused. Capped, because a tab a jeweller leaves open
+       all day must not grow a list nobody reads. */
     LEDGER_REJECTS.push({ subject:mv.subject, type:mv.type, dq:mv.dq, reason:bad, at:Date.now() });
+    if(LEDGER_REJECTS.length > 200) LEDGER_REJECTS = LEDGER_REJECTS.slice(-100);
     return false;
   }
   const uuid = m.uuid || moveUuid(mv);
@@ -3659,7 +3663,14 @@ function startFresh(){
   RENDER_FAIL = 0; renderAll();
 }
 
-function setTheme(v){ U.theme = v === 'dark' ? 'dark' : 'light'; saveU(); renderAll(); }
+function setTheme(v){
+  U.theme = v === 'dark' ? 'dark' : 'light'; saveU();
+  /* the OS chrome follows the theme. Left alone, a dark app sits under a light status bar and
+     the phone shows two products at once. */
+  try{ const m = document.querySelector('meta[name="theme-color"]');
+       if(m) m.setAttribute('content', U.theme === 'dark' ? '#0B0F17' : '#F4F6F8'); }catch(e){}
+  renderAll();
+}
 function toggleTheme(){ setTheme(U.theme === 'light' ? 'dark' : 'light'); }
 /* the Cyrillic face is behind a unicode-range, so an Armenian-only install never fetches it and
    sw.js deliberately does not precache it. A RUSSIAN user, though, needs it offline from the
