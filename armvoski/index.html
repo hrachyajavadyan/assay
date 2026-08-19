@@ -1674,6 +1674,20 @@ const num = v => { const n = +v; return isFinite(n) ? n : 0; };
    shop names, document references — all of them are typed by a person. */
 const escH = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+/* an id or a string going into an inline handler crosses TWO parsers: the HTML attribute parser
+   decodes the entity references, and the JS parser then reads what is left. JSON.stringify() is
+   the wrong tool for that — it emits DOUBLE quotes, which close the attribute itself, so
+   `onclick="setTab("tray")"` parsed as `onclick="setTab("` and EVERY TAP IN THE PRODUCT was a
+   syntax error. (Nothing caught it for a while because the tests drove the app through
+   page.evaluate, which never goes near the attribute. A real tap is the only thing that finds
+   this.) So: build the JS string literal first, then HTML-escape the whole literal. escH turns
+   `'` into &#39;, which the HTML parser hands back to JS as a plain quote. */
+function jsArg(v){
+  const lit = "'" + String(v==null?'':v)
+    .replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\r?\n/g,'\\n') + "'";
+  return escH(lit);
+}
+
 /* money: integer dram, tabular, with the mark riding inside the number so `.7em` resolves
    against the amount and never against whatever container the pair landed in. */
 const amd = n => '<span class="num">' + safeInt(n,0).toLocaleString('en-US') + '<span class="cur">֏</span></span>';
@@ -2926,14 +2940,14 @@ function renderNav(){
   NAV_HIDDEN = NAV_KEYS.filter(k => keys.indexOf(k) < 0);
   nv.innerHTML = keys.map(k =>
     '<button class="' + (U.tab===k ? 'active' : '') + '" aria-label="' + escH(t('tab_'+k)) + '"'
-    + ' onclick="setTab(' + JSON.stringify(k) + ')">'
+    + ' onclick="setTab(' + jsArg(k) + ')">'
     + '<span class="icw">' + NAV_ICON[k] + '</span><span>' + escH(t('tab_'+k)) + '</span></button>').join('')
     + (NAV_HIDDEN.length ? '<button aria-label="' + escH(t('menu_title')) + '" onclick="openMoreNav()">'
         + '<span class="icw">☰</span><span>' + escH(t('more_tab')) + '</span></button>' : '');
 }
 function openMoreNav(){
   const rows = NAV_HIDDEN.map(k =>
-    '<button class="morerow' + (U.tab===k ? ' active' : '') + '" onclick="closeModal();setTab(' + JSON.stringify(k) + ')">'
+    '<button class="morerow' + (U.tab===k ? ' active' : '') + '" onclick="closeModal();setTab(' + jsArg(k) + ')">'
     + '<span class="mrico">' + NAV_ICON[k] + '</span><span class="mrnm">' + escH(t('tab_'+k)) + '</span></button>').join('');
   openModal('<h3>☰ ' + escH(t('menu_title')) + '</h3>' + rows
     + '<button class="btn ghost full" style="margin-top:16px" onclick="closeModal()">' + escH(t('close')) + '</button>');
@@ -3079,7 +3093,7 @@ function viewTray(){
       if(p.location !== 'tray') bits.push('<span class="badge b-neutral">' + escH(locLabel(p.location)) + '</span>');
       if(!p.acq.known || !p.acq.costAmd) bits.push('<span class="badge b-rose">' + escH(t('badge_nocost')) + '</span>');
       if(p.acq.preJul26) bits.push('<span class="badge b-neutral">&lt; 01.07.26</span>');
-      return '<button class="prow" onclick="openPiece(' + JSON.stringify(p.id) + ')">'
+      return '<button class="prow" onclick="openPiece(' + jsArg(p.id) + ')">'
         + '<div class="pi"><div class="pnm">' + escH(nm) + '</div>'
         + '<div class="psub">' + bits.join('') + '</div></div>'
         /* WEIGHT AND PURE METAL ONLY. The piece's PRICE is computed money and no computed money
@@ -3090,7 +3104,7 @@ function viewTray(){
     }).join('');
     const pools = g.pools.map(x => {
       const nlots = lotsFor(x.b.id).length;
-      return '<button class="prow" onclick="openPool(' + JSON.stringify(x.b.id) + ')">'
+      return '<button class="prow" onclick="openPool(' + jsArg(x.b.id) + ')">'
       + '<div class="pi"><div class="pnm">' + escH(t('w_scrap')) + ' · ' + escH(metalLabel(x.b.metal)) + '</div>'
       + '<div class="psub"><span>' + escH(t('w_pool')) + '</span>'
         + (nlots ? '<span>' + escH(fmt('w_acqn', { n: nlots })) + '</span>' : '') + '</div></div>'
@@ -3392,7 +3406,19 @@ function startFresh(){
 
 function setTheme(v){ U.theme = v === 'dark' ? 'dark' : 'light'; saveU(); renderAll(); }
 function toggleTheme(){ setTheme(U.theme === 'light' ? 'dark' : 'light'); }
-function setLang(v){ U.lang = ['hy','en','ru'].indexOf(v) >= 0 ? v : 'hy'; lang = U.lang; saveU(); renderAll(); }
+/* the Cyrillic face is behind a unicode-range, so an Armenian-only install never fetches it and
+   sw.js deliberately does not precache it. A RUSSIAN user, though, needs it offline from the
+   first run — so when the language IS ru the page asks the worker for it by name. One
+   hard-coded subset, no path travels from here into the cache. */
+function swWantCyrillic(){
+  try{
+    if(lang !== 'ru' || !navigator.serviceWorker) return;
+    navigator.serviceWorker.ready.then(r => {
+      if(r && r.active) r.active.postMessage({ type:'shellfont', subset:'cyrillic' });
+    }).catch(() => {});
+  }catch(e){}
+}
+function setLang(v){ U.lang = ['hy','en','ru'].indexOf(v) >= 0 ? v : 'hy'; lang = U.lang; saveU(); swWantCyrillic(); renderAll(); }
 function toggleLang(){ setLang({ hy:'en', en:'ru', ru:'hy' }[U.lang] || 'hy'); }
 
 /* =====================================================================================
@@ -3510,6 +3536,7 @@ function boot(){
   const bad = verifyLedger();
   if(bad.length){ console.warn('ArmVoski: ledger cache disagreed on', bad.length, 'subjects — rebuilding'); healLedger(); saveState(); }
   renderAll();
+  swWantCyrillic();
   window.addEventListener('resize', () => { try{ renderNav(); }catch(e){} });
   if('serviceWorker' in navigator){
     window.addEventListener('load', () => {
