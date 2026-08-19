@@ -1686,6 +1686,16 @@ const K = {
    so adding them later is a line in this object. */
 const FINENESS = { au:[375,416,500,583,585,750,916,958,999], ag:[800,830,875,925,960,999] };
 const METALS = ['au','ag'];
+/* what a form lands on for a metal it has never been set to. NOT FINENESS[metal][0] — that is 375
+   for gold, the rarest fineness in the trade, and a jeweller who taps a metal chip by accident
+   must not end up quoting it. 585 and 925 are the ordinary standards. */
+const FIN_DEFAULT = { au:585, ag:925 };
+/* a form's per-metal memory: switching to silver and back returns to the gold fineness you had. */
+function finSwitch(mem, from, to, cur){
+  mem[from] = safeInt(cur, 0);
+  const want = safeInt(mem[to], 0);
+  return FINENESS[to].indexOf(want) >= 0 ? want : FIN_DEFAULT[to];
+}
 
 /* the exemption thresholds (research §3.3): gold under 1.5 g, silver under 3 g, need no stamp */
 const HM_EXEMPT_G = { au:1.5, ag:3 };
@@ -1871,7 +1881,9 @@ T.hy = {
   pr_base_gross:'Աշխատանքը՝ համախառն քաշով', pr_base_net:'Աշխատանքը՝ զուտ քաշով',
   pr_margin_note:'Հավելագինը՝ {p}% մետաղի գնի վրա',
   pr_buy_title:'Գնման գին', pr_buy_nostones:'Քարերը չեն գնահատվում',
-  pr_warn80:'Գինը հաշվարկվածի {p}%-ն է։ 80%-ից ցածր վաճառքը հարկվում է իրական արժեքի 80%-ից։',
+  /* «ցածր կամ հավասար», ոչ թե «ցածր»: spec 2.3-ը սահմանում է շեմը ներառյալ, և ուղիղ 80%-ի
+     դեպքում «80%-ից ցածր» ձևակերպումը կհակասեր իր իսկ տոկոսին։ */
+  pr_warn80:'Գինը հաշվարկվածի {p}%-ն է։ Հաշվարկվածի 80%-ով կամ ավելի ցածր վաճառքը հարկվում է իրական արժեքի 80%-ից։',
   pr_warn80_sub:'Հաշվարկված՝ {a} · 80% = {b} · Ձեր գինը՝ {c}',
   /* ---- today (spec 6.1 home) ---- */
   home_title:'Այսօր', home_stock:'Դարակի պաշարը', home_pure:'Մաքուր մետաղ',
@@ -1955,7 +1967,7 @@ T.hy = {
   by_setrate:'Գնման զեղչ % (999 գնից)',
   by_saverate:'Պահպանել զեղչը',
   by_show:'Ցույց տվեք այս տողը հաճախորդին — գինը, հարգը, քաշը և հաշվարկը։',
-  by_hm:'Ի՞նչ դրոշմ է կրում իրը',
+  by_hm:'Ի՞նչ հարգադրոշմ է կրում իրը',
   by_recent:'Վերջին գնումները',
   by_act_open:'Բացել ակտը',
   by_cost_note:'Վճարված գումարը դառնում է այս մետաղի ինքնարժեքը՝ գնման ակտի համարով։',
@@ -1969,6 +1981,21 @@ T.hy = {
   act_total:'Ընդամենը', act_words:'Գումարը բառերով', act_pay:'Վճարման եղանակ',
   act_note:'Ակտը կազմված է երկու օրինակից՝ մեկական կողմերին։',
   print:'Տպել',
+  /* ---- the buy line's prose (never a form label in a sentence) ---- */
+  pr_buy_disc:'Գնման զեղչ՝ {p}%', pr_buy_stones:'Քարերը գնահատված են',
+  by_stones_sell:'Քարերի գինը վաճառքում (֏)',
+  by_stones_sell_d:'Դատարկ թողնելու դեպքում կվերցվի վճարվածը՝ {a}։ Առանց դրա իրի հաշվարկված գինը ցածր կլինի ձեռքբերման արժեքից։',
+  act_stones_note:'Քարերի արժեքը — քաշը 1-ին տողում է',
+  rate_ag_unset:'Արծաթի 999 գինը նշված չէ',
+  /* ---- Այսօր՝ օրվա շարժը և ՀԴՄ ծածկույթը (spec 5.3, 6.1) ---- */
+  home_day:'Օրվա շարժը', home_sales_n:'Վաճառք', home_buys_n:'Գնում',
+  home_takings:'Օրվա մուտքը', home_payouts:'Օրվա ելքը',
+  home_no_sales:'Այսօր վաճառք չի գրանցվել', home_no_buys:'Այսօր գնում չի գրանցվել',
+  home_hdm:'ՀԴՄ ծածկույթ',
+  home_hdm_sub:'Այս ամսվա {n} վաճառքից {k}-ը կրում է ՀԴՄ համար',
+  home_hdm_none:'Այս ամիս վաճառք դեռ չկա',
+  al_hdm:'{n} վաճառք՝ առանց ՀԴՄ համարի',
+  al_hdm_d:'Համարը գրանցվում է միայն այս սարքում — ոչինչ չի ուղարկվում։',
   /* ---- the recovery net (ArmTrade's own strings) ---- */
   rec_title:'Ծրագիրը չկարողացավ բացել էջը',
   rec_body:'Տվյալների մի մասը վնասված է։ Կարող եք վերականգնել վերջին ճիշտ վիճակը՝ առանց հեռախոսից որևէ բան ջնջելու։',
@@ -2029,7 +2056,7 @@ T.en = {
   pr_base_gross:'Making charged on gross weight', pr_base_net:'Making charged on net weight',
   pr_margin_note:'Margin of {p}% on the metal rate',
   pr_buy_title:'Buy-in price', pr_buy_nostones:'Stones are not valued',
-  pr_warn80:'This price is {p}% of the computed one. A sale below 80% is taxed on 80% of fair value.',
+  pr_warn80:'This price is {p}% of the computed one. A sale at or below 80% is taxed on 80% of fair value.',
   pr_warn80_sub:'Computed {a} · 80% = {b} · your price {c}',
   home_title:'Today', home_stock:'Stock in the tray', home_pure:'Pure metal',
   home_val:"Value at today's rate", home_pieces:'Items in the tray',
@@ -2118,7 +2145,20 @@ T.en = {
   act_total:'Total', act_words:'Amount in words', act_pay:'Payment method',
   act_note:'Drawn up in two copies, one for each party.',
   print:'Print',
-  rec_title:'The app could not draw this screen',
+  pr_buy_disc:'Buy-in discount {p}%', pr_buy_stones:'Stones are valued',
+  by_stones_sell:'Stones at resale (֏)',
+  by_stones_sell_d:"Left blank, the amount paid is carried over: {a}. Without it the item's computed price falls below what the shop paid for it.",
+  act_stones_note:'Value of the stones — their weight is on row 1',
+  rate_ag_unset:'The silver 999 rate has not been set',
+  home_day:"Today's trading", home_sales_n:'Sales', home_buys_n:'Buy-ins',
+  home_takings:'Taken in today', home_payouts:'Paid out today',
+  home_no_sales:'No sales recorded today', home_no_buys:'No buy-ins recorded today',
+  home_hdm:'Fiscal receipt coverage',
+  home_hdm_sub:"{k} of this month's {n} sales carry a fiscal receipt number",
+  home_hdm_none:'No sales this month yet',
+  al_hdm:'{n} sales with no fiscal receipt number',
+  al_hdm_d:'The number is recorded on this device only — nothing is transmitted.',
+  rec_title:'The app could not open this screen',
   rec_body:'Part of the data is damaged. You can restore the last good state without deleting anything from the phone.',
   rec_restore:'Restore the last good state',
   rec_fresh:'Start again (with demo data)'
@@ -2177,7 +2217,7 @@ T.ru = {
   pr_base_gross:'Работа считается по весу брутто', pr_base_net:'Работа считается по весу нетто',
   pr_margin_note:'Наценка {p}% на цену металла',
   pr_buy_title:'Цена закупки', pr_buy_nostones:'Камни не оцениваются',
-  pr_warn80:'Эта цена — {p}% от расчётной. Продажа ниже 80% облагается от 80% реальной стоимости.',
+  pr_warn80:'Эта цена — {p}% от расчётной. Продажа по 80% и ниже облагается с 80% реальной стоимости.',
   pr_warn80_sub:'Расчёт {a} · 80% = {b} · ваша цена {c}',
   home_title:'Сегодня', home_stock:'Запас в витрине', home_pure:'Чистый металл',
   home_val:'Стоимость по сегодняшней цене', home_pieces:'Изделий в витрине',
@@ -2266,6 +2306,19 @@ T.ru = {
   act_total:'Итого', act_words:'Сумма прописью', act_pay:'Способ оплаты',
   act_note:'Акт составлен в двух экземплярах, по одному каждой стороне.',
   print:'Печать',
+  pr_buy_disc:'Дисконт закупки {p}%', pr_buy_stones:'Камни оценены',
+  by_stones_sell:'Камни в цене продажи (֏)',
+  by_stones_sell_d:'Если оставить пустым, переносится уплаченная сумма: {a}. Иначе расчётная цена изделия окажется ниже себестоимости.',
+  act_stones_note:'Стоимость камней — вес указан в строке 1',
+  rate_ag_unset:'Цена серебра 999 не указана',
+  home_day:'Обороты дня', home_sales_n:'Продажи', home_buys_n:'Закупки',
+  home_takings:'Поступило за день', home_payouts:'Выплачено за день',
+  home_no_sales:'Продаж сегодня не зарегистрировано', home_no_buys:'Закупок сегодня не зарегистрировано',
+  home_hdm:'Покрытие чеками ККМ',
+  home_hdm_sub:'{k} из {n} продаж этого месяца имеют номер чека ККМ',
+  home_hdm_none:'Продаж в этом месяце пока нет',
+  al_hdm:'{n} продаж без номера чека ККМ',
+  al_hdm_d:'Номер записывается только на этом устройстве — ничего не передаётся.',
   rec_title:'Приложение не смогло открыть экран',
   rec_body:'Часть данных повреждена. Можно восстановить последнее исправное состояние, ничего не удаляя с телефона.',
   rec_restore:'Восстановить последнее исправное состояние',
@@ -2652,9 +2705,18 @@ function priceOf(p){
 }
 /* what the shop pays a walk-in for metal. NO MAKING CHARGE — the shop is buying metal, not
    workmanship — and stones default to zero because a shop buying scrap does not pay for them. */
+/* THE PER-GRAM PRICE OF ONE FINENESS — the figure the shop quotes across the counter, the figure
+   the buy screen's rate card already prints, and THE FIGURE THE ԳՆՄԱՆ ԱԿՏ'S «1 գ գին» COLUMN
+   CARRIES. It is the primitive on the buy side and buyPriceOf multiplies it, because the act is a
+   signed two-party document that a customer and an accountant both check by hand: ITS OWN
+   OPERANDS MUST GIVE ITS OWN ANSWER — the same rule breakdown() obeys and the same rule the
+   specification's own worked example follows (12.400 x 26,700 = 331,080).
+   Rounding the product instead — round(net x buyRate x f/999) — while printing a per-gram rate
+   rounded separately made 4,266 of 5,000 acts fail to foot, by up to 188 dram. */
+const buyFineRate = (fineness, metal) => Math.round(buyRate(metal) * safeInt(fineness,0) / 999);
 function buyPriceOf(netG, fineness, metal){
   if(!buyDiscSet()) return 0;
-  return Math.round(num(netG) * buyRate(metal) * safeInt(fineness,0) / 999);
+  return Math.round(num(netG) * buyFineRate(fineness, metal));
 }
 
 /* ---- THE BREAKDOWN LINE — MANDATORY ----
@@ -2696,17 +2758,31 @@ function buyBreakdown(netG, fineness, metal, stonesAmd){
   /* WITHOUT A DISCOUNT THERE IS NO BUY RATE, so there is no line to print. Printing one anyway
      would put «x 0 =» in front of a customer, which is worse than saying the setting is missing. */
   if(!buyDiscSet()) return '<div class="notice bad">' + escH(t('by_needrate')) + '</div>';
-  const br = buyRate(metal), f = safeInt(fineness,0);
+  const br = buyRate(metal), f = safeInt(fineness,0), fr = buyFineRate(f, metal);
   const st = safeAmd(stonesAmd, 0);
-  /* metal rounds where buyPriceOf rounds and the stones are already whole dram, so the line's
-     own operands give the line's own answer exactly - the one promise a breakdown line makes. */
   const paid = buyPriceOf(netG, fineness, metal) + st;
-  return '<div class="brk"><b>' + gramTxt(netG, 3) + t('u_g') + '</b>'
-    + '<span class="op">&times;</span><b>' + br.toLocaleString('en-US') + '</b>'
+  /* THE WHY-LINE IS PROSE, SO IT USES PROSE STRINGS. It used to splice in `w_buydisc`, which is a
+     SETTINGS FIELD LABEL — «Գնման զեղչ %» — beside a value that already carries its own «%», so
+     the customer read «Գնման զեղչ % 12%»; and when the stones were valued it substituted
+     `by_stones_lbl` «Քարերի գումարը (֏)», a form label complete with its unit in brackets,
+     dropped into an explanatory sentence. */
+  const why = [ st ? t('pr_buy_stones') : t('pr_buy_nostones'),
+                fmt('pr_buy_disc', { p: pctTxt(S.cfg.buyDiscPct) }) ];
+  /* TWO STAGES, EACH OF WHICH FOOTS. The first reduces the 999 buy rate to this fineness and is
+     the exact number the act's «1 գ գին» column prints; the second multiplies it by the weight
+     and is the exact row the act prints. Folded into one line, the printed per-gram figure and
+     the printed total came from two different roundings and disagreed by up to half a dram per
+     gram — on the one document the customer checks in his head. */
+  return '<div class="brk">'
+    + '<b>' + br.toLocaleString('en-US') + '</b>'
     + '<span class="op">&times;</span><b>' + f + '/999</b>'
+    + '<span class="eq">=</span><b>' + fr.toLocaleString('en-US') + ' ֏/' + t('u_g') + '</b>'
+    + '</div>'
+    + '<div class="brk"><b>' + gramTxt(netG, 3) + t('u_g') + '</b>'
+    + '<span class="op">&times;</span><b>' + fr.toLocaleString('en-US') + '</b>'
     + (st ? '<span class="op">+</span><b>' + st.toLocaleString('en-US') + '</b>' : '')
     + '<span class="eq">=</span><b>' + paid.toLocaleString('en-US') + ' ֏</b>'
-    + '<span class="why">' + escH((st ? t('by_stones_lbl') : t('pr_buy_nostones')) + ' · ' + t('w_buydisc') + ' ' + pctTxt(S.cfg.buyDiscPct) + '%') + '</span></div>';
+    + '<span class="why">' + escH(why.join(' · ')) + '</span></div>';
 }
 
 /* the valuation of a quantity of metal is computed money, so it gets a breakdown line too:
@@ -2735,8 +2811,14 @@ function valBreakdown(terms){
    record can carry them for the accountant. */
 function fairValueWarn(computed, manual){
   const c = safeAmd(computed,0), m = safeAmd(manual,0);
-  if(!c || !m || m >= c * 0.8) return null;
-  return { computed:c, floor: Math.round(c*0.8), manual:m, pct: Math.round(m*100/c) };
+  /* AT OR BELOW, NOT BELOW. Spec 2.3 opens «A sale at or below 80% of fair value is
+     recalculated», so a sale at exactly the floor is the case the rule exists for; `m >= c*0.8`
+     let it pass in silence. */
+  if(!c || !m || m > c * 0.8) return null;
+  /* FLOOR, NEVER ROUND. Math.round put every price in [0.795c, 0.8c) at «80%», so the headline
+     asserted that the very figure it was warning about was not below the threshold — a ~1,500 ֏
+     wide band on a 300,000 ֏ piece where the warning contradicted its own reason. */
+  return { computed:c, floor: Math.round(c*0.8), manual:m, pct: Math.floor(m*100/c) };
 }
 
 /* =====================================================================================
@@ -3344,6 +3426,17 @@ function openModal(inner){
     + '<div class="mbody"><div class="grabber"></div>' + inner + '</div></div>';
 }
 function closeModal(){ document.getElementById('modalRoot').innerHTML = ''; }
+/* a modal dismisses on Escape. The product targets a phone, where the backdrop tap and the Փակել
+   button are the exits — but the ԳՆՄԱՆ ԱԿՏ and the hand-over lists are read and closed on a
+   keyboard-attached device at the counter, and a sheet that swallows Escape reads as stuck. The
+   sheet drafts are dropped with it, exactly as the Չեղարկել button drops them. */
+function escClose(){
+  const r = document.getElementById('modalRoot');
+  if(!r || !r.innerHTML) return false;
+  NI = null; SL = null; CN_SHEET = null;
+  closeModal();
+  return true;
+}
 let TOAST_T = 0;
 function toast(msg){
   const el = document.getElementById('toast');
@@ -3365,28 +3458,46 @@ function topBar(){
       + ({hy:'EN', en:'РУ', ru:'ՀԱՅ'})[lang] + '</button>';
 }
 
-/* ---- the rate card. Provenance and age, always. ---- */
-function rateCard(){
-  const b = base999();
-  const prov = [ '999', t(S.rate.src === 'cb' ? 'rate_src_cb' : 'rate_src_manual'), rateAgeTxt() ]
+/* ---- the rate card. Provenance, age and THE METAL, always.
+   Every rate function in this product is metal-dimensioned by contract, and this card used to
+   call sellRate() and buyRate() with NO ARGUMENT — both silently answered for gold, while the
+   shop's 235 g of silver was valued from the silver rate on the very same screen and that rate
+   appeared nowhere. One unnamed number standing for two metals is the shape of the 34x silver
+   overcharge the pricing layer was already fixed for; the card follows. ---- */
+function rateMetalBlock(metal){
+  const b = metalRate999(metal);
+  const prov = [ '999', metalLabel(metal),
+                 t(S.rate.src === 'cb' ? 'rate_src_cb' : 'rate_src_manual'), rateAgeTxt() ]
     .filter(Boolean).join(' · ');
   const stale = rateStale();
-  return '<div class="ratecard">'
-    + '<div class="mlbl">' + escH(t('rate_title')) + '</div>'
-    + '<div class="rv">' + (b ? b.toLocaleString('en-US') : '—')
+  const nm = ' · ' + metalLabel(metal);
+  return '<div class="rv">' + (b ? b.toLocaleString('en-US') : '—')
       + '<span class="cur">֏/' + escH(t('u_g')) + '</span></div>'
     + '<div class="rprov' + (stale ? ' stale' : '') + '">' + escH(b ? prov : t('rate_unavail')) + '</div>'
+    + '<div class="rrow">'
+      + '<div class="rsub"><div class="l">' + escH(t('w_sellrate') + nm) + ' (+' + pctTxt(S.cfg.marginPct) + '%)</div>'
+        + '<div class="v">' + (b ? sellRate(metal).toLocaleString('en-US') + '<span class="cur">֏</span>' : '—')
+        + '</div></div>'
+      + '<div class="rsub"><div class="l">' + escH(t('w_buyrate') + nm)
+        + (buyDiscSet() ? ' (−' + pctTxt(S.cfg.buyDiscPct) + '%)' : '') + '</div>'
+        + (buyDiscSet() && b
+            ? '<div class="v">' + buyRate(metal).toLocaleString('en-US') + '<span class="cur">֏</span></div>'
+            : '<div class="v">—</div>'
+              + (buyDiscSet() ? '' : '<div class="mlbl">' + escH(t('buydisc_unset')) + '</div>')) + '</div>'
+    + '</div>';
+}
+function rateCard(){
+  const b = base999(), stale = rateStale();
+  /* gold is always shown because it is the anchor the Central Bank publishes; silver appears as
+     soon as it has a rate, because a shop that holds silver prices silver. */
+  const ag = silver999();
+  return '<div class="ratecard">'
+    + '<div class="mlbl">' + escH(t('rate_title')) + '</div>'
+    + rateMetalBlock('au')
     + (stale && b ? '<div class="rprov stale">' + escH(fmt('rate_stale',
         { n: Math.max(1, Math.floor(rateAgeMs()/DAY)) })) + '</div>' : '')
-    + '<div class="rrow">'
-      + '<div class="rsub"><div class="l">' + escH(t('w_sellrate')) + ' (+' + pctTxt(S.cfg.marginPct) + '%)</div>'
-        + '<div class="v">' + sellRate().toLocaleString('en-US') + '<span class="cur">֏</span></div></div>'
-      + '<div class="rsub"><div class="l">' + escH(t('w_buyrate'))
-        + (buyDiscSet() ? ' (−' + pctTxt(S.cfg.buyDiscPct) + '%)' : '') + '</div>'
-        + (buyDiscSet()
-            ? '<div class="v">' + buyRate().toLocaleString('en-US') + '<span class="cur">֏</span></div>'
-            : '<div class="v">—</div><div class="mlbl">' + escH(t('buydisc_unset')) + '</div>') + '</div>'
-    + '</div>'
+    + (ag ? '<hr class="actrule">' + rateMetalBlock('ag')
+          : '<div class="notice">' + escH(t('rate_ag_unset')) + '</div>')
     /* the ONE accent-filled button rule: updating the rate is the screen's next action only
        when the rate is stale or missing. On a normal morning it is a quiet ghost button and the
        screen has no accent slab at all, which is the correct answer for a screen you read. */
@@ -3414,16 +3525,46 @@ function saveRate(){
   saveState(); closeModal(); renderAll(); toast(t('rate_saved'));
 }
 
+/* =====================================================================================
+   THE DAY'S BOOKS
+   S.sales and S.buys are what the two counter flows write, and until now NOTHING on the shop's
+   first screen read either of them: a jeweller could sell a ring and buy in a chain and Այսօր was
+   byte-for-byte the same afterwards. These four helpers are the whole of what the home screen
+   needs, and they are here rather than inline so the ՀԴՄ coverage figure has exactly one
+   definition (spec 5.3: what share of THIS MONTH'S sales carry a fiscal receipt number).
+   ===================================================================================== */
+const sameDay = (a,b) => safeInt(a,0) === safeInt(b,0);
+function sameMonth(ts, ref){
+  const a = new Date(safeInt(ts,0)), b = new Date(safeInt(ref,0));
+  return a.getUTCFullYear() === b.getUTCFullYear() && a.getUTCMonth() === b.getUTCMonth();
+}
+const salesToday = () => (S.sales||[]).filter(x => sameDay(x.ts, S.today));
+const buysToday  = () => (S.buys ||[]).filter(x => sameDay(x.ts, S.today));
+/* THE PRODUCT IS NOT A ՀԴՄ AND TRANSMITS NOTHING (spec 5.3). This is a coverage figure the
+   shopkeeper can act on — how many of his own sales carry the number he typed off the fiscal
+   printer — and it computes no tax consequence from it, because the rates are unverified. */
+function hdmCoverage(){
+  const ms = (S.sales||[]).filter(x => sameMonth(x.ts, S.today));
+  const ok = ms.filter(x => String(x.hdmRef||'').trim() !== '').length;
+  return { n: ms.length, ok: ok, miss: ms.length - ok,
+           pct: ms.length ? Math.floor(ok*100/ms.length) : 100 };
+}
+
 /* ---- Այսօր ---- */
 function viewHome(){
   const pm = pureByMetal();
   const val = valuation();
   const noCost = (S.pieces||[]).filter(p => onHand(pieceSubj(p.id)) > EPS && (!p.acq.known || !p.acq.costAmd)).length;
   const atAssay = (S.pieces||[]).filter(p => p.location === 'assay' && onHand(pieceSubj(p.id)) > EPS).length;
+  const sales = salesToday(), buys = buysToday();
+  const takings = sales.reduce((a,x) => a + safeAmd(x.price,0), 0);
+  const payouts = buys.reduce((a,x) => a + safeAmd(x.paid,0), 0);
+  const cov = hdmCoverage();
   const alerts = [];
-  if(rateStale()) alerts.push({ bad:true, t: t('al_rate'), d: rateAgeTxt(), go:'openRate()' });
-  if(noCost) alerts.push({ bad:true, t: fmt('al_nocost', { n: noCost }), d: t('acq_unknown'), go:"setTab('tray')" });
-  if(atAssay) alerts.push({ bad:false, t: fmt('al_assay', { n: atAssay }), d: t('hm_title'), go:"setTab('tray')" });
+  if(rateStale()) alerts.push({ bad:true, t: t('al_rate'), d: rateAgeTxt() });
+  if(cov.miss) alerts.push({ bad:true, t: fmt('al_hdm', { n: cov.miss }), d: t('al_hdm_d') });
+  if(noCost) alerts.push({ bad:true, t: fmt('al_nocost', { n: noCost }), d: t('acq_unknown') });
+  if(atAssay) alerts.push({ bad:false, t: fmt('al_assay', { n: atAssay }), d: t('hm_title') });
 
   return '<main class="anim">'
     + '<div class="sec">' + escH(t('home_title')) + '</div>'
@@ -3435,6 +3576,57 @@ function viewHome(){
         + val.toLocaleString('en-US') + '<span class="cur">֏</span></div></div>'
     + '</div>'
     + valBreakdown(Object.keys(pm).map(m => ({ pure: pm[m], rate: metalRate999(m), metal: m })))
+
+    /* ---- THE DAY (spec 6.1): what the shop sold and what it bought, today. ---- */
+    + '<div class="sec">' + escH(t('home_day')) + '</div>'
+    + '<div class="kpis kpi2">'
+      + '<div class="kpi"><div class="l">' + escH(t('home_takings')) + ' · '
+        + escH(fmt('tray_sub', { n: sales.length })) + '</div><div class="v m">'
+        + takings.toLocaleString('en-US') + '<span class="cur">֏</span></div></div>'
+      + '<div class="kpi"><div class="l">' + escH(t('home_payouts')) + ' · '
+        + escH(fmt('tray_sub', { n: buys.length })) + '</div><div class="v m">'
+        + payouts.toLocaleString('en-US') + '<span class="cur">֏</span></div></div>'
+    + '</div>'
+    + '<div class="card"><h3>' + escH(t('home_sales_n')) + '</h3>'
+      + (sales.length
+          ? '<div class="tblwrap"><table class="tbl"><thead><tr>'
+            + '<th>' + escH(t('w_piece')) + '</th>'
+            + '<th class="num">' + escH(t('sl_sold_price')) + '</th>'
+            + '<th>' + escH(t('sl_hdm')) + '</th></tr></thead><tbody>'
+            + sales.slice().reverse().map(x => { const nm = x.name || x.code || '—';
+                const sub = [ (x.code && x.code !== nm) ? x.code : '', safeInt(x.fineness,0) ]
+                  .filter(Boolean).join(' · ');
+                return '<tr><td>' + escH(nm) + '<span class="tblsub">' + escH(sub) + '</span></td>'
+                  + '<td class="num">' + safeAmd(x.price,0).toLocaleString('en-US')
+                  + (x.warn ? ' <span class="badge b-rose">' + safeInt(x.warn.pct,0) + '%</span>' : '') + '</td>'
+                  /* THE MISSING NUMBER IS NAMED ON THE ROW, not only counted in the alert block. */
+                  + '<td>' + (String(x.hdmRef||'').trim()
+                      ? escH(x.hdmRef)
+                      : '<span class="badge b-rose">' + escH(t('none')) + '</span>') + '</td></tr>'; }).join('')
+            + '</tbody></table></div>'
+          : '<div class="muted">' + escH(t('home_no_sales')) + '</div>')
+    + '</div>'
+    + '<div class="card"><h3>' + escH(t('home_buys_n')) + '</h3>'
+      + (buys.length
+          ? buys.slice().reverse().map(b => '<button class="prow" onclick="openBuyAct(' + jsArg(b.id) + ')">'
+              + '<div class="pi"><div class="pnm">' + escH(b.id) + '</div>'
+              + '<div class="psub"><span>' + escH(metalLabel(b.metal)) + ' ' + safeInt(b.fineness,0) + '</span>'
+              + '<span class="badge b-neutral">' + escH(b.dest === 'resale' ? t('by_dest_resale') : t('by_dest_scrap')) + '</span></div></div>'
+              + '<div class="pw"><div class="a">' + safeAmd(b.paid,0).toLocaleString('en-US')
+              + '<span class="cur">֏</span></div>'
+              + '<div class="b">' + gramTxt(b.netG,3) + escH(t('u_g')) + '</div></div></button>').join('')
+          : '<div class="muted">' + escH(t('home_no_buys')) + '</div>')
+    + '</div>'
+    /* ---- ՀԴՄ coverage (spec 5.3). A share the shopkeeper can act on, and NOTHING computed
+       from it: no tax consequence, and nothing transmitted anywhere, ever. ---- */
+    + '<div class="card' + (cov.n && cov.miss ? ' rail rail-bad' : '') + '"><h3>' + escH(t('home_hdm')) + '</h3>'
+      + '<div class="row"><span class="mlbl">' + escH(t('home_hdm')) + '</span>'
+        + '<span class="big">' + (cov.n ? cov.pct + '%' : '—') + '</span></div>'
+      + '<div class="muted" style="margin-top:6px">' + escH(cov.n
+          ? fmt('home_hdm_sub', { n: cov.n, k: cov.ok }) : t('home_hdm_none')) + '</div>'
+      + '<div class="notice">' + escH(t('sl_hdm_note')) + '</div>'
+    + '</div>'
+
     + '<div class="card"><h3>' + escH(t('home_pure')) + '</h3>'
       + Object.keys(pm).map(m => '<div class="row"><span>' + escH(metalLabel(m)) + ' 999</span>'
           + '<span>' + gram(pm[m], 3) + '</span></div>').join('')
@@ -3772,7 +3964,7 @@ function viewFor(k){
 let NI = null;
 function niFresh(){
   return {
-    code:'', metal:'au', fineness:585, cat:'ring',
+    code:'', metal:'au', fineness:585, cat:'ring', finBy:{ au:585, ag:925 },
     weighedAs:'gross', grossG:'', stoneG:'', netG:'',
     stonesAmd:'', makingG:'',
     costAmd:'', costKnown:true, docType:'invoice', docRef:'', acqDate: S.today,
@@ -3803,8 +3995,13 @@ function openNewItem(){
 }
 function niSet(k, v){
   if(!NI) return;
-  NI[k] = v;
-  if(k === 'metal' && FINENESS[v].indexOf(safeInt(NI.fineness,0)) < 0) NI.fineness = FINENESS[v][0];
+  /* the metal chip carries the fineness with it. Falling back to FINENESS[v][0] landed the form
+     on 375 on the way back from silver — the rarest fineness in the trade, and (before the row
+     wrapped) at the left of a row whose right half was off-screen. */
+  if(k === 'metal' && v !== NI.metal){
+    NI.fineness = finSwitch(NI.finBy, NI.metal, v, NI.fineness);
+    NI.metal = v;
+  } else NI[k] = v;
   niRender();
 }
 /* typing must not re-render — that would move the caret. The numeric fields update the draft and
@@ -3865,8 +4062,12 @@ function niRender(){
     + '<div class="chips">' + METALS.map(m => chip(NI.metal===m, 'niSet(' + jsArg('metal') + ',' + jsArg(m) + ')', metalLabel(m))).join('') + '</div>'
 
     /* 583 sits beside 585 in this list, distinct and never normalised away */
+    /* WRAP. This row's own CSS carries the rule — a mandatory choice may never hide behind a
+       scrollbar-less swipe — and հարգ is the most consequential choice on the form: it multiplies
+       the price. On a plain .chips row at 320px, 750/916/958/999 sat past the right edge with no
+       fade, no partial chip and no scrollbar, so the list read as ending at 585. */
     + '<div class="fieldlbl">' + escH(t('w_harg')) + '</div>'
-    + '<div class="chips">' + FINENESS[NI.metal].map(f =>
+    + '<div class="chips wrap">' + FINENESS[NI.metal].map(f =>
         chip(safeInt(NI.fineness,0)===f, 'niSet(' + jsArg('fineness') + ',' + f + ')', String(f))).join('') + '</div>'
 
     + '<div class="fieldlbl">' + escH(t('w_cat')) + '</div>'
@@ -4078,12 +4279,18 @@ function viewSell(){
           + '<th>' + escH(t('w_date')) + '</th><th>' + escH(t('w_piece')) + '</th>'
           + '<th class="num">' + escH(t('sl_sold_price')) + '</th><th>' + escH(t('sl_hdm')) + '</th>'
           + '</tr></thead><tbody>'
-          + recent.map(s => '<tr><td>' + escH(fdate(s.ts)) + '</td>'
-            + '<td>' + escH(s.name || s.code || '—')
-              + '<span class="tblsub">' + escH((s.code||'') + ' · ' + safeInt(s.fineness,0)) + '</span></td>'
+          + recent.map(s => { const nm = s.name || s.code || '—';
+            /* the code goes on the sub-line ONLY when it is not already the name. A piece with no
+               model has no name but its tag code, so `s.name || s.code` and a sub-line beginning
+               with the code resolved to the same string twice in one 44px row. */
+            const sub = [ (s.code && s.code !== nm) ? s.code : '', safeInt(s.fineness,0) ]
+              .filter(Boolean).join(' · ');
+            return '<tr><td>' + escH(fdate(s.ts)) + '</td>'
+            + '<td>' + escH(nm)
+              + '<span class="tblsub">' + escH(sub) + '</span></td>'
             + '<td class="num">' + safeAmd(s.price,0).toLocaleString('en-US')
               + (s.warn ? ' <span class="badge b-rose">' + safeInt(s.warn.pct,0) + '%</span>' : '') + '</td>'
-            + '<td>' + escH(s.hdmRef || '—') + '</td></tr>').join('')
+            + '<td>' + escH(s.hdmRef || '—') + '</td></tr>'; }).join('')
           + '</tbody></table></div>'
         : '<div class="card"><div class="muted">' + escH(t('sl_none')) + '</div></div>')
     + '</main>';
@@ -4122,6 +4329,16 @@ function slFinalHtml(a){
   return '<div class="row" style="margin-top:12px"><span class="mlbl">' + escH(t('pr_manual')) + '</span>'
     + '<span class="big">' + a.manual.toLocaleString('en-US') + '<span class="cur">֏</span></span></div>';
 }
+/* the reset control's own html, so the ONE place that decides whether it exists is shared by the
+   first paint and every repaint. It used to be inlined in slRender() alone — and slRender() runs
+   only from openSell() (where `touched` is always false) and from slReset() itself, so the button
+   could never appear, slReset() was dead code, and three translated strings shipped for a control
+   that could not be reached. */
+function slResetHtml(){
+  if(!SL || !SL.touched) return '';
+  return '<button class="btn ghost full" style="margin-top:9px" onclick="slReset()">'
+    + escH(t('sl_reset')) + '</button>';
+}
 function slPrice(v){
   if(!SL) return;
   SL.price = v; SL.touched = true;
@@ -4142,6 +4359,7 @@ function slPaint(){
     const wa = el('slWarn'); if(wa) wa.innerHTML = slWarnHtml(w);
     const fi = el('slFinal'); if(fi) fi.innerHTML = slFinalHtml(a);
     const go = el('slGo'); if(go) go.className = 'btn primary' + (a.price > 0 ? '' : ' off');
+    const rs = el('slResetWrap'); if(rs) rs.innerHTML = slResetHtml();
   }catch(e){}
 }
 function slRender(){
@@ -4184,8 +4402,7 @@ function slRender(){
     + '<label class="fieldlbl" for="slP">' + escH(t('sl_yourprice')) + '</label>'
     + '<input id="slP" type="number" inputmode="numeric" min="0" step="1" value="' + escH(SL.price)
       + '" oninput="slPrice(this.value)">'
-    + (SL.touched ? '<button class="btn ghost full" style="margin-top:9px" onclick="slReset()">'
-        + escH(t('sl_reset')) + '</button>' : '')
+    + '<div id="slResetWrap">' + slResetHtml() + '</div>'
     + '<div id="slFinal">' + slFinalHtml(a) + '</div>'
     + '<div id="slWarn">' + slWarnHtml(w) + '</div>'
 
@@ -4250,7 +4467,8 @@ function slConfirm(){
 let BY = null;
 function byFresh(){
   return { metal:'au', fineness:585, weighedAs:'gross', grossG:'', stoneG:'', netG:'',
-           stonesAmd:'', pay:'cash', name:'', passport:'', ssn:'',
+           finBy:{ au:585, ag:925 },
+           stonesAmd:'', stonesSell:'', pay:'cash', name:'', passport:'', ssn:'',
            dest:'scrap', code:'', cat:'ring', makingG:'', hmOrigin:'none', disc:'' };
 }
 function byWeights(){
@@ -4304,8 +4522,11 @@ function byCalcHtml(){
 }
 function bySet(k, v){
   if(!BY) BY = byFresh();
-  BY[k] = v;
-  if(k === 'metal' && FINENESS[v].indexOf(safeInt(BY.fineness,0)) < 0) BY.fineness = FINENESS[v][0];
+  /* see niSet: the metal chip carries the fineness with it. */
+  if(k === 'metal' && v !== BY.metal){
+    BY.fineness = finSwitch(BY.finBy, BY.metal, v, BY.fineness);
+    BY.metal = v;
+  } else BY[k] = v;
   renderAll();
 }
 function byNum(k, v){
@@ -4352,7 +4573,7 @@ function viewBuy(){
       + '<div class="rprov">' + escH('999 · −' + pctTxt(S.cfg.buyDiscPct) + '% · '
           + t(S.rate.src === 'cb' ? 'rate_src_cb' : 'rate_src_manual') + ' · ' + rateAgeTxt()) + '</div>'
       + '<div class="rprov">' + escH(t('w_harg') + ' ' + safeInt(BY.fineness,0) + ': '
-          + Math.round(buyRate(BY.metal) * safeInt(BY.fineness,0) / 999).toLocaleString('en-US')
+          + buyFineRate(BY.fineness, BY.metal).toLocaleString('en-US')
           + ' ֏/' + t('u_g')) + '</div>'
       + '</div>'
     : '<div class="card rail rail-bad"><h3>' + escH(t('w_buyrate')) + '</h3>'
@@ -4371,8 +4592,10 @@ function viewBuy(){
     + '<div class="fieldlbl">' + escH(t('w_metal')) + '</div>'
     + '<div class="chips">' + METALS.map(m =>
         chip(BY.metal===m, 'bySet(' + jsArg('metal') + ',' + jsArg(m) + ')', metalLabel(m))).join('') + '</div>'
+    /* WRAP — see the same row on the new-item form. 916 is the second most common Armenian gold
+       standard and 999 is what melted fine metal comes back as; neither may sit off-screen. */
     + '<div class="fieldlbl">' + escH(t('w_harg')) + '</div>'
-    + '<div class="chips">' + FINENESS[BY.metal].map(f =>
+    + '<div class="chips wrap">' + FINENESS[BY.metal].map(f =>
         chip(safeInt(BY.fineness,0)===f, 'bySet(' + jsArg('fineness') + ',' + f + ')', String(f))).join('') + '</div>'
     /* WHICH TWO CAME OFF THE SCALE — the third is derived and LOCKED, exactly as on the item
        form, because three editable weights are three chances to disagree with the scale. */
@@ -4433,6 +4656,18 @@ function viewBuy(){
               chip(BY.cat===c, 'bySet(' + jsArg('cat') + ',' + jsArg(c) + ')', catLabel(c))).join('') + '</div>'
           + '<label class="fieldlbl" for="byMk">' + escH(t('w_making')) + '</label>'
           + '<input id="byMk" type="number" inputmode="numeric" min="0" step="1" value="' + escH(BY.makingG) + '" oninput="byNum(' + jsArg('makingG') + ',this.value)">'
+          /* THE STONES THE SHOP JUST PAID FOR MUST REACH THE PIECE. The resale branch used to
+             hardcode `stonesAmd:0`, so a buy-in that valued the stones at 60,000 ֏ recorded that
+             sum in acq.stoneCost and then created a piece whose own computed price was BELOW its
+             acquisition cost, with no field anywhere in the product to correct it — the jeweller
+             could only override the price on every sale, which is the flow the 80% warning exists
+             to police. Left blank this carries the amount paid, which at least recovers cost. */
+          + '<label class="fieldlbl" for="byStS" style="margin-top:12px">' + escH(t('by_stones_sell')) + '</label>'
+          + '<input id="byStS" type="number" inputmode="numeric" min="0" step="1" placeholder="'
+            + safeAmd(BY.stonesAmd,0) + '" value="' + escH(BY.stonesSell) + '" oninput="byNum('
+            + jsArg('stonesSell') + ',this.value)">'
+          + '<div class="notice">' + escH(fmt('by_stones_sell_d',
+              { a: safeAmd(BY.stonesAmd,0).toLocaleString('en-US') + ' ֏' })) + '</div>'
           /* the hallmark the item ACTUALLY carries. `origin` is an enum, not a boolean, because
              an unstamped item is legitimate in six different ways — and if the weight or the
              category makes it exempt, the app knows and overrides «չհարգադրոշմված». */
@@ -4489,6 +4724,10 @@ function byConfirm(){
   let subject = '', pieceId = '', lotId = '', dq = w.netG;
 
   if(BY.dest === 'resale'){
+    /* blank means «the same as I paid for them» — never zero. Zero is a legitimate answer the
+       jeweller can type, and it is not the same as not having answered. */
+    const stonesSell = String(BY.stonesSell || '').trim() === ''
+      ? safeAmd(BY.stonesAmd, 0) : safeAmd(BY.stonesSell, 0);
     const sug = suggestHallmark({ metal, netG:w.netG, cat:BY.cat });
     const origin = (BY.hmOrigin === 'none' && sug !== 'none') ? sug : BY.hmOrigin;
     pieceId = contentId('i', [ref, BY.code, metal, fineness, w.grossG, w.stoneG].join(KSEP),
@@ -4496,7 +4735,7 @@ function byConfirm(){
     S.pieces.push({
       id: pieceId, model:null, code: BY.code || ref, metal: metal, fineness: fineness,
       grossG:w.grossG, stoneG:w.stoneG, netG:w.netG, weighedAs:w.weighedAs,
-      stonesAmd:0, makingG: safeAmd(BY.makingG,0), priceManual:0,
+      stonesAmd: stonesSell, makingG: safeAmd(BY.makingG,0), priceManual:0,
       acq: acq(),
       hallmark:{ origin: origin, makerMark:false, sentTs:0, backTs:0, docRef:'', office:'' },
       location:'tray', cat: BY.cat, atg:'', note:'', addedTs: S.today
@@ -4530,7 +4769,7 @@ function byConfirm(){
   S.buys.push({
     id: ref, ts: S.today, metal: metal, fineness: fineness,
     grossG: w.grossG, stoneG: w.stoneG, netG: dq, weighedAs: w.weighedAs,
-    rate: buyRate(metal), fineRate: Math.round(buyRate(metal) * fineness / 999),
+    rate: buyRate(metal), fineRate: buyFineRate(fineness, metal),
     metalAmd: buyPriceOf(w.netG, fineness, metal), stonesAmd: safeAmd(BY.stonesAmd,0),
     paid: paid, pay: BY.pay === 'bank' ? 'bank' : 'cash',
     dest: BY.dest === 'resale' ? 'resale' : 'scrap',
@@ -4572,10 +4811,14 @@ function openBuyAct(ref){
     + '<td class="num">' + gramTxt(a.netG,3) + '</td>'
     + '<td class="num">' + safeAmd(a.fineRate,0).toLocaleString('en-US') + '</td>'
     + '<td class="num">' + safeAmd(a.metalAmd,0).toLocaleString('en-US') + '</td></tr>'];
+  /* THE VALUATION LINE CARRIES THE AMOUNT, NOT THE MASS AGAIN. The stone weight is already on
+     row 1, where it is subtracted to give net; repeating it here made the «Քարեր, գ» column of a
+     signed document sum to twice the stones actually weighed. On paper a column of grams must be
+     summable, so row 2 leaves every weight column empty and carries only the money. */
   if(safeAmd(a.stonesAmd,0)) rows.push('<tr>'
-    + '<td>2<span class="actsub">' + escH(t('act_stones_row') + ' · ' + gramTxt(a.stoneG,3) + t('u_g')) + '</span></td>'
+    + '<td>2<span class="actsub">' + escH(t('act_stones_note')) + '</span></td>'
     + '<td>' + escH(t('act_stones_row')) + '</td><td class="num">—</td><td class="num">—</td>'
-    + '<td class="num">' + gramTxt(a.stoneG,3) + '</td><td class="num">—</td><td class="num">—</td>'
+    + '<td class="num">—</td><td class="num">—</td><td class="num">—</td>'
     + '<td class="num">' + safeAmd(a.stonesAmd,0).toLocaleString('en-US') + '</td></tr>');
 
   openModal(
@@ -4786,9 +5029,12 @@ function voskiSelfTest(){
         const r = buyRate('au')===0 && buyPriceOf(10,585,'au')===0; S.cfg.buyDiscPct=k; return r; })());
     ok('buyRate applies the discount once set', (()=>{ const k=S.cfg.buyDiscPct; S.cfg.buyDiscPct=12;
         const r = buyRate('au')===Math.round(base999()*0.88); S.cfg.buyDiscPct=k; return r; })());
+    /* spelled out against the silver base, not recomputed with the functions under test: the
+       weight times the per-gram price of THIS fineness of THIS metal — which is also the act's
+       own two operands (see «every buy act row foots» below). */
     ok('buy-in quotes silver at the silver rate', (()=>{ const k=S.cfg.buyDiscPct; S.cfg.buyDiscPct=12;
         const r = buyRate('ag')===Math.round(silver999()*0.88)
-               && buyPriceOf(10,925,'ag')===Math.round(10*Math.round(silver999()*0.88)*925/999)
+               && buyPriceOf(10,925,'ag')===Math.round(10*Math.round(Math.round(silver999()*0.88)*925/999))
                && buyPriceOf(10,925,'ag')!==buyPriceOf(10,925,'au');
         S.cfg.buyDiscPct=k; return r; })());
     ok('null survives migrate', (()=>{ const snap=JSON.parse(JSON.stringify(S)); snap.cfg.buyDiscPct=null;
@@ -4808,6 +5054,22 @@ function voskiSelfTest(){
     })(), (()=>{ const p=(S.pieces||[]).find(x=>x.metal==='ag'); return p ? p.id+' -> '+priceOf(p) : 'no silver'; })());
     ok('breakdown renders the numbers', /5\.42|5\.420/.test(breakdown(pi)) && breakdown(pi).indexOf('750/999') > 0);
     ok('80% warning fires', !!fairValueWarn(100000, 70000) && fairValueWarn(100000, 90000) === null);
+    /* AT OR BELOW (spec 2.3). A sale at exactly the floor is the case the rule exists for and it
+       used to pass in silence; one dram above it is a normal sale. */
+    ok('80% warning fires AT the floor and not above it',
+       (fairValueWarn(100000, 80000)||{}).pct === 80 && fairValueWarn(100000, 80001) === null);
+    /* THE HEADLINE MAY NOT CONTRADICT ITS OWN REASON. Math.round put every price in
+       [0.795c, 0.8c) at «80%» — a ~1,500 ֏ band on a 300,000 ֏ piece — so the sentence asserted
+       that the figure it was warning about was not below the threshold. */
+    ok('the warning never rounds its percentage up to the threshold', (()=>{
+      for(let m = 1; m <= 80000; m++){
+        const w = fairValueWarn(100000, m);
+        if(!w) return false;
+        if(m < 80000 && w.pct >= 80) return false;
+        if(w.pct !== Math.floor(m/1000)) return false;
+      }
+      return true;
+    })());
     /* THE LINE MUST REPRODUCE ITS OWN TOTAL. Re-run the arithmetic from the PRINTED operands
        alone: if the display precision ever creeps back into breakdown(), «3.81» beside a total
        computed from 3.813 disagrees by 94 dram and the one promise the line makes is broken. */
@@ -4959,7 +5221,39 @@ function voskiSelfTest(){
     /* NO MAKING CHARGE ON THE BUY SIDE. The shop is buying metal, not workmanship. */
     ok('the buy price carries no making charge', (()=>{
       const keep = S.cfg.buyDiscPct; S.cfg.buyDiscPct = 12;
-      const r = buyPriceOf(10, 585, 'au') === Math.round(10 * buyRate('au') * 585/999);
+      const r = buyPriceOf(10, 585, 'au') === Math.round(10 * Math.round(buyRate('au') * 585/999));
+      S.cfg.buyDiscPct = keep; return r;
+    })());
+    /* THE ԳՆՄԱՆ ԱԿՏ MUST FOOT. Its «1 գ գին» column times its «Զուտ, գ» column has to give its
+       «Գումար, ֏» column EXACTLY — it is a signed two-party document that the customer and the
+       accountant both check by hand. The old shape rounded the product while printing a rate
+       rounded per gram, and 4,266 of 5,000 acts disagreed, by up to 188 dram. The sweep is over
+       the record byConfirm() actually writes, not over the formula. */
+    ok('every buy act row foots: rate x net = amount', (()=>{
+      const keep = S.cfg.buyDiscPct;
+      const F = { au:[375,416,500,583,585,750,916,958,999], ag:[800,830,875,925,960,999] };
+      let seed = 424242, bad = 0;
+      const rnd = () => (seed = (seed*1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+      for(let i=0;i<5000;i++){
+        S.cfg.buyDiscPct = Math.round(rnd()*300)/10;
+        const metal = rnd() < 0.3 ? 'ag' : 'au';
+        const fl = F[metal], f = fl[Math.floor(rnd()*fl.length)];
+        const net = round3(0.2 + rnd()*400);
+        const fineRate = buyFineRate(f, metal);        /* what the act's rate column prints */
+        const metalAmd = buyPriceOf(net, f, metal);    /* what the act's amount column prints */
+        if(Math.round(net * fineRate) !== metalAmd) bad++;
+      }
+      S.cfg.buyDiscPct = keep; return bad === 0;
+    })());
+    /* and the customer-facing line is the same two operands, so the act cannot disagree with the
+       screen the customer was shown across the counter */
+    ok('the buy line and the act quote the same per-gram rate', (()=>{
+      const keep = S.cfg.buyDiscPct; S.cfg.buyDiscPct = 12;
+      const nums = String(buyBreakdown(12.4, 585, 'au', 0)).match(/<b>([^<]+)<\/b>/g)
+        .map(x => x.replace(/<\/?b>/g,''));
+      const fr = buyFineRate(585,'au');
+      const r = nums.some(x => parseInt(String(x).replace(/[^0-9]/g,''),10) === fr)
+        && parseInt(String(nums[nums.length-1]).replace(/[^0-9]/g,''),10) === Math.round(12.4*fr);
       S.cfg.buyDiscPct = keep; return r;
     })());
     /* the act number is never re-used: it is scanned off every reference the shop already holds */
@@ -4993,9 +5287,65 @@ function voskiSelfTest(){
       const r = postMove({ subject:sub, type:'sale', dq:-on, ts:S.today,
                            cost:p.acq.costAmd, ref:'ՀԴՄ-TEST' });
       return r && eqG(onHand(sub), 0) && !pieceRows().some(x => x.p.id === 'i6')
-        && w && w.pct === 70 && w.computed === computed && w.manual === manual
+        && w && (w.pct === 70 || w.pct === 69) && w.computed === computed && w.manual === manual
         && verifyLedger().length === 0;
     })());
+    /* A RESALE BUY-IN MAY NOT THROW AWAY THE STONES IT PAID FOR. The resale branch hardcoded
+       `stonesAmd:0`, so a piece created from a buy-in that valued the stones at 60,000 ֏ recorded
+       that sum in acq.stoneCost and then priced BELOW its own acquisition cost, with no field
+       anywhere in the product to correct it. */
+    ok('a resale piece carries the stone value that was paid', (()=>{
+      const keep = S.cfg.buyDiscPct; S.cfg.buyDiscPct = 10;
+      BY = byFresh();
+      BY.metal='au'; BY.fineness=585; BY.weighedAs='gross';
+      BY.grossG='6.400'; BY.stoneG='0.900'; BY.stonesAmd='60000';
+      BY.dest='resale'; BY.code='ՔԱՐ-TEST'; BY.makingG='5000';
+      const paid = byPaid();
+      const before = (S.pieces||[]).length;
+      byConfirm();
+      const made = (S.pieces||[])[ (S.pieces||[]).length - 1 ];
+      const r = (S.pieces||[]).length === before + 1
+        && made && safeAmd(made.stonesAmd,0) === 60000
+        && made.acq.stoneCost === 60000
+        && priceOf(made) >= made.acq.costAmd            /* recovers what the shop paid */
+        && eqG(onHand(pieceSubj(made.id)), made.netG)
+        && paid === made.acq.costAmd
+        && verifyLedger().length === 0;
+      BY = null; S.cfg.buyDiscPct = keep; closeModal(); return r;
+    })());
+
+    /* ՀԴՄ coverage: a share of THIS MONTH's sales, and nothing computed from it (spec 5.3) */
+    ok('hdm coverage counts this month only', (()=>{
+      const keep = S.sales.slice();
+      const prevMonth = Date.UTC(2026,6,4);
+      S.sales = [
+        { id:'x1', ts:S.today, hdmRef:'A-1', price:1000, fineness:585, netG:1, metal:'au',
+          pieceId:'', code:'', name:'', computed:1000, manual:0, warn:null, acqKnown:true, acqCost:0 },
+        { id:'x2', ts:S.today, hdmRef:'',    price:1000, fineness:585, netG:1, metal:'au',
+          pieceId:'', code:'', name:'', computed:1000, manual:0, warn:null, acqKnown:true, acqCost:0 },
+        { id:'x3', ts:prevMonth, hdmRef:'',  price:1000, fineness:585, netG:1, metal:'au',
+          pieceId:'', code:'', name:'', computed:1000, manual:0, warn:null, acqKnown:true, acqCost:0 }
+      ];
+      const c = hdmCoverage();
+      const r = c.n === 2 && c.ok === 1 && c.miss === 1 && c.pct === 50
+             && salesToday().length === 2;
+      S.sales = keep; return r;
+    })());
+    /* and the home screen actually reads them — the two counter flows wrote S.sales and S.buys
+       and nothing on the shop's first screen looked at either. */
+    ok('Այսօր reads the day\'s sales and buy-ins', (()=>{
+      const ks = S.sales.slice(), kb = S.buys.slice();
+      S.sales = [{ id:'h1', ts:S.today, hdmRef:'', price:123456, fineness:585, netG:1, metal:'au',
+        pieceId:'', code:'ՏԵՍՏ-1', name:'', computed:123456, manual:0, warn:null, acqKnown:true, acqCost:0 }];
+      S.buys  = [{ id:'ԳԱ-2026-0777', ts:S.today, metal:'au', fineness:585, grossG:1, stoneG:0,
+        netG:1, weighedAs:'gross', rate:0, fineRate:0, metalAmd:0, stonesAmd:0, paid:654321,
+        pay:'cash', dest:'scrap', subject:'b:au:585', pieceId:'', lotId:'', seller:{name:'',passport:'',ssn:''} }];
+      const html = viewHome();
+      const r = html.indexOf('123,456') > 0 && html.indexOf('654,321') > 0
+             && html.indexOf('ԳԱ-2026-0777') > 0 && html.indexOf(escH(t('home_hdm'))) > 0;
+      S.sales = ks; S.buys = kb; return r;
+    })());
+
     /* the amount in words is Armenian whatever the UI language is — that is the language the
        գնման ակտ is signed in */
     ok('the amount in words is Armenian', amWords(0) === 'զրո դրամ'
@@ -5033,6 +5383,9 @@ function boot(){
   renderAll();
   swWantCyrillic();
   window.addEventListener('resize', () => { try{ renderNav(); }catch(e){} });
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape' || e.key === 'Esc'){ try{ if(escClose()) e.preventDefault(); }catch(err){} }
+  });
   if('serviceWorker' in navigator){
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('sw.js').catch(() => {});
