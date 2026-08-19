@@ -1915,7 +1915,7 @@ T.hy = {
   w_sellrate:'Վաճառքի գին, 999', w_buyrate:'Գնման գին, 999', w_rate999:'Շուկայի գին, 999',
   rate_zero:'Գինը չի կարող 0 լինել', rate_zero_d:'Առանց 999-ի գնի ամեն գին կորցնում է մետաղի բաժինը։ Մուտքագրե՛ք այսօրվա գինը ձեռքով։',
   al_norate:'Օրվա գինը մուտքագրված չէ', al_norate_m:'{m}՝ օրվա գինը մուտքագրված չէ',
-  sl_norate:'{m}-ի 999 գինը մուտքագրված չէ։ Առանց դրա այս իրի գինը մետաղի բաժին չունի — վաճառքն արգելափակված է։',
+  sl_norate:'{m} · 999 գինը մուտքագրված չէ։ Առանց դրա այս իրի գինը մետաղի բաժին չունի — վաճառքն արգելափակված է։',
   w_acqn:'{n} ձեռքբերում', badge_nocost:'Ինքնարժեք չկա',
   buydisc_unset:'Գնման զեղչը դեռ նշված չէ — մուտքագրեք Տվյալներ բաժնում',
   buydisc_unset_f:'Գնման զեղչը դեռ նշված չէ',
@@ -5148,11 +5148,16 @@ function slRender(){
        that said 181,918 — the one promise the breakdown line makes is that its own operands
        give its own answer, and moving the answer out from under it breaks exactly that. The
        override gets its own figure, below, where the warning can sit beside it. */
-    + '<div class="pricebox">'
-      + '<div class="l">' + escH(t('pr_computed')) + '</div>'
-      + '<div class="v">' + a.computed.toLocaleString('en-US') + '<span class="cur">֏</span></div>'
-      + breakdown(p)
-    + '</div>'
+    /* NO RATE, NO COMPUTED PRICE. buyBreakdown already refuses to print a line without a rate —
+       «x 0 =» in front of a customer is worse than saying the setting is missing — and the sell
+       sheet must hold the same line: a price box reading «59,320 ֏» over a formula containing
+       «× 0» is a number the jeweller can act on and should not. */
+    + (noRate ? ''
+      : '<div class="pricebox">'
+        + '<div class="l">' + escH(t('pr_computed')) + '</div>'
+        + '<div class="v">' + a.computed.toLocaleString('en-US') + '<span class="cur">֏</span></div>'
+        + breakdown(p)
+      + '</div>')
 
     /* THE OVERRIDE IS RESPECTED, NOT FOUGHT: the field is rendered once and nothing in this
        sheet ever writes back into it. */
