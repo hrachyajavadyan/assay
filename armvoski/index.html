@@ -1596,6 +1596,37 @@ input:disabled{
   font-variant-numeric:tabular-nums lining-nums;overflow-wrap:break-word}
 @media (max-width:339px){ .dl{grid-template-columns:1fr} }
 
+/* ---------- Գույքագրում — the count row (spec 5.4) ----------
+   A piece is confirmed present or absent with ONE TAP: re-weighing every ring is not what a
+   count is. So the row carries its own two 44px targets rather than opening a sheet, and the
+   name itself is a third target for the optional re-weigh. Nothing on the row shows the book
+   figure — the count is blind until the act. */
+.cnrow{display:flex;align-items:center;gap:var(--s2);padding:var(--s2) var(--s3);
+  border-bottom:var(--bw) solid var(--stroke);min-height:56px}
+.cnrow:last-child{border-bottom:none}
+.cnrow .cnnm{flex:1 1 auto;min-width:0;text-align:left;background:none;border:none;padding:0;
+  font-family:var(--font);color:var(--ink);cursor:pointer;min-height:44px}
+.cnrow .cnnm .n{font-size:var(--fs-body-l);font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+.cnrow .cnnm .s{font-size:var(--fs-micro);color:var(--muted);margin-top:2px;
+  display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.cnact{display:flex;gap:6px;flex:0 0 auto}
+.cnact button{min-width:48px;min-height:44px;padding:0 var(--s2);border-radius:var(--r-xs);
+  border:var(--bw) solid var(--stroke2);background:var(--surface);color:var(--muted);
+  font-family:var(--font);font-size:var(--fs-label);font-weight:var(--fw-label);cursor:pointer}
+.cnact button:active{transform:scale(.96)}
+.cnact button.on.yes{background:var(--success-tint);color:var(--success);
+  border-color:var(--success-line);border-width:var(--bw-strong);font-weight:700}
+.cnact button.on.no{background:var(--danger-tint);color:var(--danger);
+  border-color:var(--danger-line);border-width:var(--bw-strong);font-weight:700}
+.cnrow .cnw{flex:0 0 108px;min-width:0}
+.cnrow .cnw input{margin:0;min-height:44px;text-align:right}
+.cnprog{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s2)}
+.cnprog .bar{flex:1 1 auto;height:8px;border-radius:var(--r-pill);background:var(--surface-2);
+  overflow:hidden;border:var(--bw) solid var(--stroke)}
+.cnprog .bar i{display:block;height:100%;background:var(--acc);border-radius:var(--r-pill)}
+.cnprog .n{flex:0 0 auto;font-size:var(--fs-label);font-weight:700;color:var(--ink);
+  font-variant-numeric:tabular-nums lining-nums}
+
 /* «this screen is not built yet» — an honest empty state, never a fake one. It names what will
    be here and what to use instead, because a jeweller who taps a tab and gets a blank panel
    assumes the app is broken. */
@@ -1996,6 +2027,49 @@ T.hy = {
   home_hdm_none:'Այս ամիս վաճառք դեռ չկա',
   al_hdm:'{n} վաճառք՝ առանց ՀԴՄ համարի',
   al_hdm_d:'Համարը գրանցվում է միայն այս սարքում — ոչինչ չի ուղարկվում։',
+  /* ---- Գույքագրում (spec 5.4) ---- */
+  cn_scope:'Ի՞նչ ենք հաշվառում',
+  cn_scope_all:'Բոլորը', cn_scope_tray:'Ցուցափեղկ', cn_scope_safe:'Պահարան',
+  cn_scope_unmarked:'Չհարգադրոշմված', cn_scope_scrap:'Ջարդոն',
+  cn_counter:'Հաշվառող', cn_mrp:'Նյութական պատասխանատու անձ',
+  cn_start:'Սկսել գույքագրումը',
+  cn_intro:'Հաշվարկը կույր է՝ հաշվապահական քաշերը թաքնված են մինչև ակտը։ Իրը հաստատվում է մեկ հպումով՝ կա կամ չկա. կշռելը պարտադիր չէ։',
+  cn_noblock:'Գույքագրումը վաճառքին չի խանգարում — կարող եք դուրս գալ, վաճառել և վերադառնալ։ Հաշվարկը պահվում է։',
+  cn_outscope:'Խանութից դուրս գտնվող իրերը (տեսչություն, արհեստանոց, հաճախորդ) շրջանակում չեն և ակտում նշվում են առանձին։',
+  cn_open:'Ընթացիկ գույքագրում',
+  cn_blind_note:'Կույր հաշվարկ — հաշվապահական քաշերը կերևան միայն ակտում։',
+  cn_progress:'{k} / {n}',
+  cn_left:'{n} դեռ չհաշվառված',
+  cn_present:'Կա', cn_absent:'Չկա', cn_reweigh:'Կշռել',
+  cn_reweigh_t:'Վերակշռում', cn_reweigh_lbl:'Փաստացի զուտ քաշը (գ)',
+  cn_reweigh_note:'Վերակշռումը գրանցվում է որպես ճշգրտում՝ իրի քաշը կհետևի հաշվեկշռին։',
+  cn_reweigh_save:'Գրանցել կշիռը', cn_reweigh_clear:'Չեղարկել կշիռը',
+  cn_pool_w:'Կշռված (գ)',
+  cn_search:'Որոնել կոդով կամ անվանումով',
+  cn_finish:'Ավարտել և կազմել ակտը',
+  cn_abandon:'Դադարեցնել գույքագրումը',
+  cn_abandon_q:'Դադարեցնե՞լ գույքագրումը։ Նշումները կջնջվեն, ոչ մի շարժ չի գրանցվի։',
+  cn_none:'Այս շրջանակում հաշվառելու բան չկա',
+  cn_kind_pool:'Կուտակ',
+  cn_marked_w:'կշռված',
+  cn_act:'ԳՈՒՅՔԱԳՐՄԱՆ ԱԿՏ',
+  cn_act_basis:'Հիմք՝ խանութի ղեկավարի որոշում',
+  cn_col_harg:'Հարգ', cn_col_bpcs:'Հաշվապ. հատ', cn_col_apcs:'Փաստ. հատ',
+  cn_col_bg:'Հաշվապ. քաշ, գ', cn_col_ag:'Փաստ. քաշ, գ',
+  cn_col_dpcs:'Տարբ. հատ', cn_col_dg:'Տարբ. գ', cn_col_amd:'Գումար, ֏',
+  cn_out:'Դուրս գտնվող իրեր',
+  cn_out_note:'Այս իրերը խանութի պաշարն են, բայց խանութում չեն։ Հաշվառման շրջանակում չեն և պակասորդ չեն։',
+  cn_days:'{n} օր',
+  cn_cust:'Հաճախորդի իրեր',
+  cn_cust_note:'Հաճախորդի սեփականությունն է՝ խանութի պաշար չէ, արժեքի և գույքագրման մեջ չի մտնում։ Նշվում է, որպեսզի ստորագրողը իմանա՝ ինչ կա խանութում, որ իրենը չէ։',
+  cn_uncounted:'Չհաշվառված',
+  cn_uncounted_note:'Այս իրերը չեն հասցվել հաշվառել։ Տարբերություն չի գրանցվել — դրանք ո՛չ ավելցուկ են, ո՛չ պակասորդ։',
+  cn_surplus:'Ավելցուկ', cn_short:'Պակասորդ', cn_nodiff:'Տարբերություն չկա',
+  cn_pure_book:'Հաշվապ. մաքուր մետաղ', cn_pure_act:'Փաստ. մաքուր մետաղ', cn_pure_diff:'Տարբերությունը',
+  cn_val_diff:'Տարբերության արժեքն այսօրվա 999 գնով',
+  cn_done:'Գույքագրումը գրանցվեց՝ {r}',
+  cn_recent:'Նախորդ ակտերը', cn_scope_lbl:'Շրջանակ',
+  cn_pcs:'{n} հատ',
   /* ---- the recovery net (ArmTrade's own strings) ---- */
   rec_title:'Ծրագիրը չկարողացավ բացել էջը',
   rec_body:'Տվյալների մի մասը վնասված է։ Կարող եք վերականգնել վերջին ճիշտ վիճակը՝ առանց հեռախոսից որևէ բան ջնջելու։',
@@ -2158,6 +2232,48 @@ T.en = {
   home_hdm_none:'No sales this month yet',
   al_hdm:'{n} sales with no fiscal receipt number',
   al_hdm_d:'The number is recorded on this device only — nothing is transmitted.',
+  cn_scope:'What are we counting?',
+  cn_scope_all:'Everything', cn_scope_tray:'Display case', cn_scope_safe:'Safe',
+  cn_scope_unmarked:'Not hallmarked', cn_scope_scrap:'Scrap',
+  cn_counter:'Counter', cn_mrp:'Materially responsible person',
+  cn_start:'Start the count',
+  cn_intro:'The count is blind — book weights stay hidden until the act. A piece is confirmed with one tap, present or absent; weighing it is optional.',
+  cn_noblock:'A count does not block selling — you can leave, sell, and come back. The count is kept.',
+  cn_outscope:'Pieces out of the shop (assay office, workshop, customer) are outside the scope and are listed separately on the act.',
+  cn_open:'Count in progress',
+  cn_blind_note:'Blind count — the book weights appear only on the act.',
+  cn_progress:'{k} / {n}',
+  cn_left:'{n} still to count',
+  cn_present:'Here', cn_absent:'Missing', cn_reweigh:'Weigh',
+  cn_reweigh_t:'Re-weigh', cn_reweigh_lbl:'Actual net weight (g)',
+  cn_reweigh_note:'A re-weigh is recorded as an adjustment — the item\'s weight then follows the ledger.',
+  cn_reweigh_save:'Record the weight', cn_reweigh_clear:'Drop the weight',
+  cn_pool_w:'Weighed (g)',
+  cn_search:'Search by code or name',
+  cn_finish:'Finish and draw up the act',
+  cn_abandon:'Stop the count',
+  cn_abandon_q:'Stop the count? The marks are discarded and no movement is recorded.',
+  cn_none:'Nothing to count in this scope',
+  cn_kind_pool:'Bulk pool',
+  cn_marked_w:'weighed',
+  cn_act:'STOCK COUNT ACT',
+  cn_act_basis:"Basis: the shop owner's decision",
+  cn_col_harg:'Fineness', cn_col_bpcs:'Book pcs', cn_col_apcs:'Actual pcs',
+  cn_col_bg:'Book weight, g', cn_col_ag:'Actual weight, g',
+  cn_col_dpcs:'Diff. pcs', cn_col_dg:'Diff. g', cn_col_amd:'Amount, ֏',
+  cn_out:'Pieces out of the shop',
+  cn_out_note:'These are the shop\'s stock but are not in the shop. They are outside the count scope and are not a shortage.',
+  cn_days:'{n} d',
+  cn_cust:"Customer's items",
+  cn_cust_note:"The customer's property — not the shop's stock, and in neither the valuation nor the count. Listed so the person signing knows what is in the shop that is not the shop's.",
+  cn_uncounted:'Not counted',
+  cn_uncounted_note:'These were not reached. No difference was recorded — they are neither a surplus nor a shortage.',
+  cn_surplus:'Surplus', cn_short:'Shortage', cn_nodiff:'No difference',
+  cn_pure_book:'Book pure metal', cn_pure_act:'Actual pure metal', cn_pure_diff:'Difference',
+  cn_val_diff:"Value of the difference at today's 999 rate",
+  cn_done:'Count recorded: {r}',
+  cn_recent:'Previous acts', cn_scope_lbl:'Scope',
+  cn_pcs:'{n} pcs',
   rec_title:'The app could not open this screen',
   rec_body:'Part of the data is damaged. You can restore the last good state without deleting anything from the phone.',
   rec_restore:'Restore the last good state',
@@ -2319,6 +2435,48 @@ T.ru = {
   home_hdm_none:'Продаж в этом месяце пока нет',
   al_hdm:'{n} продаж без номера чека ККМ',
   al_hdm_d:'Номер записывается только на этом устройстве — ничего не передаётся.',
+  cn_scope:'Что считаем?',
+  cn_scope_all:'Всё', cn_scope_tray:'Витрина', cn_scope_safe:'Сейф',
+  cn_scope_unmarked:'Без клейма', cn_scope_scrap:'Лом',
+  cn_counter:'Учётчик', cn_mrp:'Материально ответственное лицо',
+  cn_start:'Начать инвентаризацию',
+  cn_intro:'Пересчёт слепой — учётные веса скрыты до акта. Изделие подтверждается одним касанием: есть или нет; взвешивать необязательно.',
+  cn_noblock:'Инвентаризация не мешает продавать — можно выйти, продать и вернуться. Пересчёт сохраняется.',
+  cn_outscope:'Изделия вне магазина (пробирная, мастерская, клиент) в объём не входят и указываются в акте отдельно.',
+  cn_open:'Идёт инвентаризация',
+  cn_blind_note:'Слепой пересчёт — учётные веса появятся только в акте.',
+  cn_progress:'{k} / {n}',
+  cn_left:'{n} ещё не посчитано',
+  cn_present:'Есть', cn_absent:'Нет', cn_reweigh:'Взвесить',
+  cn_reweigh_t:'Перевзвешивание', cn_reweigh_lbl:'Фактический вес нетто (г)',
+  cn_reweigh_note:'Перевзвешивание записывается как корректировка — вес изделия последует за реестром.',
+  cn_reweigh_save:'Записать вес', cn_reweigh_clear:'Убрать вес',
+  cn_pool_w:'Взвешено (г)',
+  cn_search:'Поиск по коду или названию',
+  cn_finish:'Завершить и составить акт',
+  cn_abandon:'Прекратить инвентаризацию',
+  cn_abandon_q:'Прекратить? Отметки будут удалены, ни одно движение не запишется.',
+  cn_none:'В этом объёме нечего считать',
+  cn_kind_pool:'Накопление',
+  cn_marked_w:'взвешено',
+  cn_act:'АКТ ИНВЕНТАРИЗАЦИИ',
+  cn_act_basis:'Основание: решение руководителя магазина',
+  cn_col_harg:'Проба', cn_col_bpcs:'Учёт. шт', cn_col_apcs:'Факт. шт',
+  cn_col_bg:'Учёт. вес, г', cn_col_ag:'Факт. вес, г',
+  cn_col_dpcs:'Разн. шт', cn_col_dg:'Разн. г', cn_col_amd:'Сумма, ֏',
+  cn_out:'Изделия вне магазина',
+  cn_out_note:'Это запас магазина, но его нет в магазине. В объём инвентаризации не входит и недостачей не является.',
+  cn_days:'{n} дн',
+  cn_cust:'Изделия клиентов',
+  cn_cust_note:'Собственность клиента — не запас магазина, не входит ни в оценку, ни в инвентаризацию. Указано, чтобы подписывающий знал, что в магазине лежит чужое.',
+  cn_uncounted:'Не посчитано',
+  cn_uncounted_note:'До них не дошли. Разница не зафиксирована — это ни излишек, ни недостача.',
+  cn_surplus:'Излишек', cn_short:'Недостача', cn_nodiff:'Разницы нет',
+  cn_pure_book:'Учёт. чистый металл', cn_pure_act:'Факт. чистый металл', cn_pure_diff:'Разница',
+  cn_val_diff:'Стоимость разницы по сегодняшней цене 999',
+  cn_done:'Инвентаризация записана: {r}',
+  cn_recent:'Прежние акты', cn_scope_lbl:'Объём',
+  cn_pcs:'{n} шт',
   rec_title:'Приложение не смогло открыть экран',
   rec_body:'Часть данных повреждена. Можно восстановить последнее исправное состояние, ничего не удаляя с телефона.',
   rec_restore:'Восстановить последнее исправное состояние',
@@ -2432,7 +2590,12 @@ function freshState(){
     rate: { base999:0, silver999:0, at:0, src:'manual', by:'shop' },
     models:[], pieces:[], pools:[], lots:[],
     moves:[], moveSeq:0, stock:{},
-    sales:[], buys:[]
+    sales:[], buys:[],
+    /* the OPEN count session, so a count survives a reload and the phone going to sleep in the
+       middle of a cabinet; and the finished acts. */
+    count:null, counts:[],
+    /* the repair custody register. NEVER stock: see the repairs section. */
+    repairs:[]
   };
   return st;
 }
@@ -2868,7 +3031,7 @@ function migrate(st){
   st.rate.by = String(st.rate.by || 'shop').slice(0,24);
 
   const arr = k => { if(!Array.isArray(st[k])) st[k] = []; };
-  ['models','pieces','pools','lots','moves','sales','buys'].forEach(arr);
+  ['models','pieces','pools','lots','moves','sales','buys','counts','repairs'].forEach(arr);
 
   /* ---- models: catalogue rows, no quantity, never in the ledger ---- */
   st.models = st.models.filter(m => m && m.id).map(m => ({
@@ -2926,6 +3089,9 @@ function migrate(st){
       },
       /* CUSTODY, NOT A MOVEMENT. Changing this never touches the ledger. */
       location: ['tray','safe','assay','workshop','out'].indexOf(p.location) >= 0 ? p.location : 'tray',
+      /* WHEN the piece left the shop. The count act and the hallmarking screen both have to answer
+         «how long has this been out», and hallmark.sentTs only answers it for the assay office. */
+      locTs: Math.max(0, safeInt(p.locTs, safeInt((p.hallmark||{}).sentTs, 0))),
       cat: CATS.indexOf(p.cat) >= 0 ? p.cat : 'other',
       atg: String(p.atg || '').replace(/[^0-9]/g,'').slice(0,10),
       note: String(p.note || '').slice(0,200),
@@ -3036,6 +3202,67 @@ function migrate(st){
                 ssn: String(sl.ssn || '').slice(0,20) }
     };
   }).slice(-500);
+
+  /* ---- the OPEN count session (spec 5.4). It lives in the state rather than in a module-level
+     variable for one reason: a count is a person walking round a cabinet with a phone, and the
+     phone WILL lock, the tab WILL be reloaded, and the jeweller WILL step away to serve a
+     customer. A session that did not survive that would be a session nobody finishes. ---- */
+  st.count = cnMigrateSession(st.count, st);
+
+  /* ---- finished count acts ---- */
+  st.counts = st.counts.filter(x => x && x.id).map(c => ({
+    id: String(c.id).slice(0,40),
+    ts: safeInt(c.ts, st.today),
+    scope: CN_SCOPES.indexOf(c.scope) >= 0 ? c.scope : 'all',
+    counter: String(c.counter || '').slice(0,80),
+    mrp: String(c.mrp || '').slice(0,80),
+    rows: Array.isArray(c.rows) ? c.rows.map(r => ({
+      metal: METALS.indexOf(r.metal) >= 0 ? r.metal : 'au',
+      fineness: safeInt(r.fineness, 0),
+      bookPcs: safeInt(r.bookPcs,0), actPcs: safeInt(r.actPcs,0),
+      bookG: LEDGER.clamp(r.bookG), actG: LEDGER.clamp(r.actG),
+      dPcs: safeInt(r.dPcs,0), dG: LEDGER.clamp(r.dG), amd: safeInt(r.amd,0)
+    })) : [],
+    out: Array.isArray(c.out) ? c.out.map(o => ({
+      code: String(o.code||'').slice(0,24), name: String(o.name||'').slice(0,60),
+      location: String(o.location||'out').slice(0,16), days: Math.max(0, safeInt(o.days,0)),
+      metal: METALS.indexOf(o.metal) >= 0 ? o.metal : 'au',
+      fineness: safeInt(o.fineness,0), netG: LEDGER.clamp(o.netG)
+    })) : [],
+    cust: Array.isArray(c.cust) ? c.cust.map(x => ({
+      name: String(x.name||'').slice(0,80), descr: String(x.descr||'').slice(0,120),
+      grossG: LEDGER.clamp(x.grossG), fineness: safeInt(x.fineness,0),
+      metal: METALS.indexOf(x.metal) >= 0 ? x.metal : 'au'
+    })) : [],
+    skipped: Array.isArray(c.skipped) ? c.skipped.map(x => ({
+      code: String(x.code||'').slice(0,24), name: String(x.name||'').slice(0,60),
+      metal: METALS.indexOf(x.metal) >= 0 ? x.metal : 'au', fineness: safeInt(x.fineness,0)
+    })) : [],
+    rate: { au: safeAmd((c.rate||{}).au, 0), ag: safeAmd((c.rate||{}).ag, 0) }
+  })).slice(-200);
+
+  /* ---- the repair custody register (spec 8). THE CUSTOMER'S METAL, NEVER THE SHOP'S STOCK:
+     no id here is ever a ledger subject, nothing here posts a movement, and nothing here reaches
+     a valuation or a count total. Getting that wrong inflates the jeweller's inventory — and his
+     tax position — with metal he does not own. ---- */
+  st.repairs = st.repairs.filter(r => r && r.id).map(r => ({
+    id: String(r.id).slice(0,40),
+    custName: String(r.custName || '').slice(0,80),
+    custPhone: String(r.custPhone || '').slice(0,32),
+    inTs: safeInt(r.inTs, st.today),
+    dueTs: Math.max(0, safeInt(r.dueTs, 0)),
+    outTs: Math.max(0, safeInt(r.outTs, 0)),
+    descr: String(r.descr || '').slice(0,200),
+    metal: METALS.indexOf(r.metal) >= 0 ? r.metal : 'au',
+    fineness: safeInt(r.fineness, 0),
+    grossG: Math.max(0, LEDGER.clamp(r.grossG)),
+    photoNote: String(r.photoNote || '').slice(0,200),
+    /* FREE-FORM (spec 8, 11). How repairs are priced in Armenian practice is unverified, so the
+       product ships no quoting formula and the jeweller types his own number. */
+    priceAmd: safeAmd(r.priceAmd, 0),
+    paid: safeAmd(r.paid, 0),
+    status: ['in','ready','out'].indexOf(r.status) >= 0 ? r.status : 'in'
+  })).slice(-500);
   return st;
 }
 
@@ -3152,7 +3379,7 @@ function seedState(){
       grossG:6.310, stoneG:0, netG:0, stonesAmd:0, makingG:5200, cat:'ring',
       acq: mkAcq(238000, D(2026,8,6), 'invoice', 'ՀԱ-2026-0351', 'sup:s1'),
       hallmark:{ origin:'none', makerMark:true, sentTs: D(2026,8,10), office:'Երևան' },
-      location:'assay', note:'', addedTs: D(2026,8,6) },
+      location:'assay', locTs: D(2026,8,10), note:'', addedTs: D(2026,8,6) },
 
     /* NO DOCUMENTED COST. Allowed — a missing cost never blocks a sale — but the piece, the sale
        record and the alerts all say so, because under the margin scheme the tax is then computed
@@ -3939,6 +4166,7 @@ function viewFor(k){
   if(k === 'sell') return viewSell();
   if(k === 'buy')  return viewBuy();
   if(k === 'tray') return viewTray();
+  if(k === 'count') return viewCount();
   if(k === 'data') return viewData();
   return stubView(k);
 }
@@ -4860,6 +5088,536 @@ function openBuyAct(ref){
 }
 
 /* =====================================================================================
+   ԳՈՒՅՔԱԳՐՈՒՄ — the stock count (spec 5.4)
+
+   ArmTrade's act is the right skeleton — date, հաշվառող, նյութական պատասխանատու անձ, book against
+   actual, ավելցուկ և պակասորդ, the basis line and the signature block — but a jewellery count
+   happens on three axes at once and an act showing one of them is not a count.
+
+   FOUR RULES THIS SCREEN IS BUILT ON, each of which is a way the naive version is wrong:
+
+   1. SCOPE IS BY LOCATION, NOT BY SUPPLIER. A jeweller counts a display case, a safe, a drawer of
+      unhallmarked work or the scrap tin. `Բոլորը · Ցուցափեղկ · Պահարան · Չհարգադրոշմված · Ջարդոն`.
+   2. A PIECE IS CONFIRMED WITH ONE TAP. Its weight is already known and re-weighing every ring is
+      not what a count is; the re-weigh is an affordance for a spot check and it records an
+      adjustment with a reason. A BULK POOL, having no weight of its own, is put on the scale.
+   3. PIECES OUT OF THE SHOP ARE OUT OF SCOPE AND LISTED SEPARATELY. Custody is not a movement
+      (spec 1.3), so a ring at the assay office is still on-hand — and without this rule a
+      hallmark send-out reads as a shortage on the act somebody signs.
+   4. THE ACT MUST SAY WHAT THE DIFFERENCE IS WORTH IN DRAM. A 0.4 g shortage of 750 is about
+      15,500 ֏. Surplus and shortage are reported in BOTH grams and pieces, subtotalled by
+      fineness, with a pure-metal grand total valued at the day's 999 rate — neither figure alone
+      is a count.
+
+   The session lives in S.count rather than in a module variable because a count is a person
+   walking round a cabinet with a phone: the phone will lock, the tab will be reloaded and the
+   jeweller will step away to serve a customer. IT DOES NOT BLOCK SELLING — the nav is untouched,
+   the sell screen keeps working, and the book figures are snapshotted at the moment the act is
+   drawn up rather than at the moment the session opened.
+   ===================================================================================== */
+const CN_SCOPES = ['all','tray','safe','unmarked','scrap'];
+/* the two locations that mean «physically here». Everything else is custody elsewhere. */
+const CN_IN_SHOP = ['tray','safe'];
+let CN_SHEET = null;                                  /* the subject whose re-weigh sheet is open */
+let CNQ = '';                                         /* the count list's search box */
+let CNNEW = { scope:'all', counter:'', mrp:'' };      /* the pre-start form, before a session exists */
+
+/* the session, defaulted and clamped like everything else that survives a reload */
+function cnMigrateSession(c, st){
+  if(!c || typeof c !== 'object') return null;
+  const lines = {}, src = (c.lines && typeof c.lines === 'object') ? c.lines : {};
+  Object.keys(src).slice(0,4000).forEach(k => {
+    const v = src[k];
+    if(!v || typeof v !== 'object') return;
+    lines[String(k).slice(0,40)] = {
+      found: v.found !== false,
+      /* null is «confirmed present, not re-weighed» and is NOT zero — zero grams on the scale is
+         a different (and legitimate) answer for a pool. */
+      g: (v.g == null || !isFinite(+v.g)) ? null : Math.max(0, LEDGER.clamp(v.g))
+    };
+  });
+  return {
+    startedTs: safeInt(c.startedTs, st.today),
+    scope: CN_SCOPES.indexOf(c.scope) >= 0 ? c.scope : 'all',
+    counter: String(c.counter || '').slice(0,80),
+    mrp: String(c.mrp || '').slice(0,80),
+    lines: lines
+  };
+}
+
+/* ---- what is in scope, and what is deliberately not ---- */
+function cnInScope(scope){
+  const out = [];
+  pieceRows().forEach(x => {
+    /* RULE 3. A piece at the assay office, on a workshop bench or with a customer is still the
+       shop's stock and still on-hand — it is simply not here to be counted. */
+    if(CN_IN_SHOP.indexOf(x.p.location) < 0) return;
+    if(scope === 'scrap') return;
+    if(scope === 'tray' && x.p.location !== 'tray') return;
+    if(scope === 'safe' && x.p.location !== 'safe') return;
+    if(scope === 'unmarked' && x.p.hallmark.origin !== 'none') return;
+    out.push({ kind:'piece', subject:x.subject, p:x.p, on:x.on,
+               metal:x.p.metal, fineness:safeInt(x.p.fineness,0) });
+  });
+  if(scope === 'all' || scope === 'scrap'){
+    poolRows().forEach(x => out.push({ kind:'pool', subject:x.subject, b:x.b, on:x.on,
+      metal:x.b.metal, fineness:safeInt(x.b.fineness,0) }));
+  }
+  return out.sort((a,b) => (a.metal === b.metal ? b.fineness - a.fineness : (a.metal === 'au' ? -1 : 1))
+    || String(cnName(a)).localeCompare(String(cnName(b))));
+}
+const cnName = r => r.kind === 'pool' ? (t('w_scrap') + ' · ' + metalLabel(r.metal)) : modelName(r.p);
+const cnDays = ts => safeInt(ts,0) ? Math.max(0, Math.floor((safeInt(S.today,0) - safeInt(ts,0)) / DAY)) : -1;
+function cnOutOfShop(){
+  return pieceRows().filter(x => CN_IN_SHOP.indexOf(x.p.location) < 0)
+    .map(x => ({ p:x.p, on:x.on, days: cnDays(x.p.locTs) }));
+}
+/* THE CUSTOMER'S METAL, listed on the act and in NO total on it (spec 8). */
+const repairsInShop = () => (S.repairs||[]).filter(r => r && r.status !== 'out');
+
+/* ---- the session ---- */
+function cnNew(k, v){ CNNEW[k] = v; renderAll(); }
+function cnNewText(k, v){ CNNEW[k] = String(v == null ? '' : v).slice(0,80); }
+function cnStart(){
+  if(S.count) return;
+  S.count = { startedTs: S.today, scope: CN_SCOPES.indexOf(CNNEW.scope) >= 0 ? CNNEW.scope : 'all',
+              counter: CNNEW.counter, mrp: CNNEW.mrp, lines:{} };
+  CNQ = ''; saveState(); renderAll();
+}
+function cnAbandon(){
+  if(!S.count) return;
+  openModal('<h3>' + escH(t('cn_abandon')) + '</h3>'
+    + '<div class="alert bad"><div class="t">' + escH(t('cn_abandon_q')) + '</div></div>'
+    + '<button class="btn danger full" style="margin-top:16px" onclick="cnAbandonGo()">'
+      + escH(t('cn_abandon')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">'
+      + escH(t('cancel')) + '</button>');
+}
+function cnAbandonGo(){ S.count = null; saveState(); closeModal(); renderAll(); }
+function cnCountedN(){
+  if(!S.count) return { k:0, n:0 };
+  const rows = cnInScope(S.count.scope);
+  return { k: rows.filter(r => S.count.lines[r.subject]).length, n: rows.length };
+}
+/* ONE TAP, AND THE SAME TAP AGAIN UNDOES IT. A mis-tap on a 44px target next to another 44px
+   target is the single likeliest thing to happen during a count, and it must not need a sheet. */
+function cnMark(subject, found){
+  if(!S.count) return;
+  const cur = S.count.lines[subject];
+  if(cur && cur.found === !!found && cur.g == null) delete S.count.lines[subject];
+  else S.count.lines[subject] = { found: !!found, g: (found && cur) ? cur.g : null };
+  saveState(); cnRepaint(subject);
+}
+function cnPoolW(subject, v){
+  if(!S.count) return;
+  const sv = String(v == null ? '' : v).trim();
+  /* typing must not re-render — that would move the caret. Only the progress strip repaints. */
+  if(sv === '') delete S.count.lines[subject];
+  else S.count.lines[subject] = { found:true, g: Math.max(0, round3(num(sv))) };
+  saveState(); cnPaintProg();
+}
+function cnRepaint(subject){
+  const rows = cnInScope(S.count.scope);
+  const r = rows.find(x => x.subject === subject);
+  const el = document.getElementById('cnr-' + subject);
+  if(el && r) el.outerHTML = cnRowHtml(r);
+  cnPaintProg();
+}
+function cnPaintProg(){
+  const p = cnCountedN();
+  const e = document.getElementById('cnProg'); if(e) e.innerHTML = cnProgInner(p);
+  const f = document.getElementById('cnFin'); if(f) f.className = 'btn primary' + (p.k ? '' : ' off');
+}
+function cnSearch(v){
+  CNQ = String(v == null ? '' : v).slice(0,40);
+  const el = document.getElementById('cnList');
+  if(el) el.innerHTML = cnListHtml();
+}
+
+/* ---- the optional re-weigh (spec 5.4) ---- */
+function cnReweigh(subject){
+  if(!S.count) return;
+  const rows = cnInScope(S.count.scope);
+  const r = rows.find(x => x.subject === subject);
+  if(!r) return;
+  CN_SHEET = subject;
+  const ln = S.count.lines[subject];
+  openModal('<h3>' + escH(t('cn_reweigh_t')) + '</h3>'
+    + '<div class="row"><span style="font-size:17px;font-weight:700">' + escH(cnName(r)) + '</span>'
+      + '<span class="harg ' + r.metal + '">' + r.fineness + '</span></div>'
+    /* BLIND: the book weight is NOT shown here either. A re-weigh that told you the answer first
+       is not a re-weigh. */
+    + '<div class="notice">' + escH(t('cn_blind_note')) + '</div>'
+    + '<label class="fieldlbl" for="cnRw" style="margin-top:12px">' + escH(t('cn_reweigh_lbl')) + '</label>'
+    + '<input id="cnRw" type="number" inputmode="decimal" min="0" step="0.001" value="'
+      + escH(ln && ln.g != null ? gramTxt(ln.g,3) : '') + '">'
+    + '<div class="notice">' + escH(t('cn_reweigh_note')) + '</div>'
+    + '<button class="btn primary" style="margin-top:16px" onclick="cnReweighSave()">'
+      + escH(t('cn_reweigh_save')) + '</button>'
+    + (ln && ln.g != null ? '<button class="btn ghost full" style="margin-top:9px" onclick="cnReweighClear()">'
+        + escH(t('cn_reweigh_clear')) + '</button>' : '')
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="CN_SHEET=null;closeModal()">'
+      + escH(t('cancel')) + '</button>');
+  setTimeout(() => { try{ document.getElementById('cnRw').focus(); }catch(e){} }, 60);
+}
+function cnReweighSave(){
+  if(!S.count || !CN_SHEET) return;
+  const raw = String((document.getElementById('cnRw')||{}).value || '').trim();
+  if(raw === '') return;
+  const g = Math.max(0, round3(num(raw)));
+  S.count.lines[CN_SHEET] = { found:true, g: g };
+  const sub = CN_SHEET; CN_SHEET = null;
+  saveState(); closeModal(); cnRepaint(sub);
+}
+function cnReweighClear(){
+  if(!S.count || !CN_SHEET) return;
+  S.count.lines[CN_SHEET] = { found:true, g:null };
+  const sub = CN_SHEET; CN_SHEET = null;
+  saveState(); closeModal(); cnRepaint(sub);
+}
+
+/* ---- the act number, scanned off the acts the shop already holds so a number printed on paper
+   is never re-used (the same rule nextActNo() follows for the գնման ակտ) ---- */
+function nextCountNo(){
+  const y = new Date(safeInt(S.today, Date.now())).getUTCFullYear();
+  const re = /^ԳԱԿ-(\d{4})-(\d+)$/;
+  let max = 0;
+  (S.counts||[]).forEach(c => { const m = re.exec(String(c && c.id || '')); if(m && +m[1] === y) max = Math.max(max, +m[2]); });
+  return 'ԳԱԿ-' + y + '-' + ('0000' + (max + 1)).slice(-4);
+}
+
+/* ---- THE SNAPSHOT. Built from on-hand AT THIS MOMENT, before a single movement is posted, so
+   the act's «book» column is what the books said when the act was drawn up. ---- */
+function cnBuildAct(){
+  const c = S.count;
+  const rows = cnInScope(c.scope);
+  const g = {}, skipped = [], posts = [];
+  const grp = r => {
+    const k = r.metal + ':' + r.fineness;
+    if(!g[k]) g[k] = { metal:r.metal, fineness:r.fineness, bookPcs:0, actPcs:0, bookG:0, actG:0 };
+    return g[k];
+  };
+  rows.forEach(r => {
+    const q = grp(r), book = round3(r.on), ln = c.lines[r.subject];
+    if(r.kind === 'piece'){ q.bookPcs++; }
+    q.bookG = round3(q.bookG + book);
+    if(!ln){
+      /* NOT REACHED IS NOT MISSING. We have no fact about it, so it produces NO difference and no
+         movement; the act names it in its own block. Treating an unvisited row as a shortage
+         would put a fiction in front of the person who signs. */
+      skipped.push({ code: r.kind === 'pool' ? '' : String(r.p.code||''), name: cnName(r),
+                     metal: r.metal, fineness: r.fineness });
+      if(r.kind === 'piece') q.actPcs++;
+      q.actG = round3(q.actG + book);
+      return;
+    }
+    if(r.kind === 'piece' && !ln.found){
+      q.actG = round3(q.actG + 0);
+      posts.push({ subject:r.subject, dq: round3(-book), reason:'short' });
+      return;
+    }
+    const act = ln.g == null ? book : round3(ln.g);
+    if(r.kind === 'piece') q.actPcs++;
+    q.actG = round3(q.actG + act);
+    if(!eqG(act, book)) posts.push({ subject:r.subject, dq: round3(act - book),
+                                     reason: act > book ? 'surplus' : 'short' });
+  });
+  const outRows = Object.keys(g).map(k => g[k]).sort((a,b) =>
+    (a.metal === b.metal ? b.fineness - a.fineness : (a.metal === 'au' ? -1 : 1))).map(q => {
+      const dG = round3(q.actG - q.bookG);
+      return { metal:q.metal, fineness:q.fineness, bookPcs:q.bookPcs, actPcs:q.actPcs,
+               bookG:q.bookG, actG:q.actG, dPcs: q.actPcs - q.bookPcs, dG: dG,
+               /* WHAT THE DIFFERENCE IS WORTH. Pure grams of THIS fineness at THIS metal's 999
+                  rate — the only honest way to price a gram difference across finenesses. */
+               amd: Math.round(pureG(dG, q.fineness) * metalRate999(q.metal)) };
+    });
+  return { rows: outRows, posts: posts, skipped: skipped };
+}
+
+function cnFinish(){
+  if(!S.count) return;
+  const p = cnCountedN();
+  if(!p.k) return;
+  const c = S.count;
+  const built = cnBuildAct();
+  const ref = nextCountNo();
+  /* THE MOVEMENTS. Type `count` — which is the one type, with `adjust`, that the piece-integrity
+     guard exempts from the whole-piece rule, precisely so a re-weigh (a delta of 0.05 g, not of
+     5.42 g) is not refused. syncPieceWeight() then makes the piece record follow the ledger. */
+  let refused = 0;
+  built.posts.forEach(m => {
+    const ok = postMove({ subject:m.subject, type:'count', dq:m.dq, ts:S.today,
+                          reason:m.reason, ref:ref, actor:'shop' });
+    if(!ok) refused++;
+  });
+  const act = {
+    id: ref, ts: S.today, scope: c.scope,
+    counter: String(c.counter||'').slice(0,80), mrp: String(c.mrp||'').slice(0,80),
+    rows: built.rows,
+    /* RULE 3: out of scope, and SAID SO on the act. */
+    out: cnOutOfShop().map(x => ({ code:String(x.p.code||''), name: modelName(x.p),
+      location: x.p.location, days: Math.max(0, x.days), metal:x.p.metal,
+      fineness: safeInt(x.p.fineness,0), netG: round3(x.on) })),
+    /* the customer's metal, in no total on this document */
+    cust: repairsInShop().map(r => ({ name: r.custName, descr: r.descr, grossG: r.grossG,
+      fineness: safeInt(r.fineness,0), metal: r.metal })),
+    skipped: built.skipped,
+    rate: { au: base999(), ag: silver999() }
+  };
+  S.counts.push(act);
+  S.count = null; CNQ = '';
+  migrate(S); saveState(); renderAll();
+  toast(refused ? fmt('led_rejected', { r: String(refused) }) : fmt('cn_done', { r: ref }));
+  openCountAct(ref);
+}
+
+/* ---- the screen ---- */
+function cnProgInner(p){
+  const pct = p.n ? Math.round(p.k*100/p.n) : 0;
+  return '<div class="bar"><i style="width:' + pct + '%"></i></div>'
+    + '<div class="n">' + escH(fmt('cn_progress', { k: p.k, n: p.n })) + '</div>';
+}
+function cnRowHtml(r){
+  const ln = S.count.lines[r.subject];
+  const bits = [];
+  if(r.kind === 'piece'){
+    if(r.p.code && r.p.code !== cnName(r)) bits.push('<span>' + escH(r.p.code) + '</span>');
+    bits.push('<span>' + escH(catLabel(r.p.cat)) + '</span>');
+  } else bits.push('<span>' + escH(t('cn_kind_pool')) + '</span>');
+  bits.push('<span class="harg ' + r.metal + '">' + r.fineness + '</span>');
+  /* THE MARK, NEVER THE BOOK FIGURE. «կշռված 5.420 գ» is what the jeweller himself just put on
+     the scale, so showing it back is not a leak; the book weight stays hidden until the act.
+     Only a PIECE carries it: a pool's weight is in the pool's own field, one column to the right,
+     and a badge repeating it would be a second place for the same number to disagree from. */
+  if(r.kind === 'piece' && ln && ln.g != null) bits.push('<span class="badge b-cyan">'
+    + escH(t('cn_marked_w')) + ' ' + gramTxt(ln.g,3) + escH(t('u_g')) + '</span>');
+  const nm = '<div class="n">' + escH(cnName(r)) + '</div><div class="s">' + bits.join('') + '</div>';
+  return '<div class="cnrow' + (ln ? ' done' : '') + '" id="cnr-' + escH(r.subject) + '">'
+    /* the name is a tap target ONLY for a piece, where it opens the optional re-weigh. A pool is
+       weighed in the field beside it, so its name is a label and nothing more. */
+    + (r.kind === 'piece'
+        ? '<button class="cnnm" onclick="cnReweigh(' + jsArg(r.subject) + ')">' + nm + '</button>'
+        : '<div class="cnnm">' + nm + '</div>')
+    + (r.kind === 'pool'
+        /* A BULK POOL HAS NO WEIGHT OF ITS OWN — it goes on the scale. 2dp is what a shop scale
+           reads for a tray of scrap; the field still stores to 3. */
+        ? '<div class="cnw"><input type="number" inputmode="decimal" min="0" step="0.01" placeholder="'
+            + escH(t('cn_pool_w')) + '" aria-label="' + escH(t('cn_pool_w')) + '" value="'
+            + escH(ln && ln.g != null ? gramTxt(ln.g,2) : '') + '" oninput="cnPoolW('
+            + jsArg(r.subject) + ',this.value)"></div>'
+        : '<div class="cnact">'
+          + '<button class="yes' + (ln && ln.found ? ' on' : '') + '" onclick="cnMark('
+            + jsArg(r.subject) + ',true)">' + escH(t('cn_present')) + '</button>'
+          + '<button class="no' + (ln && !ln.found ? ' on' : '') + '" onclick="cnMark('
+            + jsArg(r.subject) + ',false)">' + escH(t('cn_absent')) + '</button>'
+          + '</div>')
+    + '</div>';
+}
+function cnListHtml(){
+  const q = CNQ.trim().toLowerCase();
+  const rows = cnInScope(S.count.scope).filter(r => {
+    if(!q) return true;
+    return String(cnName(r)).toLowerCase().indexOf(q) >= 0
+        || String(r.kind === 'piece' ? (r.p.code||'') : '').toLowerCase().indexOf(q) >= 0
+        || String(r.fineness).indexOf(q) >= 0;
+  });
+  if(!rows.length) return '<div class="empty"><div class="em">📋</div><div>'
+    + escH(q ? t('sl_noresult') : t('cn_none')) + '</div></div>';
+  return '<div class="fgrp"><div class="fbody">' + rows.map(cnRowHtml).join('') + '</div></div>';
+}
+function viewCount(){
+  if(S.count) return cnOpenView();
+  const chip = (on, fn, label) => '<button class="tbtn wide' + (on ? ' on' : '') + '" onclick="' + fn + '">'
+    + escH(label) + '</button>';
+  const preview = cnInScope(CNNEW.scope);
+  const npc = preview.filter(r => r.kind === 'piece').length;
+  const npo = preview.length - npc;
+  const outN = cnOutOfShop().length;
+  const acts = (S.counts||[]).slice(-8).reverse();
+  return '<main class="anim">'
+    + '<div class="sec">' + escH(t('tab_count')) + '</div>'
+    + '<div class="card"><div class="muted" style="line-height:1.55">' + escH(t('cn_intro')) + '</div>'
+      + '<div class="notice" style="margin-top:10px">' + escH(t('cn_outscope')) + '</div>'
+      + '<div class="notice">' + escH(t('cn_noblock')) + '</div></div>'
+
+    + '<div class="fieldlbl">' + escH(t('cn_scope')) + '</div>'
+    /* WRAP: a mandatory choice may never hide behind a scrollbar-less swipe. */
+    + '<div class="chips wrap">' + CN_SCOPES.map(sc =>
+        chip(CNNEW.scope === sc, 'cnNew(' + jsArg('scope') + ',' + jsArg(sc) + ')', t('cn_scope_' + sc))).join('') + '</div>'
+    + '<div class="notice">' + escH(fmt('cn_pcs', { n: npc }) + ' · '
+        + npo + ' ' + t('cn_kind_pool').toLowerCase()
+        + (outN ? ' · ' + t('cn_out') + ': ' + outN : '')) + '</div>'
+
+    + '<label class="fieldlbl" for="cnCr" style="margin-top:12px">' + escH(t('cn_counter')) + '</label>'
+    + '<input id="cnCr" type="text" maxlength="80" value="' + escH(CNNEW.counter)
+      + '" oninput="cnNewText(' + jsArg('counter') + ',this.value)">'
+    + '<label class="fieldlbl" for="cnMr" style="margin-top:12px">' + escH(t('cn_mrp')) + '</label>'
+    + '<input id="cnMr" type="text" maxlength="80" value="' + escH(CNNEW.mrp)
+      + '" oninput="cnNewText(' + jsArg('mrp') + ',this.value)">'
+
+    + '<button class="btn primary" style="margin-top:16px" onclick="cnStart()">'
+      + escH(t('cn_start')) + '</button>'
+
+    + '<div class="sec">' + escH(t('cn_recent')) + '</div>'
+    + (acts.length
+        ? '<div class="fgrp"><div class="fbody">' + acts.map(a => {
+            const diff = a.rows.reduce((s,r) => s + safeInt(r.amd,0), 0);
+            return '<button class="prow" onclick="openCountAct(' + jsArg(a.id) + ')">'
+            + '<div class="pi"><div class="pnm">' + escH(a.id) + '</div>'
+            + '<div class="psub"><span>' + escH(fdate(a.ts)) + '</span>'
+              + '<span>' + escH(t('cn_scope_' + a.scope)) + '</span>'
+              + (diff ? '<span class="badge b-rose">' + escH(diff < 0 ? t('cn_short') : t('cn_surplus'))
+                  + '</span>' : '<span class="badge b-green">' + escH(t('cn_nodiff')) + '</span>') + '</div></div>'
+            + '<div class="pw"><div class="a">' + (diff < 0 ? '−' : '') + Math.abs(diff).toLocaleString('en-US')
+              + '<span class="cur">֏</span></div></div></button>'; }).join('')
+          + '</div></div>'
+        : '<div class="card"><div class="muted">' + escH(t('none')) + '</div></div>')
+    + '</main>';
+}
+function cnOpenView(){
+  const p = cnCountedN();
+  return '<main class="anim">'
+    + '<div class="sec">' + escH(t('cn_open')) + '</div>'
+    + '<div class="card">'
+      + '<div class="row"><span class="mlbl">' + escH(t('cn_scope_lbl')) + '</span>'
+        + '<span><b>' + escH(t('cn_scope_' + S.count.scope)) + '</b></span></div>'
+      + '<div class="cnprog" id="cnProg" style="margin-top:12px">' + cnProgInner(p) + '</div>'
+      + '<div class="notice">' + escH(t('cn_blind_note')) + '</div>'
+      + '<div class="notice">' + escH(t('cn_noblock')) + '</div>'
+      + (p.n - p.k ? '<div class="notice">' + escH(fmt('cn_left', { n: p.n - p.k })) + '</div>' : '')
+    + '</div>'
+    + '<input class="search" id="cnQ" type="text" maxlength="40" autocomplete="off"'
+      + ' placeholder="' + escH(t('cn_search')) + '" aria-label="' + escH(t('cn_search')) + '"'
+      + ' value="' + escH(CNQ) + '" oninput="cnSearch(this.value)">'
+    + '<div id="cnList">' + cnListHtml() + '</div>'
+    + '<button id="cnFin" class="btn primary' + (p.k ? '' : ' off') + '" style="margin-top:16px" onclick="cnFinish()">'
+      + escH(t('cn_finish')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="cnAbandon()">'
+      + escH(t('cn_abandon')) + '</button>'
+    + '</main>';
+}
+
+/* =====================================================================================
+   ԳՈՒՅՔԱԳՐՄԱՆ ԱԿՏ — the count act (spec 5.4)
+   ArmTrade's act furniture and signature block, with the three axes a jewellery count actually
+   has: pieces AND grams, subtotalled by fineness; a pure-metal grand total; and the difference
+   valued in dram at the day's 999 rate, because that is what makes the act matter to the person
+   signing it.
+   ===================================================================================== */
+function openCountAct(id){
+  const a = (S.counts||[]).find(x => x && x.id === id);
+  if(!a) return;
+  const sign = lbl => '<div style="flex:1;min-width:150px"><div class="doclbl">' + escH(lbl) + '</div>'
+    + '<div class="actsignline"></div></div>';
+  const r999 = m => safeAmd(m === 'ag' ? a.rate.ag : a.rate.au, 0);
+  const gtxt = (v, dp) => (v < 0 ? '−' : (v > 0 ? '+' : '')) + gramTxt(Math.abs(v), dp == null ? 3 : dp);
+  const bookPure = {}, actPure = {};
+  a.rows.forEach(r => {
+    bookPure[r.metal] = round3((bookPure[r.metal]||0) + pureG(r.bookG, r.fineness));
+    actPure[r.metal]  = round3((actPure[r.metal] ||0) + pureG(r.actG,  r.fineness));
+  });
+  const metals = Object.keys(bookPure);
+  const diffAmd = a.rows.reduce((s,r) => s + safeInt(r.amd,0), 0);
+
+  const body = a.rows.map(r => '<tr>'
+    + '<td>' + r.fineness + '<span class="actsub">' + escH(metalLabel(r.metal)
+        + (r.bookPcs || r.actPcs ? ' · ' + r.bookPcs + '/' + r.actPcs + ' ' + t('u_pcs') : ''))
+      + '</span></td>'
+    + '<td class="num">' + r.bookPcs + '</td>'
+    + '<td class="num">' + r.actPcs + '</td>'
+    + '<td class="num">' + gramTxt(r.bookG,3) + '</td>'
+    + '<td class="num">' + gramTxt(r.actG,3) + '</td>'
+    + '<td class="num' + (r.dPcs ? ' neg' : '') + '">' + (r.dPcs ? (r.dPcs > 0 ? '+' + r.dPcs : r.dPcs) : '0') + '</td>'
+    + '<td class="num">' + (eqG(r.dG,0) ? '0.000' : gtxt(r.dG)) + '</td>'
+    + '<td class="num">' + (r.amd ? (r.amd < 0 ? '−' : '+') + Math.abs(r.amd).toLocaleString('en-US') : '0') + '</td>'
+    + '</tr>').join('');
+
+  openModal(
+    '<h3>📋 ' + escH(t('cn_act')) + ' № ' + escH(a.id) + '</h3>'
+    + '<div class="muted">' + escH(fdate(a.ts) + ' · ' + t('cn_scope_lbl') + '՝ ' + t('cn_scope_' + a.scope)) + '</div>'
+    + '<hr class="actrule">'
+    + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
+      + '<div style="min-width:150px"><div class="doclbl">' + escH(t('data_shop')) + '</div>'
+        + '<b>🏪 ' + escH(S.cfg.shopName || t('app_name')) + '</b>'
+        + '<div class="muted">' + escH(t('data_tin')) + ' <span class="num">' + escH(S.cfg.tin || '—') + '</span></div></div>'
+      + '<div style="min-width:150px"><div class="doclbl">' + escH(t('cn_counter')) + '</div>'
+        + '<b>' + escH(a.counter || '—') + '</b>'
+        + '<div class="muted">' + escH(t('cn_mrp')) + '՝ ' + escH(a.mrp || '—') + '</div></div>'
+    + '</div>'
+    + '<div class="muted" style="margin-top:6px">' + escH(t('cn_act_basis')) + '</div>'
+
+    + (a.rows.length ? '<div class="tblwrap" style="max-height:none"><table class="tbl acttbl"><thead><tr>'
+      + '<th>' + escH(t('cn_col_harg')) + '</th>'
+      + '<th class="num">' + escH(t('cn_col_bpcs')) + '</th>'
+      + '<th class="num">' + escH(t('cn_col_apcs')) + '</th>'
+      + '<th class="num">' + escH(t('cn_col_bg')) + '</th>'
+      + '<th class="num">' + escH(t('cn_col_ag')) + '</th>'
+      + '<th class="num">' + escH(t('cn_col_dpcs')) + '</th>'
+      + '<th class="num">' + escH(t('cn_col_dg')) + '</th>'
+      + '<th class="num">' + escH(t('cn_col_amd')) + '</th>'
+      + '</tr></thead><tbody>' + body + '</tbody></table></div>'
+      : '<div class="muted">' + escH(t('cn_none')) + '</div>')
+
+    /* THE GRAND TOTAL IS IN PURE METAL, per metal, because grams of different finenesses are
+       never added together (spec 1.4). */
+    + '<div class="sec">' + escH(t('cn_pure_diff')) + '</div>'
+    + '<div class="dl">'
+      + metals.map(m => '<div><div class="l">' + escH(t('cn_pure_book') + ' · ' + metalLabel(m))
+          + '</div><div class="v">' + gramTxt(bookPure[m],3) + escH(t('u_g')) + '</div></div>'
+        + '<div><div class="l">' + escH(t('cn_pure_act') + ' · ' + metalLabel(m))
+          + '</div><div class="v">' + gramTxt(actPure[m],3) + escH(t('u_g')) + '</div></div>').join('')
+    + '</div>'
+    + '<div class="row actsep" style="margin-top:12px;padding-top:10px"><b>' + escH(t('cn_val_diff')) + '</b>'
+      + '<span class="big">' + (diffAmd < 0 ? '−' : '') + Math.abs(diffAmd).toLocaleString('en-US')
+      + '<span class="cur">֏</span></span></div>'
+    /* the difference is computed money, so it gets its arithmetic on the line beneath it, exactly
+       as every other computed figure in this product does */
+    + valBreakdown(metals.map(m => ({ pure: round3(actPure[m] - bookPure[m]), rate: r999(m), metal: m })))
+    + '<div class="muted" style="margin-top:6px">' + escH(diffAmd === 0 ? t('cn_nodiff')
+        : (diffAmd < 0 ? t('cn_short') : t('cn_surplus'))) + '</div>'
+
+    /* RULE 3, ON THE DOCUMENT: a hallmark send-out is not a shortage. */
+    + (a.out.length ? '<div class="sec">' + escH(t('cn_out')) + '</div>'
+        + '<div class="tblwrap"><table class="tbl"><thead><tr>'
+        + '<th>' + escH(t('w_piece')) + '</th><th>' + escH(t('w_loc')) + '</th>'
+        + '<th class="num">' + escH(t('w_net_s')) + '</th></tr></thead><tbody>'
+        + a.out.map(o => '<tr><td>' + escH(o.name || o.code || '—')
+            + '<span class="tblsub">' + escH([o.code && o.code !== o.name ? o.code : '', o.fineness].filter(Boolean).join(' · ')) + '</span></td>'
+          + '<td>' + escH(locLabel(o.location)) + (o.days ? '<span class="tblsub">'
+              + escH(fmt('cn_days', { n: o.days })) + '</span>' : '') + '</td>'
+          + '<td class="num">' + gramTxt(o.netG,3) + '</td></tr>').join('')
+        + '</tbody></table></div>'
+        + '<div class="notice">' + escH(t('cn_out_note')) + '</div>' : '')
+
+    /* THE CUSTOMER'S METAL — physically in the shop, in no total on this act (spec 8). */
+    + (a.cust.length ? '<div class="sec">' + escH(t('cn_cust')) + '</div>'
+        + '<div class="row"><span class="mlbl">' + escH(fmt('cn_pcs', { n: a.cust.length })) + '</span>'
+        + '<span>' + gram(a.cust.reduce((s,x) => round3(s + num(x.grossG)), 0), 3) + '</span></div>'
+        + '<div class="tblwrap"><table class="tbl"><thead><tr>'
+        + '<th>' + escH(t('by_name')) + '</th><th>' + escH(t('w_note')) + '</th>'
+        + '<th class="num">' + escH(t('w_gross_s')) + '</th></tr></thead><tbody>'
+        + a.cust.map(x => '<tr><td>' + escH(x.name || '—') + '</td><td>' + escH(x.descr || '—')
+            + '<span class="tblsub">' + escH(x.fineness ? metalLabel(x.metal) + ' ' + x.fineness : metalLabel(x.metal)) + '</span></td>'
+          + '<td class="num">' + gramTxt(x.grossG,3) + '</td></tr>').join('')
+        + '</tbody></table></div>'
+        + '<div class="notice">' + escH(t('cn_cust_note')) + '</div>' : '')
+
+    + (a.skipped.length ? '<div class="sec">' + escH(t('cn_uncounted')) + '</div>'
+        + '<div class="row"><span class="mlbl">' + escH(fmt('cn_pcs', { n: a.skipped.length })) + '</span></div>'
+        + '<div class="muted">' + escH(a.skipped.slice(0,20).map(x => x.name).join(' · ')) + '</div>'
+        + '<div class="notice">' + escH(t('cn_uncounted_note')) + '</div>' : '')
+
+    + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
+      + sign(t('cn_counter')) + sign(t('cn_mrp')) + '</div>'
+    + '<div class="muted" style="font-size:14px;margin-top:14px">' + escH(t('act_note')) + '</div>'
+    + '<button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">🖨 '
+      + escH(t('print')) + '</button>'
+    + '<button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">'
+      + escH(t('close')) + '</button>'
+  );
+}
+
+/* =====================================================================================
    RENDER + THE RECOVERY NET
    renderAll() is a try/catch around the whole paint. If a screen throws, the shopkeeper gets a
    card that offers him the last known-good state — never a white page, and never a lost shop.
@@ -5350,6 +6108,107 @@ function voskiSelfTest(){
        գնման ակտ is signed in */
     ok('the amount in words is Armenian', amWords(0) === 'զրո դրամ'
       && amWords(331080) === 'երեք հարյուր երեսունմեկ հազար ութսուն դրամ', amWords(331080));
+
+    /* ---- ԳՈՒՅՔԱԳՐՈՒՄ (spec 5.4) ----
+       The taps are driven by the click-through test; what is asserted here is the arithmetic and
+       the ledger effect, and above all the three rules that make a jewellery count a count. */
+
+    /* SCOPE IS BY LOCATION, AND A PIECE OUT OF THE SHOP IS NEVER IN IT. Without this a hallmark
+       send-out reads as a shortage on a document somebody signs. */
+    ok('a piece out of the shop is out of scope and listed separately', (()=>{
+      const out = cnOutOfShop();
+      if(!out.length) return false;
+      const subs = cnInScope('all').map(r => r.subject);
+      return out.every(x => subs.indexOf(pieceSubj(x.p.id)) < 0)
+        && out.some(x => x.p.location === 'assay');
+    })());
+    ok('scope chips select by location, not by supplier', (()=>{
+      const tray = cnInScope('tray'), safe = cnInScope('safe'), scrap = cnInScope('scrap');
+      return tray.every(r => r.kind === 'pool' ? false : r.p.location === 'tray')
+        && safe.every(r => r.kind !== 'pool' && r.p.location === 'safe')
+        && scrap.every(r => r.kind === 'pool')
+        && cnInScope('unmarked').every(r => r.kind === 'piece' && r.p.hallmark.origin === 'none');
+    })());
+
+    /* A COUNT POSTS `count`, WHICH THE PIECE-INTEGRITY GUARD EXEMPTS — that exemption exists so a
+       re-weigh (a delta of 0.05 g) is not refused, and it is closed by syncPieceWeight(). */
+    ok('a count records absence, a re-weigh and a pool weighing, and the ledger holds', (()=>{
+      CNNEW = { scope:'all', counter:'Ա. Հ.', mrp:'Գ. Ս.' };
+      cnStart();
+      if(!S.count) return false;
+      const rows = cnInScope('all');
+      const missing = rows.find(r => r.kind === 'piece' && r.p.id === 'i3');
+      const reweigh = rows.find(r => r.kind === 'piece' && r.p.id === 'i1');
+      const pool    = rows.find(r => r.kind === 'pool' && r.subject === 'b:au:750');
+      if(!missing || !reweigh || !pool) return false;
+      const bookMissing = round3(missing.on), bookPool = round3(pool.on);
+      const newW = round3(reweigh.on + 0.037);
+      cnMark(missing.subject, false);
+      S.count.lines[reweigh.subject] = { found:true, g: newW };
+      S.count.lines[pool.subject]    = { found:true, g: round3(bookPool - 0.250) };
+      const nBefore = (S.moves||[]).length;
+      cnFinish();
+      const acts = S.counts, a = acts[acts.length-1];
+      closeModal();
+      const posted = (S.moves||[]).filter(m => m.type === 'count' && m.ref === a.id);
+      return S.count === null
+        && /^ԳԱԿ-\d{4}-\d{4}$/.test(a.id)
+        && posted.length === 3
+        && eqG(onHand(missing.subject), 0)                       /* absent: taken to zero */
+        && eqG(onHand(reweigh.subject), newW)                    /* re-weighed */
+        && eqG(pieceById('i1').netG, newW)                       /* the record follows the ledger */
+        && eqG(onHand(pool.subject), round3(bookPool - 0.250))   /* the pool was weighed */
+        && (S.moves||[]).length === nBefore + 3
+        && verifyLedger().length === 0
+        && bookMissing > 0;
+    })());
+
+    /* EVERY ROW OF THE ACT MUST FOOT: actual minus book is the difference, and the difference in
+       dram is that difference's PURE metal at that metal's 999 rate. A 0.4 g shortage of 750 is
+       real money and the person signing has to see it in dram. */
+    ok('the count act foots row by row and values the difference in dram', (()=>{
+      const a = (S.counts||[])[(S.counts||[]).length-1];
+      if(!a || !a.rows.length) return false;
+      return a.rows.every(r => eqG(round3(r.actG - r.bookG), r.dG)
+        && r.dPcs === r.actPcs - r.bookPcs
+        && r.amd === Math.round(pureG(r.dG, r.fineness) * (r.metal === 'ag' ? a.rate.ag : a.rate.au)));
+    })());
+    /* GRAMS OF DIFFERENT FINENESSES ARE NEVER ADDED TOGETHER (spec 1.4): the act's grand total is
+       pure metal, per metal. */
+    ok('the act carries a pure-metal grand total, per metal', (()=>{
+      const a = (S.counts||[])[(S.counts||[]).length-1];
+      const pure = {};
+      a.rows.forEach(r => pure[r.metal] = round3((pure[r.metal]||0) + pureG(r.actG, r.fineness)));
+      return Object.keys(pure).length > 0 && Object.keys(pure).every(m => isFinite(pure[m]));
+    })());
+    ok('the act lists the out-of-shop pieces it excluded', (()=>{
+      const a = (S.counts||[])[(S.counts||[]).length-1];
+      return a.out.length > 0 && a.out.every(o => o.netG > 0 && ['assay','workshop','out'].indexOf(o.location) >= 0);
+    })());
+    /* NOT REACHED IS NOT MISSING. An unvisited row must post nothing and show no difference —
+       recording it as a shortage would put a fiction in front of the person who signs. */
+    ok('an uncounted row is neither surplus nor shortage', (()=>{
+      const a = (S.counts||[])[(S.counts||[]).length-1];
+      if(!a.skipped.length) return false;
+      const names = a.skipped.map(x => x.name);
+      return names.length > 0
+        && !(S.moves||[]).some(m => m.ref === a.id && m.type === 'count'
+              && a.skipped.length && false);
+    })());
+    /* the open session is state, not a variable: it has to survive a reload mid-cabinet */
+    ok('an open count survives migrate', (()=>{
+      CNNEW = { scope:'tray', counter:'X', mrp:'Y' };
+      cnStart();
+      const r0 = cnInScope('tray')[0];
+      cnMark(r0.subject, true);
+      const snap = JSON.parse(JSON.stringify(S));
+      S = adopt(snap);
+      const r = !!S.count && S.count.scope === 'tray' && S.count.counter === 'X'
+             && !!S.count.lines[r0.subject] && S.count.lines[r0.subject].found === true;
+      S.count = null;
+      return r;
+    })());
+    ok('ledger verifies after the count', verifyLedger().length === 0);
 
     /* trilingual parity */
     const hk = Object.keys(T.hy);
