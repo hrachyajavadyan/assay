@@ -1606,6 +1606,32 @@ input:disabled{
 .stub .se{font-size:30px;line-height:1;margin-bottom:var(--s3)}
 .stub h4{margin:0 0 var(--s2);font-size:var(--fs-title);font-weight:var(--fw-title)}
 .stub p{margin:0;color:var(--muted);font-size:var(--fs-body);line-height:1.5}
+
+/* ---------- the counter flows: sell and buy-in ----------
+   Two screens where a figure is read ACROSS a counter, not down at arm's length, so the price
+   and the arithmetic under it get the display size the rate card gets. Nothing here introduces
+   a second accent: the one accent-filled button on each screen is the commit. */
+.pricebox{
+  background:var(--surface);border:var(--bw-strong) solid var(--acc-line);
+  border-radius:var(--r);padding:var(--s4);margin:var(--s3) 0;
+}
+.pricebox .l{font-size:var(--fs-caps);font-weight:var(--fw-caps);line-height:var(--lh-caps);color:var(--dim)}
+.pricebox .v{
+  font-size:var(--fs-display-m);font-weight:var(--fw-display-m);
+  line-height:var(--lh-display-m);letter-spacing:var(--ls-display-m);color:var(--ink);
+  font-variant-numeric:tabular-nums lining-nums;margin-top:2px;
+}
+.pricebox .brk{background:var(--surface-2)}
+
+/* the buy act's own column fold. The seven-column act is ~520px wide and a 390px phone is the
+   normal case, so below 560px the four reference columns fold into a sub-line under the row
+   number and the four figures the customer is looking at — zuyt, rate, sum — stay on screen.
+   PRINT ALWAYS CARRIES ALL EIGHT: the @media print block forces every .acttbl cell back to
+   table-cell with !important, which outranks these selectors however specific they are. */
+@media screen and (max-width:560px){
+  .acttbl.buyact th:nth-child(4),.acttbl.buyact td:nth-child(4),
+  .acttbl.buyact th:nth-child(5),.acttbl.buyact td:nth-child(5){display:none}
+}
 </style>
 </head>
 <body class="light">
@@ -1887,13 +1913,62 @@ T.hy = {
   data_ns:'Տվյալները պահվում են այս սարքում՝ առանձին ARMGOLD-ից։',
   /* ---- honest empty screens ---- */
   stub_title:'Այս էկրանը դեռ պատրաստ չէ',
-  stub_sell:'Վաճառքի էկրանը՝ որոնում կոդով, գին բացվածքով, ՀԴՄ համար։ Առայժմ գինը տեսնելու համար բացեք իրը Դարակից։',
-  stub_buy:'Բնակչությունից գնման էկրանը՝ կշիռ, հարգ, հաշվարկ, գնման ակտ։',
   stub_recv:'Մատակարարից ընդունումը՝ քաշերով և ինքնարժեքով։',
   stub_count:'Գույքագրումը՝ ըստ հարգի, կույր հաշվարկով, ակտով։',
   stub_mark:'Հարգադրոշմավորման ուղարկում և վերադարձ։',
   stub_repair:'Հաճախորդի իրերի պահպանման մատյան — երբեք պաշարի մեջ։',
   stub_debts:'Մատակարարների մնացորդները՝ հաշիվներից և վճարումներից։',
+  /* ---- Վաճառք (spec 2.2, 2.3, 5.3) ---- */
+  sl_search:'Որոնել կոդով կամ անվանումով',
+  sl_avail:'{n} իր՝ վաճառքի համար',
+  sl_noresult:'Այդ կոդով կամ անվանումով իր չգտնվեց',
+  sl_sheet:'Իրի վաճառք',
+  sl_yourprice:'Ձեր գինը (֏)',
+  sl_reset:'Վերադառնալ հաշվարկված գնին',
+  sl_hdm:'ՀԴՄ կտրոնի համար',
+  sl_hdm_note:'Համարը միայն գրանցվում է այս սարքում։ Ոչ մի տվյալ չի ուղարկվում ՊԵԿ կամ որևէ պետական մարմին։',
+  sl_confirm:'Վաճառել',
+  sl_done:'Վաճառքը գրանցվեց',
+  sl_price_needed:'Մուտքագրեք գին',
+  sl_nocost:'Այս իրի ինքնարժեքը փաստաթղթավորված չէ։ Մարժայի սխեմայում հարկը հաշվարկվում է ամբողջ գնից, ոչ թե մարժայից։ Վաճառքն այնուամենայնիվ շարունակվում է։',
+  sl_warn_ok:'Սա զգուշացում է, ոչ թե արգելք — վաճառքը շարունակվում է ձեր հաստատմամբ, և երկու թիվն էլ պահվում է վաճառքի գրառման մեջ։',
+  sl_recent:'Վերջին վաճառքները',
+  sl_none:'Վաճառքներ դեռ չկան',
+  sl_sold_price:'Վաճառքի գին',
+  sl_out:'Իրը խանութում չէ — {l}',
+  /* ---- Գնում բնակչությունից (spec 2.4, 5.2) ---- */
+  by_weigh:'Կշռում',
+  by_paid:'Վճարվող գումարը',
+  by_stones_lbl:'Քարերի գումարը (֏)',
+  by_pay:'Վճարման եղանակ', by_cash:'Կանխիկ', by_bank:'Փոխանցում',
+  by_seller:'Վաճառողը',
+  by_name:'Անուն, ազգանուն', by_passport:'Անձնագիր', by_ssn:'ՀԾՀ',
+  by_optional:'ըստ ցանկության',
+  by_id_note:'Անձնական տվյալների դաշտերը լրացվում են ըստ ցանկության։ Թե որ փաստաթղթերն են գնման ակտում պարտադիր՝ ճշտեք ձեր հաշվապահի հետ։',
+  by_dest:'Ի՞նչ է դառնում մետաղը',
+  by_dest_scrap:'Ջարդոն', by_dest_resale:'Վերավաճառք',
+  by_dest_scrap_d:'Ավելանում է կուտակին և բացում նոր ձեռքբերում՝ այս ինքնարժեքով։',
+  by_dest_resale_d:'Ստեղծվում է իր՝ նույն ինքնարժեքով, և դրվում դարակ։',
+  by_confirm:'Վճարել և կազմել ակտը',
+  by_done:'Գնումը գրանցվեց՝ {r}',
+  by_needrate:'Գնման զեղչը նշված չէ — առանց դրա գնման գին չկա։ Մուտքագրեք զեղչը, կամ փոխեք այն Տվյալներ բաժնում։',
+  by_setrate:'Գնման զեղչ % (999 գնից)',
+  by_saverate:'Պահպանել զեղչը',
+  by_show:'Ցույց տվեք այս տողը հաճախորդին — գինը, հարգը, քաշը և հաշվարկը։',
+  by_hm:'Ի՞նչ դրոշմ է կրում իրը',
+  by_recent:'Վերջին գնումները',
+  by_act_open:'Բացել ակտը',
+  by_cost_note:'Վճարված գումարը դառնում է այս մետաղի ինքնարժեքը՝ գնման ակտի համարով։',
+  /* ---- Գնման ակտ (spec 5.2) ---- */
+  act_title:'ԳՆՄԱՆ ԱԿՏ',
+  act_buyer:'Գնորդ', act_seller:'Վաճառող',
+  act_col_n:'№', act_col_metal:'Մետաղ', act_col_harg:'Հարգ',
+  act_col_gross:'Համախառն, գ', act_col_stone:'Քարեր, գ', act_col_net:'Զուտ, գ',
+  act_col_rate:'1 գ գին, ֏', act_col_sum:'Գումար, ֏',
+  act_stones_row:'Քարեր',
+  act_total:'Ընդամենը', act_words:'Գումարը բառերով', act_pay:'Վճարման եղանակ',
+  act_note:'Ակտը կազմված է երկու օրինակից՝ մեկական կողմերին։',
+  print:'Տպել',
   /* ---- the recovery net (ArmTrade's own strings) ---- */
   rec_title:'Ծրագիրը չկարողացավ բացել էջը',
   rec_body:'Տվյալների մի մասը վնասված է։ Կարող եք վերականգնել վերջին ճիշտ վիճակը՝ առանց հեռախոսից որևէ բան ջնջելու։',
@@ -1990,13 +2065,59 @@ T.en = {
   data_privacy_body:'ArmVoski sends no data to the tax service or to any state body. Everything stays on this phone.',
   data_ns:'Data is stored on this device, separately from ARMGOLD.',
   stub_title:'This screen is not built yet',
-  stub_sell:'The sell screen: search by code, price with its breakdown, fiscal receipt number. For now, open an item from the Tray to see its price.',
-  stub_buy:'Buy-in from the public: weigh, pick the fineness, see the arithmetic, print the purchase act.',
   stub_recv:'Goods receipt from a supplier, by weight, capturing cost basis.',
   stub_count:'Stock count by fineness, blind, with the act.',
   stub_mark:'Send-out to the assay office and return.',
   stub_repair:"A custody register for the customer's metal — never in stock.",
   stub_debts:'Supplier balances, derived from bills and payments.',
+  sl_search:'Search by code or name',
+  sl_avail:'{n} items available to sell',
+  sl_noresult:'No item matches that code or name',
+  sl_sheet:'Sell an item',
+  sl_yourprice:'Your price (֏)',
+  sl_reset:'Back to the computed price',
+  sl_hdm:'Fiscal receipt number',
+  sl_hdm_note:'The number is only recorded on this device. Nothing is sent to the SRC or any state body.',
+  sl_confirm:'Sell',
+  sl_done:'Sale recorded',
+  sl_price_needed:'Enter a price',
+  sl_nocost:'This item has no documented acquisition cost. Under the margin scheme the tax is then computed on the whole price, not on the margin. The sale proceeds anyway.',
+  sl_warn_ok:'This is a warning, not a block — the sale proceeds on your confirmation, and both figures are stored on the sale record.',
+  sl_recent:'Recent sales',
+  sl_none:'No sales yet',
+  sl_sold_price:'Sale price',
+  sl_out:'The item is not in the shop — {l}',
+  by_weigh:'Weighing',
+  by_paid:'Amount to pay',
+  by_stones_lbl:'Stones (֏)',
+  by_pay:'Payment method', by_cash:'Cash', by_bank:'Transfer',
+  by_seller:'The seller',
+  by_name:'Name', by_passport:'Passport', by_ssn:'Social security no.',
+  by_optional:'optional',
+  by_id_note:'The identity fields are optional. Which documents a purchase act legally requires is a question for your accountant.',
+  by_dest:'What the metal becomes',
+  by_dest_scrap:'Scrap', by_dest_resale:'Resale',
+  by_dest_scrap_d:'Added to the bulk pool, opening a lot at this cost.',
+  by_dest_resale_d:'Creates a piece carrying the same acquisition cost, and puts it in the tray.',
+  by_confirm:'Pay and draw up the act',
+  by_done:'Buy-in recorded — {r}',
+  by_needrate:'The buy-in discount is not set — without it there is no buy price. Enter it here, or change it under Data.',
+  by_setrate:'Buy-in discount % (off the 999 rate)',
+  by_saverate:'Save the discount',
+  by_show:'Show this line to the customer — the rate, the fineness, the weight and the arithmetic.',
+  by_hm:'What mark does the item carry?',
+  by_recent:'Recent buy-ins',
+  by_act_open:'Open the act',
+  by_cost_note:'The amount paid becomes this metal’s acquisition cost, referenced by the purchase act number.',
+  act_title:'PURCHASE ACT',
+  act_buyer:'Buyer', act_seller:'Seller',
+  act_col_n:'No.', act_col_metal:'Metal', act_col_harg:'Fineness',
+  act_col_gross:'Gross, g', act_col_stone:'Stones, g', act_col_net:'Net, g',
+  act_col_rate:'Per g, ֏', act_col_sum:'Amount, ֏',
+  act_stones_row:'Stones',
+  act_total:'Total', act_words:'Amount in words', act_pay:'Payment method',
+  act_note:'Drawn up in two copies, one for each party.',
+  print:'Print',
   rec_title:'The app could not draw this screen',
   rec_body:'Part of the data is damaged. You can restore the last good state without deleting anything from the phone.',
   rec_restore:'Restore the last good state',
@@ -2092,13 +2213,59 @@ T.ru = {
   data_privacy_body:'ArmVoski не отправляет никаких данных в налоговую или любой государственный орган. Всё остаётся на этом телефоне.',
   data_ns:'Данные хранятся на этом устройстве, отдельно от ARMGOLD.',
   stub_title:'Этот экран ещё не готов',
-  stub_sell:'Экран продажи: поиск по коду, цена с расшифровкой, номер чека ККМ. Пока цену можно посмотреть, открыв изделие из Витрины.',
-  stub_buy:'Закупка у населения: вес, проба, расчёт, акт закупки.',
   stub_recv:'Приёмка от поставщика — по весу, с себестоимостью.',
   stub_count:'Инвентаризация по пробам, вслепую, с актом.',
   stub_mark:'Передача в пробирную и возврат.',
   stub_repair:'Журнал хранения изделий клиента — никогда не в запасе.',
   stub_debts:'Остатки поставщиков — из счетов и платежей.',
+  sl_search:'Поиск по коду или названию',
+  sl_avail:'{n} изделий к продаже',
+  sl_noresult:'Изделие с таким кодом или названием не найдено',
+  sl_sheet:'Продажа изделия',
+  sl_yourprice:'Ваша цена (֏)',
+  sl_reset:'Вернуться к расчётной цене',
+  sl_hdm:'Номер чека ККМ',
+  sl_hdm_note:'Номер только записывается на этом устройстве. Никакие данные не отправляются в КГД или иной государственный орган.',
+  sl_confirm:'Продать',
+  sl_done:'Продажа записана',
+  sl_price_needed:'Введите цену',
+  sl_nocost:'У изделия нет документированной себестоимости. По схеме маржи налог считается со всей цены, а не с маржи. Продажа всё равно продолжается.',
+  sl_warn_ok:'Это предупреждение, а не запрет — продажа продолжается по вашему подтверждению, и обе цифры сохраняются в записи о продаже.',
+  sl_recent:'Последние продажи',
+  sl_none:'Продаж пока нет',
+  sl_sold_price:'Цена продажи',
+  sl_out:'Изделия нет в магазине — {l}',
+  by_weigh:'Взвешивание',
+  by_paid:'Сумма к выплате',
+  by_stones_lbl:'Камни (֏)',
+  by_pay:'Способ оплаты', by_cash:'Наличные', by_bank:'Перечисление',
+  by_seller:'Продавец',
+  by_name:'Имя, фамилия', by_passport:'Паспорт', by_ssn:'Номер соц. услуг',
+  by_optional:'по желанию',
+  by_id_note:'Поля с личными данными заполняются по желанию. Какие документы обязательны в акте закупки — вопрос к вашему бухгалтеру.',
+  by_dest:'Чем становится металл',
+  by_dest_scrap:'Лом', by_dest_resale:'Перепродажа',
+  by_dest_scrap_d:'Поступает в накопление и открывает партию по этой себестоимости.',
+  by_dest_resale_d:'Создаётся изделие с той же себестоимостью и кладётся в витрину.',
+  by_confirm:'Выплатить и составить акт',
+  by_done:'Закупка записана — {r}',
+  by_needrate:'Дисконт закупки не задан — без него нет цены закупки. Введите его здесь или измените в разделе Данные.',
+  by_setrate:'Дисконт закупки % (от цены 999)',
+  by_saverate:'Сохранить дисконт',
+  by_show:'Покажите эту строку клиенту — цену, пробу, вес и расчёт.',
+  by_hm:'Какое клеймо на изделии?',
+  by_recent:'Последние закупки',
+  by_act_open:'Открыть акт',
+  by_cost_note:'Выплаченная сумма становится себестоимостью этого металла со ссылкой на номер акта закупки.',
+  act_title:'АКТ ЗАКУПКИ',
+  act_buyer:'Покупатель', act_seller:'Продавец',
+  act_col_n:'№', act_col_metal:'Металл', act_col_harg:'Проба',
+  act_col_gross:'Брутто, г', act_col_stone:'Камни, г', act_col_net:'Нетто, г',
+  act_col_rate:'Цена 1 г, ֏', act_col_sum:'Сумма, ֏',
+  act_stones_row:'Камни',
+  act_total:'Итого', act_words:'Сумма прописью', act_pay:'Способ оплаты',
+  act_note:'Акт составлен в двух экземплярах, по одному каждой стороне.',
+  print:'Печать',
   rec_title:'Приложение не смогло открыть экран',
   rec_body:'Часть данных повреждена. Можно восстановить последнее исправное состояние, ничего не удаляя с телефона.',
   rec_restore:'Восстановить последнее исправное состояние',
@@ -2525,14 +2692,21 @@ function breakdown(p){
     + '<span class="eq">=</span><b>' + Math.round(metal + stones + making).toLocaleString('en-US') + ' ֏</b>'
     + '<span class="why">' + escH(why.join(' · ')) + '</span></div>';
 }
-function buyBreakdown(netG, fineness, metal){
+function buyBreakdown(netG, fineness, metal, stonesAmd){
+  /* WITHOUT A DISCOUNT THERE IS NO BUY RATE, so there is no line to print. Printing one anyway
+     would put «x 0 =» in front of a customer, which is worse than saying the setting is missing. */
+  if(!buyDiscSet()) return '<div class="notice bad">' + escH(t('by_needrate')) + '</div>';
   const br = buyRate(metal), f = safeInt(fineness,0);
-  const paid = buyPriceOf(netG, fineness, metal);
+  const st = safeAmd(stonesAmd, 0);
+  /* metal rounds where buyPriceOf rounds and the stones are already whole dram, so the line's
+     own operands give the line's own answer exactly - the one promise a breakdown line makes. */
+  const paid = buyPriceOf(netG, fineness, metal) + st;
   return '<div class="brk"><b>' + gramTxt(netG, 3) + t('u_g') + '</b>'
     + '<span class="op">&times;</span><b>' + br.toLocaleString('en-US') + '</b>'
     + '<span class="op">&times;</span><b>' + f + '/999</b>'
+    + (st ? '<span class="op">+</span><b>' + st.toLocaleString('en-US') + '</b>' : '')
     + '<span class="eq">=</span><b>' + paid.toLocaleString('en-US') + ' ֏</b>'
-    + '<span class="why">' + escH(t('pr_buy_nostones') + ' · ' + t('w_buydisc') + ' ' + pctTxt(S.cfg.buyDiscPct) + '%') + '</span></div>';
+    + '<span class="why">' + escH((st ? t('by_stones_lbl') : t('pr_buy_nostones')) + ' · ' + t('w_buydisc') + ' ' + pctTxt(S.cfg.buyDiscPct) + '%') + '</span></div>';
 }
 
 /* the valuation of a quantity of metal is computed money, so it gets a breakdown line too:
@@ -2734,8 +2908,52 @@ function migrate(st){
     if(isFinite(v)) st.stock[k] = v; else delete st.stock[k];
   });
 
-  st.sales = st.sales.slice(-500);
-  st.buys = st.buys.slice(-500);
+  /* ---- the two counter-flow records. Neither is the ledger - the ledger is S.moves - but both
+     are what the accountant reads later, so they are defaulted and clamped like everything else.
+     The 80% warning's two figures are kept BECAUSE they were kept: a sale record that dropped
+     them would leave the counter's own reasoning unreconstructable. ---- */
+  st.sales = st.sales.filter(x => x && x.id).map(x => ({
+    id: String(x.id).slice(0,40),
+    ts: safeInt(x.ts, st.today),
+    pieceId: String(x.pieceId || '').slice(0,24),
+    code: String(x.code || '').slice(0,24),
+    name: String(x.name || '').slice(0,60),
+    metal: METALS.indexOf(x.metal) >= 0 ? x.metal : 'au',
+    fineness: safeInt(x.fineness, 585),
+    netG: Math.max(0, LEDGER.clamp(x.netG)),
+    price: safeAmd(x.price, 0), computed: safeAmd(x.computed, 0), manual: safeAmd(x.manual, 0),
+    warn: (x.warn && typeof x.warn === 'object')
+      ? { computed: safeAmd(x.warn.computed,0), floor: safeAmd(x.warn.floor,0),
+          manual: safeAmd(x.warn.manual,0), pct: Math.max(0, Math.min(100, safeInt(x.warn.pct,0))) }
+      : null,
+    hdmRef: String(x.hdmRef || '').slice(0,40),
+    acqKnown: x.acqKnown !== false,
+    acqCost: safeAmd(x.acqCost, 0)
+  })).slice(-500);
+  st.buys = st.buys.filter(x => x && x.id).map(x => {
+    const sl = (x.seller && typeof x.seller === 'object') ? x.seller : {};
+    return {
+      id: String(x.id).slice(0,40),
+      ts: safeInt(x.ts, st.today),
+      metal: METALS.indexOf(x.metal) >= 0 ? x.metal : 'au',
+      fineness: safeInt(x.fineness, 585),
+      grossG: Math.max(0, LEDGER.clamp(x.grossG)),
+      stoneG: Math.max(0, LEDGER.clamp(x.stoneG)),
+      netG: Math.max(0, LEDGER.clamp(x.netG)),
+      weighedAs: x.weighedAs === 'net' ? 'net' : 'gross',
+      rate: safeAmd(x.rate, 0), fineRate: safeAmd(x.fineRate, 0),
+      metalAmd: safeAmd(x.metalAmd, 0), stonesAmd: safeAmd(x.stonesAmd, 0),
+      paid: safeAmd(x.paid, 0),
+      pay: x.pay === 'bank' ? 'bank' : 'cash',
+      dest: x.dest === 'resale' ? 'resale' : 'scrap',
+      subject: String(x.subject || '').slice(0,40),
+      pieceId: String(x.pieceId || '').slice(0,24),
+      lotId: String(x.lotId || '').slice(0,32),
+      seller: { name: String(sl.name || '').slice(0,80),
+                passport: String(sl.passport || '').slice(0,40),
+                ssn: String(sl.ssn || '').slice(0,20) }
+    };
+  }).slice(-500);
   return st;
 }
 
@@ -3526,6 +3744,8 @@ function stubView(k){
 
 function viewFor(k){
   if(k === 'home') return viewHome();
+  if(k === 'sell') return viewSell();
+  if(k === 'buy')  return viewBuy();
   if(k === 'tray') return viewTray();
   if(k === 'data') return viewData();
   return stubView(k);
@@ -3754,6 +3974,626 @@ function niSave(){
     return;
   }
   NI = null; saveState(); closeModal(); U.tab = 'tray'; renderAll(); toast(t('ni_done'));
+}
+
+/* =====================================================================================
+   THE AMOUNT IN WORDS (spec 5.2)
+   ArmTrade's amWords, carried over verbatim, and for the reason ArmTrade states in its own
+   comment: the amount is written in Armenian ON EVERY LANGUAGE OF THE UI, because Armenian is
+   the language the document is signed in. A Russian-speaking jeweller still signs an Armenian
+   գնման ակտ, and a document whose figure and whose words are in different languages is not a
+   document an accountant will accept.
+   ===================================================================================== */
+const AM_U   = ['','մեկ','երկու','երեք','չորս','հինգ','վեց','յոթ','ութ','ինը'];
+const AM_TEEN= ['տասը','տասնմեկ','տասներկու','տասներեք','տասնչորս','տասնհինգ','տասնվեց','տասնյոթ','տասնութ','տասնինը'];
+const AM_TENS= ['','','քսան','երեսուն','քառասուն','հիսուն','վաթսուն','յոթանասուն','ութսուն','իննսուն'];
+function amWords3(x){
+  const out = [], h = Math.floor(x/100), r = x%100;
+  if(h) out.push((h>1 ? AM_U[h]+' ' : '') + 'հարյուր');
+  if(r < 10){ if(r) out.push(AM_U[r]); }
+  else if(r < 20) out.push(AM_TEEN[r-10]);
+  else out.push(AM_TENS[Math.floor(r/10)] + (r%10 ? AM_U[r%10] : ''));
+  return out.join(' ');
+}
+function amWords(n){
+  let v = Math.round(Math.abs(Number(n)||0));
+  const neg = (Number(n)||0) < 0;
+  if(v === 0) return 'զրո դրամ';
+  const parts = [];
+  const mil = Math.floor(v/1000000); v %= 1000000;
+  const th  = Math.floor(v/1000);    v %= 1000;
+  if(mil) parts.push((mil>1 ? amWords3(mil)+' ' : '') + 'միլիոն');
+  if(th)  parts.push((th>1  ? amWords3(th)+' '  : '') + 'հազար');
+  if(v)   parts.push(amWords3(v));
+  return (neg ? 'մինուս ' : '') + parts.join(' ') + ' դրամ';
+}
+
+/* =====================================================================================
+   ՎԱՃԱՌՔ — selling a finished piece (spec 2.2, 2.3, 5.3)
+   Search by code or model, open the piece, read the price WITH ITS BREAKDOWN, override it if
+   the jeweller has a reason, see the 80%-of-fair-value warning if the override crosses it,
+   record the ՀԴՄ number, confirm. The movement is a `sale` of the piece's WHOLE net weight —
+   the piece-integrity guard refuses anything else, and rightly: a ring cannot be half sold.
+   ===================================================================================== */
+let SELLQ = '';
+function sellSet(q){
+  SELLQ = String(q == null ? '' : q).slice(0,40);
+  /* typing repaints THE LIST ONLY. A full render would rebuild the input and take the caret
+     with it — the same rule niNum() follows in the new-item form. */
+  const el = document.getElementById('sellList');
+  if(el) el.innerHTML = sellListHtml();
+}
+function sellCandidates(){
+  const q = SELLQ.trim().toLowerCase();
+  const rows = pieceRows().filter(x => {
+    if(!q) return true;
+    const p = x.p;
+    return String(p.code||'').toLowerCase().indexOf(q) >= 0
+        || String(modelName(p)).toLowerCase().indexOf(q) >= 0
+        || String(catLabel(p.cat)).toLowerCase().indexOf(q) >= 0
+        || String(p.fineness).indexOf(q) >= 0;
+  });
+  /* what is in the tray is what the hand can reach. A piece out at the assay office is still
+     the shop's stock (custody is not a movement) so it is still sellable — it just sorts last
+     and carries its location, because promising a customer a ring that is across town is the
+     kind of thing a counter screen must not let happen quietly. */
+  return rows.sort((a,b) =>
+    ((a.p.location === 'tray' ? 0 : 1) - (b.p.location === 'tray' ? 0 : 1))
+    || ((b.p.addedTs||0) - (a.p.addedTs||0)));
+}
+function sellListHtml(){
+  const rows = sellCandidates();
+  if(!rows.length)
+    return '<div class="empty"><div class="em">🏷</div><div>'
+      + escH(SELLQ.trim() ? t('sl_noresult') : t('tray_empty')) + '</div></div>';
+  return '<div class="fgrp"><div class="fbody">' + rows.map(x => {
+    const p = x.p, nm = modelName(p), bits = [];
+    if(p.code && p.code !== nm) bits.push('<span>' + escH(p.code) + '</span>');
+    bits.push('<span>' + escH(catLabel(p.cat)) + '</span>');
+    if(p.location !== 'tray') bits.push('<span class="badge b-neutral">' + escH(locLabel(p.location)) + '</span>');
+    if(!p.acq.known || !p.acq.costAmd) bits.push('<span class="badge b-rose">' + escH(t('badge_nocost')) + '</span>');
+    return '<button class="prow" onclick="openSell(' + jsArg(p.id) + ')">'
+      + '<div class="pi"><div class="pnm">' + escH(nm) + '</div>'
+      + '<div class="psub">' + bits.join('') + '</div></div>'
+      /* WEIGHT AND FINENESS ONLY. The price is computed money and no computed money appears in
+         this product without the formula beside it, so it lives one tap away on the sheet where
+         breakdown() renders it with the numbers substituted. */
+      + '<div class="pw"><div class="a">' + gramTxt(x.on) + '<span class="g">' + escH(t('u_g')) + '</span></div>'
+      + '<div class="b"><span class="harg ' + p.metal + '">' + safeInt(p.fineness,0) + '</span></div></div></button>';
+  }).join('') + '</div></div>';
+}
+function viewSell(){
+  const n = pieceRows().length;
+  const recent = (S.sales||[]).slice(-6).reverse();
+  return '<main class="anim">'
+    + '<div class="sec">' + escH(t('tab_sell')) + '</div>'
+    + '<input class="search" id="sellQ" type="text" maxlength="40" autocomplete="off"'
+      + ' placeholder="' + escH(t('sl_search')) + '" aria-label="' + escH(t('sl_search')) + '"'
+      + ' value="' + escH(SELLQ) + '" oninput="sellSet(this.value)">'
+    + '<div class="muted" style="margin-bottom:10px">' + escH(fmt('sl_avail', { n: n })) + '</div>'
+    + '<div id="sellList">' + sellListHtml() + '</div>'
+    + '<div class="sec">' + escH(t('sl_recent')) + '</div>'
+    + (recent.length
+        ? '<div class="tblwrap"><table class="tbl"><thead><tr>'
+          + '<th>' + escH(t('w_date')) + '</th><th>' + escH(t('w_piece')) + '</th>'
+          + '<th class="num">' + escH(t('sl_sold_price')) + '</th><th>' + escH(t('sl_hdm')) + '</th>'
+          + '</tr></thead><tbody>'
+          + recent.map(s => '<tr><td>' + escH(fdate(s.ts)) + '</td>'
+            + '<td>' + escH(s.name || s.code || '—')
+              + '<span class="tblsub">' + escH((s.code||'') + ' · ' + safeInt(s.fineness,0)) + '</span></td>'
+            + '<td class="num">' + safeAmd(s.price,0).toLocaleString('en-US')
+              + (s.warn ? ' <span class="badge b-rose">' + safeInt(s.warn.pct,0) + '%</span>' : '') + '</td>'
+            + '<td>' + escH(s.hdmRef || '—') + '</td></tr>').join('')
+          + '</tbody></table></div>'
+        : '<div class="card"><div class="muted">' + escH(t('sl_none')) + '</div></div>')
+    + '</main>';
+}
+
+let SL = null;
+function openSell(id){
+  const p = pieceById(id);
+  if(!p) return;
+  /* the price starts AT the computed figure and the app stops touching it the moment the
+     jeweller types — ARMGOLD's aPriceTouched behaviour, and the trade will not accept anything
+     else. `touched` is what makes the override respected rather than fought. */
+  SL = { id: id, price: String(priceOf(p)), touched:false, hdm:'' };
+  slRender();
+}
+function slAmount(){
+  const p = pieceById(SL && SL.id);
+  const computed = p ? priceOf(p) : 0;
+  if(!SL || !SL.touched) return { computed: computed, manual: 0, price: computed };
+  const m = safeAmd(SL.price, 0);
+  return { computed: computed, manual: m, price: m };
+}
+function slWarnHtml(w){
+  if(!w) return '';
+  return '<div class="alert bad" style="margin-top:12px"><div class="t">⚠ '
+    + escH(fmt('pr_warn80', { p: w.pct })) + '</div><div class="d">'
+    + escH(fmt('pr_warn80_sub', { a: w.computed.toLocaleString('en-US') + ' ֏',
+        b: w.floor.toLocaleString('en-US') + ' ֏',
+        c: w.manual.toLocaleString('en-US') + ' ֏' }))
+    + '</div><div class="d">' + escH(t('sl_warn_ok')) + '</div></div>';
+}
+function slPrice(v){
+  if(!SL) return;
+  SL.price = v; SL.touched = true;
+  slPaint();
+}
+function slHdm(v){ if(SL) SL.hdm = String(v == null ? '' : v).slice(0,40); }
+function slReset(){
+  if(!SL) return;
+  const p = pieceById(SL.id);
+  SL.price = String(p ? priceOf(p) : 0); SL.touched = false;
+  slRender();
+}
+function slPaint(){
+  const a = slAmount();
+  const el = id => document.getElementById(id);
+  try{
+    const w = a.manual ? fairValueWarn(a.computed, a.manual) : null;
+    const wa = el('slWarn'); if(wa) wa.innerHTML = slWarnHtml(w);
+    const tv = el('slTotal');
+    if(tv) tv.innerHTML = a.price.toLocaleString('en-US') + '<span class="cur">֏</span>';
+    const tl = el('slTotalL');
+    if(tl) tl.textContent = a.manual ? t('pr_manual') : t('pr_computed');
+    const go = el('slGo'); if(go) go.className = 'btn primary' + (a.price > 0 ? '' : ' off');
+  }catch(e){}
+}
+function slRender(){
+  if(!SL) return;
+  const p = pieceById(SL.id);
+  if(!p) return;
+  const a = slAmount();
+  const w = a.manual ? fairValueWarn(a.computed, a.manual) : null;
+  openModal(
+    '<h3>' + escH(t('sl_sheet')) + '</h3>'
+    + '<div class="row"><span style="font-size:17px;font-weight:700">' + escH(modelName(p)) + '</span>'
+      + '<span class="harg ' + p.metal + '">' + safeInt(p.fineness,0) + '</span></div>'
+    + '<div class="muted" style="margin-top:4px">'
+      + escH([p.code, catLabel(p.cat), metalLabel(p.metal)].filter(Boolean).join(' · ')) + '</div>'
+    + (p.location !== 'tray'
+        ? '<div class="notice">' + escH(fmt('sl_out', { l: locLabel(p.location) })) + '</div>' : '')
+
+    + '<div class="dl">'
+      + '<div><div class="l">' + escH(t('w_net_s')) + '</div><div class="v">'
+        + gramTxt(p.netG,3) + escH(t('u_g')) + '</div></div>'
+      + '<div><div class="l">' + escH(t('w_gross_s')) + '</div><div class="v">'
+        + gramTxt(p.grossG,3) + escH(t('u_g')) + '</div></div>'
+    + '</div>'
+
+    /* THE COMPUTED PRICE AND ITS BREAKDOWN. Never one without the other. */
+    + '<div class="sec">' + escH(t('pr_title')) + '</div>'
+    + '<div class="pricebox">'
+      + '<div class="l" id="slTotalL">' + escH(a.manual ? t('pr_manual') : t('pr_computed')) + '</div>'
+      + '<div class="v" id="slTotal">' + a.price.toLocaleString('en-US') + '<span class="cur">֏</span></div>'
+      + breakdown(p)
+    + '</div>'
+
+    /* THE OVERRIDE IS RESPECTED, NOT FOUGHT: the field is rendered once and nothing in this
+       sheet ever writes back into it. */
+    + '<label class="fieldlbl" for="slP">' + escH(t('sl_yourprice')) + '</label>'
+    + '<input id="slP" type="number" inputmode="numeric" min="0" step="1" value="' + escH(SL.price)
+      + '" oninput="slPrice(this.value)">'
+    + (SL.touched ? '<button class="btn ghost full" style="margin-top:9px" onclick="slReset()">'
+        + escH(t('sl_reset')) + '</button>' : '')
+    + '<div id="slWarn">' + slWarnHtml(w) + '</div>'
+
+    /* a missing cost NEVER blocks a sale — it is stated, plainly, and the sale proceeds */
+    + (p.acq.known && p.acq.costAmd ? ''
+        : '<div class="alert bad" style="margin-top:12px"><div class="t">' + escH(t('acq_unknown'))
+          + '</div><div class="d">' + escH(t('sl_nocost')) + '</div></div>')
+
+    /* ՀԴՄ: A REFERENCE FIELD AND NOTHING MORE. This product is not a fiscal device and never
+       transmits: same posture ArmTrade holds and states in its own privacy copy. */
+    + '<div class="sec">' + escH(t('sl_hdm')) + '</div>'
+    + '<input id="slH" type="text" maxlength="40" value="' + escH(SL.hdm) + '" oninput="slHdm(this.value)">'
+    + '<div class="notice">' + escH(t('sl_hdm_note')) + '</div>'
+
+    + '<button id="slGo" class="btn primary' + (a.price > 0 ? '' : ' off') + '" style="margin-top:16px" onclick="slConfirm()">'
+      + escH(t('sl_confirm')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="SL=null;closeModal()">'
+      + escH(t('cancel')) + '</button>'
+  );
+}
+function slConfirm(){
+  if(!SL) return;
+  const p = pieceById(SL.id);
+  if(!p) return;
+  const a = slAmount();
+  if(!(a.price > 0)) return toast(t('sl_price_needed'));
+  const sub = pieceSubj(p.id);
+  const on = round3(onHand(sub));
+  if(!(on > EPS)) return;
+  const warn = a.manual ? fairValueWarn(a.computed, a.manual) : null;
+  const hdm = String(SL.hdm || '').slice(0,40);
+  /* THE WHOLE NET WEIGHT, taken from the LEDGER rather than from the record — after a re-weigh
+     the two are reconciled by syncPieceWeight, and posting the record's figure when they ever
+     disagreed would be refused by the piece-integrity guard for a reason nobody could see. */
+  const ok = postMove({ subject: sub, type:'sale', dq: -on, ts: S.today,
+                        cost: p.acq.costAmd, ref: hdm, actor:'shop' });
+  if(!ok){
+    const last = LEDGER_REJECTS[LEDGER_REJECTS.length-1];
+    toast(fmt('led_rejected', { r: last ? t(REJ_KEY[last.reason] || 'rej_nosubject') : '' }));
+    return;
+  }
+  p.priceManual = a.manual ? a.manual : 0;
+  S.sales.push({
+    id: contentId('s', [p.id, hdm, a.price, S.today].join(KSEP), (S.sales||[]).length),
+    ts: S.today, pieceId: p.id, code: p.code, name: modelName(p),
+    metal: p.metal, fineness: safeInt(p.fineness,0), netG: on,
+    price: a.price, computed: a.computed, manual: a.manual,
+    /* BOTH FIGURES ARE STORED so the accountant sees later what the counter saw at the time. */
+    warn: warn ? { computed: warn.computed, floor: warn.floor, manual: warn.manual, pct: warn.pct } : null,
+    hdmRef: hdm,
+    acqKnown: !!(p.acq.known && p.acq.costAmd), acqCost: safeAmd(p.acq.costAmd,0)
+  });
+  SL = null; saveState(); closeModal(); renderAll(); toast(t('sl_done'));
+}
+
+/* =====================================================================================
+   ԳՆՈՒՄ ԲՆԱԿՉՈՒԹՅՈՒՆԻՑ — the walk-in buy-in (spec 2.4, 5.2)
+   The flow ArmTrade has no equivalent of, and the trade's other half. Weigh, pick the հարգ,
+   show the customer the arithmetic, pay, draw up the գնման ակտ — and THE PRICE PAID BECOMES THE
+   ACQUISITION COST, because under the margin scheme that document IS the cost basis.
+   ===================================================================================== */
+let BY = null;
+function byFresh(){
+  return { metal:'au', fineness:585, weighedAs:'gross', grossG:'', stoneG:'', netG:'',
+           stonesAmd:'', pay:'cash', name:'', passport:'', ssn:'',
+           dest:'scrap', code:'', cat:'ring', makingG:'', hmOrigin:'none', disc:'' };
+}
+function byWeights(){
+  const stone = Math.max(0, round3(num(BY.stoneG)));
+  if(BY.weighedAs === 'net'){
+    const net = round3(num(BY.netG));
+    return { weighedAs:'net', stoneG:stone, netG:net, grossG: round3(net + stone) };
+  }
+  const gross = round3(num(BY.grossG));
+  return { weighedAs:'gross', stoneG:stone, grossG:gross, netG: round3(gross - stone) };
+}
+/* NO MAKING CHARGE — the shop is buying metal, not workmanship. Stones default to zero and the
+   sheet says so; the field exists for the case where the shop does pay for them. */
+function byPaid(){
+  const w = byWeights();
+  return buyPriceOf(w.netG, BY.fineness, BY.metal) + safeAmd(BY.stonesAmd, 0);
+}
+function byWeightsOk(){
+  const w = byWeights();
+  return weightsValid({ grossG:w.grossG, stoneG:w.stoneG, netG:w.netG });
+}
+function byValid(){ return buyDiscSet() && byWeightsOk() && byPaid() > 0; }
+function byCalcHtml(){
+  if(!buyDiscSet())
+    return '<div class="notice bad">' + escH(t('by_needrate')) + '</div>';
+  if(!byWeightsOk())
+    return '<div class="notice bad">' + escH(lang==='hy'
+      ? 'Համախառն ≥ քարեր ≥ 0, զուտը՝ 0-ից մեծ։'
+      : (lang==='ru' ? 'Брутто ≥ камни ≥ 0, нетто больше нуля.'
+                     : 'Gross ≥ stones ≥ 0, and net must be above zero.')) + '</div>';
+  const w = byWeights();
+  return '<div class="pricebox">'
+    + '<div class="l">' + escH(t('by_paid')) + '</div>'
+    + '<div class="v">' + byPaid().toLocaleString('en-US') + '<span class="cur">֏</span></div>'
+    /* THE LINE THE CUSTOMER READS ACROSS THE COUNTER. It is the flow's whole selling point:
+       the rate, the purity, the weight and the arithmetic, on the phone, in his own language. */
+    + buyBreakdown(w.netG, BY.fineness, BY.metal, safeAmd(BY.stonesAmd,0))
+    + '<div class="notice">' + escH(t('by_show')) + '</div>'
+    + '<div class="notice">' + escH(t('w_pure') + ': ' + gramTxt(pureG(w.netG, BY.fineness),3) + ' ' + t('u_g')) + '</div>'
+    + '</div>';
+}
+function bySet(k, v){
+  if(!BY) BY = byFresh();
+  BY[k] = v;
+  if(k === 'metal' && FINENESS[v].indexOf(safeInt(BY.fineness,0)) < 0) BY.fineness = FINENESS[v][0];
+  renderAll();
+}
+function byNum(k, v){
+  if(!BY) BY = byFresh();
+  BY[k] = v;
+  byPaint();
+}
+function byPaint(){
+  const w = byWeights();
+  try{
+    const d = document.getElementById('byDerived');
+    if(d) d.value = gramTxt(BY.weighedAs === 'net' ? w.grossG : w.netG, 3);
+    const c = document.getElementById('byCalc');
+    if(c) c.innerHTML = byCalcHtml();
+    const g = document.getElementById('byGo');
+    if(g) g.className = 'btn primary' + (byValid() ? '' : ' off');
+  }catch(e){}
+}
+function bySaveDisc(){
+  const v = String((BY && BY.disc) || '').trim();
+  if(v === '') return;
+  /* THE DISCOUNT IS NEVER INVENTED. It ships unset, and the only way it acquires a value is a
+     jeweller typing one — here or on the Data screen. cfgSet holds the null-is-not-zero rule. */
+  cfgSet('buyDiscPct', v);
+  renderAll();
+}
+function viewBuy(){
+  if(!BY) BY = byFresh();
+  const w = byWeights();
+  const chip = (on, fn, label) => '<button class="tbtn wide' + (on ? ' on' : '') + '" onclick="' + fn + '">'
+    + escH(label) + '</button>';
+  const gLbl = BY.weighedAs === 'net' ? t('w_net') : t('w_gross');
+  const dLbl = BY.weighedAs === 'net' ? t('w_gross') : t('w_net');
+  const recent = (S.buys||[]).slice(-5).reverse();
+
+  /* WITHOUT A RATE THERE IS NO PRICE. The screen says so and asks for the number instead of
+     quoting one nobody chose — and while it is missing, setting it IS the screen's next action,
+     so it holds the one accent-filled button. */
+  const rateBlock = buyDiscSet()
+    ? '<div class="ratecard">'
+      + '<div class="mlbl">' + escH(t('w_buyrate')) + ' · ' + escH(metalLabel(BY.metal)) + '</div>'
+      + '<div class="rv">' + buyRate(BY.metal).toLocaleString('en-US')
+        + '<span class="cur">֏/' + escH(t('u_g')) + '</span></div>'
+      + '<div class="rprov">' + escH('999 · −' + pctTxt(S.cfg.buyDiscPct) + '% · '
+          + t(S.rate.src === 'cb' ? 'rate_src_cb' : 'rate_src_manual') + ' · ' + rateAgeTxt()) + '</div>'
+      + '<div class="rprov">' + escH(t('w_harg') + ' ' + safeInt(BY.fineness,0) + ': '
+          + Math.round(buyRate(BY.metal) * safeInt(BY.fineness,0) / 999).toLocaleString('en-US')
+          + ' ֏/' + t('u_g')) + '</div>'
+      + '</div>'
+    : '<div class="card rail rail-bad"><h3>' + escH(t('w_buyrate')) + '</h3>'
+      + '<div class="notice bad">' + escH(t('by_needrate')) + '</div>'
+      + '<label class="fieldlbl" for="byDisc" style="margin-top:12px">' + escH(t('by_setrate')) + '</label>'
+      + '<input id="byDisc" type="number" inputmode="decimal" min="0" max="90" step="0.1" placeholder="—" value="'
+        + escH(BY.disc) + '" oninput="byNum(' + jsArg('disc') + ',this.value)">'
+      + '<button class="btn primary" style="margin-top:12px" onclick="bySaveDisc()">'
+        + escH(t('by_saverate')) + '</button></div>';
+
+  return '<main class="anim">'
+    + '<div class="sec">' + escH(t('tab_buy')) + '</div>'
+    + rateBlock
+
+    + '<div class="sec">' + escH(t('by_weigh')) + '</div>'
+    + '<div class="fieldlbl">' + escH(t('w_metal')) + '</div>'
+    + '<div class="chips">' + METALS.map(m =>
+        chip(BY.metal===m, 'bySet(' + jsArg('metal') + ',' + jsArg(m) + ')', metalLabel(m))).join('') + '</div>'
+    + '<div class="fieldlbl">' + escH(t('w_harg')) + '</div>'
+    + '<div class="chips">' + FINENESS[BY.metal].map(f =>
+        chip(safeInt(BY.fineness,0)===f, 'bySet(' + jsArg('fineness') + ',' + f + ')', String(f))).join('') + '</div>'
+    /* WHICH TWO CAME OFF THE SCALE — the third is derived and LOCKED, exactly as on the item
+       form, because three editable weights are three chances to disagree with the scale. */
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('ni_weighed')) + '</div>'
+    + '<div class="chips">'
+      + chip(BY.weighedAs==='gross', 'bySet(' + jsArg('weighedAs') + ',' + jsArg('gross') + ')', t('w_gross'))
+      + chip(BY.weighedAs==='net',   'bySet(' + jsArg('weighedAs') + ',' + jsArg('net') + ')',   t('w_net'))
+    + '</div>'
+    + '<label class="fieldlbl" for="byW">' + escH(gLbl) + ' (' + escH(t('u_g')) + ')</label>'
+    + '<input id="byW" type="number" inputmode="decimal" min="0" step="0.001" value="'
+      + escH(BY.weighedAs==='net' ? BY.netG : BY.grossG) + '" oninput="byNum('
+      + jsArg(BY.weighedAs==='net'?'netG':'grossG') + ',this.value)">'
+    + '<label class="fieldlbl" for="byS" style="margin-top:12px">' + escH(t('w_stone')) + ' (' + escH(t('u_g')) + ')</label>'
+    + '<input id="byS" type="number" inputmode="decimal" min="0" step="0.001" value="'
+      + escH(BY.stoneG) + '" oninput="byNum(' + jsArg('stoneG') + ',this.value)">'
+    + '<label class="fieldlbl" for="byDerived" style="margin-top:12px">' + escH(dLbl)
+      + ' (' + escH(t('pc_derived')) + ')</label>'
+    + '<input id="byDerived" type="text" disabled value="'
+      + gramTxt(BY.weighedAs==='net' ? w.grossG : w.netG, 3) + '">'
+    /* STONES DEFAULT TO ZERO AND THE SHEET SAYS WHY. A shop buying scrap does not pay for the
+       stones; the field is here for the case where it does. */
+    + '<label class="fieldlbl" for="byStA" style="margin-top:12px">' + escH(t('by_stones_lbl')) + '</label>'
+    + '<input id="byStA" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="'
+      + escH(BY.stonesAmd) + '" oninput="byNum(' + jsArg('stonesAmd') + ',this.value)">'
+    + '<div class="notice">' + escH(t('pr_buy_nostones')) + '</div>'
+
+    + '<div id="byCalc">' + byCalcHtml() + '</div>'
+
+    + '<div class="sec">' + escH(t('by_pay')) + '</div>'
+    + '<div class="chips">'
+      + chip(BY.pay==='cash', 'bySet(' + jsArg('pay') + ',' + jsArg('cash') + ')', t('by_cash'))
+      + chip(BY.pay==='bank', 'bySet(' + jsArg('pay') + ',' + jsArg('bank') + ')', t('by_bank'))
+    + '</div>'
+
+    /* IDENTITY FIELDS ARE OPTIONAL AND SAY SO. Which documents a գնման ակտ legally requires is
+       unverified, so the product captures the fields adjacent practice uses and makes NO legal
+       assertion about them. */
+    + '<div class="sec">' + escH(t('by_seller')) + ' <span class="mlbl">(' + escH(t('by_optional')) + ')</span></div>'
+    + '<label class="fieldlbl" for="byNm">' + escH(t('by_name')) + '</label>'
+    + '<input id="byNm" type="text" maxlength="80" value="' + escH(BY.name) + '" oninput="byNum(' + jsArg('name') + ',this.value)">'
+    + '<label class="fieldlbl" for="byPp" style="margin-top:12px">' + escH(t('by_passport')) + '</label>'
+    + '<input id="byPp" type="text" maxlength="40" value="' + escH(BY.passport) + '" oninput="byNum(' + jsArg('passport') + ',this.value)">'
+    + '<label class="fieldlbl" for="bySs" style="margin-top:12px">' + escH(t('by_ssn')) + '</label>'
+    + '<input id="bySs" type="text" maxlength="20" value="' + escH(BY.ssn) + '" oninput="byNum(' + jsArg('ssn') + ',this.value)">'
+    + '<div class="notice">' + escH(t('by_id_note')) + '</div>'
+
+    + '<div class="sec">' + escH(t('by_dest')) + '</div>'
+    + '<div class="chips">'
+      + chip(BY.dest==='scrap',  'bySet(' + jsArg('dest') + ',' + jsArg('scrap') + ')',  t('by_dest_scrap'))
+      + chip(BY.dest==='resale', 'bySet(' + jsArg('dest') + ',' + jsArg('resale') + ')', t('by_dest_resale'))
+    + '</div>'
+    + '<div class="notice">' + escH(BY.dest==='resale' ? t('by_dest_resale_d') : t('by_dest_scrap_d')) + '</div>'
+    + (BY.dest === 'resale'
+        ? '<label class="fieldlbl" for="byCode" style="margin-top:12px">' + escH(t('w_code')) + '</label>'
+          + '<input id="byCode" type="text" maxlength="24" value="' + escH(BY.code) + '" oninput="byNum(' + jsArg('code') + ',this.value)">'
+          + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('w_cat')) + '</div>'
+          + '<div class="chips wrap">' + CATS.map(c =>
+              chip(BY.cat===c, 'bySet(' + jsArg('cat') + ',' + jsArg(c) + ')', catLabel(c))).join('') + '</div>'
+          + '<label class="fieldlbl" for="byMk">' + escH(t('w_making')) + '</label>'
+          + '<input id="byMk" type="number" inputmode="numeric" min="0" step="1" value="' + escH(BY.makingG) + '" oninput="byNum(' + jsArg('makingG') + ',this.value)">'
+          /* the hallmark the item ACTUALLY carries. `origin` is an enum, not a boolean, because
+             an unstamped item is legitimate in six different ways — and if the weight or the
+             category makes it exempt, the app knows and overrides «չհարգադրոշմված». */
+          + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('by_hm')) + '</div>'
+          + '<div class="chips wrap">' + ['none','am_assay','eaeu'].map(o =>
+              chip(BY.hmOrigin===o, 'bySet(' + jsArg('hmOrigin') + ',' + jsArg(o) + ')', hmLabel(o))).join('') + '</div>'
+        : '')
+    + '<div class="notice">' + escH(t('by_cost_note')) + '</div>'
+
+    + '<button id="byGo" class="btn primary' + (byValid() ? '' : ' off') + '" style="margin-top:16px" onclick="byConfirm()">'
+      + escH(t('by_confirm')) + '</button>'
+
+    + '<div class="sec">' + escH(t('by_recent')) + '</div>'
+    + (recent.length
+        ? '<div class="fgrp"><div class="fbody">' + recent.map(b =>
+            '<button class="prow" onclick="openBuyAct(' + jsArg(b.id) + ')">'
+            + '<div class="pi"><div class="pnm">' + escH(b.id) + '</div>'
+            + '<div class="psub"><span>' + escH(fdate(b.ts)) + '</span>'
+              + '<span>' + escH(metalLabel(b.metal)) + ' ' + safeInt(b.fineness,0) + '</span>'
+              + '<span class="badge b-neutral">' + escH(b.dest === 'resale' ? t('by_dest_resale') : t('by_dest_scrap')) + '</span></div></div>'
+            + '<div class="pw"><div class="a">' + safeAmd(b.paid,0).toLocaleString('en-US')
+              + '<span class="cur">֏</span></div>'
+            + '<div class="b">' + gramTxt(b.netG,3) + escH(t('u_g')) + '</div></div></button>').join('')
+          + '</div></div>'
+        : '<div class="card"><div class="muted">' + escH(t('none')) + '</div></div>')
+    + '</main>';
+}
+
+/* the act number. Scanned off every document reference the shop already holds — its own acts,
+   its pieces' and its lots' — so a shop seeded or synced with acts numbered to 41 issues 42 and
+   never re-uses a number that is already printed on paper somewhere. */
+function nextActNo(){
+  const y = new Date(safeInt(S.today, Date.now())).getUTCFullYear();
+  const re = /^ԳԱ-(\d{4})-(\d+)$/;
+  let max = 0;
+  const scan = v => { const m = re.exec(String(v == null ? '' : v)); if(m && +m[1] === y) max = Math.max(max, +m[2]); };
+  (S.buys||[]).forEach(b => scan(b && b.id));
+  (S.pieces||[]).forEach(p => scan(p && p.acq && p.acq.docRef));
+  (S.lots||[]).forEach(l => scan(l && l.acq && l.acq.docRef));
+  return 'ԳԱ-' + y + '-' + ('0000' + (max + 1)).slice(-4);
+}
+
+function byConfirm(){
+  if(!BY || !byValid()) return;
+  const w = byWeights();
+  const paid = byPaid();
+  const ref = nextActNo();
+  const metal = BY.metal, fineness = safeInt(BY.fineness, 585);
+  /* THE PRICE PAID IS THE ACQUISITION COST. Under the margin scheme this document IS the cost
+     basis, which is why the buy-in flow and the tax position are the same flow. */
+  const acq = () => ({ costAmd: paid, stoneCost: safeAmd(BY.stonesAmd,0), date: S.today,
+                       preJul26: S.today < JUL26, docType:'buyact', docRef: ref,
+                       source:'public', known:true });
+  let subject = '', pieceId = '', lotId = '', dq = w.netG;
+
+  if(BY.dest === 'resale'){
+    const sug = suggestHallmark({ metal, netG:w.netG, cat:BY.cat });
+    const origin = (BY.hmOrigin === 'none' && sug !== 'none') ? sug : BY.hmOrigin;
+    pieceId = contentId('i', [ref, BY.code, metal, fineness, w.grossG, w.stoneG].join(KSEP),
+                        (S.pieces||[]).length);
+    S.pieces.push({
+      id: pieceId, model:null, code: BY.code || ref, metal: metal, fineness: fineness,
+      grossG:w.grossG, stoneG:w.stoneG, netG:w.netG, weighedAs:w.weighedAs,
+      stonesAmd:0, makingG: safeAmd(BY.makingG,0), priceManual:0,
+      acq: acq(),
+      hallmark:{ origin: origin, makerMark:false, sentTs:0, backTs:0, docRef:'', office:'' },
+      location:'tray', cat: BY.cat, atg:'', note:'', addedTs: S.today
+    });
+    migrate(S);
+    const made = pieceById(pieceId);
+    if(!made){ toast(t('sl_price_needed')); return; }
+    subject = pieceSubj(pieceId); dq = num(made.netG);
+  } else {
+    subject = poolSubj(metal, fineness);
+    if(!(S.pools||[]).some(b => b && b.id === subject))
+      S.pools.push({ id: subject, metal: metal, fineness: fineness, cat:'scrap', note:'' });
+    /* the lot is the cost basis layered on the pool, consumed FIFO BY ACQUISITION DATE. */
+    lotId = contentId('l', [ref, subject, w.netG].join(KSEP), (S.lots||[]).length);
+    S.lots.push({ id: lotId, subject: subject, inG: w.netG, leftG: w.netG, acq: acq() });
+  }
+
+  /* ONE `buyin` MOVEMENT EITHER WAY, with `ref` linking the act to the metal permanently. */
+  const ok = postMove({ subject: subject, type:'buyin', dq: dq, ts: S.today, cost: paid,
+                        ref: ref, lot: lotId, actor:'shop' });
+  if(!ok){
+    /* the ledger refused, so neither the piece nor the lot exists. Never leave a record the log
+       disagrees with — that is the one state this product may not be in. */
+    if(pieceId) S.pieces = (S.pieces||[]).filter(x => x.id !== pieceId);
+    if(lotId)   S.lots   = (S.lots||[]).filter(x => x.id !== lotId);
+    const last = LEDGER_REJECTS[LEDGER_REJECTS.length-1];
+    toast(fmt('led_rejected', { r: last ? t(REJ_KEY[last.reason] || 'rej_nosubject') : '' }));
+    return;
+  }
+
+  S.buys.push({
+    id: ref, ts: S.today, metal: metal, fineness: fineness,
+    grossG: w.grossG, stoneG: w.stoneG, netG: dq, weighedAs: w.weighedAs,
+    rate: buyRate(metal), fineRate: Math.round(buyRate(metal) * fineness / 999),
+    metalAmd: buyPriceOf(w.netG, fineness, metal), stonesAmd: safeAmd(BY.stonesAmd,0),
+    paid: paid, pay: BY.pay === 'bank' ? 'bank' : 'cash',
+    dest: BY.dest === 'resale' ? 'resale' : 'scrap',
+    subject: subject, pieceId: pieceId, lotId: lotId,
+    seller: { name: String(BY.name||'').slice(0,80),
+              passport: String(BY.passport||'').slice(0,40),
+              ssn: String(BY.ssn||'').slice(0,20) }
+  });
+  BY = byFresh();
+  saveState(); renderAll(); toast(fmt('by_done', { r: ref }));
+  openBuyAct(ref);
+}
+
+/* =====================================================================================
+   ԳՆՄԱՆ ԱԿՏ — the buy-in document (spec 5.2)
+   The same furniture as ArmTrade's statement: two parties with ՀՎՀՀ, a line table, a total, the
+   amount in words in Armenian, the payment method, two signature rules and a footnote.
+   ===================================================================================== */
+function openBuyAct(ref){
+  const a = (S.buys||[]).find(x => x && x.id === ref);
+  if(!a) return;
+  const sign = lbl => '<div style="flex:1;min-width:150px"><div class="doclbl">' + escH(lbl) + '</div>'
+    + '<div class="actsignline"></div></div>';
+  const party = (ttl, em, name, sub) => '<div style="min-width:150px"><div class="doclbl">' + escH(ttl) + '</div>'
+    + '<b>' + escH(em + ' ' + (name || '—')) + '</b>'
+    + '<div class="muted">' + sub + '</div></div>';
+  const sl = a.seller || {};
+  const sellerSub = [
+    sl.passport ? t('by_passport') + ' ' + escH(sl.passport) : '',
+    sl.ssn ? t('by_ssn') + ' ' + escH(sl.ssn) : ''
+  ].filter(Boolean).join(' · ');
+  const rows = ['<tr>'
+    + '<td>1<span class="actsub">' + escH(metalLabel(a.metal) + ' · ' + safeInt(a.fineness,0)
+        + ' · ' + t('w_gross_s') + ' ' + gramTxt(a.grossG,3) + t('u_g')) + '</span></td>'
+    + '<td>' + escH(metalLabel(a.metal)) + '</td>'
+    + '<td class="num">' + safeInt(a.fineness,0) + '</td>'
+    + '<td class="num">' + gramTxt(a.grossG,3) + '</td>'
+    + '<td class="num">' + gramTxt(a.stoneG,3) + '</td>'
+    + '<td class="num">' + gramTxt(a.netG,3) + '</td>'
+    + '<td class="num">' + safeAmd(a.fineRate,0).toLocaleString('en-US') + '</td>'
+    + '<td class="num">' + safeAmd(a.metalAmd,0).toLocaleString('en-US') + '</td></tr>'];
+  if(safeAmd(a.stonesAmd,0)) rows.push('<tr>'
+    + '<td>2<span class="actsub">' + escH(t('act_stones_row')) + '</span></td>'
+    + '<td>' + escH(t('act_stones_row')) + '</td><td class="num">—</td><td class="num">—</td>'
+    + '<td class="num">' + gramTxt(a.stoneG,3) + '</td><td class="num">—</td><td class="num">—</td>'
+    + '<td class="num">' + safeAmd(a.stonesAmd,0).toLocaleString('en-US') + '</td></tr>');
+
+  openModal(
+    '<h3>📄 ' + escH(t('act_title')) + ' № ' + escH(a.id) + '</h3>'
+    + '<div class="muted">' + escH(fdate(a.ts)) + '</div>'
+    + '<hr class="actrule">'
+    + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
+      + party(t('act_buyer'), '🏪', S.cfg.shopName || t('app_name'),
+              escH(t('data_tin')) + ' <span class="num">' + escH(S.cfg.tin || '—') + '</span>')
+      + party(t('act_seller'), '👤', sl.name, sellerSub)
+    + '</div>'
+    + '<div class="tblwrap" style="max-height:none"><table class="tbl acttbl buyact"><thead><tr>'
+      + '<th>' + escH(t('act_col_n')) + '</th><th>' + escH(t('act_col_metal')) + '</th>'
+      + '<th class="num">' + escH(t('act_col_harg')) + '</th>'
+      + '<th class="num">' + escH(t('act_col_gross')) + '</th>'
+      + '<th class="num">' + escH(t('act_col_stone')) + '</th>'
+      + '<th class="num">' + escH(t('act_col_net')) + '</th>'
+      + '<th class="num">' + escH(t('act_col_rate')) + '</th>'
+      + '<th class="num">' + escH(t('act_col_sum')) + '</th>'
+      + '</tr></thead><tbody>' + rows.join('') + '</tbody></table></div>'
+    + '<div class="row actsep" style="margin-top:12px;padding-top:10px"><b>' + escH(t('act_total')) + '</b>'
+      + '<span class="big">' + gramTxt(a.netG,3) + '<span class="g">' + escH(t('u_g')) + '</span>'
+      + ' · ' + safeAmd(a.paid,0).toLocaleString('en-US') + '<span class="cur">֏</span></span></div>'
+    /* IN ARMENIAN ON EVERY LANGUAGE OF THE UI — that is the language the document is signed in. */
+    + '<div class="muted" style="margin-top:6px">' + escH(t('act_words')) + '՝ <b>' + escH(amWords(a.paid)) + '</b></div>'
+    + '<div class="muted" style="margin-top:6px">' + escH(t('act_pay') + '՝ '
+        + (a.pay === 'bank' ? t('by_bank') : t('by_cash'))) + '</div>'
+    + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
+      + sign(t('act_seller')) + sign(t('act_buyer')) + '</div>'
+    + '<div class="muted" style="font-size:14px;margin-top:14px">' + escH(t('act_note')) + '</div>'
+    /* NO COPY ASSERTING THE IDENTITY FIELDS ARE LEGALLY REQUIRED. That is unverified, and a
+       document that asserts a legal requirement it cannot source is worse than one that does not. */
+    + '<div class="muted" style="font-size:14px;margin-top:6px">' + escH(t('by_id_note')) + '</div>'
+    + '<button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">🖨 '
+      + escH(t('print')) + '</button>'
+    + '<button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">'
+      + escH(t('close')) + '</button>'
+  );
 }
 
 /* =====================================================================================
