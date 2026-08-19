@@ -1439,6 +1439,10 @@ tr.hlflash{animation:none;background:var(--acc-tint)}
    formula wrap at all, and without this it happily split «6,523,251» across two lines — a money
    figure broken mid-figure is not a wrap, it is a misread number. */
 .brk b{white-space:nowrap}
+/* the metal an operand belongs to. The valuation line adds gold grams and silver grams in one
+   sum under a single caption; without naming each metal beside its own rate the line cannot be
+   re-done in the reader's head, which is the only job it has. */
+.brk .mn{color:var(--dim);font-weight:600;margin-right:.3em;white-space:nowrap}
 .brk .op{color:var(--dim);font-weight:600;padding:0 .15em}
 .brk .eq{color:var(--dim);font-weight:600;padding:0 .2em}
 .brk b{font-weight:700}
@@ -1527,8 +1531,13 @@ tr.hlflash{animation:none;background:var(--acc-tint)}
 .prow:active{background:var(--surface-2)}
 .prow:focus-visible{outline:none;box-shadow:var(--focus)}
 .prow .pi{flex:1 1 auto;min-width:0}
+/* Wrap to two lines, NOT ellipsis — the same call this file already makes for .sug .nm and for
+   the same reason. At 320px «Կախազարդ քարով» clipped to «Կախազարդ քա…» and, worse, «Ջարդոն ·
+   Արծաթ» clipped to «Ջարդոն · Արծ…», where the truncated word is the metal name and the metal
+   name is the row's whole identity. */
 .prow .pnm{font-size:var(--fs-body-l);font-weight:600;line-height:1.3;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow-wrap:break-word}
 .prow .psub{font-size:var(--fs-micro);line-height:var(--lh-micro);color:var(--muted);
   margin-top:2px;display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
 .prow .pw{flex:0 0 auto;text-align:right}
@@ -1556,7 +1565,10 @@ tr.hlflash{animation:none;background:var(--acc-tint)}
    clipped subtitle says less than no subtitle), and at 320px the wordmark itself goes rather
    than render as «ԱրմՈ…» — a truncated brand is worse than an absent one. */
 @media (max-width:460px){ #top .logo{display:flex} #top .logo small{display:none} }
-@media (max-width:360px){ #top .logo>div{display:none} }
+/* `>div` matched the logomark too — it is itself a div child of .logo — so .logo collapsed to
+   0x0 and 320/360 got exactly the bare date chip and two icons the comment above says must not
+   happen. 360dp is the most common Android width. Only the WORDMARK goes. */
+@media (max-width:360px){ #top .logo>div:not(.logomark){display:none} }
 
 /* A DERIVED FIELD MUST LOOK DERIVED. `disabled` alone renders almost identically to an editable
    input in this design system, so the jeweller reaching for the third weight finds a box that
@@ -1778,6 +1790,7 @@ T.hy = {
   w_harg:'Հարգ', w_metal:'Մետաղ', w_au:'Ոսկի', w_ag:'Արծաթ',
   w_piece:'Իր', w_pieces:'Իրեր', w_model:'Մոդել', w_scrap:'Ջարդոն', w_pool:'Կուտակ',
   w_weight:'Քաշ', w_gross:'Համախառն քաշ', w_stone:'Քարերի քաշ', w_net:'Զուտ քաշ',
+  w_date:'Ամսաթիվ', mv_type:'Շարժ', led_count:'Շարժեր',
   w_gross_s:'Համախառն', w_stone_s:'Քարեր', w_net_s:'Զուտ',
   w_stones_amd:'Քարեր (֏)', w_making:'Աշխատանք (֏/գ)', w_making_s:'Աշխատանք',
   w_pure:'Մաքուր մետաղ', w_pure_s:'մաքուր', w_rate:'Շուկայի գին, 999 (֏/գ)', w_rate_s:'Շուկայի գին',
@@ -1786,12 +1799,14 @@ T.hy = {
   w_sellrate:'Վաճառքի գին, 999', w_buyrate:'Գնման գին, 999',
   w_acqn:'{n} ձեռքբերում', badge_nocost:'Ինքնարժեք չկա',
   buydisc_unset:'Գնման զեղչը դեռ նշված չէ — մուտքագրեք Տվյալներ բաժնում',
+  buydisc_unset_f:'Գնման զեղչը դեռ նշված չէ',
   brk_val:'Մաքուր մետաղ × 999 գին',
   /* ---- categories (ARMGOLD's practitioner list) ---- */
   cat_ring:'Մատանի', cat_chain:'Շղթա', cat_bracelet:'Ապարանջան', cat_earring:'Ականջօղ',
   cat_pendant:'Կախազարդ', cat_cross:'Խաչ', cat_watch:'Ժամացույց', cat_scrap:'Ջարդոն', cat_other:'Այլ',
   /* ---- locations. Custody, not a movement. ---- */
-  loc_tray:'Դարակ', loc_safe:'Պահարան', loc_assay:'Հարգորոշման', loc_workshop:'Արհեստանոց', loc_out:'Դուրս',
+  loc_tray:'Դարակ', loc_safe:'Պահարան', loc_assay:'Հարգորոշման տեսչությունում',
+  loc_workshop:'Արհեստանոց', loc_out:'Դուրս',
   /* ---- the eleven movement types (spec 3) ---- */
   mv_open:'Սկզբնական մնացորդ', mv_receipt:'Ընդունում', mv_buyin:'Գնում բնակչությունից',
   mv_sale:'Վաճառք', mv_return:'Վերադարձ մատակարարին', mv_writeoff:'Դուրսգրում',
@@ -1801,7 +1816,7 @@ T.hy = {
   hm_title:'Հարգադրոշմավորում', hm_assay:'Հարգորոշում', hm_maker:'Անվանական դրոշմ',
   hm_am_assay:'ՀՀ հարգադրոշմ', hm_eaeu:'ԵԱՏՄ հարգադրոշմ', hm_exempt_weight:'Ազատված՝ քաշով',
   hm_exempt_scrap:'Ազատված՝ ջարդոն', hm_exempt_other:'Ազատված՝ այլ', hm_none:'Չհարգադրոշմված',
-  hm_why_weight:'{g}-ից թեթև իրերը հարգադրոշմման ենթակա չեն։',
+  hm_why_weight:'{g}-ից թեթև իրերը հարգադրոշմավորման ենթակա չեն։',
   /* ---- acquisition (spec 1.6) ---- */
   acq_title:'Ձեռքբերում', acq_cost:'Ինքնարժեք', acq_date:'Ձեռքբերման ամսաթիվ',
   acq_doc:'Փաստաթուղթ', acq_ref:'Փաստաթղթի համար', acq_source:'Աղբյուր',
@@ -1815,7 +1830,7 @@ T.hy = {
   rate_title:'Այսօրվա գինը', rate_src_cb:'ԿԲ', rate_src_manual:'ձեռքով',
   rate_age_now:'հենց նոր', rate_age_h:'{n} ժ առաջ', rate_age_d:'{n} օր առաջ',
   rate_stale:'Գինը հին է ({n} օր) — թարմացրե՛ք',
-  rate_edit:'Փոխել գինը', rate_ask:'Մուտքագրեք 999 հարգի 1 գրամի գինը դրամով',
+  rate_edit:'Փոխել գինը', rate_ask:'Մուտքագրեք ոսկու 999 հարգի 1 գրամի գինը դրամով',
   rate_saved:'Գինը գրանցվեց',
   rate_unavail:'Շուկայի գինը հասանելի չէ — մուտքագրեք ձեռքով',
   /* ---- pricing (spec 2.2) ---- */
@@ -1828,15 +1843,15 @@ T.hy = {
   pr_warn80_sub:'Հաշվարկված՝ {a} · 80% = {b} · Ձեր գինը՝ {c}',
   /* ---- today (spec 6.1 home) ---- */
   home_title:'Այսօր', home_stock:'Դարակի պաշարը', home_pure:'Մաքուր մետաղ',
-  home_val:'Արժեքը այսօրվա գնով', home_pieces:'Իրեր դարակում',
+  home_val:'Արժեքն այսօրվա գնով', home_pieces:'Իրեր դարակում',
   home_alerts:'Ուշադրության կարիք ունեն', home_ok:'Ամեն ինչ կարգին է',
   al_nocost:'{n} իր՝ առանց փաստաթղթավորված ինքնարժեքի',
-  al_assay:'{n} իր՝ հարգորոշման մեջ',
+  al_assay:'{n} իր՝ հարգորոշման տեսչությունում',
   al_rate:'Օրվա գինը թարմացված չէ',
   /* ---- tray (spec 6.1 tray) ---- */
   tray_title:'Դարակ', tray_bulk:'Կուտակներ', tray_pcs:'Իրեր',
   tray_sub:'{n} հատ', tray_pure_lbl:'Ընդամենը մաքուր մետաղ',
-  tray_val_lbl:'Արժեքը այսօրվա 999 գնով',
+  tray_val_lbl:'Արժեքն այսօրվա 999 գնով',
   tray_no_total:'Տարբեր հարգերի գրամները չեն գումարվում — ընդհանուրը տրվում է մաքուր մետաղով։',
   tray_empty:'Դարակը դատարկ է',
   tray_of_which:'որից քարեր',
@@ -1855,6 +1870,7 @@ T.hy = {
   rej_negative:'մնացորդը չի կարող բացասական լինել',
   rej_nonfinite:'քաշը թիվ չէ',
   rej_nosubject:'օբյեկտը նշված չէ',
+  rej_toobig:'քաշը թույլատրելի սահմանից դուրս է',
   /* ---- data screen ---- */
   data_title:'Տվյալներ', data_shop:'Խանութ', data_shop_name:'Անվանումը', data_tin:'ՀՎՀՀ',
   data_pricing:'Գնագոյացում', data_precision:'Ճշտություն', data_dp2:'0.01 գ', data_dp3:'0.001 գ',
@@ -1869,7 +1885,7 @@ T.hy = {
   stub_buy:'Բնակչությունից գնման էկրանը՝ կշիռ, հարգ, հաշվարկ, գնման ակտ։',
   stub_recv:'Մատակարարից ընդունումը՝ քաշերով և ինքնարժեքով։',
   stub_count:'Գույքագրումը՝ ըստ հարգի, կույր հաշվարկով, ակտով։',
-  stub_mark:'Հարգադրոշմման ուղարկում և վերադարձ։',
+  stub_mark:'Հարգադրոշմավորման ուղարկում և վերադարձ։',
   stub_repair:'Հաճախորդի իրերի պահպանման մատյան — երբեք պաշարի մեջ։',
   stub_debts:'Մատակարարների մնացորդները՝ հաշիվներից և վճարումներից։',
   /* ---- the recovery net (ArmTrade's own strings) ---- */
@@ -1891,6 +1907,7 @@ T.en = {
   w_harg:'Fineness', w_metal:'Metal', w_au:'Gold', w_ag:'Silver',
   w_piece:'Item', w_pieces:'Items', w_model:'Model', w_scrap:'Scrap', w_pool:'Bulk pool',
   w_weight:'Weight', w_gross:'Gross weight', w_stone:'Stone weight', w_net:'Net weight',
+  w_date:'Date', mv_type:'Movement', led_count:'Movements',
   w_gross_s:'Gross', w_stone_s:'Stones', w_net_s:'Net',
   w_stones_amd:'Stones (֏)', w_making:'Making (֏/g)', w_making_s:'Making',
   w_pure:'Pure metal', w_pure_s:'pure', w_rate:'Market rate, 999 (֏/g)', w_rate_s:'Market rate',
@@ -1899,6 +1916,7 @@ T.en = {
   w_sellrate:'Sell rate, 999', w_buyrate:'Buy rate, 999',
   w_acqn:'{n} acquisitions', badge_nocost:'no cost basis',
   buydisc_unset:'The buy-in discount has not been set — enter it under Data',
+  buydisc_unset_f:'The buy-in discount has not been set',
   brk_val:'pure metal × the 999 rate',
   cat_ring:'Ring', cat_chain:'Chain', cat_bracelet:'Bracelet', cat_earring:'Earrings',
   cat_pendant:'Pendant', cat_cross:'Cross', cat_watch:'Watch', cat_scrap:'Scrap', cat_other:'Other',
@@ -1957,6 +1975,7 @@ T.en = {
   rej_negative:'on-hand cannot go negative',
   rej_nonfinite:'the weight is not a number',
   rej_nosubject:'no subject given',
+  rej_toobig:'the weight is outside the allowed range',
   data_title:'Data', data_shop:'Shop', data_shop_name:'Name', data_tin:'TIN',
   data_pricing:'Pricing', data_precision:'Precision', data_dp2:'0.01 g', data_dp3:'0.001 g',
   data_making_base:'Making charge computed on', data_mb_gross:'Gross weight', data_mb_net:'Net weight',
@@ -1990,6 +2009,7 @@ T.ru = {
   w_harg:'Проба', w_metal:'Металл', w_au:'Золото', w_ag:'Серебро',
   w_piece:'Изделие', w_pieces:'Изделия', w_model:'Модель', w_scrap:'Лом', w_pool:'Накопление',
   w_weight:'Вес', w_gross:'Вес брутто', w_stone:'Вес камней', w_net:'Вес нетто',
+  w_date:'Дата', mv_type:'Движение', led_count:'Движения',
   w_gross_s:'Брутто', w_stone_s:'Камни', w_net_s:'Нетто',
   w_stones_amd:'Камни (֏)', w_making:'Работа (֏/г)', w_making_s:'Работа',
   w_pure:'Чистый металл', w_pure_s:'чистый', w_rate:'Рыночная цена, 999 (֏/г)', w_rate_s:'Рыночная цена',
@@ -1998,6 +2018,7 @@ T.ru = {
   w_sellrate:'Цена продажи, 999', w_buyrate:'Цена закупки, 999',
   w_acqn:'{n} приобретений', badge_nocost:'нет себестоимости',
   buydisc_unset:'Дисконт закупки не задан — укажите его в разделе «Данные»',
+  buydisc_unset_f:'Дисконт закупки не задан',
   brk_val:'чистый металл × цена 999',
   cat_ring:'Кольцо', cat_chain:'Цепь', cat_bracelet:'Браслет', cat_earring:'Серьги',
   cat_pendant:'Подвеска', cat_cross:'Крест', cat_watch:'Часы', cat_scrap:'Лом', cat_other:'Прочее',
@@ -2056,6 +2077,7 @@ T.ru = {
   rej_negative:'остаток не может быть отрицательным',
   rej_nonfinite:'вес не является числом',
   rej_nosubject:'объект не указан',
+  rej_toobig:'вес вне допустимого диапазона',
   data_title:'Данные', data_shop:'Магазин', data_shop_name:'Название', data_tin:'УНН',
   data_pricing:'Ценообразование', data_precision:'Точность', data_dp2:'0,01 г', data_dp3:'0,001 г',
   data_making_base:'Работа считается по', data_mb_gross:'Весу брутто', data_mb_net:'Весу нетто',
@@ -2229,8 +2251,15 @@ const pieceById = id => (S.pieces||[]).find(p => p && p.id === id) || null;
    affordance during a stock count that "records the new weight as an adjustment with a reason",
    and such an adjustment is a DELTA — 0.05 g, not 5.42 g — so the whole-piece rule would refuse
    the one movement the count act needs. For those two types the guard falls back to the rule
-   that holds for every subject in the ledger: on-hand may not go negative. Do not remove this
-   exception without also rewriting how a re-weigh is recorded. */
+   that holds for every subject in the ledger: on-hand may not go negative.
+
+   THE LOOP THAT EXCEPTION OPENS IS CLOSED BY syncPieceWeight() BELOW, and the two must be read
+   together. On their own these two types let a piece's on-hand drift away from its recorded
+   netG — the tray listing 5.37 g while the card priced 5.42 g, with nothing reconciling them —
+   which breaks spec 1.3's rule that after any movement a piece's on-hand is either zero or its
+   full net weight. It is not the guard that restores that rule (a re-weigh is legitimate and
+   must not be refused); it is the piece record following the ledger. Do not remove either half
+   without rewriting the other. */
 function pieceIntegrityGuard(mv, cur){
   if(!mv.subject) return 'nosubject';
   const dq = num(mv.dq);
@@ -2245,7 +2274,25 @@ function pieceIntegrityGuard(mv, cur){
   return '';
 }
 const REJ_KEY = { piece_whole:'rej_piece_whole', negative:'rej_negative',
-                  nonfinite:'rej_nonfinite', nosubject:'rej_nosubject' };
+                  nonfinite:'rej_nonfinite', nosubject:'rej_nosubject', toobig:'rej_toobig' };
+
+/* ---- the other half of the adjust/count exception (spec 5.4, 1.3) ----
+   A re-weigh is the ONE movement that changes what a piece weighs, so it is the one movement
+   that must also change the piece RECORD. Without this the ledger says 5.37 g, p.netG still
+   says 5.42 g, priceOf() still charges for 5.42 g and the tray and the card contradict each
+   other on the same screen. Stones are not re-weighed by an adjustment of the metal, so gross
+   follows net and stoneG is left alone. A movement that takes the piece to zero is the piece
+   LEAVING, not a re-weigh, so its recorded weight stands. */
+function syncPieceWeight(mv){
+  if(!isPieceSubj(mv.subject)) return;
+  if(mv.type !== 'adjust' && mv.type !== 'count') return;
+  const p = pieceById(subjPieceId(mv.subject));
+  if(!p) return;
+  const after = round3(onHand(mv.subject));
+  if(after <= EPS) return;
+  p.netG = after;
+  p.grossG = round3(after + num(p.stoneG));
+}
 
 /* the content-addressed uuid. The ordinal counts movements ALREADY in the log carrying the same
    identity, so a replay of one movement is a no-op while two genuinely distinct identical-looking
@@ -2262,6 +2309,21 @@ function postMove(m){
   if(!m || !m.subject || !m.type) return false;
   if(!Array.isArray(S.moves)){ S.moves = []; S.moveSeq = S.moveSeq || 0; }
   if(!S.stock || typeof S.stock !== 'object') S.stock = {};
+  /* THE RAW NUMBER IS JUDGED BEFORE IT IS SANITISED. round3() turns NaN and Infinity into 0 and
+     clampG() silently rewrites 1,000,000 to 99,999, so validating the sanitised value can never
+     see either — a non-finite weight used to append a permanent 0-gram row and return true, and
+     a fat-fingered million used to post 99,999 g of gold as a legitimate receipt with nothing
+     anywhere saying the number had been changed. AN APPEND-ONLY LOG CANNOT BE CORRECTED
+     AFTERWARDS, so a number the operator did not choose must never enter it in silence: both
+     are REFUSED and reported. */
+  const rawDq = +m.dq;
+  const rawBad = !isFinite(rawDq) ? 'nonfinite'
+               : (Math.abs(rawDq) > MOVE_G_MAX ? 'toobig' : '');
+  if(rawBad){
+    LEDGER_REJECTS.push({ subject:String(m.subject), type:String(m.type), dq:rawDq, reason:rawBad, at:Date.now() });
+    if(LEDGER_REJECTS.length > 200) LEDGER_REJECTS = LEDGER_REJECTS.slice(-100);
+    return false;
+  }
   const mv = {
     n: 0,
     uuid: '',
@@ -2300,6 +2362,9 @@ function postMove(m){
      the same numbers in the same order, and eqG() covers a cache that came back through
      migrate()'s clamp. */
   S.stock[mv.subject] = LEDGER.fold(onHand(mv.subject), LEDGER.delta(mv));
+  /* the piece record follows the ledger, not the other way round: see syncPieceWeight. This is
+     part of the write, not an annotation — leaving it out is what let on-hand and netG diverge. */
+  syncPieceWeight(mv);
   /* lots are a derived annotation, so a failure here may never block a ledger move */
   try{ reconcileLots(mv); }catch(e){}
   return true;
@@ -2319,7 +2384,13 @@ function verifyLedger(){
   Object.keys(S.stock||{}).forEach(k => subs[k] = 1);
   Object.keys(rb).forEach(k => subs[k] = 1);
   Object.keys(subs).forEach(sub => {
-    const cached = num((S.stock||{})[sub]), rebuilt = num(rb[sub]);
+    /* NOT num(). num() coerces NaN and Infinity to 0, so running it first made the isFinite
+       test below impossible to fail and `nonFinite` dead code: a cache holding NaN reported
+       clean. A subject absent from one side is genuinely 0; a subject PRESENT and non-finite
+       is the thing this branch exists to catch, and the two must not be conflated. */
+    const cRaw = (S.stock||{})[sub], rRaw = rb[sub];
+    const cached = cRaw === undefined || cRaw === null ? 0 : +cRaw;
+    const rebuilt = rRaw === undefined || rRaw === null ? 0 : +rRaw;
     if(!isFinite(cached) || !isFinite(rebuilt)) out.push({ subject:sub, cached, rebuilt, nonFinite:true });
     else if(!LEDGER.eq(cached, rebuilt)) out.push({ subject:sub, cached, rebuilt });
   });
@@ -2381,12 +2452,18 @@ function reconcileLots(mv){
    market derives, and it is what ARMGOLD already does.
    ===================================================================================== */
 const base999 = () => safeAmd(S.rate && S.rate.base999, 0);
-const rateFor = f => Math.round(base999() * safeInt(f,0) / 999);
-const sellRate = () => Math.round(base999() * (1 + num(S.cfg.marginPct)/100));
+const silver999 = () => safeAmd(S.rate && S.rate.silver999, 0);
+/* METAL IS A DIMENSION, NOT AN ASSUMPTION (spec 1.2). ARMGOLD, whose formula this product
+   inherits, is gold-only, and every rate below used to be hardwired to the gold base — which
+   priced a 14.2 g silver chain at the gold rate, a 34x overcharge. There is exactly ONE place
+   that answers "what is a gram of this metal worth", and every rate is derived from it. */
+const metalRate999 = m => m === 'ag' ? silver999() : base999();
+const rateFor  = (f, metal) => Math.round(metalRate999(metal) * safeInt(f,0) / 999);
+const sellRate = metal => Math.round(metalRate999(metal) * (1 + num(S.cfg.marginPct)/100));
 const buyDiscSet = () => S.cfg.buyDiscPct != null;
 /* 0 when the discount has never been set: there is no honest buy rate to show, and a caller that
    renders 0 renders a dash (see rateCard) rather than a number nobody chose. */
-const buyRate  = () => buyDiscSet() ? Math.round(base999() * (1 - num(S.cfg.buyDiscPct)/100)) : 0;
+const buyRate  = metal => buyDiscSet() ? Math.round(metalRate999(metal) * (1 - num(S.cfg.buyDiscPct)/100)) : 0;
 
 /* which weight the making charge multiplies. Owner decision: GROSS. The setting exists and the
    breakdown line names it, so the answer is visible rather than buried. */
@@ -2395,16 +2472,16 @@ const makingWeight = p => S.cfg.makingBase === 'net' ? num(p.netG) : num(p.gross
 /* the finished-item sale price. ARMGOLD's formula with netG made explicit. It is the trade's own
    decomposition and it does not change. */
 function priceOf(p){
-  const metal = num(p.netG) * sellRate() * safeInt(p.fineness,0) / 999;
+  const metal = num(p.netG) * sellRate(p.metal) * safeInt(p.fineness,0) / 999;
   const stones = safeAmd(p.stonesAmd, 0);
   const making = safeAmd(p.makingG, 0) * makingWeight(p);
   return Math.round(metal + stones + making);
 }
 /* what the shop pays a walk-in for metal. NO MAKING CHARGE — the shop is buying metal, not
    workmanship — and stones default to zero because a shop buying scrap does not pay for them. */
-function buyPriceOf(netG, fineness){
+function buyPriceOf(netG, fineness, metal){
   if(!buyDiscSet()) return 0;
-  return Math.round(num(netG) * buyRate() * safeInt(fineness,0) / 999);
+  return Math.round(num(netG) * buyRate(metal) * safeInt(fineness,0) / 999);
 }
 
 /* ---- THE BREAKDOWN LINE — MANDATORY ----
@@ -2413,11 +2490,11 @@ function buyPriceOf(netG, fineness){
    COMPUTED MONEY MAY APPEAR ANYWHERE IN THIS PRODUCT WITHOUT ONE. If you are adding a screen
    that shows a price, you are adding a call to this function. */
 function breakdown(p){
-  const sr = sellRate(), f = safeInt(p.fineness,0);
-  const metal = Math.round(num(p.netG) * sr * f / 999);
+  const sr = sellRate(p.metal), f = safeInt(p.fineness,0);
+  const metal = num(p.netG) * sr * f / 999;
   const stones = safeAmd(p.stonesAmd, 0);
   const mkRate = safeAmd(p.makingG, 0), mkW = makingWeight(p);
-  const making = Math.round(mkRate * mkW);
+  const making = mkRate * mkW;
   const parts = [];
   /* THE BREAKDOWN LINE PRINTS WEIGHTS AT FULL STORED PRECISION (3dp), never at the shop's
      DISPLAY precision. The display setting exists so a tray of two-decimal figures scans
@@ -2434,12 +2511,17 @@ function breakdown(p){
   why.push(t(S.cfg.makingBase === 'net' ? 'pr_base_net' : 'pr_base_gross'));
   why.push(fmt('pr_margin_note', { p: pctTxt(S.cfg.marginPct) }));
   return '<div class="brk">' + parts.join('<span class="op">+</span>')
-    + '<span class="eq">=</span><b>' + (metal + stones + making).toLocaleString('en-US') + ' ֏</b>'
+    /* ROUNDED ONCE, ON THE SUM — not per term. Rounding metal and making separately and then
+       adding them made the line's own printed total disagree with the price printed directly
+       above it by 1 ֏ on about a quarter of real 3dp weights. The one promise this line makes
+       is that its own operands give its own answer AND that its answer is the price shown, so
+       it must round exactly where priceOf() rounds. */
+    + '<span class="eq">=</span><b>' + Math.round(metal + stones + making).toLocaleString('en-US') + ' ֏</b>'
     + '<span class="why">' + escH(why.join(' · ')) + '</span></div>';
 }
-function buyBreakdown(netG, fineness){
-  const br = buyRate(), f = safeInt(fineness,0);
-  const paid = buyPriceOf(netG, fineness);
+function buyBreakdown(netG, fineness, metal){
+  const br = buyRate(metal), f = safeInt(fineness,0);
+  const paid = buyPriceOf(netG, fineness, metal);
   return '<div class="brk"><b>' + gramTxt(netG, 3) + t('u_g') + '</b>'
     + '<span class="op">&times;</span><b>' + br.toLocaleString('en-US') + '</b>'
     + '<span class="op">&times;</span><b>' + f + '/999</b>'
@@ -2451,9 +2533,15 @@ function buyBreakdown(netG, fineness){
    pure grams, the 999 rate, the product. One helper, used by the tray group headers, the
    pure-metal total and the bulk pool sheet, so the three can never drift apart. */
 function valBreakdown(terms){
-  const total = terms.reduce((a,x) => a + Math.round(x.pure * x.rate), 0);
+  /* rounded once, on the sum — same rule as breakdown(), and the same reason: valuation()
+     rounds once too, and a KPI that disagrees with the line under it by 1 ֏ is a KPI nobody
+     trusts. */
+  const total = Math.round(terms.reduce((a,x) => a + x.pure * x.rate, 0));
   return '<div class="brk">'
-    + terms.map(x => '<b>' + gramTxt(x.pure,3) + t('u_g') + '</b><span class="op">&times;</span><b>'
+    /* each operand carries its metal: two metals' 999 rates appear in one sum and «999 գին»
+       is singular, so without the label the line does not stand alone. */
+    + terms.map(x => (x.metal ? '<span class="mn">' + escH(metalLabel(x.metal)) + '</span>' : '')
+        + '<b>' + gramTxt(x.pure,3) + t('u_g') + '</b><span class="op">&times;</span><b>'
         + safeAmd(x.rate,0).toLocaleString('en-US') + '</b>').join('<span class="op">+</span>')
     + '<span class="eq">=</span><b>' + total.toLocaleString('en-US') + ' \u058F</b>'
     + '<span class="why">' + escH(t('brk_val')) + '</span></div>';
@@ -2811,11 +2899,18 @@ function seedState(){
                reason:'melt', ref:'ՁՁ-2026-0004', actor:'shop' });
     postMove({ subject:'b:au:999', type:'melt_in', dq: 7.180, ts: D(2026,8,14),
                reason:'melt', ref:'ՁՁ-2026-0004', actor:'shop' });
-    /* the refining loss, named and posted on the SOURCE pool. 12.400 x 0.585 = 7.254 g of pure
-       metal went out and 7.180 came back: 0.074 g did not. A loss that vanishes into a rounding
-       difference is exactly the kind of thing that destroys trust in a stock system, so it is an
-       explicit movement in its own right. */
-    postMove({ subject:'b:au:585', type:'loss', dq:-0.127, ts: D(2026,8,14),
+    /* THE REFINING LOSS IS NOT A SECOND DEDUCTION (spec 2.5, whose worked example annotates this
+       very row «-0.000  <- not a second deduction»). melt_out already removed the WHOLE physical
+       weight from the source pool: 12.400 g left the shop for the melter and 12.400 g is what
+       came off the pool. The loss is documented by the GAP between melt_out and melt_in —
+       12.400 x 0.585 = 7.254 g of pure metal went out and 7.180 g of fine metal came back, so
+       0.074 g did not — and it is posted as a zero-delta movement so the loss is visible and
+       NAMED («Կորուստ») without the ledger removing metal a second time.
+       Deducting it again understated the pool by 0.127 g, understated lot l1's remaining basis
+       by the same, and verifyLedger() reported clean throughout — because cache-equals-log is
+       not the invariant that catches it. The invariant that does is spec 1.3's: the sum of a
+       subject's movements equals what is PHYSICALLY at that subject's location. */
+    postMove({ subject:'b:au:585', type:'loss', dq:0, ts: D(2026,8,14),
                reason:'melt', ref:'ՁՁ-2026-0004', actor:'shop' });
     postMove({ subject:'b:ag:925', type:'adjust', dq:-0.350, ts: D(2026,8,17),
                reason:'short', note:'կշեռքի ճշգրտում', actor:'shop' });
@@ -2903,7 +2998,6 @@ function pureByMetal(){
   });
   return out;
 }
-const metalRate999 = m => m === 'ag' ? safeAmd(S.rate.silver999, 0) : base999();
 function valuation(){
   const pm = pureByMetal(); let v = 0;
   Object.keys(pm).forEach(m => { v += pm[m] * metalRate999(m); });
@@ -3104,7 +3198,7 @@ function viewHome(){
       + '<div class="kpi"><div class="l">' + escH(t('home_val')) + '</div><div class="v m">'
         + val.toLocaleString('en-US') + '<span class="cur">֏</span></div></div>'
     + '</div>'
-    + valBreakdown(Object.keys(pm).map(m => ({ pure: pm[m], rate: metalRate999(m) })))
+    + valBreakdown(Object.keys(pm).map(m => ({ pure: pm[m], rate: metalRate999(m), metal: m })))
     + '<div class="card"><h3>' + escH(t('home_pure')) + '</h3>'
       + Object.keys(pm).map(m => '<div class="row"><span>' + escH(metalLabel(m)) + ' 999</span>'
           + '<span>' + gram(pm[m], 3) + '</span></div>').join('')
@@ -3185,7 +3279,7 @@ function viewTray(){
       + '<div class="row" style="margin-top:12px"><span class="mlbl">' + escH(t('tray_val_lbl')) + '</span>'
         + '<span class="num" style="font-size:17px;font-weight:700">'
         + valuation().toLocaleString('en-US') + '<span class="cur">֏</span></span></div>'
-      + valBreakdown(Object.keys(pm).map(m => ({ pure: pm[m], rate: metalRate999(m) })))
+      + valBreakdown(Object.keys(pm).map(m => ({ pure: pm[m], rate: metalRate999(m), metal: m })))
       + '<div class="notice" style="margin-top:12px">' + escH(t('tray_no_total')) + '</div>'
     + '</div>'
     + body
@@ -3310,7 +3404,10 @@ function openPool(id){
 function histTable(rows){
   if(!rows.length) return '<div class="muted">' + escH(t('pc_hist_empty')) + '</div>';
   return '<div class="tblwrap"><table class="tbl"><thead><tr>'
-    + '<th>' + escH(t('acq_date')) + '</th><th>' + escH(t('led_title')) + '</th>'
+    /* THIS TABLE'S OWN HEADINGS. It used to borrow `acq_date` and `led_title` from the lots
+       table above it, so a sale's date sat under a column headed «Ձեռքբերման ամսաթիվ» and the
+       type column repeated the section heading printed directly above it. */
+    + '<th>' + escH(t('w_date')) + '</th><th>' + escH(t('mv_type')) + '</th>'
     + '<th class="num">' + escH(t('w_weight')) + '</th><th class="num">' + escH(t('pc_bal')) + '</th>'
     + '</tr></thead><tbody>'
     + rows.map(m => '<tr><td>' + escH(fdate(m.ts)) + '</td>'
@@ -3337,7 +3434,13 @@ function viewData(){
       + '<label class="fieldlbl" for="cfgB" style="margin-top:12px">' + escH(t('w_buydisc')) + '</label>'
       + '<input id="cfgB" type="number" inputmode="decimal" min="0" max="90" step="0.1" placeholder="—" value="'
         + (buyDiscSet() ? num(S.cfg.buyDiscPct) : '') + '" oninput="cfgSet(\'buyDiscPct\',this.value)">'
-      + (buyDiscSet() ? '' : '<div class="notice">' + escH(t('buydisc_unset')) + '</div>')
+      /* the pointer form of this string belongs on the HOME rate card, which is where it can
+         send you somewhere. Under the field itself it would be instructing you to go to the
+         screen you are standing on, pointing at the very input it sits beneath. And it is
+         re-rendered on input (cfgSet) so the screen stops contradicting a field that now holds
+         a number — a full re-render on every keystroke would steal focus. */
+      + '<div id="bdNote">' + (buyDiscSet() ? ''
+          : '<div class="notice">' + escH(t('buydisc_unset_f')) + '</div>') + '</div>'
       + '<div class="fieldlbl" style="margin-top:14px">' + escH(t('data_making_base')) + '</div>'
       + '<div class="chips">'
         + '<button class="tbtn wide' + (S.cfg.makingBase==='gross' ? ' on' : '') + '" onclick="cfgSet(\'makingBase\',\'gross\')">' + escH(t('data_mb_gross')) + '</button>'
@@ -3350,7 +3453,7 @@ function viewData(){
       + '</div>'
     + '</div>'
     + '<div class="card"><h3>' + escH(t('data_ledger')) + '</h3>'
-      + '<div class="row"><span class="mlbl">' + escH(t('led_title')) + '</span><span class="num">'
+      + '<div class="row"><span class="mlbl">' + escH(t('led_count')) + '</span><span class="num">'
         + (S.moves||[]).length + '</span></div>'
       + '<div class="' + (bad.length ? 'alert bad' : 'notice') + '" style="margin-top:10px">'
         + escH(bad.length ? fmt('led_verify_bad', { n: bad.length })
@@ -3381,6 +3484,10 @@ function cfgSet(k, v){
   else S.cfg[k] = v;
   migrate(S); saveState();
   if(k==='makingBase' || k==='gramDp') renderAll();
+  else if(k==='buyDiscPct'){
+    const n = document.getElementById('bdNote');
+    if(n) n.innerHTML = buyDiscSet() ? '' : '<div class="notice">' + escH(t('buydisc_unset_f')) + '</div>';
+  }
 }
 function doVerify(){
   const bad = verifyLedger();
@@ -3783,20 +3890,44 @@ function voskiSelfTest(){
     ok('fold is commutative', Object.keys(sums).every(k => eqG(sums[k], sums2[k])));
 
     /* pricing */
-    ok('rateFor is pro rata', rateFor(585) === Math.round(base999()*585/999));
-    ok('sellRate applies the margin to the RATE', sellRate() === Math.round(base999()*(1+S.cfg.marginPct/100)));
+    ok('rateFor is pro rata', rateFor(585,'au') === Math.round(base999()*585/999));
+    ok('sellRate applies the margin to the RATE', sellRate('au') === Math.round(base999()*(1+S.cfg.marginPct/100)));
+    /* METAL IS A DIMENSION (spec 1.2). Every one of these used to be hardwired to the gold base,
+       which priced the seeded 14.2 g silver chain at 720,256 ֏ instead of 21,261 ֏. Assert the
+       silver side of every rate, and — the assertion that would actually have caught it — assert
+       that a silver piece's price does NOT come off the gold rate. */
+    ok('silver 999 rate is the silver one', metalRate999('ag') === safeAmd(S.rate.silver999,0)
+       && metalRate999('ag') !== base999());
+    ok('sellRate is metal-dimensioned', sellRate('ag') === Math.round(silver999()*(1+S.cfg.marginPct/100))
+       && sellRate('ag') !== sellRate('au'), sellRate('ag') + ' vs ' + sellRate('au'));
+    ok('rateFor is metal-dimensioned', rateFor(925,'ag') === Math.round(silver999()*925/999));
     /* the buy-in discount is UNSET on a fresh shop and must stay unset — a default here would be
        an invented figure quoted to a walk-in customer. */
     ok('buy discount ships unset', freshCfg().buyDiscPct === null);
     ok('unset buy rate is not a number to quote', (()=>{ const k=S.cfg.buyDiscPct; S.cfg.buyDiscPct=null;
-        const r = buyRate()===0 && buyPriceOf(10,585)===0; S.cfg.buyDiscPct=k; return r; })());
+        const r = buyRate('au')===0 && buyPriceOf(10,585,'au')===0; S.cfg.buyDiscPct=k; return r; })());
     ok('buyRate applies the discount once set', (()=>{ const k=S.cfg.buyDiscPct; S.cfg.buyDiscPct=12;
-        const r = buyRate()===Math.round(base999()*0.88); S.cfg.buyDiscPct=k; return r; })());
+        const r = buyRate('au')===Math.round(base999()*0.88); S.cfg.buyDiscPct=k; return r; })());
+    ok('buy-in quotes silver at the silver rate', (()=>{ const k=S.cfg.buyDiscPct; S.cfg.buyDiscPct=12;
+        const r = buyRate('ag')===Math.round(silver999()*0.88)
+               && buyPriceOf(10,925,'ag')===Math.round(10*Math.round(silver999()*0.88)*925/999)
+               && buyPriceOf(10,925,'ag')!==buyPriceOf(10,925,'au');
+        S.cfg.buyDiscPct=k; return r; })());
     ok('null survives migrate', (()=>{ const snap=JSON.parse(JSON.stringify(S)); snap.cfg.buyDiscPct=null;
         return migrate(snap).cfg.buyDiscPct === null; })());
     const pi = pieceById('i1');
-    const expect = Math.round(pi.netG*sellRate()*pi.fineness/999 + pi.stonesAmd + pi.makingG*pi.grossG);
+    const expect = Math.round(pi.netG*sellRate('au')*pi.fineness/999 + pi.stonesAmd + pi.makingG*pi.grossG);
     ok('price uses NET metal and GROSS making', priceOf(pi) === expect, priceOf(pi) + ' vs ' + expect);
+    /* the assertion that fails on a gold-only sellRate. Written against the SILVER rate spelled
+       out, not against sellRate(), because recomputing `expect` with the same function under
+       test is what let the 34x silver overcharge ship. */
+    ok('a silver piece prices off the SILVER rate', (()=>{
+      const ag = (S.pieces||[]).filter(p => p.metal === 'ag');
+      if(!ag.length) return false;
+      return ag.every(p => priceOf(p) === Math.round(
+        p.netG * Math.round(safeAmd(S.rate.silver999,0)*(1+num(S.cfg.marginPct)/100)) * p.fineness/999
+        + safeAmd(p.stonesAmd,0) + safeAmd(p.makingG,0)*(S.cfg.makingBase==='net' ? p.netG : p.grossG)));
+    })(), (()=>{ const p=(S.pieces||[]).find(x=>x.metal==='ag'); return p ? p.id+' -> '+priceOf(p) : 'no silver'; })());
     ok('breakdown renders the numbers', /5\.42|5\.420/.test(breakdown(pi)) && breakdown(pi).indexOf('750/999') > 0);
     ok('80% warning fires', !!fairValueWarn(100000, 70000) && fairValueWarn(100000, 90000) === null);
     /* THE LINE MUST REPRODUCE ITS OWN TOTAL. Re-run the arithmetic from the PRINTED operands
@@ -3811,8 +3942,115 @@ function voskiSelfTest(){
       let tot = netv*rt*fin/999;
       if(pc.stonesAmd) tot += N(nums[i++]);
       if(pc.makingG){ const mr = N(nums[i++]), mw = G(nums[i++]); tot += mr*mw; }
-      return Math.abs(Math.round(tot) - N(nums[nums.length-1])) <= 1;
+      /* EXACTLY. It used to tolerate 1 ֏ of drift, which is precisely the defect: breakdown()
+         rounded metal and making separately and then summed, while priceOf() rounds once at the
+         end, so on roughly a quarter of real 3dp weights the line's own total disagreed with the
+         price printed directly above it. Both promises are asserted here. */
+      return Math.round(tot) === N(nums[nums.length-1]) && Math.round(tot) === priceOf(pc);
     }));
+    /* and on weights a jeweller would actually type, not just on the seed — every seed piece
+       happens to have an integral making charge, which is why the seed never showed it. */
+    ok('breakdown total === priceOf on 3dp weights', (()=>{
+      const F = [375,416,500,583,585,750,916,958,999];
+      let seed = 12345;
+      const rnd = () => (seed = (seed*1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+      for(let i=0;i<3000;i++){
+        const gross = round3(1 + rnd()*20), stone = round3(gross * rnd() * 0.3);
+        const p = { metal: rnd() < 0.2 ? 'ag' : 'au', fineness: F[Math.floor(rnd()*F.length)],
+                    grossG: gross, stoneG: stone, netG: round3(gross - stone),
+                    stonesAmd: Math.round(rnd()*80000), makingG: Math.round(rnd()*8000) };
+        const html = String(breakdown(p));
+        const nums = html.match(/<b>([^<]+)<\/b>/g).map(x => x.replace(/<\/?b>/g,''));
+        const printed = parseInt(String(nums[nums.length-1]).replace(/[^0-9]/g,''),10);
+        if(printed !== priceOf(p)) return false;
+      }
+      return true;
+    })());
+    /* the valuation pair drifted at the same rate and for the same reason */
+    ok('valBreakdown total === valuation', (()=>{
+      const pm = pureByMetal();
+      const html = valBreakdown(Object.keys(pm).map(m => ({ pure: pm[m], rate: metalRate999(m), metal: m })));
+      const nums = html.match(/<b>([^<]+)<\/b>/g).map(x => x.replace(/<\/?b>/g,''));
+      return parseInt(String(nums[nums.length-1]).replace(/[^0-9]/g,''),10) === valuation();
+    })());
+
+    /* THE PHYSICAL INVARIANT (spec 1.3): the sum of a subject's movements equals what is
+       physically at that subject's location. The refining loss is documented by the GAP between
+       melt_out and melt_in, not by a third deduction on the source — deducting it twice took
+       0.127 g off a pool that had only lost 12.400 g, and cache-equals-log reported clean
+       because both sides were wrong together. */
+    ok('melt does not deduct the loss twice', (()=>{
+      const ms = (S.moves||[]).filter(m => m.subject === 'b:au:585'
+        && ['open','receipt','buyin','melt_out'].indexOf(m.type) >= 0);
+      const physical = ms.reduce((a,m) => round3(a + num(m.dq)), 0);
+      return eqG(onHand('b:au:585'), physical);
+    })(), onHand('b:au:585') + ' on hand');
+    ok('the loss is still NAMED in the log', (S.moves||[]).some(m => m.type === 'loss'));
+    ok('lot basis follows the physical weight', (()=>{
+      const l1 = (S.lots||[]).find(l => l.id === 'l1');
+      return l1 && eqG(l1.leftG, round3(74.600 - 12.400));
+    })(), JSON.stringify(((S.lots||[]).find(l => l.id === 'l1')||{}).leftG));
+
+    /* A RE-WEIGH REWRITES THE PIECE (spec 5.4 + 1.3). adjust/count are exempt from the
+       whole-piece rule, and without the record following the ledger a piece's on-hand silently
+       diverged from its netG and from its price: the tray listed 5.37 g while the card priced
+       5.42 g and nothing reconciled them. */
+    ok('a re-weigh keeps piece, ledger and price coherent', (()=>{
+      const p = pieceById('i5'); if(!p) return false;
+      const sub = pieceSubj(p.id), st = p.stoneG;
+      for(let i=0;i<20;i++) postMove({ subject: sub, type:'adjust', dq: (i%2 ? 0.037 : -0.019),
+                                       ts: S.today, reason:'reweigh', note:'t'+i });
+      const on = onHand(sub), q = pieceById('i5');
+      return eqG(on, q.netG) && eqG(q.grossG, round3(q.netG + st))
+             && priceOf(q) === Math.round(q.netG*sellRate(q.metal)*q.fineness/999
+                  + safeAmd(q.stonesAmd,0) + safeAmd(q.makingG,0)*(S.cfg.makingBase==='net'?q.netG:q.grossG));
+    })());
+    ok('every on-hand piece still matches its record', (S.pieces||[]).every(p => {
+      const on = onHand(pieceSubj(p.id));
+      return eqG(on, 0) || eqG(on, num(p.netG));
+    }));
+    ok('ledger verifies after the re-weighs', verifyLedger().length === 0);
+
+    /* A NON-FINITE ON-HAND IS REPORTED, not coerced to 0 and passed. num() ran before the
+       isFinite test, so `nonFinite` was dead code and a cache holding NaN reported clean. */
+    ok('verifyLedger catches a NaN cache', (()=>{
+      S.stock['b:au:999x'] = NaN;
+      const bad = verifyLedger();
+      const caught = bad.some(x => x.subject === 'b:au:999x' && x.nonFinite);
+      delete S.stock['b:au:999x'];
+      return caught;
+    })());
+    ok('a missing cache entry is 0, not NaN', (()=>{
+      const k = 'b:au:585', keep = S.stock[k];
+      delete S.stock[k];
+      const bad = verifyLedger();
+      S.stock[k] = keep;
+      return bad.some(x => x.subject === k && !x.nonFinite);
+    })());
+
+    /* THE RAW dq IS JUDGED BEFORE IT IS SANITISED. round3() turned NaN and Infinity into 0 and
+       clampG() rewrote 1,000,000 to 99,999, so both used to append a permanent row and return
+       true. An append-only log cannot be corrected afterwards. */
+    ok('NaN dq is refused, not logged as 0', (()=>{
+      const n = (S.moves||[]).length;
+      const r = postMove({ subject:'b:au:750', type:'receipt', dq: NaN, ts: S.today, ref:'N1' });
+      return r === false && (S.moves||[]).length === n
+             && LEDGER_REJECTS.some(x => x.reason === 'nonfinite');
+    })());
+    ok('Infinity dq is refused', (()=>{
+      const n = (S.moves||[]).length;
+      return postMove({ subject:'b:au:750', type:'receipt', dq: Infinity, ts: S.today, ref:'N2' }) === false
+             && (S.moves||[]).length === n;
+    })());
+    ok('an out-of-range dq is refused, never silently clamped', (()=>{
+      const on = onHand('b:au:750'), n = (S.moves||[]).length;
+      const r = postMove({ subject:'b:au:750', type:'receipt', dq: 1000000, ts: S.today, ref:'CLAMP' });
+      return r === false && (S.moves||[]).length === n && eqG(onHand('b:au:750'), on)
+             && LEDGER_REJECTS.some(x => x.reason === 'toobig');
+    })());
+    ok('every refusal reason has a label', Object.keys(REJ_KEY).every(k =>
+      T.hy[REJ_KEY[k]] && T.en[REJ_KEY[k]] && T.ru[REJ_KEY[k]]));
+    ok('ledger verifies after the refusals', verifyLedger().length === 0);
 
     /* hallmark expertise */
     ok('under 1.5 g is exempt by weight', suggestHallmark({ metal:'au', netG:1.2, cat:'earring' }) === 'exempt_weight');
