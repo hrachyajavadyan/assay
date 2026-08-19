@@ -1551,9 +1551,23 @@ tr.hlflash{animation:none;background:var(--acc-tint)}
 
 /* ArmTrade hides its wordmark below 461px because its demo header carries SEVEN controls and
    a 320px row cannot hold them plus a brand. This product's header carries three, so the brand
-   stays: without it a phone screen opens on a bare date chip and two icons, which reads as
-   chrome that failed to load rather than as a product. */
+   stays down to 361px: without it a phone screen opens on a bare date chip and two icons, which
+   reads as chrome that failed to load rather than as a product. Its DESCRIPTOR goes first (a
+   clipped subtitle says less than no subtitle), and at 320px the wordmark itself goes rather
+   than render as «ԱրմՈ…» — a truncated brand is worse than an absent one. */
 @media (max-width:460px){ #top .logo{display:flex} #top .logo small{display:none} }
+@media (max-width:360px){ #top .logo>div{display:none} }
+
+/* A DERIVED FIELD MUST LOOK DERIVED. `disabled` alone renders almost identically to an editable
+   input in this design system, so the jeweller reaching for the third weight finds a box that
+   simply does not respond — which reads as a broken field, not as an answer the app computed.
+   It gets the quiet fill, a dashed edge and a dimmer ink: visibly a readout, not an input.
+   Contrast stays above AA because --muted is 5.8:1 on the light fill and 8.8:1 on the dark. */
+input:disabled{
+  background:var(--surface-2) !important;border-style:dashed !important;
+  border-color:var(--stroke2) !important;color:var(--muted) !important;
+  cursor:default;opacity:1;
+}
 
 /* a definition list inside a sheet: label above, figure below, on the 4px grid */
 .dl{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin:var(--s3) 0}
