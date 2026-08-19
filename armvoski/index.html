@@ -830,6 +830,7 @@ input.err,textarea.err{border-color:var(--danger)}
 .actsep{border-top:var(--bw) solid var(--stroke2)}
 .actsignline{border-bottom:var(--bw) solid var(--stroke2);height:26px;max-width:180px}
 .acttbl .actsub{display:none}
+.thshort{display:none}
 /* On a phone the 7-column act is ~465px wide inside a 352px wrapper, so ՓԱՍՏԱՑԻ, Δ and ֏ —
    the whole point of the document — scrolled off with no cue. Below 560px the two reference
    columns (Ապրանքի կոդ, Չափման միավոր) fold into a sub-line under the product name instead;
@@ -849,6 +850,12 @@ input.err,textarea.err{border-color:var(--danger)}
   .acttbl{font-size:var(--fs-micro)}
   /* the buy act has its own fold (columns 4 and 5) and only seven columns, so it keeps its Δ */
   .acttbl.buyact th:nth-child(6),.acttbl.buyact td:nth-child(6){display:table-cell}
+  /* A COLUMN IS AS WIDE AS ITS LONGEST WORD, and «Հաշվապ.» is a longer word than any figure
+     under it — five Armenian headers alone pushed the table 103px past a 358px wrapper, which is
+     the whole reason the dram column was off-screen. The header carries both forms and the
+     narrow screen shows the short one; print and desktop keep the full wording. */
+  .thlong{display:none}
+  .thshort{display:inline}
 }
 
 /* ---------- TOP BAR: one 52px row ---------- */
@@ -1434,6 +1441,8 @@ tr.hlflash{animation:none;background:var(--acc-tint)}
   /* the act keeps all seven columns on paper — the narrow-screen column hiding is screen-only */
   .acttbl th,.acttbl td{display:table-cell !important}
   .acttbl .actsub{display:none !important}
+  .thlong{display:inline !important}
+  .thshort{display:none !important}
 }
 
 /* ================= ArmVoski additions to the ArmTrade design system =================
@@ -2089,8 +2098,11 @@ T.hy = {
   cn_act:'ԳՈՒՅՔԱԳՐՄԱՆ ԱԿՏ',
   cn_act_basis:'Հիմք՝ խանութի ղեկավարի որոշում',
   cn_col_harg:'Մետաղ · Հարգ', cn_col_bpcs:'Հաշվապ. հատ', cn_col_apcs:'Փաստ. հատ',
-  cn_col_bg:'Հաշվապ. զուտ քաշ, գ', cn_col_ag:'Փաստ. զուտ քաշ, գ',
-  cn_col_atw:'Կշռման պահին, գ', cn_col_now:'Այժմ, գ',
+  cn_col_bg:'Հաշվապ. զուտ, գ', cn_col_ag:'Փաստ. զուտ, գ',
+  cn_col_atw:'Կշռման պահին, գ', cn_col_now:'Այժմ, գ', cn_in_amd:'Դրամով',
+  cn_col_harg_s:'Հարգ', cn_col_bpcs_s:'Հաշվ. հատ', cn_col_apcs_s:'Փաստ. հատ',
+  cn_col_bg_s:'Հաշվ., գ', cn_col_ag_s:'Փաստ., գ', cn_col_dpcs_s:'Δ հատ',
+  cn_col_dg_s:'Տարբ.', cn_col_amd_s:'֏',
   cn_col_dpcs:'Տարբ. հատ', cn_col_dg:'Տարբ. գ', cn_col_amd:'Գումար, ֏',
   cn_out:'Դուրս գտնվող իրեր',
   cn_out_note:'Այս իրերը խանութի պաշարն են, բայց խանութում չեն։ Հաշվառման շրջանակում չեն և պակասորդ չեն։',
@@ -2387,8 +2399,11 @@ T.en = {
   cn_act:'STOCK COUNT ACT',
   cn_act_basis:"Basis: the shop owner's decision",
   cn_col_harg:'Metal · Fineness', cn_col_bpcs:'Book pcs', cn_col_apcs:'Actual pcs',
-  cn_col_bg:'Book net weight, g', cn_col_ag:'Actual net weight, g',
-  cn_col_atw:'At weighing, g', cn_col_now:'Now, g',
+  cn_col_bg:'Book net, g', cn_col_ag:'Actual net, g',
+  cn_col_atw:'At weighing, g', cn_col_now:'Now, g', cn_in_amd:'In dram',
+  cn_col_harg_s:'Fineness', cn_col_bpcs_s:'Book pcs', cn_col_apcs_s:'Act. pcs',
+  cn_col_bg_s:'Book, g', cn_col_ag_s:'Act., g', cn_col_dpcs_s:'Δ pcs',
+  cn_col_dg_s:'Δ g', cn_col_amd_s:'֏',
   cn_col_dpcs:'Diff. pcs', cn_col_dg:'Diff. g', cn_col_amd:'Amount, ֏',
   cn_out:'Pieces out of the shop',
   cn_out_note:'These are the shop\'s stock but are not in the shop. They are outside the count scope and are not a shortage.',
@@ -2681,8 +2696,11 @@ T.ru = {
   cn_act:'АКТ ИНВЕНТАРИЗАЦИИ',
   cn_act_basis:'Основание: решение руководителя магазина',
   cn_col_harg:'Металл · Проба', cn_col_bpcs:'Учёт. шт', cn_col_apcs:'Факт. шт',
-  cn_col_bg:'Учёт. вес нетто, г', cn_col_ag:'Факт. вес нетто, г',
-  cn_col_atw:'На момент взвешивания, г', cn_col_now:'Сейчас, г',
+  cn_col_bg:'Учёт. нетто, г', cn_col_ag:'Факт. нетто, г',
+  cn_col_atw:'На момент взвешивания, г', cn_col_now:'Сейчас, г', cn_in_amd:'В драмах',
+  cn_col_harg_s:'Проба', cn_col_bpcs_s:'Учёт. шт', cn_col_apcs_s:'Факт. шт',
+  cn_col_bg_s:'Учёт., г', cn_col_ag_s:'Факт., г', cn_col_dpcs_s:'Δ шт',
+  cn_col_dg_s:'Δ г', cn_col_amd_s:'֏',
   cn_col_dpcs:'Разн. шт', cn_col_dg:'Разн. г', cn_col_amd:'Сумма, ֏',
   cn_out:'Изделия вне магазина',
   cn_out_note:'Это запас магазина, но его нет в магазине. В объём инвентаризации не входит и недостачей не является.',
@@ -3607,7 +3625,21 @@ function migrate(st){
     })) : [],
     skipped: Array.isArray(c.skipped) ? c.skipped.map(x => ({
       code: String(x.code||'').slice(0,24), name: String(x.name||'').slice(0,60),
-      metal: METALS.indexOf(x.metal) >= 0 ? x.metal : 'au', fineness: safeInt(x.fineness,0)
+      kind: x.kind === 'pool' ? 'pool' : 'piece',
+      metal: METALS.indexOf(x.metal) >= 0 ? x.metal : 'au', fineness: safeInt(x.fineness,0),
+      bookG: LEDGER.clamp(x.bookG)
+    })) : [],
+    /* the uncounted half of the act, subtotalled by metal and հարգ (spec 5.4). An act drawn by
+       an older build has none, and openCountAct falls back to the flat name list for it. */
+    unc: Array.isArray(c.unc) ? c.unc.map(u => ({
+      metal: METALS.indexOf(u.metal) >= 0 ? u.metal : 'au', fineness: safeInt(u.fineness,0),
+      pcs: Math.max(0, safeInt(u.pcs,0)), g: LEDGER.clamp(u.g)
+    })) : [],
+    /* subjects whose books moved between the weighing and the act */
+    moved: Array.isArray(c.moved) ? c.moved.map(m => ({
+      code: String(m.code||'').slice(0,24), name: String(m.name||'').slice(0,60),
+      metal: METALS.indexOf(m.metal) >= 0 ? m.metal : 'au', fineness: safeInt(m.fineness,0),
+      atG: LEDGER.clamp(m.atG), nowG: LEDGER.clamp(m.nowG), refused: m.refused ? 1 : 0
     })) : [],
     rate: { au: safeAmd((c.rate||{}).au, 0), ag: safeAmd((c.rate||{}).ag, 0) }
   })).slice(-200);
@@ -6109,6 +6141,12 @@ function cnOpenView(){
    valued in dram at the day's 999 rate, because that is what makes the act matter to the person
    signing it.
    ===================================================================================== */
+/* a header cell carrying both wordings — see the .thshort note in the stylesheet */
+function th2(key, cls){
+  return '<th' + (cls ? ' class="' + cls + '"' : '') + '>'
+    + '<span class="thlong">' + escH(t(key)) + '</span>'
+    + '<span class="thshort">' + escH(t(key + '_s')) + '</span></th>';
+}
 function openCountAct(id){
   const a = (S.counts||[]).find(x => x && x.id === id);
   if(!a) return;
@@ -6176,14 +6214,9 @@ function openCountAct(id){
 
     + (uncN ? '<div class="sec">' + escH(t('cn_counted_t')) + '</div>' : '')
     + (a.rows.length ? '<div class="tblwrap" style="max-height:none"><table class="tbl acttbl"><thead><tr>'
-      + '<th>' + escH(t('cn_col_harg')) + '</th>'
-      + '<th class="num">' + escH(t('cn_col_bpcs')) + '</th>'
-      + '<th class="num">' + escH(t('cn_col_apcs')) + '</th>'
-      + '<th class="num">' + escH(t('cn_col_bg')) + '</th>'
-      + '<th class="num">' + escH(t('cn_col_ag')) + '</th>'
-      + '<th class="num">' + escH(t('cn_col_dpcs')) + '</th>'
-      + '<th class="num">' + escH(t('cn_col_dg')) + '</th>'
-      + '<th class="num">' + escH(t('cn_col_amd')) + '</th>'
+      + th2('cn_col_harg', '') + th2('cn_col_bpcs', 'num') + th2('cn_col_apcs', 'num')
+      + th2('cn_col_bg', 'num') + th2('cn_col_ag', 'num') + th2('cn_col_dpcs', 'num')
+      + th2('cn_col_dg', 'num') + th2('cn_col_amd', 'num')
       + '</tr></thead><tbody>' + body + '</tbody></table></div>'
       : '<div class="muted">' + escH(t('cn_none')) + '</div>')
 
@@ -6198,7 +6231,7 @@ function openCountAct(id){
         + '<div><div class="l">' + escH(t('cn_pure_d') + ' · ' + metalLabel(m))
           + '</div><div class="v">' + (actPure[m] - bookPure[m] < -EPS ? '−' : '')
           + gramTxt(Math.abs(actPure[m] - bookPure[m]),3) + escH(t('u_g')) + '</div></div>'
-        + '<div><div class="l">' + escH(t('cn_val_diff') + ' · ' + metalLabel(m))
+        + '<div><div class="l">' + escH(t('cn_in_amd') + ' · ' + metalLabel(m))
           + '</div><div class="v">' + (metalAmd[m] < 0 ? '−' : '')
           + Math.abs(safeInt(metalAmd[m],0)).toLocaleString('en-US') + escH(' ֏') + '</div></div>').join('')
     + '</div>'
@@ -6290,9 +6323,13 @@ function openCountAct(id){
         + '<th class="num">' + escH(t('cn_col_bpcs')) + '</th>'
         + '<th class="num">' + escH(t('cn_col_bg')) + '</th></tr></thead><tbody>'
         + unc.map(u => '<tr><td>' + escH(metalLabel(u.metal) + ' ' + u.fineness)
+            /* the pool's own name already reads «Ջարդոն · Ոսկի», and inside a row that names the
+               metal and the հարգ that repeats the metal twice and makes the separator ambiguous:
+               within this row it is simply «Ջարդոն». */
             + '<span class="subkeep">' + escH((a.skipped||[]).filter(x =>
                 x.metal === u.metal && x.fineness === u.fineness)
-              .map(x => x.name + (x.code && x.code !== x.name ? ' ' + x.code : '')).join(' · ')) + '</span></td>'
+              .map(x => x.kind === 'pool' ? t('w_scrap')
+                    : x.name + (x.code && x.code !== x.name ? ' ' + x.code : '')).join(' · ')) + '</span></td>'
           + '<td class="num">' + safeInt(u.pcs,0) + '</td>'
           + '<td class="num">' + gramTxt(u.g,3) + '</td></tr>').join('')
         + '</tbody></table></div>'
