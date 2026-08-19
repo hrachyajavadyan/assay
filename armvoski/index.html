@@ -4276,11 +4276,21 @@ function byValid(){ return buyDiscSet() && byWeightsOk() && byPaid() > 0; }
 function byCalcHtml(){
   if(!buyDiscSet())
     return '<div class="notice bad">' + escH(t('by_needrate')) + '</div>';
-  if(!byWeightsOk())
-    return '<div class="notice bad">' + escH(lang==='hy'
-      ? 'Համախառն ≥ քարեր ≥ 0, զուտը՝ 0-ից մեծ։'
-      : (lang==='ru' ? 'Брутто ≥ камни ≥ 0, нетто больше нуля.'
-                     : 'Gross ≥ stones ≥ 0, and net must be above zero.')) + '</div>';
+  if(!byWeightsOk()){
+    /* AN UNTOUCHED FORM IS NOT AN ERROR. A red rail on a form nobody has typed into yet reads
+       as a mistake the jeweller has already made; it is only a constraint once he has put a
+       number in one of the two boxes. */
+    const typed = String(BY.grossG||'').trim() !== '' || String(BY.netG||'').trim() !== ''
+               || String(BY.stoneG||'').trim() !== '';
+    return '<div class="notice' + (typed ? ' bad' : '') + '">' + escH(
+      typed
+        ? (lang==='hy' ? 'Համախառն ≥ քարեր ≥ 0, զուտը՝ 0-ից մեծ։'
+          : (lang==='ru' ? 'Брутто ≥ камни ≥ 0, нетто больше нуля.'
+                         : 'Gross ≥ stones ≥ 0, and net must be above zero.'))
+        : (lang==='hy' ? 'Դրեք իրը կշեռքին և մուտքագրեք քաշը՝ գինը կհաշվարկվի։'
+          : (lang==='ru' ? 'Положите изделие на весы и введите вес — цена рассчитается.'
+                         : 'Put the item on the scale and type the weight; the price follows.'))) + '</div>';
+  }
   const w = byWeights();
   return '<div class="pricebox">'
     + '<div class="l">' + escH(t('by_paid')) + '</div>'
@@ -4563,7 +4573,7 @@ function openBuyAct(ref){
     + '<td class="num">' + safeAmd(a.fineRate,0).toLocaleString('en-US') + '</td>'
     + '<td class="num">' + safeAmd(a.metalAmd,0).toLocaleString('en-US') + '</td></tr>'];
   if(safeAmd(a.stonesAmd,0)) rows.push('<tr>'
-    + '<td>2<span class="actsub">' + escH(t('act_stones_row')) + '</span></td>'
+    + '<td>2<span class="actsub">' + escH(t('act_stones_row') + ' · ' + gramTxt(a.stoneG,3) + t('u_g')) + '</span></td>'
     + '<td>' + escH(t('act_stones_row')) + '</td><td class="num">—</td><td class="num">—</td>'
     + '<td class="num">' + gramTxt(a.stoneG,3) + '</td><td class="num">—</td><td class="num">—</td>'
     + '<td class="num">' + safeAmd(a.stonesAmd,0).toLocaleString('en-US') + '</td></tr>');
