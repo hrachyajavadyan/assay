@@ -1829,6 +1829,8 @@ T.hy = {
   pc_title:'Իրի քարտ', pc_onhand:'Մնացորդ', pc_hist:'Շարժի պատմություն', pc_hist_empty:'Շարժեր չկան',
   pc_bal:'Մնացորդ', pc_weighed_gross:'Կշռվել է համախառն', pc_weighed_net:'Կշռվել է զուտ',
   pc_derived:'ածանցյալ', pc_added:'Ավելացվել է',
+  ni_title:'Նոր իր', ni_save:'Ավելացնել իրը', ni_done:'Իրն ավելացվեց',
+  ni_weighed:'Ո՞ր քաշն եք կշռել', acq_nodoc:'Փաստաթուղթ չկա',
   /* ---- ledger ---- */
   led_title:'Շարժի պատմություն', led_actor:'Ով', actor_shop:'Խանութ', actor_system:'Համակարգ',
   led_verify_ok:'Հաշվեկշիռը ճիշտ է՝ {n} շարժ, {m} օբյեկտ',
@@ -1929,6 +1931,8 @@ T.en = {
   pc_title:'Item card', pc_onhand:'On hand', pc_hist:'Stock movements', pc_hist_empty:'No movements yet',
   pc_bal:'Balance', pc_weighed_gross:'Weighed as gross', pc_weighed_net:'Weighed as net',
   pc_derived:'derived', pc_added:'Added',
+  ni_title:'New item', ni_save:'Add the item', ni_done:'Item added',
+  ni_weighed:'Which weight did you put on the scale?', acq_nodoc:'No document',
   led_title:'Stock movements', led_actor:'By', actor_shop:'Shop', actor_system:'System',
   led_verify_ok:'Ledger is consistent — {n} movements, {m} subjects',
   led_verify_bad:'Ledger disagrees on {n} subjects',
@@ -2025,6 +2029,8 @@ T.ru = {
   pc_title:'Карточка изделия', pc_onhand:'Остаток', pc_hist:'История движений', pc_hist_empty:'Движений нет',
   pc_bal:'Остаток', pc_weighed_gross:'Взвешено брутто', pc_weighed_net:'Взвешено нетто',
   pc_derived:'производное', pc_added:'Добавлено',
+  ni_title:'Новое изделие', ni_save:'Добавить изделие', ni_done:'Изделие добавлено',
+  ni_weighed:'Какой вес вы взвесили?', acq_nodoc:'Нет документа',
   led_title:'История движений', led_actor:'Кто', actor_shop:'Магазин', actor_system:'Система',
   led_verify_ok:'Баланс сходится — {n} движений, {m} объектов',
   led_verify_bad:'Баланс не сходится по {n} объектам',
@@ -2385,12 +2391,17 @@ function breakdown(p){
   const mkRate = safeAmd(p.makingG, 0), mkW = makingWeight(p);
   const making = Math.round(mkRate * mkW);
   const parts = [];
-  parts.push('<b>' + gramTxt(p.netG) + t('u_g') + '</b>'
+  /* THE BREAKDOWN LINE PRINTS WEIGHTS AT FULL STORED PRECISION (3dp), never at the shop's
+     DISPLAY precision. The display setting exists so a tray of two-decimal figures scans
+     cleanly; this line exists so the jeweller can reproduce the total in his head. Printing
+     «3.81» beside a total computed from 3.813 makes the two disagree by 94 dram — small, and
+     fatal, because the ONE promise this line makes is that its own numbers give its own answer. */
+  parts.push('<b>' + gramTxt(p.netG, 3) + t('u_g') + '</b>'
     + '<span class="op">&times;</span>' + '<b>' + sr.toLocaleString('en-US') + '</b>'
     + '<span class="op">&times;</span>' + '<b>' + f + '/999</b>');
   if(stones) parts.push('<b>' + stones.toLocaleString('en-US') + '</b>');
   if(mkRate) parts.push('<b>' + mkRate.toLocaleString('en-US') + '</b><span class="op">&times;</span><b>'
-    + gramTxt(mkW) + t('u_g') + '</b>');
+    + gramTxt(mkW, 3) + t('u_g') + '</b>');
   const why = [];
   why.push(t(S.cfg.makingBase === 'net' ? 'pr_base_net' : 'pr_base_gross'));
   why.push(fmt('pr_margin_note', { p: pctTxt(S.cfg.marginPct) }));
@@ -2401,7 +2412,7 @@ function breakdown(p){
 function buyBreakdown(netG, fineness){
   const br = buyRate(), f = safeInt(fineness,0);
   const paid = buyPriceOf(netG, fineness);
-  return '<div class="brk"><b>' + gramTxt(netG) + t('u_g') + '</b>'
+  return '<div class="brk"><b>' + gramTxt(netG, 3) + t('u_g') + '</b>'
     + '<span class="op">&times;</span><b>' + br.toLocaleString('en-US') + '</b>'
     + '<span class="op">&times;</span><b>' + f + '/999</b>'
     + '<span class="eq">=</span><b>' + paid.toLocaleString('en-US') + ' ֏</b>'
@@ -3077,7 +3088,8 @@ function viewTray(){
   const pm = pureByMetal();
   if(!groups.length){
     return '<main class="anim"><div class="sec">' + escH(t('tray_title')) + '</div>'
-      + '<div class="empty"><div class="em">💍</div><div>' + escH(t('tray_empty')) + '</div></div></main>';
+      + '<div class="empty"><div class="em">💍</div><div>' + escH(t('tray_empty')) + '</div></div>'
+      + '<button class="btn primary" onclick="openNewItem()">+ ' + escH(t('ni_title')) + '</button></main>';
   }
   const body = groups.map(g => {
     const r999 = metalRate999(g.metal);
@@ -3124,6 +3136,10 @@ function viewTray(){
 
   return '<main class="anim">'
     + '<div class="sec">' + escH(t('tray_title')) + '</div>'
+    /* the tray's ONE accent-filled action: putting a piece in it. Everything else on this screen
+       is a row you read or tap through. */
+    + '<button class="btn primary" style="margin-bottom:12px" onclick="openNewItem()">+ '
+      + escH(t('ni_title')) + '</button>'
     + '<div class="puretot"><div class="l">' + escH(t('tray_pure_lbl')) + '</div>'
       + Object.keys(pm).map(m => '<div class="v">' + gramTxt(pm[m],3) + '<span class="g">'
           + escH(t('u_g')) + '</span> <span class="mlbl">' + escH(metalLabel(m)) + ' 999</span></div>').join('')
@@ -3349,6 +3365,231 @@ function viewFor(k){
 }
 
 /* =====================================================================================
+   ADDING A PIECE (spec 1.5, 1.6)
+   The one form in the foundation, and it exists because two rules in the item model are only
+   real if you can see them working:
+
+   1. THE JEWELLER TYPES TWO OF THE THREE WEIGHTS AND THE THIRD IS DERIVED AND LOCKED. The
+      derived field is genuinely disabled — not merely recalculated — so there is never a moment
+      where three mutually inconsistent numbers are on screen and the app has to guess which two
+      the scale produced. `weighedAs` records which pair it was, because a later dispute turns on
+      exactly that.
+   2. `acq.preJul26` IS STORED AT CREATION, not derived at read time. It is computed here, once,
+      from the acquisition date the jeweller gives, and thereafter it is what the record says it
+      is — a device clock change or a later legal change cannot silently reclassify old stock into
+      the other tax treatment.
+
+   The draft lives outside S: nothing enters the ledger until the jeweller commits, and the
+   commit goes through postMove() like every other gram in the shop.
+   ===================================================================================== */
+let NI = null;
+function niFresh(){
+  return {
+    code:'', metal:'au', fineness:585, cat:'ring',
+    weighedAs:'gross', grossG:'', stoneG:'', netG:'',
+    stonesAmd:'', makingG:'',
+    costAmd:'', costKnown:true, docType:'invoice', docRef:'', acqDate: S.today,
+    note:''
+  };
+}
+/* the derived third field, computed from whichever two the jeweller is typing */
+function niWeights(){
+  const stone = Math.max(0, round3(num(NI.stoneG)));
+  if(NI.weighedAs === 'net'){
+    const net = round3(num(NI.netG));
+    return { weighedAs:'net', stoneG:stone, netG:net, grossG: round3(net + stone) };
+  }
+  const gross = round3(num(NI.grossG));
+  return { weighedAs:'gross', stoneG:stone, grossG:gross, netG: round3(gross - stone) };
+}
+function niPiece(){
+  const w = niWeights();
+  return {
+    id:'draft', model:null, code:NI.code, metal:NI.metal, fineness:safeInt(NI.fineness,585),
+    grossG:w.grossG, stoneG:w.stoneG, netG:w.netG, weighedAs:w.weighedAs,
+    stonesAmd:safeAmd(NI.stonesAmd,0), makingG:safeAmd(NI.makingG,0), cat:NI.cat
+  };
+}
+function openNewItem(){
+  NI = niFresh();
+  niRender();
+}
+function niSet(k, v){
+  if(!NI) return;
+  NI[k] = v;
+  if(k === 'metal' && FINENESS[v].indexOf(safeInt(NI.fineness,0)) < 0) NI.fineness = FINENESS[v][0];
+  niRender();
+}
+/* typing must not re-render — that would move the caret. The numeric fields update the draft and
+   repaint only the derived readout and the price. */
+function niNum(k, v){
+  if(!NI) return;
+  NI[k] = v;
+  niPaint();
+}
+function niPaint(){
+  const w = niWeights(), p = niPiece();
+  const el = id => document.getElementById(id);
+  try{
+    const d = el('niDerived');
+    if(d) d.value = gramTxt(NI.weighedAs === 'net' ? w.grossG : w.netG, 3);
+    const pv = el('niPreview');
+    if(pv) pv.innerHTML = niPreviewHtml(p);
+    const sv = el('niSave');
+    if(sv) sv.className = 'btn primary' + (niValid(p) ? '' : ' off');
+  }catch(e){}
+}
+function niValid(p){
+  return weightsValid(p) && (!NI.costKnown || safeAmd(NI.costAmd,0) > 0);
+}
+function niPreviewHtml(p){
+  if(!weightsValid(p))
+    return '<div class="notice bad">' + escH(lang==='hy'
+      ? 'Համախառն ≥ քարեր ≥ 0, զուտը՝ 0-ից մեծ։'
+      : (lang==='ru' ? 'Брутто ≥ камни ≥ 0, нетто больше нуля.'
+                     : 'Gross ≥ stones ≥ 0, and net must be above zero.')) + '</div>';
+  const hm = suggestHallmark(p);
+  const pre = safeInt(NI.acqDate, S.today) < JUL26;
+  return '<div class="row"><span class="mlbl">' + escH(t('pr_computed')) + '</span>'
+    + '<span class="big">' + priceOf(p).toLocaleString('en-US') + '<span class="cur">֏</span></span></div>'
+    + breakdown(p)
+    + '<div class="row" style="margin-top:10px"><span class="mlbl">' + escH(t('w_pure')) + '</span>'
+      + '<span>' + gram(pureG(p.netG, p.fineness), 3) + '</span></div>'
+    /* the app knows the hallmark exemption and says why, rather than flagging a legitimate item */
+    + '<div class="notice">' + escH(hmLabel(hm))
+      + (hm === 'exempt_weight' ? ' — ' + fmt('hm_why_weight', { g: (HM_EXEMPT_G[p.metal]||1.5) + ' ' + t('u_g') }) : '')
+      + '</div>'
+    + '<div class="notice">' + escH(pre ? t('acq_pre') : t('acq_post')) + '</div>';
+}
+function niRender(){
+  if(!NI) return;
+  const p = niPiece(), w = niWeights();
+  const chip = (on, fn, label) => '<button class="tbtn wide' + (on ? ' on' : '') + '" onclick="' + fn + '">'
+    + escH(label) + '</button>';
+  const gLbl = NI.weighedAs === 'net' ? t('w_net') : t('w_gross');
+  const dLbl = NI.weighedAs === 'net' ? t('w_gross') : t('w_net');
+  openModal(
+    '<h3>' + escH(t('ni_title')) + '</h3>'
+
+    + '<label class="fieldlbl" for="niCode">' + escH(t('w_code')) + '</label>'
+    + '<input id="niCode" type="text" maxlength="24" value="' + escH(NI.code) + '" oninput="niNum(\'code\',this.value)">'
+
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('w_metal')) + '</div>'
+    + '<div class="chips">' + METALS.map(m => chip(NI.metal===m, 'niSet(' + jsArg('metal') + ',' + jsArg(m) + ')', metalLabel(m))).join('') + '</div>'
+
+    /* 583 sits beside 585 in this list, distinct and never normalised away */
+    + '<div class="fieldlbl">' + escH(t('w_harg')) + '</div>'
+    + '<div class="chips">' + FINENESS[NI.metal].map(f =>
+        chip(safeInt(NI.fineness,0)===f, 'niSet(' + jsArg('fineness') + ',' + f + ')', String(f))).join('') + '</div>'
+
+    + '<div class="fieldlbl">' + escH(t('w_cat')) + '</div>'
+    + '<div class="chips wrap">' + CATS.map(c =>
+        chip(NI.cat===c, 'niSet(' + jsArg('cat') + ',' + jsArg(c) + ')', catLabel(c))).join('') + '</div>'
+
+    /* WHICH TWO CAME OFF THE SCALE. This is `weighedAs`, and it is a choice the jeweller makes,
+       not something the app infers from which box happens to be filled. */
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('ni_weighed')) + '</div>'
+    + '<div class="chips">'
+      + chip(NI.weighedAs==='gross', 'niSet(' + jsArg('weighedAs') + ',' + jsArg('gross') + ')', t('w_gross'))
+      + chip(NI.weighedAs==='net',   'niSet(' + jsArg('weighedAs') + ',' + jsArg('net') + ')',   t('w_net'))
+    + '</div>'
+    + '<label class="fieldlbl" for="niW">' + escH(gLbl) + ' (' + escH(t('u_g')) + ')</label>'
+    + '<input id="niW" type="number" inputmode="decimal" min="0" step="0.001" value="'
+      + escH(NI.weighedAs==='net' ? NI.netG : NI.grossG) + '" oninput="niNum(' + jsArg(NI.weighedAs==='net'?'netG':'grossG') + ',this.value)">'
+    + '<label class="fieldlbl" for="niS" style="margin-top:12px">' + escH(t('w_stone')) + ' (' + escH(t('u_g')) + ')</label>'
+    + '<input id="niS" type="number" inputmode="decimal" min="0" step="0.001" value="'
+      + escH(NI.stoneG) + '" oninput="niNum(' + jsArg('stoneG') + ',this.value)">'
+    /* THE DERIVED FIELD IS DISABLED, not merely recomputed. Three editable weights would be
+       three chances to disagree with the scale. */
+    + '<label class="fieldlbl" for="niDerived" style="margin-top:12px">' + escH(dLbl)
+      + ' (' + escH(t('pc_derived')) + ')</label>'
+    + '<input id="niDerived" type="text" disabled value="' + gramTxt(NI.weighedAs==='net' ? w.grossG : w.netG, 3) + '">'
+
+    + '<label class="fieldlbl" for="niSt" style="margin-top:12px">' + escH(t('w_stones_amd')) + '</label>'
+    + '<input id="niSt" type="number" inputmode="numeric" min="0" step="1" value="' + escH(NI.stonesAmd) + '" oninput="niNum(' + jsArg('stonesAmd') + ',this.value)">'
+    + '<label class="fieldlbl" for="niMk" style="margin-top:12px">' + escH(t('w_making')) + '</label>'
+    + '<input id="niMk" type="number" inputmode="numeric" min="0" step="1" value="' + escH(NI.makingG) + '" oninput="niNum(' + jsArg('makingG') + ',this.value)">'
+
+    + '<div class="sec">' + escH(t('acq_title')) + '</div>'
+    /* A MISSING COST NEVER BLOCKS THE PIECE. It is allowed, and it is stated, because under the
+       margin scheme the tax is then computed on the whole price. */
+    + '<div class="chips">'
+      + chip(NI.costKnown,  'niSet(' + jsArg('costKnown') + ',true)',  t('yes'))
+      + chip(!NI.costKnown, 'niSet(' + jsArg('costKnown') + ',false)', t('acq_nodoc'))
+    + '</div>'
+    + (NI.costKnown
+        ? '<label class="fieldlbl" for="niCost">' + escH(t('acq_cost')) + ' (֏)</label>'
+          + '<input id="niCost" type="number" inputmode="numeric" min="0" step="1" value="' + escH(NI.costAmd) + '" oninput="niNum(' + jsArg('costAmd') + ',this.value)">'
+          + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('acq_doc')) + '</div>'
+          + '<div class="chips">' + ['invoice','buyact','customs','opening'].map(d =>
+              chip(NI.docType===d, 'niSet(' + jsArg('docType') + ',' + jsArg(d) + ')', docLabel(d))).join('') + '</div>'
+          + '<label class="fieldlbl" for="niRef">' + escH(t('acq_ref')) + '</label>'
+          + '<input id="niRef" type="text" maxlength="40" value="' + escH(NI.docRef) + '" oninput="niNum(' + jsArg('docRef') + ',this.value)">'
+        : '<div class="alert bad"><div class="t">' + escH(t('acq_unknown')) + '</div></div>')
+    + '<label class="fieldlbl" for="niDate" style="margin-top:12px">' + escH(t('acq_date')) + '</label>'
+    + '<input id="niDate" type="date" value="' + isoDate(NI.acqDate) + '" oninput="niSetDate(this.value)">'
+
+    + '<div class="sec">' + escH(t('pr_title')) + '</div>'
+    + '<div id="niPreview">' + niPreviewHtml(p) + '</div>'
+
+    + '<button id="niSave" class="btn primary' + (niValid(p) ? '' : ' off') + '" style="margin-top:16px" onclick="niSave()">'
+      + escH(t('ni_save')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="NI=null;closeModal()">' + escH(t('cancel')) + '</button>'
+  );
+}
+function isoDate(ts){
+  const d = new Date(safeInt(ts, Date.now())); const p = n => (n<10?'0':'') + n;
+  return d.getUTCFullYear() + '-' + p(d.getUTCMonth()+1) + '-' + p(d.getUTCDate());
+}
+function niSetDate(v){
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(v||''));
+  if(m) NI.acqDate = Date.UTC(+m[1], +m[2]-1, +m[3]);
+  niPaint();
+  /* the pre/post 1 July 2026 line lives in the preview, so it repaints with the date */
+  try{ document.getElementById('niPreview').innerHTML = niPreviewHtml(niPiece()); }catch(e){}
+}
+function niSave(){
+  const p = niPiece();
+  if(!niValid(p)) return;
+  const acqDate = safeInt(NI.acqDate, S.today);
+  const id = contentId('i', [NI.code, NI.metal, NI.fineness, p.grossG, p.stoneG, acqDate].join(KSEP),
+                       (S.pieces||[]).length);
+  const piece = {
+    id, model:null, code:NI.code, metal:NI.metal, fineness:safeInt(NI.fineness,585),
+    grossG:p.grossG, stoneG:p.stoneG, netG:p.netG, weighedAs:p.weighedAs,
+    stonesAmd:safeAmd(NI.stonesAmd,0), makingG:safeAmd(NI.makingG,0), priceManual:0,
+    acq:{
+      costAmd: NI.costKnown ? safeAmd(NI.costAmd,0) : 0,
+      stoneCost:0, date: acqDate,
+      /* STORED HERE, ONCE, AT THE MOVEMENT THAT BRINGS THE METAL IN. */
+      preJul26: acqDate < JUL26,
+      docType: NI.costKnown ? NI.docType : 'none',
+      docRef: NI.costKnown ? NI.docRef : '',
+      source: NI.docType === 'buyact' ? 'public' : 'sup:manual',
+      known: !!NI.costKnown
+    },
+    hallmark:{ origin: suggestHallmark(p), makerMark:false, sentTs:0, backTs:0, docRef:'', office:'' },
+    location:'tray', cat:NI.cat, atg:'', note:NI.note, addedTs: S.today
+  };
+  S.pieces.push(piece);
+  migrate(S);
+  const ok = postMove({
+    subject: pieceSubj(id),
+    type: NI.docType === 'buyact' && NI.costKnown ? 'buyin' : (NI.costKnown ? 'receipt' : 'open'),
+    dq: piece.netG, ts: acqDate, cost: piece.acq.costAmd, ref: piece.acq.docRef, actor:'shop'
+  });
+  if(!ok){
+    /* the ledger refused, so the piece does not exist. Never leave a record the log disagrees
+       with — that is the one state this product may not be in. */
+    S.pieces = S.pieces.filter(x => x.id !== id);
+    const last = LEDGER_REJECTS[LEDGER_REJECTS.length-1];
+    toast(fmt('led_rejected', { r: last ? t(REJ_KEY[last.reason] || 'rej_nosubject') : '' }));
+    return;
+  }
+  NI = null; saveState(); closeModal(); U.tab = 'tray'; renderAll(); toast(t('ni_done'));
+}
+
+/* =====================================================================================
    RENDER + THE RECOVERY NET
    renderAll() is a try/catch around the whole paint. If a screen throws, the shopkeeper gets a
    card that offers him the last known-good state — never a white page, and never a lost shop.
@@ -3501,6 +3742,20 @@ function voskiSelfTest(){
     ok('price uses NET metal and GROSS making', priceOf(pi) === expect, priceOf(pi) + ' vs ' + expect);
     ok('breakdown renders the numbers', /5\.42|5\.420/.test(breakdown(pi)) && breakdown(pi).indexOf('750/999') > 0);
     ok('80% warning fires', !!fairValueWarn(100000, 70000) && fairValueWarn(100000, 90000) === null);
+    /* THE LINE MUST REPRODUCE ITS OWN TOTAL. Re-run the arithmetic from the PRINTED operands
+       alone: if the display precision ever creeps back into breakdown(), «3.81» beside a total
+       computed from 3.813 disagrees by 94 dram and the one promise the line makes is broken. */
+    ok('breakdown reproduces its own total', (S.pieces||[]).every(pc => {
+      const nums = String(breakdown(pc)).match(/<b>([^<]+)<\/b>/g).map(x => x.replace(/<\/?b>/g,''));
+      const G = x => parseFloat(String(x).replace(/[^0-9.]/g,''));
+      const N = x => parseInt(String(x).replace(/[^0-9]/g,''),10);
+      let i = 0;
+      const netv = G(nums[i++]), rt = N(nums[i++]), fin = N(nums[i++].split('/')[0]);
+      let tot = netv*rt*fin/999;
+      if(pc.stonesAmd) tot += N(nums[i++]);
+      if(pc.makingG){ const mr = N(nums[i++]), mw = G(nums[i++]); tot += mr*mw; }
+      return Math.abs(Math.round(tot) - N(nums[nums.length-1])) <= 1;
+    }));
 
     /* hallmark expertise */
     ok('under 1.5 g is exempt by weight', suggestHallmark({ metal:'au', netG:1.2, cat:'earring' }) === 'exempt_weight');
