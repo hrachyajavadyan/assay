@@ -1957,8 +1957,6 @@ T.hy = {
   /* ---- honest empty screens ---- */
   stub_title:'Այս էկրանը դեռ պատրաստ չէ',
   stub_recv:'Մատակարարից ընդունումը՝ քաշերով և ինքնարժեքով։',
-  stub_count:'Գույքագրումը՝ ըստ հարգի, կույր հաշվարկով, ակտով։',
-  stub_mark:'Հարգադրոշմավորման ուղարկում և վերադարձ։',
   stub_repair:'Հաճախորդի իրերի պահպանման մատյան — երբեք պաշարի մեջ։',
   stub_debts:'Մատակարարների մնացորդները՝ հաշիվներից և վճարումներից։',
   /* ---- Վաճառք (spec 2.2, 2.3, 5.3) ---- */
@@ -2070,6 +2068,43 @@ T.hy = {
   cn_done:'Գույքագրումը գրանցվեց՝ {r}',
   cn_recent:'Նախորդ ակտերը', cn_scope_lbl:'Շրջանակ',
   cn_pcs:'{n} հատ',
+  /* ---- Հարգադրոշմ (spec 5.1) ---- */
+  hm_intro:'Հարգորոշումն ու հարգադրոշմավորումը կատարում է լիցենզավորված տեսչությունը, ոչ թե ոսկերիչը։ Այս էկրանը վարում է կարգավիճակն ու հանձնման շրջափուլը — ոչ մի հարգորոշման արդյունք այստեղ չի գրանցվում։',
+  hm_custody:'Հանձնումը տեղափոխություն է, ոչ թե շարժ։ Իրը մնում է խանութի պաշարում և մնացորդում — փոխվում է միայն «Տեղը»։',
+  hm_todo:'Հանձնման ենթակա', hm_atoffice:'Տեսչությունում', hm_back:'Վերադարձած',
+  hm_ok:'Հարգադրոշմ չի պահանջվում',
+  hm_ok_note:'Ծրագիրը ինքն է հաշվում ազատումը՝ ոսկին 1.5 գ-ից, արծաթը 3 գ-ից թեթև, ջարդոն, ինչպես նաև արդեն դրոշմված իրերը։',
+  hm_todo_none:'Հանձնման ենթակա իր չկա',
+  hm_atoffice_none:'Տեսչությունում իր չկա',
+  hm_back_none:'Վերադարձած իր դեռ չկա',
+  hm_pick:'Ընտրել', hm_picked:'Ընտրված',
+  hm_send:'Ուղարկել հարգադրոշմավորման ({n})',
+  hm_send_t:'Հանձնում տեսչություն',
+  hm_office:'Տեսչությունը',
+  hm_send_go:'Կազմել հանձնման ցուցակը',
+  hm_send_done:'Հանձնման ցուցակը կազմված է՝ {r}',
+  hm_list:'ՀԱՆՁՆՄԱՆ ՑՈՒՑԱԿ',
+  hm_list_col_item:'Իր', hm_list_col_g:'Զուտ քաշ, գ',
+  hm_list_hand:'Հանձնեց', hm_list_take:'Ընդունեց',
+  hm_list_note:'Ցուցակը կազմված է երկու օրինակից՝ մեկական կողմերին։ Իրերը մնում են խանութի սեփականությունը։',
+  hm_days_out:'{n} օր տեսչությունում',
+  hm_late:'Ուշացած',
+  hm_ret:'Վերադարձավ',
+  hm_ret_t:'Վերադարձ տեսչությունից',
+  hm_ret_q:'Ի՞նչ դրոշմով է վերադարձել',
+  hm_ret_none:'Առանց հարգադրոշմի',
+  hm_ret_ref:'Տեսչության փաստաթղթի համար',
+  hm_ret_go:'Ընդունել իրը',
+  hm_ret_done:'Իրն ընդունվեց',
+  hm_status_t:'Իրի հարգադրոշմի կարգավիճակը',
+  hm_mark_exempt:'Ազատված է (անավարտ կամ այլ)',
+  hm_mark_eaeu:'Արդեն կրում է ԵԱՏՄ հարգադրոշմ',
+  hm_mark_am:'Արդեն կրում է ՀՀ հարգադրոշմ',
+  hm_mark_none:'Վերադարձնել «չհարգադրոշմված» կարգավիճակին',
+  hm_days_cfg:'Հիշեցնել, եթե իրը տեսչությունում է ավելի քան (օր)',
+  hm_days_note:'Սա ձեր սեփական հիշեցման շեմն է։ Տեսչության ժամկետների մասին ծրագիրը ոչինչ չի պնդում։',
+  hm_sends:'Նախորդ ցուցակները',
+  al_hm_late:'{n} իր՝ տեսչությունում {d} օրից ավելի',
   /* ---- the recovery net (ArmTrade's own strings) ---- */
   rec_title:'Ծրագիրը չկարողացավ բացել էջը',
   rec_body:'Տվյալների մի մասը վնասված է։ Կարող եք վերականգնել վերջին ճիշտ վիճակը՝ առանց հեռախոսից որևէ բան ջնջելու։',
@@ -2167,8 +2202,6 @@ T.en = {
   data_ns:'Data is stored on this device, separately from ARMGOLD.',
   stub_title:'This screen is not built yet',
   stub_recv:'Goods receipt from a supplier, by weight, capturing cost basis.',
-  stub_count:'Stock count by fineness, blind, with the act.',
-  stub_mark:'Send-out to the assay office and return.',
   stub_repair:"A custody register for the customer's metal — never in stock.",
   stub_debts:'Supplier balances, derived from bills and payments.',
   sl_search:'Search by code or name',
@@ -2274,6 +2307,42 @@ T.en = {
   cn_done:'Count recorded: {r}',
   cn_recent:'Previous acts', cn_scope_lbl:'Scope',
   cn_pcs:'{n} pcs',
+  hm_intro:'Assaying and hallmarking are done by a licensed office, not by the jeweller. This screen tracks the status and the send-out cycle — no assay result is ever recorded here.',
+  hm_custody:'A send-out is a change of location, not a movement. The piece stays the shop\'s stock and stays on hand — only «Location» changes.',
+  hm_todo:'To send', hm_atoffice:'At the assay office', hm_back:'Returned',
+  hm_ok:'No hallmark required',
+  hm_ok_note:'The app computes the exemption itself: gold under 1.5 g, silver under 3 g, scrap, and anything already stamped.',
+  hm_todo_none:'Nothing to send',
+  hm_atoffice_none:'Nothing at the assay office',
+  hm_back_none:'Nothing has come back yet',
+  hm_pick:'Pick', hm_picked:'Picked',
+  hm_send:'Send for hallmarking ({n})',
+  hm_send_t:'Hand over to the assay office',
+  hm_office:'Assay office',
+  hm_send_go:'Draw up the hand-over list',
+  hm_send_done:'Hand-over list drawn up: {r}',
+  hm_list:'HAND-OVER LIST',
+  hm_list_col_item:'Item', hm_list_col_g:'Net weight, g',
+  hm_list_hand:'Handed over by', hm_list_take:'Received by',
+  hm_list_note:'Drawn up in two copies, one for each party. The items remain the property of the shop.',
+  hm_days_out:'{n} d at the office',
+  hm_late:'Overdue',
+  hm_ret:'Came back',
+  hm_ret_t:'Return from the assay office',
+  hm_ret_q:'What did it come back carrying?',
+  hm_ret_none:'No hallmark',
+  hm_ret_ref:"The office's document no.",
+  hm_ret_go:'Take the piece back',
+  hm_ret_done:'Piece taken back',
+  hm_status_t:'Hallmark status of this piece',
+  hm_mark_exempt:'Exempt (unfinished or other)',
+  hm_mark_eaeu:'Already carries an EAEU hallmark',
+  hm_mark_am:'Already carries an RA hallmark',
+  hm_mark_none:'Back to «not hallmarked»',
+  hm_days_cfg:'Remind me if a piece is at the office longer than (days)',
+  hm_days_note:"This is your own reminder threshold. The app asserts nothing about the office's turnaround.",
+  hm_sends:'Previous lists',
+  al_hm_late:'{n} items at the assay office longer than {d} days',
   rec_title:'The app could not open this screen',
   rec_body:'Part of the data is damaged. You can restore the last good state without deleting anything from the phone.',
   rec_restore:'Restore the last good state',
@@ -2370,8 +2439,6 @@ T.ru = {
   data_ns:'Данные хранятся на этом устройстве, отдельно от ARMGOLD.',
   stub_title:'Этот экран ещё не готов',
   stub_recv:'Приёмка от поставщика — по весу, с себестоимостью.',
-  stub_count:'Инвентаризация по пробам, вслепую, с актом.',
-  stub_mark:'Передача в пробирную и возврат.',
   stub_repair:'Журнал хранения изделий клиента — никогда не в запасе.',
   stub_debts:'Остатки поставщиков — из счетов и платежей.',
   sl_search:'Поиск по коду или названию',
@@ -2477,6 +2544,42 @@ T.ru = {
   cn_done:'Инвентаризация записана: {r}',
   cn_recent:'Прежние акты', cn_scope_lbl:'Объём',
   cn_pcs:'{n} шт',
+  hm_intro:'Опробование и клеймение выполняет лицензированная инспекция, а не ювелир. Этот экран ведёт статус и цикл передачи — никакой результат опробования здесь не фиксируется.',
+  hm_custody:'Передача — это смена места, а не движение. Изделие остаётся запасом магазина и остаётся в остатке — меняется только «Место».',
+  hm_todo:'К передаче', hm_atoffice:'В инспекции', hm_back:'Вернулись',
+  hm_ok:'Клеймо не требуется',
+  hm_ok_note:'Освобождение приложение считает само: золото легче 1,5 г, серебро легче 3 г, лом, а также уже заклеймённые изделия.',
+  hm_todo_none:'Передавать нечего',
+  hm_atoffice_none:'В инспекции ничего нет',
+  hm_back_none:'Пока ничего не вернулось',
+  hm_pick:'Выбрать', hm_picked:'Выбрано',
+  hm_send:'Передать на клеймение ({n})',
+  hm_send_t:'Передача в инспекцию',
+  hm_office:'Инспекция',
+  hm_send_go:'Составить список передачи',
+  hm_send_done:'Список передачи составлен: {r}',
+  hm_list:'СПИСОК ПЕРЕДАЧИ',
+  hm_list_col_item:'Изделие', hm_list_col_g:'Вес нетто, г',
+  hm_list_hand:'Сдал', hm_list_take:'Принял',
+  hm_list_note:'Составлен в двух экземплярах, по одному каждой стороне. Изделия остаются собственностью магазина.',
+  hm_days_out:'{n} дн в инспекции',
+  hm_late:'Просрочено',
+  hm_ret:'Вернулось',
+  hm_ret_t:'Возврат из инспекции',
+  hm_ret_q:'С каким клеймом вернулось?',
+  hm_ret_none:'Без клейма',
+  hm_ret_ref:'Номер документа инспекции',
+  hm_ret_go:'Принять изделие',
+  hm_ret_done:'Изделие принято',
+  hm_status_t:'Статус клеймения изделия',
+  hm_mark_exempt:'Освобождено (незавершённое или иное)',
+  hm_mark_eaeu:'Уже несёт клеймо ЕАЭС',
+  hm_mark_am:'Уже несёт клеймо РА',
+  hm_mark_none:'Вернуть статус «без клейма»',
+  hm_days_cfg:'Напомнить, если изделие в инспекции дольше (дней)',
+  hm_days_note:'Это ваш собственный порог напоминания. О сроках инспекции приложение ничего не утверждает.',
+  hm_sends:'Прежние списки',
+  al_hm_late:'{n} изделий в инспекции дольше {d} дней',
   rec_title:'Приложение не смогло открыть экран',
   rec_body:'Часть данных повреждена. Можно восстановить последнее исправное состояние, ничего не удаляя с телефона.',
   rec_restore:'Восстановить последнее исправное состояние',
@@ -2579,6 +2682,11 @@ function freshCfg(){
        the whole object. The breakdown line names which weight it used either way. */
     makingBase: 'gross',
     gramDp: 2,
+    /* THE SHOP'S OWN REMINDER THRESHOLD for a piece sitting at the assay office, and the office it
+       usually uses. The research could source no assay-office turnaround at all (register item
+       16), so the product PROMISES NOTHING about how long the office takes — it only counts the
+       days and tells the jeweller when HIS OWN threshold is passed. */
+    hmDays: 14, hmOffice: '',
     regime: '', taxRate: 0
   };
 }
@@ -2593,7 +2701,7 @@ function freshState(){
     sales:[], buys:[],
     /* the OPEN count session, so a count survives a reload and the phone going to sleep in the
        middle of a cabinet; and the finished acts. */
-    count:null, counts:[],
+    count:null, counts:[], hmSends:[],
     /* the repair custody register. NEVER stock: see the repairs section. */
     repairs:[]
   };
@@ -3015,6 +3123,8 @@ function migrate(st){
     ? null : Math.max(0, Math.min(90, num(st.cfg.buyDiscPct)));
   st.cfg.makingBase = st.cfg.makingBase === 'net' ? 'net' : 'gross';
   st.cfg.gramDp = st.cfg.gramDp === 3 ? 3 : 2;
+  st.cfg.hmDays = Math.max(1, Math.min(365, safeInt(st.cfg.hmDays != null ? st.cfg.hmDays : d.hmDays, 14)));
+  st.cfg.hmOffice = String(st.cfg.hmOffice == null ? d.hmOffice : st.cfg.hmOffice).slice(0,60);
   st.cfg.regime = ['micro','turnover','vat'].indexOf(st.cfg.regime) >= 0 ? st.cfg.regime : '';
   /* NO TAX RATE SHIPS. The retail turnover rate is single-sourced at 10% against a long-standing
      5%, and the producer VAT floor is a genuine conflict between two sources. The owner types a
@@ -3031,7 +3141,7 @@ function migrate(st){
   st.rate.by = String(st.rate.by || 'shop').slice(0,24);
 
   const arr = k => { if(!Array.isArray(st[k])) st[k] = []; };
-  ['models','pieces','pools','lots','moves','sales','buys','counts','repairs'].forEach(arr);
+  ['models','pieces','pools','lots','moves','sales','buys','counts','repairs','hmSends'].forEach(arr);
 
   /* ---- models: catalogue rows, no quantity, never in the ledger ---- */
   st.models = st.models.filter(m => m && m.id).map(m => ({
@@ -3239,6 +3349,20 @@ function migrate(st){
       metal: METALS.indexOf(x.metal) >= 0 ? x.metal : 'au', fineness: safeInt(x.fineness,0)
     })) : [],
     rate: { au: safeAmd((c.rate||{}).au, 0), ag: safeAmd((c.rate||{}).ag, 0) }
+  })).slice(-200);
+
+  /* ---- hand-over lists. A list that cannot be reprinted is a list the shop cannot produce when
+     the assay office asks which items it holds. ---- */
+  st.hmSends = st.hmSends.filter(x => x && x.id).map(h => ({
+    id: String(h.id).slice(0,40),
+    ts: safeInt(h.ts, st.today),
+    office: String(h.office || '').slice(0,60),
+    items: (Array.isArray(h.items) ? h.items : []).map(i => ({
+      id: String(i.id||'').slice(0,24), code: String(i.code||'').slice(0,24),
+      name: String(i.name||'').slice(0,60),
+      metal: METALS.indexOf(i.metal) >= 0 ? i.metal : 'au',
+      fineness: safeInt(i.fineness,0), netG: Math.max(0, LEDGER.clamp(i.netG))
+    }))
   })).slice(-200);
 
   /* ---- the repair custody register (spec 8). THE CUSTOMER'S METAL, NEVER THE SHOP'S STOCK:
@@ -3791,6 +3915,11 @@ function viewHome(){
   if(rateStale()) alerts.push({ bad:true, t: t('al_rate'), d: rateAgeTxt() });
   if(cov.miss) alerts.push({ bad:true, t: fmt('al_hdm', { n: cov.miss }), d: t('al_hdm_d') });
   if(noCost) alerts.push({ bad:true, t: fmt('al_nocost', { n: noCost }), d: t('acq_unknown') });
+  const late = hmLateCount();
+  /* A PIECE THAT HAS BEEN AT THE ASSAY OFFICE PAST THE SHOP'S OWN THRESHOLD. The threshold is the
+     jeweller's own, not a promise about the office — no assay-office turnaround could be sourced. */
+  if(late) alerts.push({ bad:true, t: fmt('al_hm_late', { n: late, d: safeInt(S.cfg.hmDays,14) }),
+                         d: t('hm_days_note') });
   if(atAssay) alerts.push({ bad:false, t: fmt('al_assay', { n: atAssay }), d: t('hm_title') });
 
   return '<main class="anim">'
@@ -4136,6 +4265,7 @@ function cfgSet(k, v){
   if(k==='buyDiscPct') S.cfg[k] = (String(v).trim()==='' ? null : num(v));
   else if(k==='marginPct') S.cfg[k] = num(v);
   else if(k==='gramDp') S.cfg[k] = safeInt(v,2)===3 ? 3 : 2;
+  else if(k==='hmDays') S.cfg[k] = Math.max(1, Math.min(365, safeInt(v,14)));
   else S.cfg[k] = v;
   migrate(S); saveState();
   if(k==='makingBase' || k==='gramDp') renderAll();
@@ -4167,6 +4297,7 @@ function viewFor(k){
   if(k === 'buy')  return viewBuy();
   if(k === 'tray') return viewTray();
   if(k === 'count') return viewCount();
+  if(k === 'mark')  return viewMark();
   if(k === 'data') return viewData();
   return stubView(k);
 }
@@ -5618,6 +5749,346 @@ function openCountAct(id){
 }
 
 /* =====================================================================================
+   ՀԱՐԳԱԴՐՈՇՄԱՎՈՐՈՒՄ — hallmarking (spec 5.1)
+
+   THE ORDINARY JEWELLER IS NOT THE ASSAYER. Assaying (հարգորոշում) and hallmarking
+   (հարգադրոշմավորում) may be performed only by licensed practitioners at licensed premises, so
+   this screen records NO ASSAY RESULT. It tracks a STATUS and a SEND-OUT CYCLE, and — the useful
+   part — it knows which items need no stamp at all and says why.
+
+   THREE RULES:
+
+   1. `origin` IS AN ENUM, NOT A BOOLEAN. An unstamped item is legitimate in six different ways
+      (under weight, scrap, unfinished, EAEU-marked, RA-marked, or genuinely unstamped) and the UI
+      must not treat any of them as an error. hmNeed() is the ONE place that decides whether an
+      item is actually waiting for a stamp.
+   2. SEND-OUT IS A LOCATION CHANGE, NOT A MOVEMENT (spec 1.3). The piece is still the shop's
+      stock and still on-hand. Posting a movement for it would make a hand-over read as a sale in
+      the books and as a shortage at the next count. NOTHING IN THIS SECTION CALLS postMove().
+   3. THE APP COMPUTES THE EXEMPTION AND SAYS WHY, so it never asks a jeweller for a stamp that is
+      not required — a 1.2 g gold earring is exempt by weight and the screen states the rule
+      rather than flagging a legitimate item.
+
+   Terminology, hard rule: հարգադրոշմ / հարգադրոշմավորում, never the bare դրոշմավորում — that
+   word also names the track-and-trace regime and a stamp-duty concept. Three regimes, one root.
+   ===================================================================================== */
+let HMPICK = {};        /* the batch selection for a hand-over: pieceId -> 1 */
+let HM_SHEET = null;    /* the piece whose status or return sheet is open */
+
+/* THE ONE PLACE that decides whether a piece is waiting for a stamp. Returns '' when it is not,
+   and the reason key when it is exempt or already marked. */
+function hmState(p){
+  const o = p.hallmark.origin;
+  if(o === 'am_assay' || o === 'eaeu') return o;              /* already carries a stamp */
+  if(o.indexOf('exempt_') === 0) return o;                    /* exempt, for a stated reason */
+  const sug = suggestHallmark(p);                             /* the app's own computation */
+  if(sug !== 'none') return sug;                              /* under weight, or scrap */
+  return '';                                                  /* '' means: a stamp is wanted */
+}
+const hmNeeds = p => hmState(p) === '';
+/* the human reason beside the state, so «Ազատված՝ քաշով» never appears without the rule it rests on */
+function hmReason(p){
+  const st = hmState(p);
+  if(st === 'exempt_weight') return fmt('hm_why_weight', { g: (HM_EXEMPT_G[p.metal] || 1.5) + ' ' + t('u_g') });
+  return '';
+}
+const hmDaysOut = p => cnDays(safeInt(p.hallmark.sentTs, 0) || safeInt(p.locTs, 0));
+const hmLate = p => { const d = hmDaysOut(p); return d >= 0 && d > safeInt(S.cfg.hmDays, 14); };
+
+function hmLists(){
+  const on = pieceRows();
+  const todo = [], office = [], back = [], fine = [];
+  on.forEach(x => {
+    const p = x.p;
+    if(p.location === 'assay'){ office.push(x); return; }
+    if(CN_IN_SHOP.indexOf(p.location) < 0) return;            /* workshop / customer: not this screen */
+    if(hmNeeds(p)) todo.push(x); else fine.push(x);
+  });
+  (S.pieces||[]).forEach(p => { if(safeInt(p.hallmark.backTs,0)) back.push(p); });
+  back.sort((a,b) => safeInt(b.hallmark.backTs,0) - safeInt(a.hallmark.backTs,0));
+  office.sort((a,b) => hmDaysOut(b.p) - hmDaysOut(a.p));
+  return { todo, office, back: back.slice(0,10), fine };
+}
+const hmLateCount = () => pieceRows().filter(x => x.p.location === 'assay' && hmLate(x.p)).length;
+
+function hmPick(id){
+  if(HMPICK[id]) delete HMPICK[id]; else HMPICK[id] = 1;
+  renderAll();
+}
+function hmPickN(){ return Object.keys(HMPICK).filter(id => { const p = pieceById(id);
+  return p && p.location !== 'assay' && onHand(pieceSubj(id)) > EPS; }).length; }
+
+/* ---- the status sheet: the six legitimate ways an item can be unstamped ---- */
+function hmStatusSheet(id){
+  const p = pieceById(id);
+  if(!p) return;
+  HM_SHEET = id;
+  const b = (fn, label) => '<button class="btn ghost full" style="margin-top:9px" onclick="' + fn + '">'
+    + escH(label) + '</button>';
+  openModal('<h3>' + escH(t('hm_status_t')) + '</h3>'
+    + '<div class="row"><span style="font-size:17px;font-weight:700">' + escH(modelName(p)) + '</span>'
+      + '<span class="harg ' + p.metal + '">' + safeInt(p.fineness,0) + '</span></div>'
+    + '<div class="muted" style="margin-top:4px">' + escH([p.code, catLabel(p.cat),
+        gramTxt(p.netG,3) + t('u_g')].filter(Boolean).join(' · ')) + '</div>'
+    + '<div class="row" style="margin-top:12px"><span class="mlbl">' + escH(t('hm_title')) + '</span>'
+      + '<span>' + escH(hmLabel(p.hallmark.origin)) + '</span></div>'
+    + (hmReason(p) ? '<div class="notice">' + escH(hmReason(p)) + '</div>' : '')
+    + '<div class="notice">' + escH(t('hm_custody')) + '</div>'
+    + b('hmSetOrigin(' + jsArg('am_assay') + ')', t('hm_mark_am'))
+    + b('hmSetOrigin(' + jsArg('eaeu') + ')', t('hm_mark_eaeu'))
+    + b('hmSetOrigin(' + jsArg('exempt_other') + ')', t('hm_mark_exempt'))
+    + (p.hallmark.origin !== 'none' ? b('hmSetOrigin(' + jsArg('none') + ')', t('hm_mark_none')) : '')
+    + '<button class="btn ghost full" style="margin-top:16px" onclick="HM_SHEET=null;closeModal()">'
+      + escH(t('close')) + '</button>');
+}
+function hmSetOrigin(o){
+  const p = pieceById(HM_SHEET);
+  if(!p) return;
+  /* A STATUS, NOT AN ASSAY RESULT: this records what the item is known to carry, and it changes
+     no weight, no price and NO LEDGER ENTRY. */
+  p.hallmark.origin = ['am_assay','eaeu','exempt_weight','exempt_scrap','exempt_other','none'].indexOf(o) >= 0 ? o : 'none';
+  HM_SHEET = null; saveState(); closeModal(); renderAll();
+}
+
+/* ---- the hand-over ---- */
+function nextHmNo(){
+  const y = new Date(safeInt(S.today, Date.now())).getUTCFullYear();
+  const re = /^ՀՁ-(\d{4})-(\d+)$/;
+  let max = 0;
+  (S.hmSends||[]).forEach(h => { const m = re.exec(String(h && h.id || '')); if(m && +m[1] === y) max = Math.max(max, +m[2]); });
+  return 'ՀՁ-' + y + '-' + ('0000' + (max + 1)).slice(-4);
+}
+function hmSendSheet(){
+  if(!hmPickN()) return;
+  const ids = Object.keys(HMPICK).filter(id => { const p = pieceById(id);
+    return p && p.location !== 'assay' && onHand(pieceSubj(id)) > EPS; });
+  const tot = ids.reduce((a,id) => round3(a + num(pieceById(id).netG)), 0);
+  openModal('<h3>' + escH(t('hm_send_t')) + '</h3>'
+    + '<div class="row"><span class="mlbl">' + escH(fmt('cn_pcs', { n: ids.length })) + '</span>'
+      + '<span>' + gram(tot,3) + '</span></div>'
+    + '<label class="fieldlbl" for="hmOf" style="margin-top:12px">' + escH(t('hm_office')) + '</label>'
+    + '<input id="hmOf" type="text" maxlength="60" value="' + escH(S.cfg.hmOffice) + '">'
+    /* SAID OUT LOUD ON THE SHEET THAT COMMITS IT, because this is the one rule a later reader is
+       most likely to "fix" into a movement. */
+    + '<div class="notice">' + escH(t('hm_custody')) + '</div>'
+    + '<button class="btn primary" style="margin-top:16px" onclick="hmSendGo()">'
+      + escH(t('hm_send_go')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">'
+      + escH(t('cancel')) + '</button>');
+}
+function hmSendGo(){
+  const office = String((document.getElementById('hmOf')||{}).value || '').slice(0,60);
+  const ids = Object.keys(HMPICK).filter(id => { const p = pieceById(id);
+    return p && p.location !== 'assay' && onHand(pieceSubj(id)) > EPS; });
+  if(!ids.length) return;
+  const ref = nextHmNo();
+  const items = [];
+  ids.forEach(id => {
+    const p = pieceById(id);
+    items.push({ id:p.id, code:p.code, name: modelName(p), metal:p.metal,
+                 fineness: safeInt(p.fineness,0), netG: round3(num(p.netG)) });
+    /* CUSTODY, NOT A MOVEMENT — the whole point of this screen. Three fields change and the
+       ledger is not touched. */
+    p.location = 'assay';
+    p.locTs = S.today;
+    p.hallmark.sentTs = S.today;
+    p.hallmark.backTs = 0;
+    p.hallmark.office = office;
+  });
+  S.cfg.hmOffice = office;
+  S.hmSends.push({ id: ref, ts: S.today, office: office, items: items });
+  HMPICK = {};
+  migrate(S); saveState(); closeModal(); renderAll();
+  toast(fmt('hm_send_done', { r: ref }));
+  openHmList(ref);
+}
+
+/* ---- the return ---- */
+function hmReturnSheet(id){
+  const p = pieceById(id);
+  if(!p) return;
+  HM_SHEET = id;
+  const chip = (on, fn, label) => '<button class="tbtn wide' + (on ? ' on' : '') + '" onclick="' + fn + '">'
+    + escH(label) + '</button>';
+  openModal('<h3>' + escH(t('hm_ret_t')) + '</h3>'
+    + '<div class="row"><span style="font-size:17px;font-weight:700">' + escH(modelName(p)) + '</span>'
+      + '<span class="harg ' + p.metal + '">' + safeInt(p.fineness,0) + '</span></div>'
+    + '<div class="muted" style="margin-top:4px">' + escH([p.code, p.hallmark.office,
+        hmDaysOut(p) >= 0 ? fmt('hm_days_out', { n: hmDaysOut(p) }) : ''].filter(Boolean).join(' · ')) + '</div>'
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('hm_ret_q')) + '</div>'
+    /* THE OFFICE'S ANSWER, RECORDED AS A STATUS. The jeweller is not asserting a fineness here —
+       the fineness is already on the piece — only what the item now carries. */
+    + '<div class="chips wrap" id="hmRetChips">'
+      + chip(true,  'hmRetPick(' + jsArg('am_assay') + ')', t('hm_am_assay'))
+      + chip(false, 'hmRetPick(' + jsArg('none') + ')', t('hm_ret_none'))
+      + chip(false, 'hmRetPick(' + jsArg('exempt_other') + ')', t('hm_exempt_other'))
+    + '</div>'
+    + '<label class="fieldlbl" for="hmRef" style="margin-top:12px">' + escH(t('hm_ret_ref')) + '</label>'
+    + '<input id="hmRef" type="text" maxlength="40" value="' + escH(p.hallmark.docRef) + '">'
+    + '<div class="notice">' + escH(t('hm_custody')) + '</div>'
+    + '<button class="btn primary" style="margin-top:16px" onclick="hmReturnGo()">'
+      + escH(t('hm_ret_go')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="HM_SHEET=null;closeModal()">'
+      + escH(t('cancel')) + '</button>');
+  HM_RET = 'am_assay';
+}
+let HM_RET = 'am_assay';
+function hmRetPick(o){
+  HM_RET = o;
+  const el = document.getElementById('hmRetChips');
+  if(!el) return;
+  const chip = (on, fn, label) => '<button class="tbtn wide' + (on ? ' on' : '') + '" onclick="' + fn + '">'
+    + escH(label) + '</button>';
+  el.innerHTML = chip(o === 'am_assay', 'hmRetPick(' + jsArg('am_assay') + ')', t('hm_am_assay'))
+    + chip(o === 'none', 'hmRetPick(' + jsArg('none') + ')', t('hm_ret_none'))
+    + chip(o === 'exempt_other', 'hmRetPick(' + jsArg('exempt_other') + ')', t('hm_exempt_other'));
+}
+function hmReturnGo(){
+  const p = pieceById(HM_SHEET);
+  if(!p) return;
+  const ref = String((document.getElementById('hmRef')||{}).value || '').slice(0,40);
+  /* CUSTODY AGAIN: the piece comes home, the ledger is not touched. */
+  p.location = 'tray';
+  p.locTs = S.today;
+  p.hallmark.backTs = S.today;
+  p.hallmark.origin = ['am_assay','none','exempt_other'].indexOf(HM_RET) >= 0 ? HM_RET : 'am_assay';
+  p.hallmark.docRef = ref;
+  HM_SHEET = null;
+  migrate(S); saveState(); closeModal(); renderAll(); toast(t('hm_ret_done'));
+}
+
+/* ---- the screen ---- */
+function hmRow(x, mode){
+  const p = x.p || x;
+  const bits = [];
+  const nm = modelName(p);
+  if(p.code && p.code !== nm) bits.push('<span>' + escH(p.code) + '</span>');
+  bits.push('<span class="harg ' + p.metal + '">' + safeInt(p.fineness,0) + '</span>');
+  if(mode === 'office'){
+    const d = hmDaysOut(p);
+    bits.push('<span class="badge ' + (hmLate(p) ? 'b-rose' : 'b-neutral') + '">'
+      + escH(d >= 0 ? fmt('hm_days_out', { n: d }) : locLabel('assay')) + '</span>');
+    if(p.hallmark.office) bits.push('<span>' + escH(p.hallmark.office) + '</span>');
+  }
+  if(mode === 'back'){
+    bits.push('<span class="badge b-green">' + escH(hmLabel(p.hallmark.origin)) + '</span>');
+    if(p.hallmark.docRef) bits.push('<span>' + escH(p.hallmark.docRef) + '</span>');
+  }
+  if(mode === 'fine'){
+    bits.push('<span class="badge b-green">' + escH(hmLabel(hmState(p))) + '</span>');
+  }
+  const body = '<div class="n">' + escH(nm) + '</div><div class="s">' + bits.join('') + '</div>';
+  if(mode === 'todo'){
+    const on = !!HMPICK[p.id];
+    return '<div class="cnrow' + (on ? ' done' : '') + '">'
+      + '<button class="cnnm" onclick="hmStatusSheet(' + jsArg(p.id) + ')">' + body + '</button>'
+      + '<div class="cnact"><button class="yes hmpick' + (on ? ' on' : '') + '" onclick="hmPick('
+        + jsArg(p.id) + ')">' + escH(on ? '✓' : t('hm_pick')) + '</button></div></div>';
+  }
+  if(mode === 'office'){
+    return '<div class="cnrow">'
+      + '<div class="cnnm">' + body + '</div>'
+      + '<div class="cnact"><button class="yes hmret" onclick="hmReturnSheet(' + jsArg(p.id) + ')">'
+        + escH(t('hm_ret')) + '</button></div></div>';
+  }
+  return '<div class="cnrow"><div class="cnnm">' + body + '</div>'
+    + '<div class="cnact"><span class="mlbl" style="align-self:center">'
+      + escH(gramTxt(p.netG,3) + t('u_g')) + '</span></div></div>';
+}
+function viewMark(){
+  const L = hmLists();
+  const nPick = hmPickN();
+  const sends = (S.hmSends||[]).slice(-6).reverse();
+  const grp = (title, rows, empty, mode) => '<div class="sec">' + escH(title) + '</div>'
+    + (rows.length ? '<div class="fgrp"><div class="fbody">'
+        + rows.map(r => hmRow(r, mode)).join('') + '</div></div>'
+      : '<div class="card"><div class="muted">' + escH(empty) + '</div></div>');
+  return '<main class="anim">'
+    + '<div class="sec">' + escH(t('tab_mark')) + '</div>'
+    + '<div class="card"><div class="muted" style="line-height:1.55">' + escH(t('hm_intro')) + '</div>'
+      + '<div class="notice" style="margin-top:10px">' + escH(t('hm_custody')) + '</div></div>'
+
+    + (L.office.length && hmLateCount()
+        ? '<div class="alert bad"><div class="t">' + escH(fmt('al_hm_late',
+            { n: hmLateCount(), d: safeInt(S.cfg.hmDays,14) })) + '</div>'
+          + '<div class="d">' + escH(t('hm_days_note')) + '</div></div>' : '')
+
+    + grp(t('hm_todo'), L.todo, t('hm_todo_none'), 'todo')
+    /* the screen's ONE accent-filled button, and it exists only when there is something picked */
+    + (nPick ? '<button class="btn primary" style="margin-top:4px" onclick="hmSendSheet()">'
+        + escH(fmt('hm_send', { n: nPick })) + '</button>' : '')
+
+    + grp(t('hm_atoffice'), L.office, t('hm_atoffice_none'), 'office')
+    + grp(t('hm_back'), L.back, t('hm_back_none'), 'back')
+
+    + '<div class="sec">' + escH(t('hm_ok')) + '</div>'
+    + '<div class="card"><div class="row"><span class="mlbl">' + escH(t('hm_ok')) + '</span>'
+      + '<span class="big">' + L.fine.length + '</span></div>'
+      + '<div class="notice">' + escH(t('hm_ok_note')) + '</div></div>'
+    + (L.fine.length ? '<div class="fgrp"><div class="fbody">'
+        + L.fine.map(r => hmRow(r, 'fine')).join('') + '</div></div>' : '')
+
+    + '<div class="card"><h3>' + escH(t('hm_days_cfg')) + '</h3>'
+      + '<input id="hmD" type="number" inputmode="numeric" min="1" max="365" step="1" value="'
+        + safeInt(S.cfg.hmDays,14) + '" oninput="cfgSet(\'hmDays\',this.value)">'
+      + '<div class="notice">' + escH(t('hm_days_note')) + '</div></div>'
+
+    + '<div class="sec">' + escH(t('hm_sends')) + '</div>'
+    + (sends.length
+        ? '<div class="fgrp"><div class="fbody">' + sends.map(h =>
+            '<button class="prow" onclick="openHmList(' + jsArg(h.id) + ')">'
+            + '<div class="pi"><div class="pnm">' + escH(h.id) + '</div>'
+            + '<div class="psub"><span>' + escH(fdate(h.ts)) + '</span>'
+              + (h.office ? '<span>' + escH(h.office) + '</span>' : '') + '</div></div>'
+            + '<div class="pw"><div class="a">' + h.items.length + '<span class="g">'
+              + escH(t('u_pcs')) + '</span></div>'
+            + '<div class="b">' + gramTxt(h.items.reduce((a,i) => round3(a + num(i.netG)), 0), 3)
+              + escH(t('u_g')) + '</div></div></button>').join('')
+          + '</div></div>'
+        : '<div class="card"><div class="muted">' + escH(t('none')) + '</div></div>')
+    + '</main>';
+}
+
+/* ---- the printable two-column hand-over list (spec 5.1) ---- */
+function openHmList(id){
+  const h = (S.hmSends||[]).find(x => x && x.id === id);
+  if(!h) return;
+  const sign = lbl => '<div style="flex:1;min-width:150px"><div class="doclbl">' + escH(lbl) + '</div>'
+    + '<div class="actsignline"></div></div>';
+  const tot = h.items.reduce((a,i) => round3(a + num(i.netG)), 0);
+  openModal('<h3>🔖 ' + escH(t('hm_list')) + ' № ' + escH(h.id) + '</h3>'
+    + '<div class="muted">' + escH(fdate(h.ts)) + '</div>'
+    + '<hr class="actrule">'
+    + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
+      + '<div style="min-width:150px"><div class="doclbl">' + escH(t('data_shop')) + '</div>'
+        + '<b>🏪 ' + escH(S.cfg.shopName || t('app_name')) + '</b>'
+        + '<div class="muted">' + escH(t('data_tin')) + ' <span class="num">' + escH(S.cfg.tin || '—') + '</span></div></div>'
+      + '<div style="min-width:150px"><div class="doclbl">' + escH(t('hm_office')) + '</div>'
+        + '<b>' + escH(h.office || '—') + '</b></div>'
+    + '</div>'
+    /* TWO COLUMNS. A hand-over list is signed at a counter by two people holding the same paper:
+       what the item is, and what it weighs. Nothing else belongs on it. */
+    + '<div class="tblwrap" style="max-height:none"><table class="tbl"><thead><tr>'
+      + '<th>' + escH(t('hm_list_col_item')) + '</th>'
+      + '<th class="num">' + escH(t('hm_list_col_g')) + '</th></tr></thead><tbody>'
+      + h.items.map((i,k) => '<tr><td>' + (k+1) + '. ' + escH(i.name || i.code || '—')
+        + '<span class="tblsub">' + escH([i.code && i.code !== i.name ? i.code : '',
+            metalLabel(i.metal) + ' ' + i.fineness].filter(Boolean).join(' · ')) + '</span></td>'
+        + '<td class="num">' + gramTxt(i.netG,3) + '</td></tr>').join('')
+      + '</tbody></table></div>'
+    + '<div class="row actsep" style="margin-top:12px;padding-top:10px"><b>' + escH(t('act_total')) + '</b>'
+      + '<span class="big">' + h.items.length + ' ' + escH(t('u_pcs')) + ' · '
+      + gramTxt(tot,3) + '<span class="g">' + escH(t('u_g')) + '</span></span></div>'
+    + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
+      + sign(t('hm_list_hand')) + sign(t('hm_list_take')) + '</div>'
+    + '<div class="muted" style="font-size:14px;margin-top:14px">' + escH(t('hm_list_note')) + '</div>'
+    + '<button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">🖨 '
+      + escH(t('print')) + '</button>'
+    + '<button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">'
+      + escH(t('close')) + '</button>');
+}
+
+/* =====================================================================================
    RENDER + THE RECOVERY NET
    renderAll() is a try/catch around the whole paint. If a screen throws, the shopkeeper gets a
    card that offers him the last known-good state — never a white page, and never a lost shop.
@@ -6209,6 +6680,95 @@ function voskiSelfTest(){
       return r;
     })());
     ok('ledger verifies after the count', verifyLedger().length === 0);
+
+    /* ---- ՀԱՐԳԱԴՐՈՇՄԱՎՈՐՈՒՄ (spec 5.1) ----
+       A STATUS AND A SEND-OUT CYCLE, NEVER AN ASSAY RESULT. The assertion that matters most here
+       is the negative one: a hand-over posts NO movement. Get that wrong and a send-out reads as
+       a sale in the books and as a shortage at the next count. */
+    ok('the app computes the exemption rather than asking for a stamp it does not need', (()=>{
+      const light = { metal:'au', netG:1.2, cat:'earring', hallmark:{origin:'none'} };
+      const heavy = { metal:'au', netG:4.0, cat:'ring',    hallmark:{origin:'none'} };
+      const ag    = { metal:'ag', netG:2.5, cat:'chain',   hallmark:{origin:'none'} };
+      const scrap = { metal:'au', netG:40,  cat:'scrap',   hallmark:{origin:'none'} };
+      return hmState(light) === 'exempt_weight'            /* gold under 1.5 g */
+        && hmState(ag) === 'exempt_weight'                 /* silver under 3 g */
+        && hmState(scrap) === 'exempt_scrap'
+        && hmState(heavy) === '' && hmNeeds(heavy)         /* '' means a stamp is wanted */
+        && hmState({ metal:'au', netG:9, cat:'ring', hallmark:{origin:'eaeu'} }) === 'eaeu'
+        && hmState({ metal:'au', netG:9, cat:'ring', hallmark:{origin:'am_assay'} }) === 'am_assay'
+        && hmState({ metal:'au', netG:9, cat:'ring', hallmark:{origin:'exempt_other'} }) === 'exempt_other';
+    })());
+    ok('nothing already stamped or exempt is ever asked for', (()=>{
+      const L = hmLists();
+      return L.todo.every(x => hmNeeds(x.p))
+        && L.fine.every(x => !hmNeeds(x.p))
+        && L.office.every(x => x.p.location === 'assay')
+        && L.todo.every(x => x.p.location !== 'assay');
+    })());
+
+    /* SEND-OUT IS A LOCATION CHANGE, NOT A MOVEMENT (spec 1.3). */
+    ok('a hand-over posts no movement and moves no metal', (()=>{
+      const cand = pieceRows().filter(x => hmNeeds(x.p));
+      if(!cand.length) return false;
+      const p = cand[0].p, sub = pieceSubj(p.id);
+      const on0 = onHand(sub), val0 = valuation(), n0 = (S.moves||[]).length;
+      const pcs0 = pieceCount(), sends0 = (S.hmSends||[]).length;
+      HMPICK = {}; HMPICK[p.id] = 1;
+      S.cfg.hmOffice = 'Երևան';
+      /* hmSendGo reads the office out of the sheet's input, which is not in the DOM here */
+      const el = document.createElement('input'); el.id = 'hmOf'; el.value = 'Երևան';
+      document.body.appendChild(el);
+      hmSendGo();
+      document.body.removeChild(el);
+      closeModal();
+      const q = pieceById(p.id);
+      const r = (S.moves||[]).length === n0                 /* THE ASSERTION THAT MATTERS */
+        && eqG(onHand(sub), on0)                            /* still on hand */
+        && valuation() === val0                             /* still in the valuation */
+        && pieceCount() === pcs0                            /* still counted as stock */
+        && q.location === 'assay' && q.hallmark.sentTs === S.today && q.locTs === S.today
+        && (S.hmSends||[]).length === sends0 + 1
+        && verifyLedger().length === 0;
+      return r;
+    })());
+    ok('the hand-over list records what was handed over, and its total is the sum of the pieces', (()=>{
+      const h = (S.hmSends||[])[(S.hmSends||[]).length-1];
+      if(!h || !h.items.length) return false;
+      const tot = h.items.reduce((a,i) => round3(a + num(i.netG)), 0);
+      return /^ՀՁ-\d{4}-\d{4}$/.test(h.id)
+        && h.items.every(i => { const q = pieceById(i.id); return q && eqG(q.netG, i.netG)
+             && q.location === 'assay'; })
+        && eqG(tot, h.items.reduce((a,i) => round3(a + num(pieceById(i.id).netG)), 0));
+    })());
+    ok('a return posts no movement either, and records what came back', (()=>{
+      const x = pieceRows().find(y => y.p.location === 'assay');
+      if(!x) return false;
+      const p = x.p, sub = pieceSubj(p.id), on0 = onHand(sub), n0 = (S.moves||[]).length;
+      HM_SHEET = p.id; HM_RET = 'am_assay';
+      const el = document.createElement('input'); el.id = 'hmRef'; el.value = 'ՀԴ-TEST';
+      document.body.appendChild(el);
+      hmReturnGo();
+      document.body.removeChild(el);
+      closeModal();
+      const q = pieceById(p.id);
+      return (S.moves||[]).length === n0 && eqG(onHand(sub), on0)
+        && q.location === 'tray' && q.hallmark.backTs === S.today
+        && q.hallmark.origin === 'am_assay' && q.hallmark.docRef === 'ՀԴ-TEST'
+        && verifyLedger().length === 0;
+    })());
+    /* THE THRESHOLD IS THE SHOP'S OWN. No assay-office turnaround could be sourced (register
+       item 16), so the product counts days and promises nothing. */
+    ok('the days-out reminder uses the shop\'s own threshold', (()=>{
+      const p = (S.pieces||[]).find(x => x.location === 'assay')
+             || (S.pieces||[])[0];
+      const keepL = p.location, keepT = p.hallmark.sentTs, keepD = S.cfg.hmDays;
+      p.location = 'assay'; p.hallmark.sentTs = S.today - 20*DAY; p.locTs = p.hallmark.sentTs;
+      S.cfg.hmDays = 14; const late14 = hmLate(p);
+      S.cfg.hmDays = 30; const late30 = hmLate(p);
+      const d = hmDaysOut(p);
+      p.location = keepL; p.hallmark.sentTs = keepT; S.cfg.hmDays = keepD;
+      return d === 20 && late14 === true && late30 === false;
+    })());
 
     /* trilingual parity */
     const hk = Object.keys(T.hy);
