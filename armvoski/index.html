@@ -2071,6 +2071,7 @@ T.hy = {
   cn_surplus:'Ավելցուկ', cn_short:'Պակասորդ', cn_nodiff:'Տարբերություն չկա',
   cn_pure_book:'Հաշվապ. մաքուր մետաղ', cn_pure_act:'Փաստ. մաքուր մետաղ', cn_pure_diff:'Տարբերությունը',
   cn_val_diff:'Տարբերության արժեքն այսօրվա 999 գնով',
+  cn_val_why:'«Գումար, ֏» սյունակի գումարը',
   cn_done:'Գույքագրումը գրանցվեց՝ {r}',
   cn_recent:'Նախորդ ակտերը', cn_scope_lbl:'Շրջանակ',
   cn_pcs:'{n} հատ',
@@ -2353,6 +2354,7 @@ T.en = {
   cn_surplus:'Surplus', cn_short:'Shortage', cn_nodiff:'No difference',
   cn_pure_book:'Book pure metal', cn_pure_act:'Actual pure metal', cn_pure_diff:'Difference',
   cn_val_diff:"Value of the difference at today's 999 rate",
+  cn_val_why:'the sum of the «Amount, ֏» column',
   cn_done:'Count recorded: {r}',
   cn_recent:'Previous acts', cn_scope_lbl:'Scope',
   cn_pcs:'{n} pcs',
@@ -2631,6 +2633,7 @@ T.ru = {
   cn_surplus:'Излишек', cn_short:'Недостача', cn_nodiff:'Разницы нет',
   cn_pure_book:'Учёт. чистый металл', cn_pure_act:'Факт. чистый металл', cn_pure_diff:'Разница',
   cn_val_diff:'Стоимость разницы по сегодняшней цене 999',
+  cn_val_why:'сумма колонки «Сумма, ֏»',
   cn_done:'Инвентаризация записана: {r}',
   cn_recent:'Прежние акты', cn_scope_lbl:'Объём',
   cn_pcs:'{n} шт',
@@ -3218,14 +3221,21 @@ function valBreakdown(terms){
    record can carry them for the accountant. */
 function fairValueWarn(computed, manual){
   const c = safeAmd(computed,0), m = safeAmd(manual,0);
-  /* AT OR BELOW, NOT BELOW. Spec 2.3 opens «A sale at or below 80% of fair value is
-     recalculated», so a sale at exactly the floor is the case the rule exists for; `m >= c*0.8`
-     let it pass in silence. */
-  if(!c || !m || m > c * 0.8) return null;
-  /* FLOOR, NEVER ROUND. Math.round put every price in [0.795c, 0.8c) at «80%», so the headline
-     asserted that the very figure it was warning about was not below the threshold — a ~1,500 ֏
-     wide band on a 300,000 ֏ piece where the warning contradicted its own reason. */
-  return { computed:c, floor: Math.round(c*0.8), manual:m, pct: Math.floor(m*100/c) };
+  /* THE THRESHOLD IS THE FIGURE THE WARNING ITSELF PRINTS. The sub-line reads
+     «Հաշվարկված՝ 303,197 ֏ · 80% = 242,558 ֏ · Ձեր գինը՝ …», so 242,558 is the number the
+     jeweller is being asked to compare against and it must be the number that trips the warning.
+     Testing against the unrounded c*0.8 instead let a price typed at the printed floor pass in
+     silence whenever c*0.8 rounded DOWN — 265,301 prints a floor of 212,241 and 212,241 is above
+     212,240.8, so the one price the sheet had just told him was the limit raised nothing.
+     AT OR BELOW, not below: spec 2.3 opens «A sale at or below 80% of fair value is
+     recalculated», so a sale exactly at the floor is the case the rule exists for. */
+  const floor = Math.round(c * 0.8);
+  if(!c || !m || m > floor) return null;
+  /* FLOOR THE PERCENTAGE, NEVER ROUND IT. Math.round put every price in [0.795c, 0.8c) at «80%»,
+     so the headline asserted that the very figure it was warning about was not below the
+     threshold — a ~1,500 ֏ wide band on a 300,000 ֏ piece where the warning contradicted its own
+     stated reason. */
+  return { computed:c, floor: floor, manual:m, pct: Math.floor(m*100/c) };
 }
 
 /* =====================================================================================
@@ -5631,9 +5641,15 @@ function cnBuildAct(){
       const dG = round3(q.actG - q.bookG);
       return { metal:q.metal, fineness:q.fineness, bookPcs:q.bookPcs, actPcs:q.actPcs,
                bookG:q.bookG, actG:q.actG, dPcs: q.actPcs - q.bookPcs, dG: dG,
-               /* WHAT THE DIFFERENCE IS WORTH. Pure grams of THIS fineness at THIS metal's 999
-                  rate — the only honest way to price a gram difference across finenesses. */
-               amd: Math.round(pureG(dG, q.fineness) * metalRate999(q.metal)) };
+               /* WHAT THE DIFFERENCE IS WORTH — computed from THE ROW'S OWN PRINTED OPERANDS:
+                  the difference in grams, the fineness in the row's first column, and the day's
+                  999 rate named under the table. A 0.4 g shortage of 750 is about 15,500 ֏ and
+                  the person signing has to see it in dram.
+                  pureG()'s 3dp rounding is a DISPLAY convention for grams and is deliberately
+                  NOT in this path: the act prints the difference in grams, not in pure grams, so
+                  rounding the pure figure first would make a row an accountant recomputes by
+                  hand disagree by up to ~26 ֏ — on a document whose whole job is to be checked. */
+               amd: Math.round(num(dG) * q.fineness / 1000 * metalRate999(q.metal)) };
     });
   return { rows: outRows, posts: posts, skipped: skipped };
 }
@@ -5874,9 +5890,22 @@ function openCountAct(id){
     + '<div class="row actsep" style="margin-top:12px;padding-top:10px"><b>' + escH(t('cn_val_diff')) + '</b>'
       + '<span class="big">' + (diffAmd < 0 ? '−' : '') + Math.abs(diffAmd).toLocaleString('en-US')
       + '<span class="cur">֏</span></span></div>'
-    /* the difference is computed money, so it gets its arithmetic on the line beneath it, exactly
-       as every other computed figure in this product does */
-    + valBreakdown(metals.map(m => ({ pure: round3(actPure[m] - bookPure[m]), rate: r999(m), metal: m })))
+    /* THE TOTAL IS THE SUM OF THE COLUMN ABOVE IT, AND THE LINE SAYS SO BY ADDING THE COLUMN UP.
+       It used to be a per-metal pure-grams line — round(Σ pure × rate) — while the column was
+       per-fineness — Σ round(pure × rate). Two roundings, and on a real count they disagreed by
+       51 ֏: the headline read −589,330 and the arithmetic printed directly beneath it ended
+       «= −589,279». Same defect breakdown() and valBreakdown() were both already fixed for, on
+       the one document that gets signed by two people. */
+    + (a.rows.length ? '<div class="brk">'
+        + a.rows.map(r => '<b>' + (r.amd < 0 ? '−' : '') + Math.abs(r.amd).toLocaleString('en-US') + '</b>')
+            .join('<span class="op">+</span>')
+        + '<span class="eq">=</span><b>' + (diffAmd < 0 ? '−' : '')
+        + Math.abs(diffAmd).toLocaleString('en-US') + ' \u058F</b>'
+        + '<span class="why">' + escH(t('cn_val_why')) + '</span></div>' : '')
+    /* and the rates those amounts were built from, because no computed money appears in this
+       product without saying where its numbers came from */
+    + '<div class="muted" style="margin-top:6px">' + escH(metals.map(m =>
+        metalLabel(m) + ' 999 · ' + r999(m).toLocaleString('en-US') + ' ֏/' + t('u_g')).join(' · ')) + '</div>'
     + '<div class="muted" style="margin-top:6px">' + escH(diffAmd === 0 ? t('cn_nodiff')
         : (diffAmd < 0 ? t('cn_short') : t('cn_surplus'))) + '</div>'
 
@@ -7021,6 +7050,19 @@ function voskiSelfTest(){
        used to pass in silence; one dram above it is a normal sale. */
     ok('80% warning fires AT the floor and not above it',
        (fairValueWarn(100000, 80000)||{}).pct === 80 && fairValueWarn(100000, 80001) === null);
+    /* THE WARNING'S OWN PRINTED FLOOR IS ITS TRIGGER. The sheet prints «80% = {floor}» and the
+       jeweller types that figure; testing against the unrounded c*0.8 meant that on every price
+       whose 80% rounds DOWN, the exact number the sheet had just named as the limit raised
+       nothing at all. Swept over every computed price a piece in this shop can have. */
+    ok('a price typed at the printed floor always warns', (()=>{
+      for(let c = 1; c <= 400000; c += 7){
+        const f = Math.round(c*0.8);
+        const w = fairValueWarn(c, f);
+        if(!w || w.floor !== f) return false;
+        if(f + 1 <= c && fairValueWarn(c, f+1) !== null) return false;
+      }
+      return true;
+    })());
     /* THE HEADLINE MAY NOT CONTRADICT ITS OWN REASON. Math.round put every price in
        [0.795c, 0.8c) at «80%» — a ~1,500 ֏ band on a 300,000 ֏ piece — so the sentence asserted
        that the figure it was warning about was not below the threshold. */
@@ -7376,7 +7418,29 @@ function voskiSelfTest(){
       if(!a || !a.rows.length) return false;
       return a.rows.every(r => eqG(round3(r.actG - r.bookG), r.dG)
         && r.dPcs === r.actPcs - r.bookPcs
-        && r.amd === Math.round(pureG(r.dG, r.fineness) * (r.metal === 'ag' ? a.rate.ag : a.rate.au)));
+        && r.amd === Math.round(r.dG * r.fineness / 1000 * (r.metal === 'ag' ? a.rate.ag : a.rate.au)));
+    })());
+    /* AND THE GRAND TOTAL IS THE SUM OF THE COLUMN. The headline used to be built from per-metal
+       pure grams while the column was built per fineness; two roundings, and on a real count the
+       act's own printed arithmetic ended 51 ֏ away from the figure printed above it. */
+    ok('the act\'s grand total is exactly the sum of its amount column', (()=>{
+      const a = (S.counts||[])[(S.counts||[]).length-1];
+      if(!a || !a.rows.length) return false;
+      const sum = a.rows.reduce((x,r) => x + safeInt(r.amd,0), 0);
+      /* the RENDERED line's own operands must give the RENDERED line's own answer */
+      openCountAct(a.id);
+      const brks = document.querySelectorAll('#modalRoot .brk');
+      const brk = brks.length ? brks[brks.length-1] : null;
+      const nums = brk ? [].slice.call(brk.querySelectorAll('b')).map(el => {
+        const txt = String(el.textContent);
+        const mag = parseInt(txt.replace(/[^0-9]/g,''), 10) || 0;
+        return /\u2212|-/.test(txt.charAt(0)) ? -mag : mag;
+      }) : [];
+      closeModal();
+      if(nums.length < 2) return false;
+      const printedTotal = nums[nums.length-1];
+      const printedTerms = nums.slice(0,-1).reduce((x,y) => x + y, 0);
+      return sum === printedTotal && printedTerms === printedTotal;
     })());
     /* GRAMS OF DIFFERENT FINENESSES ARE NEVER ADDED TOGETHER (spec 1.4): the act's grand total is
        pure metal, per metal. */
