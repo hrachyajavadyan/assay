@@ -1435,6 +1435,10 @@ tr.hlflash{animation:none;background:var(--acc-tint)}
   font-variant-numeric:tabular-nums lining-nums;
   overflow-wrap:break-word;
 }
+/* the operands are atomic. `overflow-wrap:break-word` on the container is what lets a long
+   formula wrap at all, and without this it happily split «6,523,251» across two lines — a money
+   figure broken mid-figure is not a wrap, it is a misread number. */
+.brk b{white-space:nowrap}
 .brk .op{color:var(--dim);font-weight:600;padding:0 .15em}
 .brk .eq{color:var(--dim);font-weight:600;padding:0 .2em}
 .brk b{font-weight:700}
@@ -1493,14 +1497,19 @@ tr.hlflash{animation:none;background:var(--acc-tint)}
    to hold one in his head while scrolling. */
 .fgrp{margin-bottom:var(--s3)}
 .fgrp>.fhead{
-  display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;
+  display:block;
   padding:var(--s3);background:var(--surface-2);
   border:var(--bw) solid var(--stroke);border-radius:var(--r) var(--r) 0 0;
 }
-.fgrp>.fhead .fsum{margin-left:auto;text-align:right;min-width:0}
-.fgrp>.fhead .fsum .w{font-size:var(--fs-body-l);font-weight:700;color:var(--ink);
-  font-variant-numeric:tabular-nums lining-nums;white-space:nowrap}
-.fgrp>.fhead .fsum .m{font-size:var(--fs-micro);color:var(--muted);white-space:nowrap}
+/* the identity of the group on one line, its weight on the same line's right edge. The two
+   figures never run together: the weight is a block, so a wrap puts it on its own line rather
+   than butting it against the label. */
+.fgrp>.fhead .frow{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+.fgrp>.fhead .frow .w{
+  margin-left:auto;font-size:var(--fs-body-l);font-weight:700;color:var(--ink);
+  font-variant-numeric:tabular-nums lining-nums;white-space:nowrap;
+}
+.fgrp>.fhead .brk{margin-top:var(--s2);background:var(--surface);}
 .fgrp>.fbody{
   border:var(--bw) solid var(--stroke);border-top:none;border-radius:0 0 var(--r) var(--r);
   background:var(--surface);overflow:hidden;
@@ -1539,6 +1548,12 @@ tr.hlflash{animation:none;background:var(--acc-tint)}
 .puretot .v{font-size:var(--fs-display-m);font-weight:var(--fw-display-m);
   line-height:var(--lh-display-m);letter-spacing:var(--ls-display-m);color:var(--ink);
   font-variant-numeric:tabular-nums lining-nums;margin-top:2px}
+
+/* ArmTrade hides its wordmark below 461px because its demo header carries SEVEN controls and
+   a 320px row cannot hold them plus a brand. This product's header carries three, so the brand
+   stays: without it a phone screen opens on a bare date chip and two icons, which reads as
+   chrome that failed to load rather than as a product. */
+@media (max-width:460px){ #top .logo{display:flex} #top .logo small{display:none} }
 
 /* a definition list inside a sheet: label above, figure below, on the 4px grid */
 .dl{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin:var(--s3) 0}
@@ -1737,10 +1752,12 @@ T.hy = {
   w_weight:'Քաշ', w_gross:'Համախառն քաշ', w_stone:'Քարերի քաշ', w_net:'Զուտ քաշ',
   w_gross_s:'Համախառն', w_stone_s:'Քարեր', w_net_s:'Զուտ',
   w_stones_amd:'Քարեր (֏)', w_making:'Աշխատանք (֏/գ)', w_making_s:'Աշխատանք',
-  w_pure:'Մաքուր մետաղ', w_rate:'Շուկայի գին, 999 (֏/գ)', w_rate_s:'Շուկայի գին',
+  w_pure:'Մաքուր մետաղ', w_pure_s:'մաքուր', w_rate:'Շուկայի գին, 999 (֏/գ)', w_rate_s:'Շուկայի գին',
   w_margin:'Հավելագին %', w_buydisc:'Գնման զեղչ %', w_acq:'Ինքնարժեք',
   w_code:'Կոդ', w_cat:'Տեսակ', w_note:'Նշում', w_loc:'Տեղը', w_value:'Արժեքը',
   w_sellrate:'Վաճառքի գին, 999', w_buyrate:'Գնման գին, 999',
+  w_acqn:'{n} ձեռքբերում', badge_nocost:'Ինքնարժեք չկա',
+  brk_val:'Մաքուր մետաղ × 999 գին',
   /* ---- categories (ARMGOLD's practitioner list) ---- */
   cat_ring:'Մատանի', cat_chain:'Շղթա', cat_bracelet:'Ապարանջան', cat_earring:'Ականջօղ',
   cat_pendant:'Կախազարդ', cat_cross:'Խաչ', cat_watch:'Ժամացույց', cat_scrap:'Ջարդոն', cat_other:'Այլ',
@@ -1845,10 +1862,12 @@ T.en = {
   w_weight:'Weight', w_gross:'Gross weight', w_stone:'Stone weight', w_net:'Net weight',
   w_gross_s:'Gross', w_stone_s:'Stones', w_net_s:'Net',
   w_stones_amd:'Stones (֏)', w_making:'Making (֏/g)', w_making_s:'Making',
-  w_pure:'Pure metal', w_rate:'Market rate, 999 (֏/g)', w_rate_s:'Market rate',
+  w_pure:'Pure metal', w_pure_s:'pure', w_rate:'Market rate, 999 (֏/g)', w_rate_s:'Market rate',
   w_margin:'Margin %', w_buydisc:'Buy-in discount %', w_acq:'Acquisition cost',
   w_code:'Code', w_cat:'Category', w_note:'Note', w_loc:'Location', w_value:'Value',
   w_sellrate:'Sell rate, 999', w_buyrate:'Buy rate, 999',
+  w_acqn:'{n} acquisitions', badge_nocost:'no cost basis',
+  brk_val:'pure metal × the 999 rate',
   cat_ring:'Ring', cat_chain:'Chain', cat_bracelet:'Bracelet', cat_earring:'Earrings',
   cat_pendant:'Pendant', cat_cross:'Cross', cat_watch:'Watch', cat_scrap:'Scrap', cat_other:'Other',
   loc_tray:'Tray', loc_safe:'Safe', loc_assay:'At assay office', loc_workshop:'Workshop', loc_out:'Out',
@@ -1939,10 +1958,12 @@ T.ru = {
   w_weight:'Вес', w_gross:'Вес брутто', w_stone:'Вес камней', w_net:'Вес нетто',
   w_gross_s:'Брутто', w_stone_s:'Камни', w_net_s:'Нетто',
   w_stones_amd:'Камни (֏)', w_making:'Работа (֏/г)', w_making_s:'Работа',
-  w_pure:'Чистый металл', w_rate:'Рыночная цена, 999 (֏/г)', w_rate_s:'Рыночная цена',
+  w_pure:'Чистый металл', w_pure_s:'чистый', w_rate:'Рыночная цена, 999 (֏/г)', w_rate_s:'Рыночная цена',
   w_margin:'Наценка %', w_buydisc:'Дисконт закупки %', w_acq:'Себестоимость',
   w_code:'Код', w_cat:'Вид', w_note:'Примечание', w_loc:'Место', w_value:'Стоимость',
   w_sellrate:'Цена продажи, 999', w_buyrate:'Цена закупки, 999',
+  w_acqn:'{n} приобретений', badge_nocost:'нет себестоимости',
+  brk_val:'чистый металл × цена 999',
   cat_ring:'Кольцо', cat_chain:'Цепь', cat_bracelet:'Браслет', cat_earring:'Серьги',
   cat_pendant:'Подвеска', cat_cross:'Крест', cat_watch:'Часы', cat_scrap:'Лом', cat_other:'Прочее',
   loc_tray:'Витрина', loc_safe:'Сейф', loc_assay:'В пробирной', loc_workshop:'Мастерская', loc_out:'Вне магазина',
@@ -2371,6 +2392,18 @@ function buyBreakdown(netG, fineness){
     + '<span class="op">&times;</span><b>' + f + '/999</b>'
     + '<span class="eq">=</span><b>' + paid.toLocaleString('en-US') + ' ֏</b>'
     + '<span class="why">' + escH(t('pr_buy_nostones') + ' · ' + t('w_buydisc') + ' ' + pctTxt(S.cfg.buyDiscPct) + '%') + '</span></div>';
+}
+
+/* the valuation of a quantity of metal is computed money, so it gets a breakdown line too:
+   pure grams, the 999 rate, the product. One helper, used by the tray group headers, the
+   pure-metal total and the bulk pool sheet, so the three can never drift apart. */
+function valBreakdown(terms){
+  const total = terms.reduce((a,x) => a + Math.round(x.pure * x.rate), 0);
+  return '<div class="brk">'
+    + terms.map(x => '<b>' + gramTxt(x.pure,3) + t('u_g') + '</b><span class="op">&times;</span><b>'
+        + safeAmd(x.rate,0).toLocaleString('en-US') + '</b>').join('<span class="op">+</span>')
+    + '<span class="eq">=</span><b>' + total.toLocaleString('en-US') + ' \u058F</b>'
+    + '<span class="why">' + escH(t('brk_val')) + '</span></div>';
 }
 
 /* ---- the 80%-of-fair-value warning (spec 2.3) ----
@@ -2960,7 +2993,10 @@ function rateCard(){
       + '<div class="rsub"><div class="l">' + escH(t('w_buyrate')) + ' (−' + pctTxt(S.cfg.buyDiscPct) + '%)</div>'
         + '<div class="v">' + buyRate().toLocaleString('en-US') + '<span class="cur">֏</span></div></div>'
     + '</div>'
-    + '<button class="btn ghost full" style="margin-top:12px" onclick="openRate()">'
+    /* the ONE accent-filled button rule: updating the rate is the screen's next action only
+       when the rate is stale or missing. On a normal morning it is a quiet ghost button and the
+       screen has no accent slab at all, which is the correct answer for a screen you read. */
+    + '<button class="btn ' + (stale ? 'primary' : 'ghost full') + '" style="margin-top:12px" onclick="openRate()">'
       + escH(t('rate_edit')) + '</button>'
     + '</div>';
 }
@@ -3004,6 +3040,7 @@ function viewHome(){
       + '<div class="kpi"><div class="l">' + escH(t('home_val')) + '</div><div class="v m">'
         + val.toLocaleString('en-US') + '<span class="cur">֏</span></div></div>'
     + '</div>'
+    + valBreakdown(Object.keys(pm).map(m => ({ pure: pm[m], rate: metalRate999(m) })))
     + '<div class="card"><h3>' + escH(t('home_pure')) + '</h3>'
       + Object.keys(pm).map(m => '<div class="row"><span>' + escH(metalLabel(m)) + ' 999</span>'
           + '<span>' + gram(pm[m], 3) + '</span></div>').join('')
@@ -3033,31 +3070,41 @@ function viewTray(){
     const gp = pureG(g.grams, g.fineness);
     const rows = g.pieces.map(x => {
       const p = x.p;
+      const nm = modelName(p);
       const bits = [];
-      if(p.code) bits.push('<span>' + escH(p.code) + '</span>');
+      /* the code is only repeated under the name when the name is NOT the code — a one-off piece
+         has no model, so its name already IS its tag code and printing it twice reads as damage */
+      if(p.code && p.code !== nm) bits.push('<span>' + escH(p.code) + '</span>');
       bits.push('<span>' + escH(catLabel(p.cat)) + '</span>');
       if(p.location !== 'tray') bits.push('<span class="badge b-neutral">' + escH(locLabel(p.location)) + '</span>');
-      if(!p.acq.known || !p.acq.costAmd) bits.push('<span class="badge b-rose">' + escH(t('doc_none')) + '</span>');
+      if(!p.acq.known || !p.acq.costAmd) bits.push('<span class="badge b-rose">' + escH(t('badge_nocost')) + '</span>');
       if(p.acq.preJul26) bits.push('<span class="badge b-neutral">&lt; 01.07.26</span>');
       return '<button class="prow" onclick="openPiece(' + JSON.stringify(p.id) + ')">'
-        + '<div class="pi"><div class="pnm">' + escH(modelName(p)) + '</div>'
+        + '<div class="pi"><div class="pnm">' + escH(nm) + '</div>'
         + '<div class="psub">' + bits.join('') + '</div></div>'
+        /* WEIGHT AND PURE METAL ONLY. The piece's PRICE is computed money and no computed money
+           appears in this product without the formula beside it — so the price lives on the item
+           card, one tap away, where breakdown() renders it with the numbers substituted. */
         + '<div class="pw"><div class="a">' + gramTxt(x.on) + '<span class="g">' + escH(t('u_g')) + '</span></div>'
-        + '<div class="b">' + priceOf(p).toLocaleString('en-US') + ' ֏</div></div></button>';
+        + '<div class="b">' + escH(t('w_pure_s')) + ' ' + gramTxt(pureG(x.on, p.fineness),3) + escH(t('u_g')) + '</div></div></button>';
     }).join('');
-    const pools = g.pools.map(x =>
-      '<button class="prow" onclick="openPool(' + JSON.stringify(x.b.id) + ')">'
+    const pools = g.pools.map(x => {
+      const nlots = lotsFor(x.b.id).length;
+      return '<button class="prow" onclick="openPool(' + JSON.stringify(x.b.id) + ')">'
       + '<div class="pi"><div class="pnm">' + escH(t('w_scrap')) + ' · ' + escH(metalLabel(x.b.metal)) + '</div>'
-      + '<div class="psub"><span>' + escH(t('w_pool')) + '</span><span>'
-        + lotsFor(x.b.id).length + ' ' + escH(t('u_pcs')) + '</span></div></div>'
+      + '<div class="psub"><span>' + escH(t('w_pool')) + '</span>'
+        + (nlots ? '<span>' + escH(fmt('w_acqn', { n: nlots })) + '</span>' : '') + '</div></div>'
       + '<div class="pw"><div class="a">' + gramTxt(x.on) + '<span class="g">' + escH(t('u_g')) + '</span></div>'
-      + '<div class="b">' + Math.round(pureG(x.on, x.b.fineness) * r999).toLocaleString('en-US') + ' ֏</div></div></button>').join('');
+      + '<div class="b">' + escH(t('w_pure_s')) + ' ' + gramTxt(pureG(x.on, x.b.fineness),3) + escH(t('u_g')) + '</div></div></button>';
+    }).join('');
     return '<div class="fgrp"><div class="fhead">'
-      + '<span class="harg ' + g.metal + '">' + g.fineness + '</span>'
-      + '<span class="mlbl">' + escH(metalLabel(g.metal)) + (g.pcs ? ' · ' + fmt('tray_sub', { n: g.pcs }) : '') + '</span>'
-      + '<span class="fsum"><span class="w">' + gramTxt(g.grams) + '<span class="g">' + escH(t('u_g')) + '</span></span>'
-      + '<span class="m">' + escH(t('w_pure')) + ' ' + gramTxt(gp, 3) + escH(t('u_g'))
-        + ' · ' + Math.round(gp * r999).toLocaleString('en-US') + ' ֏</span></span>'
+      + '<div class="frow">'
+        + '<span class="harg ' + g.metal + '">' + g.fineness + '</span>'
+        + '<span class="mlbl">' + escH(metalLabel(g.metal)) + (g.pcs ? ' · ' + fmt('tray_sub', { n: g.pcs }) : '') + '</span>'
+        + '<span class="w">' + gramTxt(g.grams) + '<span class="g">' + escH(t('u_g')) + '</span></span>'
+      + '</div>'
+      /* the group's valuation, with its arithmetic on the line beneath it */
+      + valBreakdown([{ pure: gp, rate: r999 }])
       + '</div><div class="fbody">' + rows + pools + '</div></div>';
   }).join('');
 
@@ -3069,6 +3116,7 @@ function viewTray(){
       + '<div class="row" style="margin-top:12px"><span class="mlbl">' + escH(t('tray_val_lbl')) + '</span>'
         + '<span class="num" style="font-size:17px;font-weight:700">'
         + valuation().toLocaleString('en-US') + '<span class="cur">֏</span></span></div>'
+      + valBreakdown(Object.keys(pm).map(m => ({ pure: pm[m], rate: metalRate999(m) })))
       + '<div class="notice" style="margin-top:12px">' + escH(t('tray_no_total')) + '</div>'
     + '</div>'
     + body
@@ -3170,10 +3218,7 @@ function openPool(id){
       + '<span class="num" style="font-size:17px;font-weight:700">'
       + Math.round(pureG(on,b.fineness) * r999).toLocaleString('en-US') + '<span class="cur">֏</span></span></div>'
     /* the valuation is money, so it gets a breakdown line like every other computed figure */
-    + '<div class="brk"><b>' + gramTxt(on,3) + escH(t('u_g')) + '</b><span class="op">&times;</span><b>'
-      + safeInt(b.fineness,0) + '/1000</b><span class="op">&times;</span><b>' + r999.toLocaleString('en-US')
-      + '</b><span class="eq">=</span><b>' + Math.round(pureG(on,b.fineness)*r999).toLocaleString('en-US')
-      + ' ֏</b><span class="why">' + escH(t('w_rate_s') + ' 999') + '</span></div>'
+    + valBreakdown([{ pure: pureG(on, b.fineness), rate: r999 }])
     + '<div class="sec">' + escH(t('acq_title')) + '</div>'
     + (lots.length ? '<div class="tblwrap"><table class="tbl"><thead><tr>'
         + '<th>' + escH(t('acq_date')) + '</th><th class="num">' + escH(t('w_weight')) + '</th>'
