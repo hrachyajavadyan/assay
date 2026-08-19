@@ -1957,7 +1957,6 @@ T.hy = {
   /* ---- honest empty screens ---- */
   stub_title:'Այս էկրանը դեռ պատրաստ չէ',
   stub_recv:'Մատակարարից ընդունումը՝ քաշերով և ինքնարժեքով։',
-  stub_debts:'Մատակարարների մնացորդները՝ հաշիվներից և վճարումներից։',
   /* ---- Վաճառք (spec 2.2, 2.3, 5.3) ---- */
   sl_search:'Որոնել կոդով կամ անվանումով',
   sl_avail:'{n} իր՝ վաճառքի համար',
@@ -2134,6 +2133,21 @@ T.hy = {
   rp_slip_in_note:'Իրը մնում է հաճախորդի սեփականությունը։ Անդորրագիրը կազմված է երկու օրինակից՝ մեկական կողմերին։',
   rp_slip_out_note:'Իրը վերադարձվել է սեփականատիրոջը։ Անդորրագիրը կազմված է երկու օրինակից՝ մեկական կողմերին։',
   rp_sign_cust:'Հաճախորդ', rp_sign_shop:'Խանութ',
+  /* ---- Պարտքեր (spec 6.1, 7) ---- */
+  db_intro:'Մատակարարների մնացորդները։ Մնացորդը երբեք չի պահվում որպես թիվ — այն ամեն անգամ հաշվարկվում է երկու մատյանից՝ հաշիվներից և վճարումներից։',
+  db_books_note:'Մնացորդը = հաշիվների գումարը − վճարումների գումարը։ Առանձին «մնացորդ» դաշտ չկա, ուստի էկրանի թիվը և տողերը չեն կարող իրար հակասել։',
+  db_why:'Հաշիվներ − վճարումներ',
+  db_total:'Ընդհանուր պարտքը', db_owing:'Պարտք ունեցող մատակարարներ',
+  db_sups:'Մատակարարներ', db_sup:'Մատակարար', db_nosups:'Մատակարարներ դեռ չկան',
+  db_sup_new:'Նոր մատակարար', db_sup_name:'Անվանումը',
+  db_bill_new:'Ավելացնել հաշիվ', db_pay_new:'Գրանցել վճարում',
+  db_bill_amd:'Հաշվի գումարը (֏)', db_pay_amd:'Վճարման գումարը (֏)',
+  db_bill:'Հաշիվ', db_pay:'Վճարում', db_row:'Տող',
+  db_balance:'Մնացորդ', db_stmt:'Փոխադարձ հաշվարկի քաղվածք',
+  db_stmt_note:'Քաղվածքը կազմված է երկու օրինակից՝ մեկական կողմերին։ Տվյալները վերցված են այս սարքի մատյաններից։',
+  db_norows:'Այս մատակարարի համար գրառումներ չկան',
+  db_owes:'Պարտք կա', db_settled:'Փակված է', db_prepaid:'Կանխավճար',
+  db_nbills:'{n} հաշիվ', db_npays:'{n} վճարում',
   /* ---- the recovery net (ArmTrade's own strings) ---- */
   rec_title:'Ծրագիրը չկարողացավ բացել էջը',
   rec_body:'Տվյալների մի մասը վնասված է։ Կարող եք վերականգնել վերջին ճիշտ վիճակը՝ առանց հեռախոսից որևէ բան ջնջելու։',
@@ -2231,7 +2245,6 @@ T.en = {
   data_ns:'Data is stored on this device, separately from ARMGOLD.',
   stub_title:'This screen is not built yet',
   stub_recv:'Goods receipt from a supplier, by weight, capturing cost basis.',
-  stub_debts:'Supplier balances, derived from bills and payments.',
   sl_search:'Search by code or name',
   sl_avail:'{n} items available to sell',
   sl_noresult:'No item matches that code or name',
@@ -2400,6 +2413,20 @@ T.en = {
   rp_slip_in_note:'The item remains the property of the customer. Drawn up in two copies, one for each party.',
   rp_slip_out_note:'The item has been returned to its owner. Drawn up in two copies, one for each party.',
   rp_sign_cust:'Customer', rp_sign_shop:'Shop',
+  db_intro:'Supplier balances. A balance is never held as a number — it is recomputed every time from two books, the bills and the payments.',
+  db_books_note:'Balance = sum of the bills − sum of the payments. There is no separate «balance» field, so the figure on the screen and the rows under it cannot disagree.',
+  db_why:'bills − payments',
+  db_total:'Total owed', db_owing:'Suppliers with a balance',
+  db_sups:'Suppliers', db_sup:'Supplier', db_nosups:'No suppliers yet',
+  db_sup_new:'New supplier', db_sup_name:'Name',
+  db_bill_new:'Add a bill', db_pay_new:'Record a payment',
+  db_bill_amd:'Bill amount (֏)', db_pay_amd:'Payment amount (֏)',
+  db_bill:'Bill', db_pay:'Payment', db_row:'Entry',
+  db_balance:'Balance', db_stmt:'Statement of account',
+  db_stmt_note:'Drawn up in two copies, one for each party. The figures come from the books on this device.',
+  db_norows:'No entries for this supplier',
+  db_owes:'Owing', db_settled:'Settled', db_prepaid:'Paid ahead',
+  db_nbills:'{n} bills', db_npays:'{n} payments',
   rec_title:'The app could not open this screen',
   rec_body:'Part of the data is damaged. You can restore the last good state without deleting anything from the phone.',
   rec_restore:'Restore the last good state',
@@ -2496,7 +2523,6 @@ T.ru = {
   data_ns:'Данные хранятся на этом устройстве, отдельно от ARMGOLD.',
   stub_title:'Этот экран ещё не готов',
   stub_recv:'Приёмка от поставщика — по весу, с себестоимостью.',
-  stub_debts:'Остатки поставщиков — из счетов и платежей.',
   sl_search:'Поиск по коду или названию',
   sl_avail:'{n} изделий к продаже',
   sl_noresult:'Изделие с таким кодом или названием не найдено',
@@ -2665,6 +2691,20 @@ T.ru = {
   rp_slip_in_note:'Изделие остаётся собственностью клиента. Составлено в двух экземплярах, по одному каждой стороне.',
   rp_slip_out_note:'Изделие возвращено владельцу. Составлено в двух экземплярах, по одному каждой стороне.',
   rp_sign_cust:'Клиент', rp_sign_shop:'Магазин',
+  db_intro:'Остатки поставщиков. Остаток никогда не хранится числом — он каждый раз считается из двух книг: счетов и платежей.',
+  db_books_note:'Остаток = сумма счетов − сумма платежей. Отдельного поля «остаток» нет, поэтому цифра на экране и строки под ней не могут противоречить друг другу.',
+  db_why:'счета − платежи',
+  db_total:'Общий долг', db_owing:'Поставщиков с остатком',
+  db_sups:'Поставщики', db_sup:'Поставщик', db_nosups:'Поставщиков пока нет',
+  db_sup_new:'Новый поставщик', db_sup_name:'Название',
+  db_bill_new:'Добавить счёт', db_pay_new:'Записать платёж',
+  db_bill_amd:'Сумма счёта (֏)', db_pay_amd:'Сумма платежа (֏)',
+  db_bill:'Счёт', db_pay:'Платёж', db_row:'Запись',
+  db_balance:'Остаток', db_stmt:'Акт сверки расчётов',
+  db_stmt_note:'Составлен в двух экземплярах, по одному каждой стороне. Данные взяты из книг на этом устройстве.',
+  db_norows:'Записей по этому поставщику нет',
+  db_owes:'Есть долг', db_settled:'Закрыт', db_prepaid:'Аванс',
+  db_nbills:'{n} счетов', db_npays:'{n} платежей',
   rec_title:'Приложение не смогло открыть экран',
   rec_body:'Часть данных повреждена. Можно восстановить последнее исправное состояние, ничего не удаляя с телефона.',
   rec_restore:'Восстановить последнее исправное состояние',
@@ -2787,6 +2827,9 @@ function freshState(){
     /* the OPEN count session, so a count survives a reload and the phone going to sleep in the
        middle of a cabinet; and the finished acts. */
     count:null, counts:[], hmSends:[],
+    /* THE TWO BOOKS a supplier balance is derived from. THERE IS NO `balance` FIELD, here or
+       anywhere: see debtsFromBooks(). */
+    sups:[], bills:[], pays:[],
     /* the repair custody register. NEVER stock: see the repairs section. */
     repairs:[]
   };
@@ -3226,7 +3269,8 @@ function migrate(st){
   st.rate.by = String(st.rate.by || 'shop').slice(0,24);
 
   const arr = k => { if(!Array.isArray(st[k])) st[k] = []; };
-  ['models','pieces','pools','lots','moves','sales','buys','counts','repairs','hmSends'].forEach(arr);
+  ['models','pieces','pools','lots','moves','sales','buys','counts','repairs','hmSends',
+   'sups','bills','pays'].forEach(arr);
 
   /* ---- models: catalogue rows, no quantity, never in the ledger ---- */
   st.models = st.models.filter(m => m && m.id).map(m => ({
@@ -3436,6 +3480,21 @@ function migrate(st){
     rate: { au: safeAmd((c.rate||{}).au, 0), ag: safeAmd((c.rate||{}).ag, 0) }
   })).slice(-200);
 
+  /* ---- suppliers and the two books. A balance is NEVER stored, so migration has nothing to
+     reconcile: it defaults and clamps rows, and the figure is derived at read time. ---- */
+  st.sups = st.sups.filter(x => x && x.id).map(x => ({
+    id: String(x.id).slice(0,32), name: String(x.name || '').slice(0,80),
+    tin: String(x.tin || '').replace(/[^0-9]/g,'').slice(0,12),
+    phone: String(x.phone || '').slice(0,32), note: String(x.note || '').slice(0,200)
+  }));
+  const bookRow = x => ({
+    id: String(x.id).slice(0,40), sup: String(x.sup || '').slice(0,32),
+    ts: safeInt(x.ts, st.today), amd: safeAmd(x.amd, 0),
+    ref: String(x.ref || '').slice(0,40), note: String(x.note || '').slice(0,200)
+  });
+  st.bills = st.bills.filter(x => x && x.id && x.sup).map(bookRow).slice(-1000);
+  st.pays  = st.pays .filter(x => x && x.id && x.sup).map(bookRow).slice(-1000);
+
   /* ---- hand-over lists. A list that cannot be reprinted is a list the shop cannot produce when
      the assay office asks which items it holds. ---- */
   st.hmSends = st.hmSends.filter(x => x && x.id).map(h => ({
@@ -3599,6 +3658,24 @@ function seedState(){
              docType:'none', docRef:'', source:'opening', known:false },
       hallmark:{ origin:'am_assay', makerMark:false },
       location:'tray', note:'', addedTs: D(2025,11,3) }
+  ];
+
+  /* the two wholesalers the seed pieces name in acq.source, with their books. One is part paid
+     and one is settled, so the derived balance has both cases to show. */
+  st.sups = [
+    { id:'s1', name:'Ոսկերչական մեծածախ «Անի»', tin:'01234567', phone:'010 55 44 33', note:'' },
+    { id:'s2', name:'Իմպորտ «ԵԱՏՄ Գոլդ»', tin:'07654321', phone:'010 22 11 00', note:'' }
+  ];
+  st.bills = [
+    { id:'bl1', sup:'s1', ts: D(2026,7,28), amd: 186000, ref:'ՀԱ-2026-0311', note:'' },
+    { id:'bl2', sup:'s1', ts: D(2026,8,2),  amd: 129000, ref:'ՀԱ-2026-0344', note:'' },
+    { id:'bl3', sup:'s1', ts: D(2026,8,6),  amd: 238000, ref:'ՀԱ-2026-0351', note:'' },
+    { id:'bl4', sup:'s2', ts: D(2026,6,9),  amd:   9800, ref:'ՀԱ-2026-0202', note:'' }
+  ];
+  st.pays = [
+    { id:'py1', sup:'s1', ts: D(2026,8,5),  amd: 186000, ref:'ՎՃ-0091', note:'' },
+    { id:'py2', sup:'s1', ts: D(2026,8,12), amd: 100000, ref:'ՎՃ-0104', note:'' },
+    { id:'py3', sup:'s2', ts: D(2026,6,30), amd:   9800, ref:'ՎՃ-0077', note:'' }
   ];
 
   st.pools = [
@@ -3870,6 +3947,7 @@ function escClose(){
   const r = document.getElementById('modalRoot');
   if(!r || !r.innerHTML) return false;
   NI = null; SL = null; CN_SHEET = null; RP = null; RP_SHEET = null; HM_SHEET = null;
+  DBF = null; DB_SHEET = null;
   closeModal();
   return true;
 }
@@ -4384,6 +4462,7 @@ function viewFor(k){
   if(k === 'count') return viewCount();
   if(k === 'mark')  return viewMark();
   if(k === 'repair') return viewRepair();
+  if(k === 'debts') return viewDebts();
   if(k === 'data') return viewData();
   return stubView(k);
 }
@@ -6509,6 +6588,233 @@ function openRepairSlip(id, kind){
 }
 
 /* =====================================================================================
+   ՊԱՐՏՔԵՐ — supplier balances (spec 6.1, 7)
+
+   ArmTrade's `debtsFromBooks` pattern, transferred verbatim because the reason it exists is not
+   domain-specific: A BALANCE IS DERIVED FROM TWO BOOKS, NEVER HELD AS A RUNNING COUNTER.
+
+   There is no `balance` field anywhere in this product's state. A stored balance is a number that
+   can disagree with the rows that produced it — and when it does, nobody can tell which of the
+   two is wrong, because the disagreement itself is the only evidence. Recomputing from Σ bills −
+   Σ payments on every read means the figure on the screen and the rows under it cannot drift
+   apart: if a row is wrong you can see which one, and correcting it corrects the balance.
+
+   Same rule as the ledger one level down (on-hand is the sum of the movements, never a stored
+   quantity), and same rule as repairDue() one screen over. Three places, one discipline.
+
+   This is the WHOLESALE side: what the shop owes a supplier it buys finished pieces or metal
+   from. Buying from a walk-in is a counter flow that settles on the spot (Գնում) and does not
+   appear here. What a repair customer still owes is on the repair record, for the same reason:
+   it is a different counterparty and a different book.
+   ===================================================================================== */
+let DB_SHEET = null;   /* the supplier whose statement is open */
+let DBF = null;        /* the bill / payment draft */
+
+const supById = id => (S.sups||[]).find(x => x && x.id === id) || null;
+const supName = id => { const s = supById(id); return s && s.name ? s.name : String(id||'—'); };
+
+/* THE WHOLE OF IT. Nothing here reads a stored balance because there is not one to read. */
+function debtsFromBooks(){
+  const acc = {};
+  const touch = id => { if(!acc[id]) acc[id] = { sup:id, billed:0, paid:0, nBills:0, nPays:0 }; return acc[id]; };
+  (S.sups||[]).forEach(x => touch(x.id));
+  (S.bills||[]).forEach(b => { const a = touch(b.sup); a.billed += safeAmd(b.amd,0); a.nBills++; });
+  (S.pays ||[]).forEach(p => { const a = touch(p.sup); a.paid   += safeAmd(p.amd,0); a.nPays++;  });
+  return Object.keys(acc).map(k => {
+    const a = acc[k];
+    /* DERIVED HERE AND NOWHERE ELSE. */
+    a.balance = a.billed - a.paid;
+    return a;
+  }).sort((x,y) => y.balance - x.balance);
+}
+const debtsTotal = () => debtsFromBooks().reduce((a,x) => a + Math.max(0, x.balance), 0);
+/* both books for one supplier, oldest first, with the balance rolled forward FOR DISPLAY ONLY —
+   the roll is computed here, in the view, and is never written back to a record. */
+function supBooks(id){
+  const rows = [];
+  (S.bills||[]).forEach(b => { if(b.sup === id) rows.push({ kind:'bill', ts:b.ts, amd:safeAmd(b.amd,0), ref:b.ref, note:b.note }); });
+  (S.pays ||[]).forEach(p => { if(p.sup === id) rows.push({ kind:'pay',  ts:p.ts, amd:safeAmd(p.amd,0), ref:p.ref, note:p.note }); });
+  rows.sort((a,b) => (a.ts - b.ts) || (a.kind === 'bill' ? -1 : 1));
+  let bal = 0;
+  rows.forEach(r => { bal += (r.kind === 'bill' ? r.amd : -r.amd); r.bal = bal; });
+  return rows;
+}
+
+/* ---- adding a supplier, a bill and a payment ---- */
+function dbNewSup(){
+  openModal('<h3>' + escH(t('db_sup_new')) + '</h3>'
+    + '<label class="fieldlbl" for="dbSN">' + escH(t('db_sup_name')) + '</label>'
+    + '<input id="dbSN" type="text" maxlength="80" value="">'
+    + '<label class="fieldlbl" for="dbST" style="margin-top:12px">' + escH(t('data_tin')) + '</label>'
+    + '<input id="dbST" type="text" inputmode="numeric" maxlength="12" value="">'
+    + '<label class="fieldlbl" for="dbSP" style="margin-top:12px">' + escH(t('rp_phone')) + '</label>'
+    + '<input id="dbSP" type="tel" maxlength="32" value="">'
+    + '<button class="btn primary" style="margin-top:16px" onclick="dbSaveSup()">' + escH(t('save')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>');
+  setTimeout(() => { try{ document.getElementById('dbSN').focus(); }catch(e){} }, 60);
+}
+function dbSaveSup(){
+  const nm = String((document.getElementById('dbSN')||{}).value || '').trim().slice(0,80);
+  if(!nm) return;
+  const id = contentId('sup', nm, (S.sups||[]).length);
+  S.sups.push({ id: id, name: nm,
+    tin: String((document.getElementById('dbST')||{}).value || '').replace(/[^0-9]/g,'').slice(0,12),
+    phone: String((document.getElementById('dbSP')||{}).value || '').slice(0,32), note:'' });
+  migrate(S); saveState(); closeModal(); renderAll();
+}
+function dbOpenEntry(kind, sup){
+  if(!(S.sups||[]).length) return dbNewSup();
+  DBF = { kind: kind === 'pay' ? 'pay' : 'bill', sup: sup || (S.sups[0] && S.sups[0].id) || '',
+          amd:'', ref:'', note:'' };
+  dbRender();
+}
+function dbSet(k, v){ if(!DBF) return; DBF[k] = v; dbRender(); }
+function dbNum(k, v){ if(!DBF) return; DBF[k] = v;
+  try{ const b = document.getElementById('dbGo');
+       if(b) b.className = 'btn primary' + (safeAmd(DBF.amd,0) > 0 ? '' : ' off'); }catch(e){} }
+function dbRender(){
+  if(!DBF) return;
+  const chip = (on, fn, label) => '<button class="tbtn wide' + (on ? ' on' : '') + '" onclick="' + fn + '">'
+    + escH(label) + '</button>';
+  const isBill = DBF.kind === 'bill';
+  openModal('<h3>' + escH(isBill ? t('db_bill_new') : t('db_pay_new')) + '</h3>'
+    + '<div class="fieldlbl">' + escH(t('db_sup')) + '</div>'
+    + '<div class="chips wrap">' + (S.sups||[]).map(x =>
+        chip(DBF.sup === x.id, 'dbSet(' + jsArg('sup') + ',' + jsArg(x.id) + ')', x.name)).join('') + '</div>'
+    + '<label class="fieldlbl" for="dbA">' + escH(isBill ? t('db_bill_amd') : t('db_pay_amd')) + '</label>'
+    + '<input id="dbA" type="number" inputmode="numeric" min="0" step="1" value="' + escH(DBF.amd)
+      + '" oninput="dbNum(' + jsArg('amd') + ',this.value)">'
+    + '<label class="fieldlbl" for="dbR" style="margin-top:12px">' + escH(t('acq_ref')) + '</label>'
+    + '<input id="dbR" type="text" maxlength="40" value="' + escH(DBF.ref)
+      + '" oninput="dbNum(' + jsArg('ref') + ',this.value)">'
+    + '<label class="fieldlbl" for="dbN" style="margin-top:12px">' + escH(t('w_note')) + '</label>'
+    + '<input id="dbN" type="text" maxlength="200" value="' + escH(DBF.note)
+      + '" oninput="dbNum(' + jsArg('note') + ',this.value)">'
+    /* THE RULE, ON THE SHEET THAT WRITES THE ROW. */
+    + '<div class="notice">' + escH(t('db_books_note')) + '</div>'
+    + '<button id="dbGo" class="btn primary' + (safeAmd(DBF.amd,0) > 0 ? '' : ' off')
+      + '" style="margin-top:16px" onclick="dbSaveEntry()">' + escH(t('save')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="DBF=null;closeModal()">'
+      + escH(t('cancel')) + '</button>');
+}
+function dbSaveEntry(){
+  if(!DBF) return;
+  const amd = safeAmd(DBF.amd, 0);
+  if(!(amd > 0) || !DBF.sup) return;
+  const row = { id: contentId(DBF.kind === 'bill' ? 'bl' : 'py',
+                  [DBF.sup, amd, DBF.ref, S.today].join(KSEP),
+                  ((DBF.kind === 'bill' ? S.bills : S.pays)||[]).length),
+                sup: DBF.sup, ts: S.today, amd: amd,
+                ref: String(DBF.ref||'').slice(0,40), note: String(DBF.note||'').slice(0,200) };
+  /* APPEND ONLY, AND NO BALANCE IS UPDATED — because there is no balance to update. */
+  if(DBF.kind === 'bill') S.bills.push(row); else S.pays.push(row);
+  const sup = DBF.sup;
+  DBF = null;
+  migrate(S); saveState(); closeModal(); renderAll();
+  if(DB_SHEET) openSupplier(sup);
+}
+
+/* ---- the screen ---- */
+function viewDebts(){
+  const rows = debtsFromBooks();
+  const owing = rows.filter(x => x.balance > 0);
+  const total = debtsTotal();
+  return '<main class="anim">'
+    + '<div class="sec">' + escH(t('tab_debts')) + '</div>'
+    + '<div class="card"><div class="muted" style="line-height:1.55">' + escH(t('db_intro')) + '</div>'
+      + '<div class="notice" style="margin-top:10px">' + escH(t('db_books_note')) + '</div></div>'
+    + '<div class="kpis kpi2">'
+      + '<div class="kpi"><div class="l">' + escH(t('db_total')) + '</div><div class="v m">'
+        + total.toLocaleString('en-US') + '<span class="cur">֏</span></div></div>'
+      + '<div class="kpi"><div class="l">' + escH(t('db_owing')) + '</div><div class="v">'
+        + owing.length + '</div></div>'
+    + '</div>'
+    /* the total is computed money, so its arithmetic sits under it like every other figure here */
+    + '<div class="brk"><b>' + (S.bills||[]).reduce((a,b) => a + safeAmd(b.amd,0), 0).toLocaleString('en-US') + '</b>'
+      + '<span class="op">−</span><b>' + (S.pays||[]).reduce((a,p) => a + safeAmd(p.amd,0), 0).toLocaleString('en-US') + '</b>'
+      + '<span class="eq">=</span><b>' + ((S.bills||[]).reduce((a,b) => a + safeAmd(b.amd,0), 0)
+          - (S.pays||[]).reduce((a,p) => a + safeAmd(p.amd,0), 0)).toLocaleString('en-US') + ' ֏</b>'
+      + '<span class="why">' + escH(t('db_why')) + '</span></div>'
+
+    /* the screen's ONE accent-filled button: recording what a supplier has invoiced. */
+    + '<button class="btn primary" style="margin-top:12px" onclick="dbOpenEntry(' + jsArg('bill') + ')">+ '
+      + escH(t('db_bill_new')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="dbOpenEntry(' + jsArg('pay') + ')">'
+      + escH(t('db_pay_new')) + '</button>'
+
+    + '<div class="sec">' + escH(t('db_sups')) + '</div>'
+    + (rows.length
+        ? '<div class="fgrp"><div class="fbody">' + rows.map(x =>
+            '<button class="prow" onclick="openSupplier(' + jsArg(x.sup) + ')">'
+            + '<div class="pi"><div class="pnm">' + escH(supName(x.sup)) + '</div>'
+            + '<div class="psub"><span>' + escH(fmt('db_nbills', { n: x.nBills })) + '</span>'
+              + '<span>' + escH(fmt('db_npays', { n: x.nPays })) + '</span>'
+              + (x.balance > 0 ? '<span class="badge b-rose">' + escH(t('db_owes')) + '</span>'
+                 : (x.balance < 0 ? '<span class="badge b-cyan">' + escH(t('db_prepaid')) + '</span>'
+                    : '<span class="badge b-green">' + escH(t('db_settled')) + '</span>')) + '</div></div>'
+            + '<div class="pw"><div class="a">' + (x.balance < 0 ? '−' : '')
+              + Math.abs(x.balance).toLocaleString('en-US') + '<span class="cur">֏</span></div></div></button>').join('')
+          + '</div></div>'
+        : '<div class="card"><div class="muted">' + escH(t('db_nosups')) + '</div></div>')
+    + '<button class="btn ghost full" style="margin-top:12px" onclick="dbNewSup()">+ '
+      + escH(t('db_sup_new')) + '</button>'
+    + '</main>';
+}
+
+/* ---- the statement: both books, a running balance and a signature block ---- */
+function openSupplier(id){
+  const sup = supById(id);
+  if(!sup) return;
+  DB_SHEET = id;
+  const rows = supBooks(id);
+  const billed = rows.filter(r => r.kind === 'bill').reduce((a,r) => a + r.amd, 0);
+  const paid   = rows.filter(r => r.kind === 'pay').reduce((a,r) => a + r.amd, 0);
+  const bal = billed - paid;
+  const sign = lbl => '<div style="flex:1;min-width:150px"><div class="doclbl">' + escH(lbl) + '</div>'
+    + '<div class="actsignline"></div></div>';
+  openModal('<h3>💳 ' + escH(t('db_stmt')) + '</h3>'
+    + '<div class="row"><span style="font-size:17px;font-weight:700">' + escH(sup.name) + '</span></div>'
+    + '<div class="muted" style="margin-top:4px">' + escH([sup.tin ? t('data_tin') + ' ' + sup.tin : '',
+        sup.phone].filter(Boolean).join(' · ')) + '</div>'
+    + '<hr class="actrule">'
+    + '<div class="row"><span class="mlbl">' + escH(t('db_balance')) + '</span>'
+      + '<span class="big">' + (bal < 0 ? '−' : '') + Math.abs(bal).toLocaleString('en-US')
+      + '<span class="cur">֏</span></span></div>'
+    /* DERIVED, IN FRONT OF THE READER. Two sums and a subtraction, with the row counts, so the
+       figure can be checked against the table below it. */
+    + '<div class="brk"><b>' + billed.toLocaleString('en-US') + '</b>'
+      + '<span class="op">−</span><b>' + paid.toLocaleString('en-US') + '</b>'
+      + '<span class="eq">=</span><b>' + bal.toLocaleString('en-US') + ' ֏</b>'
+      + '<span class="why">' + escH(t('db_why')) + '</span></div>'
+
+    + (rows.length ? '<div class="tblwrap" style="max-height:none"><table class="tbl"><thead><tr>'
+        + '<th>' + escH(t('w_date')) + '</th><th>' + escH(t('db_row')) + '</th>'
+        + '<th class="num">' + escH(t('act_col_sum')) + '</th>'
+        + '<th class="num">' + escH(t('db_balance')) + '</th></tr></thead><tbody>'
+        + rows.slice().reverse().map(r => '<tr><td>' + escH(fdate(r.ts)) + '</td>'
+          + '<td>' + escH(r.kind === 'bill' ? t('db_bill') : t('db_pay'))
+            + (r.ref ? '<span class="tblsub">' + escH(r.ref) + '</span>' : '') + '</td>'
+          + '<td class="num">' + (r.kind === 'pay' ? '−' : '') + r.amd.toLocaleString('en-US') + '</td>'
+          + '<td class="num">' + r.bal.toLocaleString('en-US') + '</td></tr>').join('')
+        + '</tbody></table></div>'
+      : '<div class="muted">' + escH(t('db_norows')) + '</div>')
+    + '<div class="muted" style="margin-top:6px">' + escH(t('act_words')) + '՝ <b>'
+      + escH(amWords(Math.abs(bal))) + '</b></div>'
+
+    + '<button class="btn primary" style="margin-top:16px" onclick="dbOpenEntry(' + jsArg('pay') + ',' + jsArg(id) + ')">'
+      + escH(t('db_pay_new')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="dbOpenEntry(' + jsArg('bill') + ',' + jsArg(id) + ')">'
+      + escH(t('db_bill_new')) + '</button>'
+    + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
+      + sign(t('data_shop')) + sign(t('db_sup')) + '</div>'
+    + '<div class="muted" style="font-size:14px;margin-top:14px">' + escH(t('db_stmt_note')) + '</div>'
+    + '<button class="btn ghost full noprint" style="margin-top:16px" onclick="window.print()">🖨 '
+      + escH(t('print')) + '</button>'
+    + '<button class="btn ghost full noprint" style="margin-top:9px" onclick="DB_SHEET=null;closeModal()">'
+      + escH(t('close')) + '</button>');
+}
+
+/* =====================================================================================
    RENDER + THE RECOVERY NET
    renderAll() is a try/catch around the whole paint. If a screen throws, the shopkeeper gets a
    card that offers him the last known-good state — never a white page, and never a lost shop.
@@ -7208,6 +7514,57 @@ function voskiSelfTest(){
         && repairsInShop().some(x => x.id === id)
         && verifyLedger().length === 0;
       S.repairs = (S.repairs||[]).filter(x => x.id !== id);
+      return r;
+    })());
+
+    /* ---- ՊԱՐՏՔԵՐ: a balance derived from two books, NEVER a running counter ---- */
+    ok('a supplier balance is bills minus payments, computed at read time', (()=>{
+      const d = debtsFromBooks();
+      if(!d.length) return false;
+      return d.every(x => {
+        const billed = (S.bills||[]).filter(b => b.sup === x.sup).reduce((a,b) => a + safeAmd(b.amd,0), 0);
+        const paid   = (S.pays ||[]).filter(p => p.sup === x.sup).reduce((a,p) => a + safeAmd(p.amd,0), 0);
+        return x.billed === billed && x.paid === paid && x.balance === billed - paid;
+      });
+    })());
+    /* THE ASSERTION THAT MATTERS: there is no stored balance anywhere for one to drift from. */
+    ok('no record anywhere carries a stored balance', (()=>{
+      const bad = k => k === 'balance' || k === 'bal' || k === 'owed' || k === 'due';
+      return (S.sups||[]).every(x => !Object.keys(x).some(bad))
+        && (S.bills||[]).every(x => !Object.keys(x).some(bad))
+        && (S.pays ||[]).every(x => !Object.keys(x).some(bad));
+    })());
+    ok('adding a payment moves the balance by exactly that payment', (()=>{
+      const sup = (S.sups||[])[0]; if(!sup) return false;
+      const before = debtsFromBooks().find(x => x.sup === sup.id).balance;
+      S.pays.push({ id:'py-test', sup:sup.id, ts:S.today, amd:50000, ref:'T', note:'' });
+      const after = debtsFromBooks().find(x => x.sup === sup.id).balance;
+      S.pays = S.pays.filter(x => x.id !== 'py-test');
+      const back = debtsFromBooks().find(x => x.sup === sup.id).balance;
+      /* and REMOVING it puts the balance back, which a running counter could not do */
+      return after === before - 50000 && back === before;
+    })());
+    ok('the statement rolls the balance forward and lands on the derived figure', (()=>{
+      const sup = (S.sups||[]).find(x => (S.bills||[]).some(b => b.sup === x.id));
+      if(!sup) return false;
+      const rows = supBooks(sup.id);
+      const d = debtsFromBooks().find(x => x.sup === sup.id);
+      return rows.length > 1
+        && rows.every((r,i) => i === 0 || rows[i-1].ts <= r.ts)
+        && rows[rows.length-1].bal === d.balance;
+    })());
+    ok('supplier books survive migrate untouched', (()=>{
+      const snap = JSON.parse(JSON.stringify(S));
+      const before = JSON.stringify(debtsFromBooks());
+      S = adopt(snap);
+      return JSON.stringify(debtsFromBooks()) === before;
+    })());
+    /* a supplier debt is not a stock movement: the two books touch neither the ledger nor a gram */
+    ok('the two books post no movement and hold no metal', (()=>{
+      const n0 = (S.moves||[]).length, v0 = valuation();
+      S.bills.push({ id:'bl-test', sup:(S.sups||[])[0].id, ts:S.today, amd:1234, ref:'T', note:'' });
+      const r = (S.moves||[]).length === n0 && valuation() === v0 && verifyLedger().length === 0;
+      S.bills = S.bills.filter(x => x.id !== 'bl-test');
       return r;
     })());
 
