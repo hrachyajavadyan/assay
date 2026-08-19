@@ -4115,6 +4115,13 @@ function slWarnHtml(w){
         c: w.manual.toLocaleString('en-US') + ' ֏' }))
     + '</div><div class="d">' + escH(t('sl_warn_ok')) + '</div></div>';
 }
+/* what will actually be recorded, shown only once it differs from the computed figure — a row
+   that repeated the same number back at the jeweller would be noise. */
+function slFinalHtml(a){
+  if(!a.manual || a.manual === a.computed) return '';
+  return '<div class="row" style="margin-top:12px"><span class="mlbl">' + escH(t('pr_manual')) + '</span>'
+    + '<span class="big">' + a.manual.toLocaleString('en-US') + '<span class="cur">֏</span></span></div>';
+}
 function slPrice(v){
   if(!SL) return;
   SL.price = v; SL.touched = true;
@@ -4133,10 +4140,7 @@ function slPaint(){
   try{
     const w = a.manual ? fairValueWarn(a.computed, a.manual) : null;
     const wa = el('slWarn'); if(wa) wa.innerHTML = slWarnHtml(w);
-    const tv = el('slTotal');
-    if(tv) tv.innerHTML = a.price.toLocaleString('en-US') + '<span class="cur">֏</span>';
-    const tl = el('slTotalL');
-    if(tl) tl.textContent = a.manual ? t('pr_manual') : t('pr_computed');
+    const fi = el('slFinal'); if(fi) fi.innerHTML = slFinalHtml(a);
     const go = el('slGo'); if(go) go.className = 'btn primary' + (a.price > 0 ? '' : ' off');
   }catch(e){}
 }
@@ -4164,9 +4168,14 @@ function slRender(){
 
     /* THE COMPUTED PRICE AND ITS BREAKDOWN. Never one without the other. */
     + '<div class="sec">' + escH(t('pr_title')) + '</div>'
+    /* THE COMPUTED FIGURE AND ITS LINE STAY PUT WHEN THE JEWELLER OVERRIDES. Repainting this
+       box with the manual number left a formula ending «= 303,197 ֏» sitting under a heading
+       that said 181,918 — the one promise the breakdown line makes is that its own operands
+       give its own answer, and moving the answer out from under it breaks exactly that. The
+       override gets its own figure, below, where the warning can sit beside it. */
     + '<div class="pricebox">'
-      + '<div class="l" id="slTotalL">' + escH(a.manual ? t('pr_manual') : t('pr_computed')) + '</div>'
-      + '<div class="v" id="slTotal">' + a.price.toLocaleString('en-US') + '<span class="cur">֏</span></div>'
+      + '<div class="l">' + escH(t('pr_computed')) + '</div>'
+      + '<div class="v">' + a.computed.toLocaleString('en-US') + '<span class="cur">֏</span></div>'
       + breakdown(p)
     + '</div>'
 
@@ -4177,6 +4186,7 @@ function slRender(){
       + '" oninput="slPrice(this.value)">'
     + (SL.touched ? '<button class="btn ghost full" style="margin-top:9px" onclick="slReset()">'
         + escH(t('sl_reset')) + '</button>' : '')
+    + '<div id="slFinal">' + slFinalHtml(a) + '</div>'
     + '<div id="slWarn">' + slWarnHtml(w) + '</div>'
 
     /* a missing cost NEVER blocks a sale — it is stated, plainly, and the sale proceeds */
@@ -4913,6 +4923,73 @@ function voskiSelfTest(){
     /* hallmark expertise */
     ok('under 1.5 g is exempt by weight', suggestHallmark({ metal:'au', netG:1.2, cat:'earring' }) === 'exempt_weight');
     ok('scrap is exempt as scrap', suggestHallmark({ metal:'au', netG:40, cat:'scrap' }) === 'exempt_scrap');
+
+    /* ---- THE TWO COUNTER FLOWS ----
+       The flows themselves are driven by taps, so what is asserted here is the arithmetic and
+       the ledger effect they commit — the parts a click-through test cannot check to the
+       milligram and the parts a later change is most likely to break. */
+
+    /* the buy line must reproduce its own total, stones included, on weights a jeweller types */
+    ok('buy breakdown reproduces its own total', (()=>{
+      const keep = S.cfg.buyDiscPct; S.cfg.buyDiscPct = 12;
+      const F = [375,416,500,583,585,750,916,958,999];
+      let seed = 777, bad = 0;
+      const rnd = () => (seed = (seed*1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+      for(let i=0;i<1500;i++){
+        const net = round3(0.5 + rnd()*45), f = F[Math.floor(rnd()*F.length)];
+        const metal = rnd() < 0.25 ? 'ag' : 'au';
+        const st = rnd() < 0.4 ? Math.round(rnd()*60000) : 0;
+        const nums = String(buyBreakdown(net, f, metal, st)).match(/<b>([^<]+)<\/b>/g)
+          .map(x => x.replace(/<\/?b>/g,''));
+        const printed = parseInt(String(nums[nums.length-1]).replace(/[^0-9]/g,''),10);
+        if(printed !== buyPriceOf(net, f, metal) + st) bad++;
+      }
+      S.cfg.buyDiscPct = keep; return bad === 0;
+    })());
+    /* NO MAKING CHARGE ON THE BUY SIDE. The shop is buying metal, not workmanship. */
+    ok('the buy price carries no making charge', (()=>{
+      const keep = S.cfg.buyDiscPct; S.cfg.buyDiscPct = 12;
+      const r = buyPriceOf(10, 585, 'au') === Math.round(10 * buyRate('au') * 585/999);
+      S.cfg.buyDiscPct = keep; return r;
+    })());
+    /* the act number is never re-used: it is scanned off every reference the shop already holds */
+    ok('the act number is fresh and well formed', (()=>{
+      const n = nextActNo();
+      return /^ԳԱ-\d{4}-\d{4}$/.test(n)
+        && !(S.buys||[]).some(b => b && b.id === n)
+        && !(S.lots||[]).some(l => l && l.acq && l.acq.docRef === n)
+        && !(S.pieces||[]).some(p => p && p.acq && p.acq.docRef === n);
+    })(), nextActNo());
+    /* a buy-in into a pool: one movement, one lot, and the lots never claim more than the ledger */
+    ok('a buy-in opens a lot without over-claiming the pool', (()=>{
+      const sub = 'b:au:585', before = onHand(sub), n = (S.moves||[]).length;
+      const lid = 'l-test-buyin';
+      S.lots.push({ id:lid, subject:sub, inG:5.125, leftG:5.125,
+        acq:{ costAmd:150000, stoneCost:0, date:S.today, preJul26:false,
+              docType:'buyact', docRef:'ԳԱ-2026-9999', source:'public', known:true } });
+      const r = postMove({ subject:sub, type:'buyin', dq:5.125, ts:S.today, cost:150000,
+                           ref:'ԳԱ-2026-9999', lot:lid });
+      let sum = 0;
+      (S.lots||[]).forEach(l => { if(l && l.subject === sub) sum = round3(sum + num(l.leftG)); });
+      return r && (S.moves||[]).length === n+1 && eqG(onHand(sub), round3(before + 5.125))
+        && sum <= onHand(sub) + EPS && verifyLedger().length === 0;
+    })());
+    /* a sale takes the WHOLE net weight, and the 80% warning stores both figures */
+    ok('a sale empties the piece and the override keeps both figures', (()=>{
+      const p = pieceById('i6'); if(!p) return false;
+      const sub = pieceSubj(p.id), on = round3(onHand(sub));
+      const computed = priceOf(p), manual = Math.round(computed * 0.7);
+      const w = fairValueWarn(computed, manual);
+      const r = postMove({ subject:sub, type:'sale', dq:-on, ts:S.today,
+                           cost:p.acq.costAmd, ref:'ՀԴՄ-TEST' });
+      return r && eqG(onHand(sub), 0) && !pieceRows().some(x => x.p.id === 'i6')
+        && w && w.pct === 70 && w.computed === computed && w.manual === manual
+        && verifyLedger().length === 0;
+    })());
+    /* the amount in words is Armenian whatever the UI language is — that is the language the
+       գնման ակտ is signed in */
+    ok('the amount in words is Armenian', amWords(0) === 'զրո դրամ'
+      && amWords(331080) === 'երեք հարյուր երեսունմեկ հազար ութսուն դրամ', amWords(331080));
 
     /* trilingual parity */
     const hk = Object.keys(T.hy);
