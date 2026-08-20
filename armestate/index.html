@@ -2400,11 +2400,6 @@ T.hy = {
   dt_reset_b: "Այս սարքի տվյալները կփոխարինվեն։",
   dt_priv: "Ի՞նչ է տեսնում գործակալի սարքը",
   dt_priv_b: "Գործակալը գրանցում է ցուցադրություններ, առաջարկներ և փուլեր։ Գումարի ոչ մի տող չի կարող ստեղծել՝ ոչ վաստակած, ոչ վճարում, ոչ բաժին, ոչ պայման։",
-  /* things that are not built yet, named honestly */
-  stub_title: "Դեռ կառուցված չէ",
-  stub_clients: "Հաճախորդների ցուցակը, դերերով և հեռախոսահամարով, հաջորդ քայլում է։ Տվյալները տեղում են՝ գործարքներում երևում են։",
-  stub_views: "Ցուցադրության գրանցումը չորս հպումով և թերթիկի տպումը հաջորդ քայլում են։ Ցուցադրությունների ապացույցի տողերն արդեն մատյանում են։",
-  stub_docs: "Պայմանագրերի էկրանը՝ բացառիկության հետհաշվարկով և տպվող ձևով, հաջորդ քայլում է։",
   /* Today's cards — the sentences, kept together so a translator sees them as a set */
   c_payout_b: "{n} գործակալի պետք է վճարել",
   c_invoice: "Վաստակած միջնորդավճարը դեռ հաշվարկված չէ",
@@ -2877,11 +2872,6 @@ T.en = {
   dt_reset_b: "The data on this device will be replaced.",
   dt_priv: "What an agent's device can see",
   dt_priv_b: "An agent records viewings, offers and stage advances. An agent's device can create no money row at all — not an earning, not a payout, not a share, not a term.",
-  /* things that are not built yet, named honestly */
-  stub_title: "Not built yet",
-  stub_clients: "The client list, with roles and a tel: link, is the next step. The data is here — it shows on the deals.",
-  stub_views: "Four-tap viewing capture and the printable sheet are the next step. The evidence rows are already in the log.",
-  stub_docs: "The contracts screen, with the exclusivity countdown and the printable form, is the next step.",
   /* Today's cards — the sentences, kept together so a translator sees them as a set */
   c_payout_b: "Agents to pay: {n}",
   c_invoice: "Earned commission is not invoiced yet",
@@ -3350,11 +3340,6 @@ T.ru = {
   dt_reset_b: "Данные на этом устройстве будут заменены.",
   dt_priv: "Что видит устройство агента",
   dt_priv_b: "Агент фиксирует показы, предложения и этапы. Устройство агента не может создать ни одной денежной строки — ни начисления, ни выплаты, ни доли, ни условия.",
-  /* things that are not built yet, named honestly */
-  stub_title: "Ещё не построено",
-  stub_clients: "Список клиентов с ролями и телефоном — следующий шаг. Данные есть, они видны в сделках.",
-  stub_views: "Запись показа в четыре касания и печать листа — следующий шаг. Строки-доказательства уже в журнале.",
-  stub_docs: "Экран договоров с обратным отсчётом эксклюзива и печатной формой — следующий шаг.",
   /* Today's cards — the sentences, kept together so a translator sees them as a set */
   c_payout_b: "Агентов к выплате: {n}",
   c_invoice: "Заработанная комиссия ещё не выставлена",
@@ -4679,10 +4664,6 @@ function emptyCard(title, body){
   return '<div class="card"><div class="empty"><div class="em">🗂</div><div><b>' + escH(title)
     + '</b><div class="muted" style="margin-top:6px">' + escH(body||'') + '</div></div></div></div>';
 }
-function stubView(em, title, body){
-  return '<div class="card"><div class="stub"><div class="se">' + em + '</div>'
-    + '<h4>' + escH(title) + '</h4><p>' + escH(body) + '</p></div></div>';
-}
 const PROP_ST_CLASS = { draft:'b-neutral', active:'b-green', reserved:'b-gold', sold:'b-cyan',
   leased:'b-cyan', withdrawn:'b-neutral', archived:'b-neutral' };
 const STAGE_CLASS = { agreed:'b-neutral', deposit:'b-gold', notary:'b-gold', registered:'b-cyan',
@@ -5591,6 +5572,12 @@ function amWords3(x){
   else out.push(AM_TENS[Math.floor(r/10)] + (r%10 ? AM_U[r%10] : ''));
   return out.join(' ');
 }
+/* [?] ONE CONVENTION, FLAGGED. A leading single unit is dropped — 1,000,000 is written
+   «միլիոն դրամ» rather than «մեկ միլիոն դրամ», the same way «հազար դրամ» is written for 1,000.
+   That is the convention the sibling products in this suite already print, and three products
+   that disagree about how to write the same number on the same accountant's desk would be worse
+   than either choice on its own. It joins the practitioner-check list in §10 rather than being
+   quietly changed here. */
 function amWords(n){
   /* the argument is already an integer number of dram — nothing here rounds money, it only
      names it. safeInt is the boundary and it ran long before this. */
@@ -6695,7 +6682,7 @@ function rateAsTyped(tm){
        : tm.mode === 'flat' ? amdTxt(tm.flat) + ' ֏'
        : monthsTxt(tm.monthsBp) + ' ' + t('cm_months_u');
 }
-function exportCommission(){
+function commissionRows(){
   const rows = [[ t('csv_deal'), t('csv_date'), t('csv_party'), t('csv_side'), t('props_title'),
                   t('p_cad'), t('cm_base'), t('cm_rate'), t('cm_fee_total'), t('cm_due'),
                   t('cm_vat'), t('cm_trigger'), t('d_stage') ]];
@@ -6727,7 +6714,10 @@ function exportCommission(){
         vatLabel(tm.vat), triggerLabel(tm.trigger), stage ]);
     });
   });
-  downloadCSV('armestate-commission-' + fdate(S.today).replace(/\./g,'-') + '.csv', rows);
+  return rows;
+}
+function exportCommission(){
+  downloadCSV('armestate-commission-' + fdate(S.today).replace(/\./g,'-') + '.csv', commissionRows());
 }
 /* THE WHOLE LOG. The draft law would require ten-year retention, and every document this product
    makes is re-derivable from these rows — so retention is a property of the log, and an export
@@ -7127,6 +7117,119 @@ function estateSelfTest(){
        (S.props||[]).every(p => { const d = daysOnMarket(p); return !d || ['listed','mandate','created'].indexOf(d.src) >= 0; }));
     ok('the fee always carries its sentence',
        (S.deals||[]).every(d => !termsComplete(d.terms) || (feeWhy(d) || '').length > 0));
+
+    /* ---- WHO PAYS: the second axis with no default ----
+       Inventing a payer split is the same class of error as inventing a rate, and it was live:
+       {seller:50%, buyer:30%} silently charged the buyer the unallocated 20%, and normTerms' own
+       {0,0} fallback charged the buyer 100% of a fee nobody said they owed. */
+    ok('an unset payer split is null, not a buyer split', (() => {
+      const tm = normTerms({ basis:'price', base:76000000, mode:'pct', bp:200,
+        payer:'split', trigger:'registered' });
+      return tm.splitBp === null && payerSplit(tm, feeOf(tm)) === null && !termsComplete(tm);
+    })());
+    ok('a split that does not total 100% is refused', (() => {
+      const tm = normTerms({ basis:'price', base:76000000, mode:'pct', bp:200, payer:'split',
+        splitBp:{seller:5000, buyer:3000}, trigger:'registered' });
+      return payerSplit(tm, feeOf(tm)) === null && !termsComplete(tm);
+    })());
+    ok('a balanced split reconciles to the dram, for every share', (() => {
+      for(let sb = 0; sb <= 10000; sb += 137){
+        const tm = normTerms({ basis:'price', base:76000001, mode:'pct', bp:225, payer:'split',
+          splitBp:{seller:sb, buyer:10000-sb}, trigger:'registered' });
+        const fee = feeOf(tm), ps = payerSplit(tm, fee);
+        if(!ps || ps.seller + ps.buyer !== fee) return false;
+      }
+      return true;
+    })());
+    ok('a single-side payer owes the whole fee and nothing is left over', (() => {
+      const mk = p => normTerms({ basis:'price', base:38500000, mode:'pct', bp:250, payer:p,
+        trigger:'registered' });
+      const a = payerSplit(mk('seller'), feeOf(mk('seller')));
+      const b = payerSplit(mk('buyer'),  feeOf(mk('buyer')));
+      return a.seller === 962500 && a.buyer === 0 && b.buyer === 962500 && b.seller === 0;
+    })());
+
+    /* ---- the ledger refuses fractional money instead of rounding it in silence ---- */
+    ok('a fractional money row is refused, with a reason', (() => {
+      const n = S.rows.length, rj = LEDGER_REJECTS.length;
+      const r = postRow({ agent:'a1', type:'adjust', amt:1234.56, ts:500, deal:'d1', actor:'owner' });
+      const refused = r === null && S.rows.length === n
+        && LEDGER_REJECTS.length === rj + 1
+        && LEDGER_REJECTS[LEDGER_REJECTS.length-1].why === 'fractional_amount';
+      LEDGER_REJECTS.length = rj;
+      return refused;
+    })());
+    ok('an integer money row still posts', (() => {
+      const n = S.rows.length;
+      const u = postRow({ agent:'a1', type:'adjust', amt:-1235, ts:501, deal:'d1', actor:'owner', note:'t' });
+      const okk = !!u && S.rows.length === n + 1;
+      S.rows = S.rows.filter(x => x.uuid !== u); S.owed = rebuildOwed();
+      return okk;
+    })());
+
+    /* ---- the accountant's file ---- */
+    ok('the commission export bills each paying side separately', (() => {
+      const rows = commissionRows();
+      const d1 = rows.filter(r => r[0] === 'd1');
+      /* d1 is 76,000,000 at 2% = 1,520,000, split 50/50: two lines of 760,000, not one of the lot */
+      return d1.length === 2 && d1[0][9] === 760000 && d1[1][9] === 760000
+        && d1[0][9] + d1[1][9] === d1[0][8];
+    })());
+    ok('a deal with no terms still gets a line', (() => {
+      const rows = commissionRows();
+      return rows.filter(r => r[0] === 'd4').length === 1
+        && (S.deals||[]).every(d => rows.some(r => r[0] === d.id));
+    })());
+    ok('every commission header names its own column', (() => {
+      const h = commissionRows()[0];
+      return h[1] === t('csv_date') && h[7] === t('cm_rate') && h[3] === t('csv_side')
+        && h[0] === t('csv_deal') && h.length === 13;
+    })());
+
+    /* ---- the viewing is the evidence, and it is in the log ---- */
+    ok('every viewing has its evidence row',
+       (S.viewings||[]).every(v => (S.rows||[]).some(r => r.type === 'view'
+         && r.prop === v.propertyId && r.client === v.clientId && r.ts === v.ts)));
+    ok('a viewing document number is unique and quotable', (() => {
+      const ns = (S.viewings||[]).map(viewDocNo);
+      return ns.every(x => /^ՑԹ-\d{4}-\d{3}$/.test(x)) && new Set(ns).size === ns.length;
+    })());
+    ok('a deal names the viewing that supports its claim',
+       supportingViewings(dealById('d1')).length > 0);
+
+    /* ---- the statement is the fold, not a second book ---- */
+    ok('the statement closes on exactly what the fold says is owed',
+       activeAgents().every(a => {
+         const rows = moneyRowsFor(a.id);
+         let bal = 0; rows.forEach(r => bal += r.amt);
+         return bal === agentMoney(a.id).owed;
+       }));
+
+    /* ---- the amount in words, in Armenian, on every language ---- */
+    ok('the amount in words is Armenian and matches the figure',
+       amWords(0) === 'զրո դրամ'
+       && amWords(1520000) === 'միլիոն հինգ հարյուր քսան հազար դրամ'
+       && amWords(-200000) === 'մինուս երկու հարյուր հազար դրամ'
+       && amWords(2000000) === 'երկու միլիոն դրամ'
+       && amWords(472500) === 'չորս հարյուր յոթանասուներկու հազար հինգ հարյուր դրամ');
+
+    /* ---- a rate typed by a person becomes integer basis points and nothing else ---- */
+    ok('a typed rate quantises to basis points',
+       bpFromPct('2') === 200 && bpFromPct('2.25') === 225 && bpFromPct('2,25') === 225
+       && bpFromPct('') === null && bpFromPct('abc') === null && bpFromPct('-1') === null
+       && bpFromMonths('0.5') === 5000 && bpFromMonths('1') === 10000);
+
+    /* ---- the terms form cannot produce terms the engine would refuse ---- */
+    ok('the terms form and the engine agree on what is complete', (() => {
+      TF = { deal:'d4', mandate:'', basis:'price', base:'27000000', mode:'pct', pct:'2.25',
+             flat:'', months:'', payer:'split', sellerPct:'50', buyerPct:'30', vat:'none',
+             trigger:'registered', note:'' };
+      const bad = termsComplete(tfTerms());
+      TF.buyerPct = '50';
+      const good = termsComplete(tfTerms()) && feeOf(tfTerms()) === 607500;
+      TF = null;
+      return !bad && good;
+    })());
 
     /* ---- trilingual parity ---- */
     const hk = Object.keys(T.hy);
