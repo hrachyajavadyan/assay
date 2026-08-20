@@ -1745,6 +1745,13 @@ input:disabled{
 .pofour .v{font-size:var(--fs-body-l);font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums lining-nums}
 .pofour .v.big2{font-size:var(--fs-display-s)}
 
+/* THE ABSENCE OF A FIGURE IS NOT A FIGURE. Where a fee would be, a deal with no terms shows a
+   sentence — and it is set at title size, not at the 26px display size the money uses, because
+   rendering «Պայմանները լրացված չեն» as a hero number is exactly the confusion between a value
+   and its absence that this product refuses to make. */
+.nofig{font-size:var(--fs-title);font-weight:var(--fw-title);line-height:var(--lh-title);
+  color:var(--acc-text)}
+
 /* A CHOICE WITH ITS CONSEQUENCE UNDER IT. The payout gate is two whole sentences, not two
    words, so it cannot be a chip row: a chip is white-space:nowrap by design and one of these
    sentences is 44 characters of Armenian, which overflowed the viewport at 320px. Two full-width
@@ -1763,8 +1770,12 @@ input:disabled{
 /* the property tile is 44px like every other avatar in the suite */
 .pmeta{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s3);margin-top:var(--s1)}
 .pmeta span{font-size:var(--fs-micro);color:var(--muted);white-space:nowrap}
+/* break-word, NOT anywhere. `anywhere` broke «Անի Հարությունյան» into «Անի Հարությունյ / ան»
+   whenever a badge shared the line — a person's name split mid-syllable is the single most
+   careless-looking thing a back office can print. `break-word` only breaks a token that cannot
+   fit on a line of its own, which is what a long cadastral code needs and a name never does. */
 .addr{font-size:var(--fs-body-l);font-weight:var(--fw-body-l);line-height:var(--lh-body-l);color:var(--ink);
-  overflow-wrap:anywhere}
+  overflow-wrap:break-word}
 .cad{font-family:var(--mono);font-size:var(--fs-micro);color:var(--dim);letter-spacing:.2px}
 </style>
 </head>
@@ -2361,6 +2372,10 @@ T.hy = {
   d_mark: "Նշել՝ {s}",
 };
 
+/* NUMBER AGREEMENT. Armenian does not inflect a noun after a numeral — «1 գործակալի» is correct —
+   while English and Russian do, and "1 agents" is the kind of sentence that makes a product look
+   machine-written. The counted strings below are shaped label-then-count, which reads correctly
+   at every n in both languages without a plural machine nobody would maintain. */
 T.en = {
   /* app chrome */
   app_name: "ArmEstate",
@@ -2554,7 +2569,7 @@ T.en = {
   d_price: "Deal amount",
   d_noncash: "Note: any payment over AMD 300,000 must be non-cash.",
   d_filing: "Cadastre filing deadline",
-  d_filing_left: "{n} working days left",
+  d_filing_left: "Working days left: {n}",
   d_filing_src: "working days, on the 2026 holiday table",
   d_filing_src_unknown: "working days, no holiday table for this year",
   d_consents: "Consents",
@@ -2662,15 +2677,15 @@ T.en = {
   stub_views: "Four-tap viewing capture and the printable sheet are the next step. The evidence rows are already in the log.",
   stub_docs: "The contracts screen, with the exclusivity countdown and the printable form, is the next step.",
   /* Today's cards — the sentences, kept together so a translator sees them as a set */
-  c_payout_b: "{n} agents to pay",
+  c_payout_b: "Agents to pay: {n}",
   c_invoice: "Earned commission is not invoiced yet",
-  c_invoice_b: "{n} deals",
-  c_excl_b: "{n} days left",
+  c_invoice_b: "Deals: {n}",
+  c_excl_b: "{n} d left",
   c_ins: "An agent's insurance is expiring",
-  c_ins_b: "{n} days left",
-  c_stuck_b: "{n} days without a move",
+  c_ins_b: "{n} d left",
+  c_stuck_b: "{n} d without a move",
   c_unsigned: "Viewing sheets are unsigned",
-  c_unsigned_b: "{n} sheets. Without a signature the fee claim is not defensible.",
+  c_unsigned_b: "Sheets: {n}. Without a signature the fee claim is not defensible.",
   d_mark: "Mark: {s}",
 };
 
@@ -2867,7 +2882,7 @@ T.ru = {
   d_price: "Сумма сделки",
   d_noncash: "Внимание: платёж свыше 300 000 ֏ должен быть безналичным.",
   d_filing: "Срок подачи в кадастр",
-  d_filing_left: "осталось {n} рабочих дней",
+  d_filing_left: "Рабочих дней осталось: {n}",
   d_filing_src: "рабочие дни, по таблице праздников 2026",
   d_filing_src_unknown: "рабочие дни, таблицы праздников на этот год нет",
   d_consents: "Согласия",
@@ -2975,15 +2990,15 @@ T.ru = {
   stub_views: "Запись показа в четыре касания и печать листа — следующий шаг. Строки-доказательства уже в журнале.",
   stub_docs: "Экран договоров с обратным отсчётом эксклюзива и печатной формой — следующий шаг.",
   /* Today's cards — the sentences, kept together so a translator sees them as a set */
-  c_payout_b: "{n} агентам к выплате",
+  c_payout_b: "Агентов к выплате: {n}",
   c_invoice: "Заработанная комиссия ещё не выставлена",
-  c_invoice_b: "{n} сделок",
-  c_excl_b: "осталось {n} дней",
+  c_invoice_b: "Сделок: {n}",
+  c_excl_b: "осталось {n} дн.",
   c_ins: "Истекает страховка агента",
-  c_ins_b: "осталось {n} дней",
-  c_stuck_b: "{n} дней без движения",
+  c_ins_b: "осталось {n} дн.",
+  c_stuck_b: "{n} дн. без движения",
   c_unsigned: "Листы показа не подписаны",
-  c_unsigned_b: "{n} листов. Без подписи требование комиссии не защитить.",
+  c_unsigned_b: "Листов: {n}. Без подписи требование комиссии не защитить.",
   d_mark: "Отметить: {s}",
 };
 
@@ -3452,7 +3467,11 @@ function migrate(st){
     id: String(a.id),
     name: String(a.name || ''),
     phone: String(a.phone || ''),
-    em: String(a.em || '🧑').slice(0, 4),
+    /* CODE POINTS, NOT UTF-16 UNITS. «👩‍💼» is five UTF-16 units — two surrogate pairs joined by
+       a zero-width joiner — so a .slice(0,4) cut it mid-pair and every agent avatar in the
+       product rendered as a woman followed by a replacement diamond. Array.from() iterates code
+       points, which is what "one emoji" actually means. */
+    em: Array.from(String(a.em || '🧑')).slice(0, 5).join(''),
     /* NO DEFAULT SHARE. null means "the owner has not set it yet" and the agent card shows an
        amber «Բաժինը նշված չէ» rather than a number nobody agreed to. */
     defaultShareBp: a.defaultShareBp == null ? null : safeBp(a.defaultShareBp, 0),
@@ -4358,12 +4377,13 @@ function agentCard(a){
       + '<div class="pav">' + escH(a.em) + '</div>'
       + '<div class="pon"><div class="addr">' + escH(a.name) + '</div>'
         + '<div class="muted">' + escH(a.phone) + '</div></div>'
-      /* «Միջնորդավճարի X%» — X% OF THE COMMISSION, never a bare X%. "My two percent" is
-         ambiguous and the ambiguity is where arguments start. */
-      + '<div>' + (a.defaultShareBp == null
-          ? badge('b-gold', t('ag_share_none'))
-          : badge('b-neutral', t('ag_share') + ' ' + bpTxt(a.defaultShareBp))) + '</div>'
     + '</div>'
+    /* «Միջնորդավճարի X%» — X% OF THE COMMISSION, never a bare X%. "My two percent" is ambiguous
+       and the ambiguity is where arguments start. The badge sits on its own line so the agent's
+       NAME keeps the full column width; a name squeezed beside a badge wraps mid-syllable. */
+    + '<div class="badgerow" style="margin-top:10px">' + (a.defaultShareBp == null
+        ? badge('b-gold', '⚠ ' + t('ag_share_none'))
+        : badge('b-neutral', t('ag_share') + ' ' + bpTxt(a.defaultShareBp))) + '</div>'
     + '<div class="prov">' + escH(t('ag_share_help')) + '</div>'
     + '<div class="pofour">'
       + '<div><div class="l">' + escH(t('st_expected')) + '</div><div class="v">' + amdTxt(m.expected) + '<span class="cur">֏</span></div></div>'
@@ -4437,8 +4457,8 @@ function dealCard(d){
     + '<div class="sug" style="border-bottom:none;padding:0">'
       + '<div class="pav">' + (p ? (KIND_EM[p.kind]||'🏠') : '🏠') + '</div>'
       + '<div class="info"><div class="addr">' + escH(p ? propAddr(p) : '—') + '</div>'
-        + '<div class="muted">' + escH((d.kind === 'lease' ? t('d_landlord') : t('d_seller')) + ': '
-          + clientName(d.sellerClientId) + ' · ' + (d.kind === 'lease' ? t('d_tenant') : t('d_buyer')) + ': '
+        + '<div class="muted">' + escH((d.kind === 'lease' ? t('d_landlord') : t('d_seller')) + sepC()
+          + clientName(d.sellerClientId) + ' · ' + (d.kind === 'lease' ? t('d_tenant') : t('d_buyer')) + sepC()
           + clientName(d.buyerClientId)) + '</div></div>'
     + '</div>'
     + stageBar(d)
@@ -4446,7 +4466,7 @@ function dealCard(d){
       + '<div class="badgerow">' + badge(STAGE_CLASS[d.stage]||'b-neutral', stageLabel(d.stage))
         + badge(DEAL_STATE_BADGE[st], dealStateLabel(st)) + '</div></div>'
     + '<div style="margin-top:12px">'
-      + (al ? amdBig(al.fee) : '<span class="big" style="color:var(--acc-text)">' + escH(t('cm_none')) + '</span>')
+      + (al ? amdBig(al.fee) : '<div class="nofig">' + escH(t('cm_none')) + '</div>')
       + '<div class="prov' + (why ? '' : ' warn') + '">' + escH(why || t('cm_none_b')) + '</div>'
     + '</div>'
     + (al ? '<div class="badgerow" style="margin-top:10px">' + al.rows.map(r =>
@@ -4458,8 +4478,12 @@ function dealCard(d){
       /* THE FORWARD BUTTON IS LABELLED WITH THE NEXT STAGE'S ACTUAL NAME — «Նշել նոտարական
          վավերացումը» — never "advance". The agent knows what happened; the app should use the
          same word they would. */
-      + (ns && !d.void ? '<button class="btn small primary" onclick="advanceDeal(' + jsArg(d.id) + ')">'
-          + escH(fmt('d_mark', {s:stageLabel(ns)})) + '</button>' : '')
+      /* AND IT IS ABSENT WHEN THE DEAL CANNOT MOVE. Offering a forward button on a deal with no
+         commission terms, only to refuse the tap with a toast, teaches the owner that the
+         product's buttons lie. The card's red rail and its sentence are the answer instead. */
+      + (ns && !d.void && termsComplete(d.terms)
+          ? '<button class="btn small primary" onclick="advanceDeal(' + jsArg(d.id) + ')">'
+            + escH(fmt('d_mark', {s:stageLabel(ns)})) + '</button>' : '')
     + '</div>'
     + '</div>';
 }
@@ -4644,7 +4668,9 @@ function payoutRow(a, m){
        dram amount is nowrap by design and would push the card past a 320px viewport. */
     + '<div style="margin-top:10px"><div class="mlbl">' + escH(t('st_payable')) + '</div>'
       + amdBig(m.payable) + '</div>'
-    + '<div class="prov">' + escH(t('st_payable_b')) + '</div>'
+    /* the definition of «payable» is printed only when there IS something payable. Under a zero
+       it reads as a claim about money that is not there. */
+    + (m.payable ? '<div class="prov">' + escH(t('st_payable_b')) + '</div>' : '')
     + '<div class="pofour">'
       + '<div><div class="l">' + escH(t('st_expected')) + '</div><div class="v">' + amdTxt(m.expected) + '<span class="cur">֏</span></div></div>'
       + '<div><div class="l">' + escH(t('st_earned')) + '</div><div class="v">' + amdTxt(m.earned) + '<span class="cur">֏</span></div></div>'
