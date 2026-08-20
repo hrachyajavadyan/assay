@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F4F6F8">
+<meta name="description" content="ԱրմԷստեյտ — անշարժ գույքի գործակալության գրասենյակ։ Մեկ էջ՝ խնդիրը, լուծումը, տարբերությունը և ազնիվ վիճակը։">
+<title>ԱրմԷստեյտ — մեկ էջով</title>
+<link rel="icon" href="data:,">
+
+<link rel="preload" href="/armtrade/vendor/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/armtrade/vendor/fonts/noto-sans-armenian-armenian-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Inter';font-style:normal;font-display:swap;font-weight:100 900;
+  src:url(/armtrade/vendor/fonts/inter-latin-wght-normal.woff2) format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Noto Sans Armenian';font-style:normal;font-display:swap;font-weight:100 900;
+  src:url(/armtrade/vendor/fonts/noto-sans-armenian-armenian-wght-normal.woff2) format('woff2');
+  unicode-range:U+0308,U+0530-058F,U+2010,U+2024,U+25CC,U+FB13-FB17}
+
+:root{
+  --bg:#F4F6F8; --surface:#FFFFFF; --surface-2:#F1F4F8;
+  --ink:#0E1726; --muted:#54607A; --dim:#5D6880;
+  --sep:#E6EAF0; --stroke:#E1E6EE; --stroke2:#C9D2E0;
+  --acc:#A85A07; --acc-ink:#FFFFFF; --acc-tint:#FFF4E3; --acc-line:#EBCFA4; --acc-text:#8A4B00;
+  --sh-1:0 1px 2px rgba(14,23,38,.06); --sh-2:0 4px 16px rgba(14,23,38,.08);
+  --focus:0 0 0 3px rgba(168,90,7,.30);
+  --font:'Inter','Noto Sans Armenian',-apple-system,'Segoe UI',Roboto,sans-serif;
+  --emoji:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",var(--font);
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s10:40px;
+}
+body.dark{
+  --bg:#0B0F17; --surface:#161C2A; --surface-2:#1E2637;
+  --ink:#E8EDF7; --muted:#A3B0C7; --dim:#8B97AE;
+  --sep:#242D40; --stroke:#242D40; --stroke2:#313C55;
+  --acc:#F0A93B; --acc-ink:#1A1205; --acc-tint:#2A1F0C; --acc-line:#5A431A; --acc-text:#F5C06A;
+  --sh-1:0 1px 2px rgba(0,0,0,.30); --sh-2:0 6px 20px rgba(0,0,0,.35);
+  --focus:0 0 0 3px rgba(240,169,59,.35);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);
+  font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p,ul{margin:0}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--acc-text)}
+
+.top{display:flex;justify-content:flex-end;gap:var(--s2);max-width:840px;margin:0 auto;
+  padding:var(--s3) var(--s4) 0}
+.tbtn{position:relative;width:44px;height:44px;display:flex;align-items:center;
+  justify-content:center;background:var(--surface);border:1px solid var(--stroke);
+  border-radius:12px;cursor:pointer;font-size:18px;font-family:var(--emoji);line-height:1;
+  box-shadow:var(--sh-1)}
+.tbtn:focus-visible,a:focus-visible{outline:none;box-shadow:var(--focus)}
+
+.sheet{max-width:840px;margin:0 auto;padding:var(--s5) var(--s4) var(--s10)}
+.head{display:flex;align-items:flex-start;gap:var(--s3);margin-bottom:var(--s4)}
+.mark{width:52px;height:52px;flex:0 0 52px;border-radius:14px;background:var(--acc);
+  color:var(--acc-ink);display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:800;line-height:1}
+h1{font-size:clamp(26px,7.4vw,34px);line-height:1.1;letter-spacing:-.6px;font-weight:700}
+.tag{font-size:15px;color:var(--muted);margin-top:2px}
+
+h2{font-size:17px;font-weight:700;letter-spacing:-.1px;margin:var(--s6) 0 var(--s2);
+  color:var(--acc-text)}
+p{margin:var(--s2) 0;max-width:64ch}
+.big{font-size:18px;line-height:1.45;max-width:48ch}
+
+.cols{display:grid;gap:var(--s5)}
+@media(min-width:760px){ .cols{grid-template-columns:1fr 1fr;align-items:start} }
+
+ul.plain{list-style:none;padding:0;margin:var(--s2) 0}
+ul.plain li{position:relative;padding-left:24px;margin:var(--s2) 0;max-width:60ch}
+ul.plain li::before{content:"·";position:absolute;left:7px;top:-4px;font-size:22px;
+  color:var(--acc-text)}
+
+/* minmax(0,1fr) not 1fr: a grid item's default min-width is min-content, so the longest
+   Armenian word in a tile («համաձայնեցվածից») pushed the two-up row 7px past a 320px screen
+   and gave the whole sheet a horizontal scrollbar. Below 360 the tiles take the full width. */
+.facts{display:grid;grid-template-columns:1fr;gap:var(--s2);margin:var(--s3) 0}
+@media(min-width:360px){ .facts{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media(min-width:520px){ .facts{grid-template-columns:repeat(4,minmax(0,1fr))} }
+.fact{background:var(--surface);border:1px solid var(--stroke);border-radius:14px;
+  padding:var(--s3);box-shadow:var(--sh-1)}
+.fact b{display:block;font-size:24px;line-height:1.1;letter-spacing:-.5px;
+  font-variant-numeric:tabular-nums}
+.fact span{display:block;font-size:14px;color:var(--muted);margin-top:var(--s1);line-height:1.35}
+
+.note{border-left:3px solid var(--acc-line);background:var(--acc-tint);
+  border-radius:0 12px 12px 0;padding:var(--s3) var(--s4);margin:var(--s3) 0;
+  font-size:15px;max-width:64ch}
+
+figure{margin:var(--s4) 0 0}
+.shot{display:inline-block;max-width:300px;width:100%;border:1px solid var(--stroke2);
+  border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:var(--sh-2)}
+figcaption{font-size:14px;color:var(--muted);margin-top:var(--s2);max-width:42ch;line-height:1.45}
+
+.contact{margin-top:var(--s6);padding-top:var(--s4);border-top:2px solid var(--acc-line)}
+.contact .row{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);margin-top:var(--s2)}
+.contact a{min-height:44px;display:inline-flex;align-items:center;font-weight:600;font-size:15px}
+.write{margin-top:var(--s4);font-size:15px;color:var(--muted)}
+.write .line{display:block;border-bottom:1px dashed var(--stroke2);height:30px;
+  max-width:420px;margin-top:var(--s1)}
+
+.small{font-size:14px;color:var(--dim);margin-top:var(--s5);max-width:64ch}
+
+/* ---- one A4 page. The spacing SCALE is redefined for print rather than each rule
+   being overridden one at a time, so the whole sheet contracts evenly. ---- */
+@media print{
+  :root{--s1:2px;--s2:4px;--s3:6px;--s4:8px;--s5:10px;--s6:11px;--s8:12px;--s10:14px}
+  @page{size:A4;margin:10mm}
+  .top{display:none}
+  body{background:#fff;color:#000;font-size:8.6pt;line-height:1.25}
+  .sheet{max-width:none;padding:0}
+  .head{margin-bottom:2.6mm}
+  .mark{width:36px;height:36px;flex:0 0 36px;font-size:18px;border-radius:9px;
+        background:#fff;color:#000;border:1.2pt solid #000}
+  h1{font-size:18pt}
+  .tag{font-size:8.6pt}
+  h2{font-size:9pt;margin:2.2mm 0 .5mm;color:#000;
+     border-bottom:.6pt solid #999;padding-bottom:.5mm}
+  p{margin:.8mm 0;max-width:none}
+  .big{font-size:9.2pt;line-height:1.28;max-width:none}
+  ul.plain li{margin:.9mm 0;padding-left:4mm;max-width:none}
+  ul.plain li::before{left:1mm;font-size:12pt;top:-1mm}
+  .cols{grid-template-columns:1fr 1fr;gap:5mm}
+  .facts{grid-template-columns:repeat(4,minmax(0,1fr));gap:2mm;margin:1.5mm 0}
+  .fact{padding:1.6mm;border-radius:2mm;box-shadow:none;border-color:#bbb;background:#fff}
+  .fact b{font-size:12pt}
+  .fact span{font-size:7.2pt;line-height:1.22;margin-top:.5mm}
+  .note{box-shadow:none;background:#fff;border-left:1.4pt solid #000;border-radius:0;
+        padding:1.4mm 3mm;margin:1.4mm 0;font-size:8.6pt;max-width:none}
+  .small{font-size:7.4pt;margin-top:1.4mm;max-width:none}
+  figure{margin:2mm 0 0}
+  .shot{max-width:52mm;box-shadow:none}
+  figcaption{font-size:7.2pt;margin-top:.8mm;line-height:1.25}
+  a{color:#000;text-decoration:none}
+  .contact{border-top:1.2pt solid #000;margin-top:2.4mm;padding-top:1.4mm}
+  .contact a{min-height:0;font-size:8.2pt}
+  .contact .row{gap:1mm 6mm;margin-top:.8mm}
+  .write{margin-top:1.8mm;font-size:8.2pt}
+  .write .line{height:5mm;max-width:70mm}
+}
+</style>
+</head>
+<body class="light">
+
+<div class="top">
+  <button class="tbtn" id="themebtn" type="button" aria-label="Թեմա">🌙</button>
+</div>
+
+<div class="sheet">
+
+  <div class="head">
+    <div class="mark">Է</div>
+    <div>
+      <h1>ԱրմԷստեյտ</h1>
+      <p class="tag">Անշարժ գույքի գործակալության գրասենյակ</p>
+    </div>
+  </div>
+
+  <h2>Խնդիրը</h2>
+  <p class="big">Գործակալը կողմ չէ ո՛չ առուվաճառքի պայմանագրին, ո՛չ պետական գրանցմանը։
+  Նրա միջնորդավճարի պահանջը հենվում է մեկ բանի վրա՝ որ հենց այս գործակալությունը հենց այս
+  գույքը ցույց է տվել հենց այս հաճախորդին հենց այս օրը։</p>
+  <p>Այդ գրառումը մինչ օրս պահվում է հեռախոսի նամակագրության մեջ, աղյուսակում կամ ընդհանրապես
+  չի պահվում։ Հայաստանում MLS չկա, և հայկական արտադրության անշարժ գույքի CRM հետազոտության
+  ընթացքում չգտնվեց։ Իսկ ընդհանուր CRM-ը հարցնում է «ո՞ր փուլում է գործարքը» և չի հարցնում
+  «ո՞ւմ որքան է հասնում այս գործարքից և ո՞ր օրվանից» — մինչդեռ հենց դա է գրասենյակի հարցը։</p>
+
+  <h2>Ի՞նչ է անում ԱրմԷստեյտը</h2>
+  <div class="cols">
+    <ul class="plain">
+      <li><b>Ցուցադրությունը՝ որպես ապացույց</b> — գույք, հաճախորդ, գործակալ, ամսաթիվ, արդյունք։
+        Գրանցումից հետո չի փոխվում, և տպվում է ստորագրվող թերթիկ։</li>
+      <li><b>Ծառայությունների պայմանագիր</b> հաճախորդի հետ՝ բացառիկության ժամկետով,
+        տասնամյա պահպանման ամսաթվով և պետական հարթակի տողով։</li>
+      <li><b>Միջնորդավճարի պայմանները՝ ամեն գործարքի համար առանձին</b> — տոկոս, հաստատագրված
+        վճար կամ ամիսների վարձավճար. վճարում է վաճառողը, գնորդը կամ երկուսը։</li>
+      <li><b>Վաստակելու պահը՝ նշված</b> — պայմանագրից, նոտարից, պետական գրանցումից կամ
+        գումարը ստանալուց։</li>
+    </ul>
+    <ul class="plain">
+      <li><b>Ո՞ւմ որքան է հասնում</b> — վճարման ենթակա, սպասվող, վաստակած և վճարված. չորս
+        տարբեր թիվ, որոնք երբեք իրար չեն գումարվում։</li>
+      <li><b>Պարտքը հաշվարկվում է երկու գրքից</b> — վաստակածը մինուս վճարածը։ Առանձին
+        պահված թիվ չկա, ուստի էկրանն ինքն իրեն չի հակասում։</li>
+      <li><b>Ամեն շարժ՝ մեկ մատյանում, որից ոչինչ չի ջնջվում։</b> Տապալված գործարքը
+        հետ է շրջվում առանձին տողով՝ պարտադիր պատճառով։</li>
+      <li><b>Հինգ տպվող փաստաթուղթ</b> հեռախոսից, գումարը բառերով՝ հայերեն։ Արտահանում
+        հաշվապահի համար՝ UTF-8 BOM-ով։</li>
+    </ul>
+  </div>
+
+  <h2>Թվեր՝ վերցված հենց ծրագրի վարքից</h2>
+  <div class="facts">
+    <div class="fact"><b>0</b><span>լռելյայն միջնորդավճարի դրույք — և չի լինելու</span></div>
+    <div class="fact"><b>7</b><span>գործարքի փուլ՝ համաձայնեցվածից մինչև գործակալին վճարվածը</span></div>
+    <div class="fact"><b>5</b><span>տպվող փաստաթուղթ՝ թերթիկ, պայմանագիր, առաջարկ, ամփոփաթերթ, հաշվարկ</span></div>
+    <div class="fact"><b>109</b><span>պնդում, որ ծրագիրը ստուգում է ինքն իր վրա մեկ կոճակով</span></div>
+  </div>
+  <p class="small">Այս էջում այլ թիվ չկա։ Շուկայի ծավալ, օգտագործողների քանակ և միջնորդավճարի
+  «սովորական» տոկոս չենք գրում, որովհետև չունենք։</p>
+
+  <div class="cols">
+    <div>
+      <h2>Ինչո՞վ է տարբերվում ընդհանուր CRM-ից</h2>
+      <p>CRM-ը վարում է ձագարը։ ԱրմԷստեյտը վարում է <b>փողը և ապացույցը</b>՝ ո՞ր ցուցադրությունն
+      է հիմնավորում պահանջը, ո՞ր դեպքն է միջնորդավճարը դարձրել վաստակած, ո՞ւմ որքան է մնացել
+      վճարելու։ Ամեն թիվ ունի իր տողը մատյանում, և ամեն տող՝ իր հիմնավորումը։</p>
+
+      <h2>Օրենքի նախագիծը</h2>
+      <p>«Ռիելտորական գործունեության մասին» օրենքի նախագիծը կպահանջեր գրավոր պայմանագիր ամեն
+      հաճախորդի հետ, փաստաթղթերի տասնամյա պահպանում և գրանցում պետական հարթակում։
+      <b>Այն ուժի մեջ լինելը հաստատված չէ</b>, ուստի ԱրմԷստեյտը ոչինչ չի պարտադրում.
+      այն պահում է հենց այն գրառումը, որը կպահանջվեր, և ամեն էկրանին գրում է, որ օրենքն
+      ուժի մեջ չէ։</p>
+
+      <h2>Որտեղ է ծրագիրն այսօր</h2>
+      <p>Երեքից <b>ամենաերիտասարդն է</b> և դեռ կառուցվում է։ Աշխատում է՝ գույք, հաճախորդներ,
+      գործակալներ, պայմանագրեր, ցուցադրություններ, առաջարկներ, գործարքի յոթ փուլը, վճարումները
+      և հինգ փաստաթուղթը։ Բացվում է առանց ինտերնետի, հեռախոսի վրա։
+      <b>Դեռ չկա.</b> համաժամացումը և գործակալի սարքը՝ այս պահին մեկ սարք, միայն տնօրենը.
+      լուսանկարներ. կնքման ստուգաթերթի սեփական դաշտերը։ Տպվող փաստաթղթերը իրավաբանի կողմից
+      ստուգված չեն։</p>
+    </div>
+
+    <div>
+      <h2>Մեկ բան, որ ուրիշ տեղ չկա</h2>
+      <div class="note">
+        Հայաստանում միջնորդավճարի ստանդարտ դրույք չկա, և գործակալությունները թիվ չեն
+        հրապարակում։ Ուստի ԱրմԷստեյտը <b>լռելյայն տոկոս չունի</b>. առանց մուտքագրված դրույքի
+        գործարքը չի շարժվում, և կարտի վրա <b>թիվ չի երևում</b> — ոչ «0 ֏», ոչ գնահատական։
+        Իսկ երբ վճարողների բաժանումը 100% չի կազմում, ծրագիրը <b>մերժում է</b> և անվանում է
+        թիվը, փոխանակ մնացորդը լուռ գցի գնորդի վրա։
+      </div>
+
+      <figure>
+        <span class="shot"><img src="img/terms.png" alt="Միջնորդավճարի պայմանների նախադիտումը՝ 540,000 ֏, երկու վճարող 50/50, գործակալի բաժինը և հաշվեկշռի տողը" width="573" height="402"></span>
+        <figcaption>Պայմանները պահելուց առաջ ծրագիրը ցույց է տալիս, թե ինչ է ստացվում՝ մինչև դրամ։</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="contact">
+    <h2>Կապ</h2>
+    <div class="row">
+      <a href="/armestate/">Բացել ծրագիրը՝ assay-9e6.pages.dev/armestate/</a>
+      <a href="/armestate/about/">Ի՞նչ է սա</a>
+      <a href="/armestate/guide/">Ուղեցույց (ՀԱՅ · ENG · РУС)</a>
+    </div>
+    <div class="write">Ներկայացնողի կոնտակտը՝
+      <span class="line"></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var LS='assay_theme';
+  function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+  var theme = get(LS)==='dark' ? 'dark' : 'light';
+  var btn = document.getElementById('themebtn');
+  function apply(t){
+    theme=t; set(LS,t);
+    document.body.classList.toggle('dark', t==='dark');
+    document.body.classList.toggle('light', t!=='dark');
+    btn.textContent = t==='dark' ? '☀️' : '🌙';
+    var m=document.querySelector('meta[name="theme-color"]');
+    if(m) m.setAttribute('content', t==='dark' ? '#0B0F17' : '#F4F6F8');
+  }
+  btn.addEventListener('click', function(){ apply(theme==='dark'?'light':'dark'); });
+  apply(theme);
+})();
+</script>
+</body>
+</html>
