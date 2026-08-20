@@ -1944,6 +1944,16 @@ const STAGE_NA = { lease: ['registered'] };
    does not watch the buyer's bank. */
 const TRIGGER_STAGE = { signed:'deposit', notarised:'notary', registered:'registered', funds:'settled' };
 const TRIGGERS = ['signed','notarised','registered','funds'];
+/* A LEASE IS NEVER REGISTERED, so it is never offered a trigger tied to a stage it cannot reach.
+   STAGE_NA already strikes that pip out of the stage walk; offering the trigger anyway printed
+   «Վաստակած է՝ պետական գրանցումից» on the closing sheet of a deal that will never be registered,
+   while the money actually arrived at a different stage. A reason nobody can reach is a false
+   reason on a document, so the list is filtered by the kind of deal. */
+function triggersFor(kind){
+  const na = STAGE_NA[kind] || [];
+  return TRIGGERS.filter(x => na.indexOf(TRIGGER_STAGE[x]) < 0);
+}
+const triggerApplies = (kind, x) => triggersFor(kind).indexOf(x) >= 0;
 
 const TERM_MODES = ['pct','flat','months'];
 const TERM_BASES = ['price','rent_month'];
@@ -1984,6 +1994,23 @@ const clampAmd = v => Math.max(-LEDGER_CAP, Math.min(LEDGER_CAP, safeInt(v,0)));
 /* basis points. 10000 = 100%. Clamped to a sane band: a 0 share is legal (an agent on a deal for
    the record but not for the money); a share over 100% of the commission is not. */
 const safeBp = (v,d) => Math.max(0, Math.min(100000, safeInt(v, d==null?0:d)));
+/* WHAT A PERSON TYPED INTO A MONEY FIELD — OR null, WHICH IS NOT ZERO.
+   `+"1 500 000"` is NaN, and safeInt then answers its default, so a fee typed as one and a half
+   million became a fee of zero that the form went on to certify as reconciling to the dram. The
+   doctrine is already written down in this file: zero is a number a person typed, null is the
+   absence of a decision — and a money field nobody can read has not been decided.
+   The separators accepted are the ones this app itself PRINTS — «1,500,000» and «1 500 000» —
+   because that is the text an owner copies off the screen beside this one. A dram has no subunit,
+   so «1500000.75» is refused rather than silently rounded, and a figure past MAX_AMD is refused
+   rather than clamped: a clamp returns a different number than the one that was typed. */
+function amdFromInput(v){
+  const s = String(v == null ? '' : v)
+    .replace(/[\s\u00a0\u202f\u2009]/g, '').replace(/,/g, '').replace(/֏/g, '');
+  if(s === '') return null;
+  if(!/^[0-9]+$/.test(s)) return null;
+  const n = parseInt(s, 10);
+  return (isFinite(n) && n >= 0 && n <= MAX_AMD) ? n : null;
+}
 /* THE LEDGER'S EQUALITY TEST IS EXACT. Everything in it is an integer, so `===` means something
    here in a way it never could in a product that holds fractional money. */
 const eqAmd = (a,b) => (a|0) === (b|0);
@@ -2550,6 +2577,18 @@ T.hy = {
   cm_payer_q: "Ո՞վ է վճարում",
   cm_split_seller: "Վաճառողի բաժինը, %",
   cm_split_buyer: "Գնորդի բաժինը, %",
+  cm_amd_bad: "Գումարը պետք է լինի ամբողջ թիվ՝ դրամով։ Օրինակ՝ 1,500,000։",
+  cm_pct_bad: "Տոկոսը պետք է լինի 0-ից 100 թիվ։",
+  cm_months_bad: "Ամիսների թիվը պետք է լինի 0-ից 10։",
+  cm_split_help_lease: "Բաժանված վճարումը երկու հաշիվ է՝ մեկը տանտիրոջը, մեկը վարձակալին։",
+  ag_share_bad: "Բաժինը պետք է լինի 0-ից 100 թիվ։ Դատարկը նշանակում է «դեռ համաձայնեցված չէ»։",
+  da_share_need: "Յուրաքանչյուր գործակալի բաժինը պետք է լինի թիվ՝ 0-ից 100։",
+  cl_tin_hint: "ՀՎՀՀ-ն ութ նիշ է։ Դատարկը թույլատրվում է՝ մինչև նոտարը։",
+  cl_tin_bad: "ՀՎՀՀ-ն պետք է լինի ուղիղ ութ նիշ։",
+  p_price_bad: "Գինը պետք է լինի ամբողջ թիվ՝ դրամով։ Օրինակ՝ 45,000,000։",
+  p_dup_inline: "Այս կադաստրային ծածկագիրը արդեն գրանցված է․ {n}",
+  doc_ds_nothing: "Այս գործարքով մատյանում դեռ ոչ մի գումար գրանցված չէ։ Ցուցված միջնորդավճարը սպասվող է, ոչ թե վաստակած։",
+  stmt_upto: "մինչև",
   cm_split_must: "Երկու բաժինը միասին պետք է լինի 100%։ Այս պահին՝ {n}։",
   cm_split_help: "Բաժանված վճարումը երկու հաշիվ է՝ մեկը վաճառողին, մեկը գնորդին։",
   cm_trigger_q: "Ե՞րբ է միջնորդավճարը համարվում վաստակած",
@@ -3167,6 +3206,18 @@ T.en = {
   cm_payer_q: "Who pays",
   cm_split_seller: "Seller's share, %",
   cm_split_buyer: "Buyer's share, %",
+  cm_amd_bad: "The amount must be a whole number of dram. For example 1,500,000.",
+  cm_pct_bad: "The percentage must be a number between 0 and 100.",
+  cm_months_bad: "The number of months must be between 0 and 10.",
+  cm_split_help_lease: "A split payment is two invoices — one to the landlord, one to the tenant.",
+  ag_share_bad: "The share must be a number between 0 and 100. Empty means «not agreed yet».",
+  da_share_need: "Every agent's share must be a number between 0 and 100.",
+  cl_tin_hint: "An Armenian ՀՎՀՀ is eight digits. Empty is allowed — until the notary.",
+  cl_tin_bad: "The ՀՎՀՀ must be exactly eight digits.",
+  p_price_bad: "The price must be a whole number of dram. For example 45,000,000.",
+  p_dup_inline: "This cadastral code is already recorded: {n}",
+  doc_ds_nothing: "Nothing has been booked in the ledger for this deal yet. The commission shown is expected, not earned.",
+  stmt_upto: "up to",
   cm_split_must: "The two shares must total 100%. They currently total {n}.",
   cm_split_help: "A split payer means two invoices: one to the seller, one to the buyer.",
   cm_trigger_q: "When is the commission earned",
@@ -3780,6 +3831,18 @@ T.ru = {
   cm_payer_q: "Кто платит",
   cm_split_seller: "Доля продавца, %",
   cm_split_buyer: "Доля покупателя, %",
+  cm_amd_bad: "Сумма должна быть целым числом в драмах. Например, 1 500 000.",
+  cm_pct_bad: "Процент должен быть числом от 0 до 100.",
+  cm_months_bad: "Число месяцев должно быть от 0 до 10.",
+  cm_split_help_lease: "Разделённый платёж — это два счёта: один арендодателю, один арендатору.",
+  ag_share_bad: "Доля должна быть числом от 0 до 100. Пусто означает «ещё не согласовано».",
+  da_share_need: "Доля каждого агента должна быть числом от 0 до 100.",
+  cl_tin_hint: "ՀՎՀՀ состоит из восьми цифр. Пусто допустимо — до нотариуса.",
+  cl_tin_bad: "ՀՎՀՀ должен состоять ровно из восьми цифр.",
+  p_price_bad: "Цена должна быть целым числом в драмах. Например, 45 000 000.",
+  p_dup_inline: "Этот кадастровый код уже записан: {n}",
+  doc_ds_nothing: "По этой сделке в журнале пока ничего не записано. Показанная комиссия — ожидаемая, а не заработанная.",
+  stmt_upto: "по",
   cm_split_must: "Две доли вместе должны давать 100%. Сейчас — {n}.",
   cm_split_help: "Разделённая оплата — это два счёта: продавцу и покупателю.",
   cm_trigger_q: "Когда комиссия считается заработанной",
@@ -4040,6 +4103,9 @@ const payerLabel    = p => T[lang]['cm_payer_'+p] ? t('cm_payer_'+p) : String(p|
 const PAYER_LEASE = { seller:'landlord', buyer:'tenant' };
 const payerLabelK = (kind, x) => (kind === 'lease' && PAYER_LEASE[x])
   ? t('cm_payer_' + PAYER_LEASE[x]) : payerLabel(x);
+/* the sentence explaining a split follows the kind too, or a landlord/tenant screen explains
+   itself with a seller and a buyer between two correctly-labelled buttons */
+const splitHelpK  = kind => t(kind === 'lease' ? 'cm_split_help_lease' : 'cm_split_help');
 const splitLabelK = (kind, x) => kind === 'lease'
   ? t(x === 'seller' ? 'cm_split_landlord' : 'cm_split_tenant')
   : t(x === 'seller' ? 'cm_split_seller'   : 'cm_split_buyer');
@@ -4285,7 +4351,11 @@ function feeOf(terms){
   }
   const bp = terms.mode === 'pct' ? terms.bp : terms.monthsBp;
   if(bp == null) return null;
-  return Math.round(safeAmd(terms.base, 0) * safeBp(bp, 0) / 10000);
+  /* A RATE WITH NO BASIS IS NOT A FEE. A base of zero used to answer «0 ֏» — a figure — where the
+     honest answer is «nobody has said what this is a percentage of». Same rule as the rate. */
+  const base = safeAmd(terms.base, 0);
+  if(base <= 0) return null;
+  return Math.round(base * safeBp(bp, 0) / 10000);
 }
 
 /* THE CUMULATIVE ALLOCATOR — the single most important function in this product.
@@ -4294,7 +4364,12 @@ function feeOf(terms){
    input, and no part is more than one dram from its true share. The remainder is whatever is
    left of `total` after the parts, and it is returned to the caller to assign DELIBERATELY AND
    VISIBLY — it is never dropped.
-   MATH.ROUND #2 OF 2 IN THIS FILE. There is no third and a review that finds one has found a bug. */
+   MATH.ROUND #2 OF 2 IN THE MONEY ARITHMETIC. The other is feeOf(). A third HERE is a bug.
+   THE FULL CENSUS, so the next reviewer counts what this comment counts: `Math.round` also
+   appears in safeInt() — the one input normaliser every stored integer passes through — and in
+   bpFromPct()/bpFromMonths(), which round a RATE into basis points and never touch dram. Those
+   are normalisation and parsing, not money arithmetic; grep finds them and they are accounted
+   for here. A money round outside feeOf() and allocBp() is still a bug. */
 function allocBp(total, bps){
   const T2 = safeInt(total, 0);
   let acc = 0, cum = 0;
@@ -5649,9 +5724,14 @@ const dealStateLabel = s => s === 'void' ? t('d_void') : s === 'noterms' ? t('cm
 
 function dealCard(d){
   const p = propById(d.propertyId);
-  const al = allocation(d);
-  const why = feeWhy(d);
   const st = dealMoneyState(d);
+  /* THE MONEY SLOT FOLLOWS dealMoneyState(), NOT feeOf(). allocation() answers as soon as there
+     is a rate and a basis, so a deal whose payer split does not total 100% — or whose payer or
+     trigger is simply unset — printed a confident «200,000֏» directly under the badge
+     «Պայմանները լրացված չեն», while the closing sheet for the same deal correctly said the
+     commission was not agreed. Two screens of one product never disagree about money. */
+  const al = st === 'noterms' ? null : allocation(d);
+  const why = feeWhy(d);
   const ns = nextStage(d);
   return '<div class="card' + (st === 'noterms' ? ' rail rail-bad' : '') + '">'
     + '<div class="sug" style="border-bottom:none;padding:0">'
@@ -6124,15 +6204,20 @@ function agDate(k, v){
   const el = document.getElementById('ag' + k);
   if(el) el.innerHTML = escH(AG[k] ? fdate(AG[k]) : t('unset'));
 }
+function agShareBad(){
+  const raw = String(AG && AG.share != null ? AG.share : '').trim();
+  return raw !== '' && bpFromPct(raw) == null;
+}
 function agPaintSave(){
   const b = document.getElementById('agSave');
-  if(b) b.disabled = !String(AG.name || '').trim();
+  if(b) b.disabled = !String(AG.name || '').trim() || agShareBad();
+  const e = document.getElementById('agErrShare');
+  if(e) e.innerHTML = agShareBad() ? '<div class="notice bad">' + escH('⚠️ ' + t('ag_share_bad')) + '</div>' : '';
 }
 function drawAgent(){
   if(!AG) return;
   MODAL_RE = drawAgent;
   const isNew = !AG.id;
-  const bp = String(AG.share).trim() === '' ? null : bpFromPct(AG.share);
   let h = '<h3>' + escH(AG.em + ' ' + (isNew ? t('ag_new') : t('ag_edit'))) + '</h3>'
     + '<div class="fieldlbl" style="margin-top:10px">' + escH(t('ag_name')) + '</div>'
     + '<input type="text" value="' + escH(AG.name) + '" oninput="agField(' + jsArg('name') + ',this.value)">'
@@ -6149,8 +6234,9 @@ function drawAgent(){
     + '<input type="text" inputmode="decimal" placeholder="' + escH(t('ag_share_ph')) + '" value="'
       + escH(AG.share) + '" oninput="agField(' + jsArg('share') + ',this.value)">'
     + '<div class="prov">' + escH(t('ag_share_help')) + '</div>'
+    + '<div id="agErrShare">' + (agShareBad() ? '<div class="notice bad">' + escH('⚠️ '
+        + t('ag_share_bad')) + '</div>' : '') + '</div>'
     + '<div class="prov">' + escH(t('ag_share_future')) + '</div>'
-    + (bp != null && bp > 10000 ? '<div class="notice bad">' + escH('⚠️ ' + t('cm_over')) + '</div>' : '')
     + '<div class="sec">🎓 ' + escH(t('ag_qual')) + '</div>'
     /* the draft law's registration, exam and insurance fields are RECORDED, not required, and the
        sheet says which of those two things is true rather than implying a duty that is not law. */
@@ -6173,7 +6259,8 @@ function drawAgent(){
       + '</div><div class="prov">' + escH(t('ag_leave_b')) + '</div>';
   }
   h += '<button class="btn primary full" id="agSave" style="margin-top:16px"'
-      + (String(AG.name).trim() ? '' : ' disabled') + ' onclick="saveAgent()">' + escH(t('dep_save')) + '</button>'
+      + (String(AG.name).trim() && !agShareBad() ? '' : ' disabled') + ' onclick="saveAgent()">'
+      + escH(t('dep_save')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>';
   openModal(h);
 }
@@ -6184,7 +6271,11 @@ function saveAgent(){
   /* AN EMPTY SHARE STAYS EMPTY. null is «not agreed yet» and 0 is «this agent gets nothing» —
      collapsing the two would be the same mistake as inventing a commission rate. */
   const raw = String(AG.share).trim();
-  const bp = raw === '' ? null : Math.max(0, Math.min(10000, bpFromPct(raw) == null ? 0 : bpFromPct(raw)));
+  /* `bpFromPct(raw) == null ? 0` collapsed exactly the two values the comment above forbids
+     collapsing: «abc» and «-10» both became «this agent gets nothing», and «120» was clamped to
+     100% in silence. Unreadable is refused; blank stays blank. */
+  const bp = raw === '' ? null : bpFromPct(raw);
+  if(raw !== '' && bp == null){ toast(t('ag_share_bad')); return; }
   const phone = String(AG.phone || '').trim();
   let a = AG.id ? agentById(AG.id) : null;
   if(!a){
@@ -6220,7 +6311,7 @@ function daInput(i, v){
   const el = document.getElementById('daSum');
   if(el) el.innerHTML = daSumHtml();
   const b = document.getElementById('daSave');
-  if(b) b.disabled = daSumBp() > 10000;
+  if(b) b.disabled = daBlocked();
 }
 function daSide(i, v){ if(DA && DA.rows[i]){ DA.rows[i].side = v; drawDealAgents(); } }
 function daRemove(i){ if(DA){ DA.rows.splice(i,1); drawDealAgents(); } }
@@ -6232,18 +6323,28 @@ function daAdd(agentId){
     pct: (a && a.defaultShareBp != null) ? pctText(a.defaultShareBp) : '', joinedTs:S.today });
   drawDealAgents();
 }
-const daSumBp = () => (DA ? DA.rows.reduce((n,r) => n + (bpFromPct(r.pct) || 0), 0) : 0);
+/* A PER-DEAL SHARE IS A NUMBER SOMEBODY AGREED. `bpFromPct(r.pct) || 0` read «abc» as «Ընդամենը
+   0%» with the save button lit — the same null-to-zero step the payer split was refused for.
+   Here blank is not «not agreed yet» either: the allocator needs a number for every row, so a
+   row without one holds the sheet shut and says which row. */
+const daBp = r => bpFromPct(r ? r.pct : null);
+const daBad = () => (DA ? DA.rows.filter(r => daBp(r) == null) : []);
+const daSumBp = () => (DA ? DA.rows.reduce((n,r) => n + (daBp(r) || 0), 0) : 0);
+const daBlocked = () => daBad().length > 0 || daSumBp() > 10000;
 function daSumHtml(){
   const sum = daSumBp();
   const d = dealById(DA.deal);
   const fee = feeOf(d && d.terms);
-  const al = fee == null ? null : allocBp(fee, DA.rows.map(r => bpFromPct(r.pct) || 0));
-  return '<div class="row"><span class="mlbl">' + escH(t('total')) + '</span><span class="num">'
-      + escH(bpTxt(sum)) + '</span></div>'
+  const bad = daBad();
+  const al = (fee == null || bad.length) ? null : allocBp(fee, DA.rows.map(r => daBp(r) || 0));
+  return (bad.length ? '' : '<div class="row"><span class="mlbl">' + escH(t('total')) + '</span><span class="num">'
+      + escH(bpTxt(sum)) + '</span></div>')
+    + (bad.length ? '<div class="notice bad">' + escH('⚠️ ' + t('da_share_need') + ' · '
+        + bad.map(r => agentName(r.agentId)).join(', ')) + '</div>' : '')
     + (sum > 10000 ? '<div class="notice bad">' + escH('⚠️ ' + t('cm_over')) + '</div>' : '')
     + (al ? '<div class="spwrap"><table class="sp"><tbody>'
         + DA.rows.map((r,i) => '<tr><td>' + escH(agentEm(r.agentId) + ' ' + agentName(r.agentId))
-            + '</td><td class="n">' + escH(bpTxt(bpFromPct(r.pct) || 0)) + '</td><td class="n">'
+            + '</td><td class="n">' + escH(bpTxt(daBp(r) || 0)) + '</td><td class="n">'
             + amdTxt(al.parts[i]) + '</td></tr>').join('')
         + '<tr class="keep"><td>' + escH(t('cm_keep')) + '</td><td class="n">'
           + escH(bpTxt(Math.max(0, 10000 - sum))) + '</td><td class="n">' + amdTxt(al.rest) + '</td></tr>'
@@ -6280,7 +6381,7 @@ function drawDealAgents(){
   h += '<div class="sec">🧮 ' + escH(t('cm_share')) + '</div>'
     + '<div class="card" style="margin:0" id="daSum">' + daSumHtml() + '</div>'
     + '<button class="btn primary full" id="daSave" style="margin-top:14px"'
-      + (daSumBp() > 10000 ? ' disabled' : '') + ' onclick="saveDealAgents()">' + escH(t('dep_save')) + '</button>'
+      + (daBlocked() ? ' disabled' : '') + ' onclick="saveDealAgents()">' + escH(t('dep_save')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>';
   openModal(h);
 }
@@ -6290,9 +6391,10 @@ function saveDealAgents(){
   /* the refusal is checked again at save, not only at the button: a sheet left open while the
      deal crossed its trigger on another device must not write a share onto earned money. */
   if(isEarned(d)){ toast(t('d_agents_locked')); return; }
+  if(daBad().length){ toast(t('da_share_need')); return; }
   if(daSumBp() > 10000) return;
   d.agents = DA.rows.map(r => ({ agentId:r.agentId, side:r.side,
-    shareBp: Math.max(0, Math.min(10000, bpFromPct(r.pct) || 0)),
+    shareBp: daBp(r) || 0,
     joinedTs: safeInt(r.joinedTs, 0) || S.today }));
   postRow({ agent:AGENCY, type:'doc', amt:0, ts:S.today, deal:d.id, prop:d.propertyId,
     reason:'shares_set', rank:DEAL_RANK[d.stage], actor:'owner',
@@ -7283,11 +7385,22 @@ function diffNote(pairs){
   return pairs.filter(x => String(x[1]) !== String(x[2]))
     .map(x => x[0] + sepC() + (String(x[1]) || '—') + ' → ' + (String(x[2]) || '—')).join(' · ');
 }
+/* AN ARMENIAN ՀՎՀՀ IS EIGHT DIGITS, and this value is printed on the closing sheet and on the
+   commission statement — documents that leave the building. Blank is legal, because the ՀՎՀՀ and
+   the passport are what the notary needs and they are optional until then; «12» and «abcdefgh»
+   are not, and the field says which rule it is applying rather than accepting anything. */
+function ncTinBad(){
+  const v = String(NC && NC.tin != null ? NC.tin : '').trim();
+  return v !== '' && !/^[0-9]{8}$/.test(v);
+}
+const ncOk = () => !!(NC && String(NC.name).trim() && !ncTinBad());
 function ncField(k, v){
   if(!NC) return;
   NC[k] = String(v == null ? '' : v);
   const b = document.getElementById('ncSave');
-  if(b) b.disabled = !String(NC.name).trim();
+  if(b) b.disabled = !ncOk();
+  const e = document.getElementById('ncErrTin');
+  if(e) e.innerHTML = ncTinBad() ? '<div class="notice bad">' + escH('⚠️ ' + t('cl_tin_bad')) + '</div>' : '';
 }
 function ncRole(r){
   if(!NC) return;
@@ -7308,6 +7421,9 @@ function drawNewClient(){
     /* the ՀՎՀՀ and the passport are what the NOTARY needs, and they are optional until then */
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('doc_tin')) + '</div>'
     + '<input type="text" value="' + escH(NC.tin) + '" oninput="ncField(' + jsArg('tin') + ',this.value)">'
+    + '<div id="ncErrTin">' + (ncTinBad() ? '<div class="notice bad">' + escH('⚠️ ' + t('cl_tin_bad'))
+        + '</div>' : '') + '</div>'
+    + '<div class="prov">' + escH(t('cl_tin_hint')) + '</div>'
     + '<div class="sec">🏷 ' + escH(t('cl_roles_q')) + '</div>'
     /* a person can be two things at once — a seller who is also a buyer — so these are toggles */
     + '<div class="chips wrap">' + CLIENT_ROLES.map(r => '<button class="'
@@ -7316,12 +7432,13 @@ function drawNewClient(){
     + '<div class="sec">🧑‍💼 ' + escH(t('vw_agent')) + '</div>'
     + pickAgentChips(NC.agent, 'ncAgent')
     + '<button class="btn primary full" id="ncSave" style="margin-top:16px"'
-      + (String(NC.name).trim() ? '' : ' disabled') + ' onclick="saveNewClient()">'
+      + (ncOk() ? '' : ' disabled') + ' onclick="saveNewClient()">'
       + escH(NC.id ? t('ed_save') : t('dep_save')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>');
 }
 function saveNewClient(){
   if(!NC) return;
+  if(ncTinBad()){ toast(t('cl_tin_bad')); return; }
   const name = String(NC.name || '').trim();
   if(!name){ toast(t('cl_need')); return; }
   const phone = String(NC.phone || '').trim();
@@ -7391,10 +7508,34 @@ function npSearch(v){
   const el = document.getElementById('npOwnerList');
   if(el) el.innerHTML = pickClientRows(NP.oq, NP.owner, 'npOwner');
 }
-function npReady(){ return !!(NP && String(NP.street).trim() && String(NP.cad).trim()); }
+/* A PRICE THAT CANNOT BE READ IS NOT A PRICE OF ZERO. Typing «1 500 000» — the shape this app
+   prints on every adjacent screen — used to zero the ask price AND push {price:0} into priceHist,
+   where the comment two lines down calls a moved price an event rather than a correction. So a
+   falsified figure was being recorded as history. Blank is still legal and means «not stated»:
+   on an edit it leaves the figure exactly where it was. */
+function npPriceBad(){
+  const r = String(NP && NP.price != null ? NP.price : '').trim();
+  return r !== '' && amdFromInput(r) == null;
+}
+/* the cadastral code is the natural key; the collision is now named UNDER THE FIELD as it is
+   typed, instead of after a full record has been filled in and the save refused with a toast */
+function npCadDup(){
+  const cad = String(NP && NP.cad != null ? NP.cad : '').trim();
+  if(!cad) return null;
+  return (S.props||[]).filter(x => x.cadCode && x.cadCode === cad && x.id !== NP.id)[0] || null;
+}
+function npReady(){
+  return !!(NP && String(NP.street).trim() && String(NP.cad).trim()) && !npPriceBad() && !npCadDup();
+}
 function npPaint(){
   const b = document.getElementById('npSave');
   if(b) b.disabled = !npReady();
+  const ep = document.getElementById('npePrice');
+  if(ep) ep.innerHTML = npPriceBad() ? '<div class="notice bad">' + escH('⚠️ ' + t('p_price_bad')) + '</div>' : '';
+  const ec = document.getElementById('npeCad');
+  const dup = npCadDup();
+  if(ec) ec.innerHTML = dup ? '<div class="notice bad">' + escH('⚠️ '
+      + fmt('p_dup_inline', {n: propAddr(dup)})) + '</div>' : '';
 }
 function drawNewProp(){
   if(!NP) return;
@@ -7418,6 +7559,8 @@ function drawNewProp(){
     + '<input type="text" value="' + escH(NP.no) + '" oninput="npField(' + jsArg('no') + ',this.value)">'
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('p_cad')) + '</div>'
     + '<input type="text" value="' + escH(NP.cad) + '" oninput="npField(' + jsArg('cad') + ',this.value)">'
+    + '<div id="npeCad">' + (npCadDup() ? '<div class="notice bad">' + escH('⚠️ '
+        + fmt('p_dup_inline', {n: propAddr(npCadDup())})) + '</div>' : '') + '</div>'
     + '<div class="prov">' + escH(t('p_need')) + '</div>'
     + '<div class="row" style="gap:10px;margin-top:12px">'
       + '<div style="flex:1"><div class="fieldlbl">' + escH(t('p_area')) + '</div>'
@@ -7438,6 +7581,8 @@ function drawNewProp(){
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(NP.deal === 'lease' ? t('p_permo') : t('p_ask')) + '</div>'
     + '<input type="text" inputmode="numeric" value="' + escH(NP.price) + '" oninput="npField('
       + jsArg('price') + ',this.value)">'
+    + '<div id="npePrice">' + (npPriceBad() ? '<div class="notice bad">' + escH('⚠️ '
+        + t('p_price_bad')) + '</div>' : '') + '</div>'
     + '<div class="sec">👤 ' + escH(t('p_owner')) + '</div>'
     + '<input class="search" type="text" inputmode="search" placeholder="' + escH(t('cl_search'))
       + '" value="' + escH(NP.oq) + '" oninput="npSearch(this.value)">'
@@ -7457,8 +7602,11 @@ function saveNewProp(){
   if(NP.id){
     const p = propById(NP.id); if(!p){ NP = null; closeModal(); return; }
     const a = p.addr || {};
-    const price = safeAmd(NP.price, 0);
     const was = propPrice(p);
+    /* null here is «the field is blank» — the save button refuses the unreadable case — and a
+       blank field on an edit is not an instruction to zero the ask price. */
+    const typed = amdFromInput(NP.price);
+    const price = typed == null ? was : typed;
     const note = diffNote([
       [t('p_cad'), p.cadCode, cad], [t('p_street'), a.street, street], [t('p_no'), a.no, String(NP.no||'').trim()],
       [t('p_district_q'), districtLabel(a.district), districtLabel(NP.district)],
@@ -7490,7 +7638,7 @@ function saveNewProp(){
     return;
   }
   const id = contentId('p', cad + KSEP + street, (S.props||[]).length);
-  const price = safeAmd(NP.price, 0);
+  const price = amdFromInput(NP.price) || 0;
   S.props.push({ id:id, cadCode:cad, kind:NP.kind, deal:NP.deal,
     addr:{ marz:'', city:'yerevan', district:NP.district, street:street, no:String(NP.no||'').trim() },
     area: Math.max(0, Math.min(1000000, num(NP.area))),
@@ -7861,15 +8009,30 @@ function offerRow(o){
    points, which is the unit every rate in this file is stored in — «2.25» becomes 225 and «0.5
    ամիս» becomes 5000. Nothing downstream ever sees 0.0225. Invariant 2 governs MONEY, and no
    money passes through here. */
-function bpFromPct(v){
-  const n = parseFloat(String(v == null ? '' : v).replace(',', '.'));
-  if(!isFinite(n) || n < 0) return null;
-  return Math.max(0, Math.min(100000, Math.round(n * 100)));
+/* STRICT, BECAUSE A RATE IS THE ONE NUMBER THIS PRODUCT REFUSES TO GUESS AT. parseFloat is
+   lenient: it read «2abc» as 2% and «1e2» as 100%. The old clamp was worse than lenient — it
+   turned a typed «999999» into a quiet 1,000%, a commission ten times the price of the flat, and
+   «12 ամիս» into 10 without a word. Trailing text is refused. Out of range is refused, NEVER
+   clamped, because a clamp answers with a number nobody typed. */
+const RATE_MAX_BP  = 10000;    /* 100% of the basis. A commission larger than the thing sold is not a rate. */
+const MONTHS_MAX_BP = 100000;  /* ten months' rent. */
+function pctFromInput(v){
+  const s = String(v == null ? '' : v)
+    .replace(/[\s\u00a0\u202f\u2009]/g, '').replace(/%/g, '').replace(',', '.');
+  if(s === '') return null;
+  if(!/^[0-9]+(\.[0-9]+)?$/.test(s)) return null;
+  const n = parseFloat(s);
+  return isFinite(n) ? n : null;
+}
+function bpFromPct(v, maxBp){
+  const n = pctFromInput(v); if(n == null) return null;
+  const bp = Math.round(n * 100);
+  return bp > (maxBp == null ? RATE_MAX_BP : maxBp) ? null : bp;
 }
 function bpFromMonths(v){
-  const n = parseFloat(String(v == null ? '' : v).replace(',', '.'));
-  if(!isFinite(n) || n < 0) return null;
-  return Math.max(0, Math.min(100000, Math.round(n * 10000)));
+  const n = pctFromInput(v); if(n == null) return null;
+  const bp = Math.round(n * 10000);
+  return bp > MONTHS_MAX_BP ? null : bp;
 }
 const pctText = bp => bp == null ? '' : String(Math.round(safeBp(bp,0)) / 100);
 const monthsText = bp => bp == null ? '' : String(Math.round(safeBp(bp,0)) / 10000);
@@ -7914,16 +8077,63 @@ function openMandateTerms(mid){
    by the same function and cannot disagree. */
 function tfTerms(){
   if(!TF) return null;
-  const split = (TF.payer === 'split' && (String(TF.sellerPct).trim() !== '' || String(TF.buyerPct).trim() !== ''))
-    ? { seller: bpFromPct(TF.sellerPct) || 0, buyer: bpFromPct(TF.buyerPct) || 0 } : null;
+  const base = amdFromInput(TF.base);
   return normTerms({
-    basis: TF.basis, base: TF.base, mode: TF.mode,
+    basis: TF.basis, base: base == null ? 0 : base, mode: TF.mode,
     bp:       TF.mode === 'pct'    ? bpFromPct(TF.pct)       : null,
-    flat:     TF.mode === 'flat'   ? (String(TF.flat).trim() === '' ? null : safeAmd(TF.flat,0)) : null,
+    /* THE FLAT FEE GOES THROUGH THE SAME GATE AS THE RATE. It used to go through safeAmd, whose
+       default answered 0 for «1 500 000» — the shape this app prints — and the form then ticked
+       «reconciles to the dram» over a fee of nothing. */
+    flat:     TF.mode === 'flat'   ? amdFromInput(TF.flat)   : null,
     monthsBp: TF.mode === 'months' ? bpFromMonths(TF.months) : null,
-    payer: TF.payer, splitBp: split, vat: TF.vat, trigger: TF.trigger, note: TF.note
+    payer: TF.payer, splitBp: tfSplitBp(), vat: TF.vat,
+    /* a trigger this deal's kind cannot reach is not a decision it can carry */
+    trigger: triggerApplies(tfKind(), TF.trigger) ? TF.trigger : null, note: TF.note
   });
 }
+/* AN UNREADABLE HALF OF A SPLIT IS NOT A ZERO HALF. `bpFromPct(x) || 0` turned «the seller's
+   share cannot be read» into «the seller pays nothing» and invoiced the buyer the entire fee —
+   the exact outcome the owner decision names and refuses. Either both halves are numbers or
+   there is no split, and then termsComplete() refuses the terms outright. */
+function tfSplitBp(){
+  if(!TF || TF.payer !== 'split') return null;
+  const sl = bpFromPct(TF.sellerPct), by = bpFromPct(TF.buyerPct);
+  if(sl == null || by == null) return null;
+  return { seller: sl, buyer: by };
+}
+/* EVERY FIELD ON THIS FORM THAT CANNOT BE READ, AS A SENTENCE NEXT TO IT. When a number is
+   unreadable the form's job is to say which number and why — not to substitute a zero and then
+   certify that the zero reconciles. Each entry carries the field it belongs under, so the
+   warning lands beside the input as well as in the preview. */
+function tfProblems(){
+  if(!TF) return [];
+  const raw = k => String(TF[k] == null ? '' : TF[k]).trim();
+  const out = [];
+  const needsBase = TF.mode === 'pct' || TF.mode === 'months';
+  if(needsBase && raw('base') !== '' && amdFromInput(TF.base) == null)
+    out.push({ f:'base', m:t('cm_amd_bad') });
+  if(TF.mode === 'flat' && raw('flat') !== '' && amdFromInput(TF.flat) == null)
+    out.push({ f:'flat', m:t('cm_amd_bad') });
+  if(TF.mode === 'pct' && raw('pct') !== '' && bpFromPct(TF.pct) == null)
+    out.push({ f:'pct', m:t('cm_pct_bad') });
+  if(TF.mode === 'months' && raw('months') !== '' && bpFromMonths(TF.months) == null)
+    out.push({ f:'months', m:t('cm_months_bad') });
+  if(TF.payer === 'split'){
+    if(raw('sellerPct') !== '' && bpFromPct(TF.sellerPct) == null) out.push({ f:'sellerPct', m:t('cm_pct_bad') });
+    if(raw('buyerPct')  !== '' && bpFromPct(TF.buyerPct)  == null) out.push({ f:'buyerPct',  m:t('cm_pct_bad') });
+    const sp = tfSplitBp();
+    if(sp && sp.seller + sp.buyer !== 10000)
+      out.push({ f:'split', m: fmt('cm_split_must', {n: bpTxt(sp.seller + sp.buyer)}) });
+  }
+  return out;
+}
+/* A VOIDED DEAL'S TERMS ARE CLOSED, and the button must say so by being unpressable rather than
+   by answering the press with a toast — the product's own rule about buttons that lie. */
+function tfVoided(){
+  const d = TF && TF.deal ? dealById(TF.deal) : null;
+  return !!(d && d.void && d.void.ts);
+}
+function tfSaveOk(){ return !tfVoided() && !tfProblems().length && termsComplete(tfTerms()); }
 /* the kind of thing being priced — a deal's own kind, or the mandate's translated into one.
    The commission words follow it, so a lease never bills «the seller». */
 function tfKind(){
@@ -7935,17 +8145,33 @@ function tfKind(){
 }
 function tfPick(k, v){ if(!TF) return; TF[k] = v; drawTerms(); }
 function tfInput(k, v){ if(!TF) return; TF[k] = String(v == null ? '' : v); tfPaint(); }
+const TF_FIELDS = ['base','flat','pct','months','sellerPct','buyerPct','split'];
 function tfPaint(){
   const el = document.getElementById('tfPreview'); if(el) el.innerHTML = tfPreviewHtml();
-  const b = document.getElementById('tfSave'); if(b) b.disabled = !termsComplete(tfTerms());
+  const probs = tfProblems();
+  TF_FIELDS.forEach(f => {
+    const n = document.getElementById('tfe_' + f); if(!n) return;
+    const p = probs.filter(x => x.f === f)[0];
+    n.innerHTML = p ? '<div class="notice bad">' + escH('⚠️ ' + p.m) + '</div>' : '';
+  });
+  const ok = tfSaveOk();
+  const b = document.getElementById('tfSave'); if(b) b.disabled = !ok;
+  const b2 = document.getElementById('tfTpl'); if(b2) b2.disabled = !ok;
 }
 
 function tfPreviewHtml(){
   const tm = tfTerms();
   const d = TF.deal ? dealById(TF.deal) : null;
   const fee = feeOf(tm);
-  if(fee == null || !tm.payer || !tm.trigger){
+  const probs = tfProblems();
+  /* ONE INCOMPLETE STATE, ONE ANSWER. An 80% payer split used to be the single incomplete state
+     that still rendered the headline fee, the allocation table, the green «reconciles to the
+     dram» tick and a panel headed «what rows will be written» — four blocks all saying the
+     amendment was ready, under a one-line refusal. A promise about the ledger must not appear
+     over a state that cannot be saved. */
+  if(probs.length || !termsComplete(tm)){
     return '<div class="nofig">' + escH(t('cm_none')) + '</div>'
+      + probs.map(p => '<div class="notice bad">' + escH('⚠️ ' + p.m) + '</div>').join('')
       + '<div class="prov warn">' + escH(t('cm_incomplete')) + '</div>';
   }
   const ps = payerSplit(tm, fee);
@@ -7957,16 +8183,12 @@ function tfPreviewHtml(){
   const kd = tfKind();
   h += '<div class="prov">' + escH([rate, t('cm_payer') + sepC() + payerLabelK(kd, tm.payer),
     t('cm_trigger') + sepC() + triggerLabel(tm.trigger)].join(' · ')) + '</div>';
-  if(tm.payer === 'split'){
-    if(!ps){
-      const sum = (bpFromPct(TF.sellerPct) || 0) + (bpFromPct(TF.buyerPct) || 0);
-      h += '<div class="notice bad">' + escH('⚠️ ' + fmt('cm_split_must', {n: bpTxt(sum)})) + '</div>';
-    } else {
-      h += '<div class="row" style="margin-top:8px"><span class="mlbl">'
-        + escH(payerLabelK(kd,'seller') + ' · ' + bpTxt(ps.sellerBp)) + '</span>' + amd(ps.seller) + '</div>'
-        + '<div class="row"><span class="mlbl">'
-        + escH(payerLabelK(kd,'buyer') + ' · ' + bpTxt(ps.buyerBp)) + '</span>' + amd(ps.buyer) + '</div>';
-    }
+  /* reached only when the terms are complete, so the split is two numbers that total 100% */
+  if(tm.payer === 'split' && ps){
+    h += '<div class="row" style="margin-top:8px"><span class="mlbl">'
+      + escH(payerLabelK(kd,'seller') + ' · ' + bpTxt(ps.sellerBp)) + '</span>' + amd(ps.seller) + '</div>'
+      + '<div class="row"><span class="mlbl">'
+      + escH(payerLabelK(kd,'buyer') + ' · ' + bpTxt(ps.buyerBp)) + '</span>' + amd(ps.buyer) + '</div>';
   }
   /* WHAT EACH AGENT TAKES, before the owner commits. An agent's share is a share of the AGENCY'S
      COMMISSION, not of the price, and this is where the owner sees that in dram. */
@@ -8026,7 +8248,7 @@ function drawTerms(){
   const p = d ? propById(d.propertyId) : propById((mn.propertyIds||[])[0]);
   const tpl = S.cfg.termsTemplate;
   const modes = TF.basis === 'rent_month' ? ['months','pct','flat'] : ['pct','flat'];
-  const ok = termsComplete(tfTerms());
+  const ok = tfSaveOk();
 
   let h = '<h3>💼 ' + escH(t('cm_terms')) + '</h3>'
     + '<div class="muted">' + escH(p ? propAddr(p) : '') + '</div>'
@@ -8043,6 +8265,7 @@ function drawTerms(){
     + '<div class="prov">' + escH(basisLabel(TF.basis)) + '</div>'
     + '<input type="text" inputmode="numeric" value="' + escH(TF.base) + '" oninput="tfInput('
       + jsArg('base') + ',this.value)">'
+    + '<div id="tfe_base"></div>'
     + '<div class="prov">' + escH(t('cm_base_help')) + '</div>';
 
   h += '<div class="sec">📐 ' + escH(t('cm_mode_q')) + '</div>'
@@ -8052,34 +8275,42 @@ function drawTerms(){
   if(TF.mode === 'pct'){
     h += '<div class="fieldlbl">' + escH(t('cm_pct_lbl')) + '</div>'
       + '<input type="text" inputmode="decimal" placeholder="' + escH(t('cm_pct_ph')) + '" value="'
-        + escH(TF.pct) + '" oninput="tfInput(' + jsArg('pct') + ',this.value)">';
+        + escH(TF.pct) + '" oninput="tfInput(' + jsArg('pct') + ',this.value)">'
+      + '<div id="tfe_pct"></div>';
   } else if(TF.mode === 'flat'){
     h += '<div class="fieldlbl">' + escH(t('cm_flat_lbl')) + '</div>'
       + '<input type="text" inputmode="numeric" value="' + escH(TF.flat) + '" oninput="tfInput('
-        + jsArg('flat') + ',this.value)">';
+        + jsArg('flat') + ',this.value)">'
+      + '<div id="tfe_flat"></div>';
   } else if(TF.mode === 'months'){
     h += '<div class="fieldlbl">' + escH(t('cm_months_lbl')) + '</div>'
       + '<input type="text" inputmode="decimal" placeholder="' + escH(t('cm_months_ph')) + '" value="'
-        + escH(TF.months) + '" oninput="tfInput(' + jsArg('months') + ',this.value)">';
+        + escH(TF.months) + '" oninput="tfInput(' + jsArg('months') + ',this.value)">'
+      + '<div id="tfe_months"></div>';
   }
 
   const kind = tfKind();
   h += '<div class="sec">💳 ' + escH(t('cm_payer_q')) + '</div>'
     + PAYERS.map(x => '<button class="pick' + (TF.payer === x ? ' on' : '') + '" onclick="tfPick('
         + jsArg('payer') + ',' + jsArg(x) + ')">' + escH(payerLabelK(kind, x))
-        + (x === 'split' ? '<span class="pd">' + escH(t('cm_split_help')) + '</span>' : '')
+        /* THE HELP TEXT FOLLOWS THE KIND, like every other label on this screen. On a lease it
+           read «one to the seller, one to the buyer» between two buttons correctly labelled
+           տանտերը and վարձակալը. */
+        + (x === 'split' ? '<span class="pd">' + escH(splitHelpK(kind)) + '</span>' : '')
         + '</button>').join('');
   if(TF.payer === 'split'){
     h += '<div class="fieldlbl">' + escH(splitLabelK(kind, 'seller')) + '</div>'
       + '<input type="text" inputmode="decimal" value="' + escH(TF.sellerPct) + '" oninput="tfInput('
         + jsArg('sellerPct') + ',this.value)">'
+      + '<div id="tfe_sellerPct"></div>'
       + '<div class="fieldlbl">' + escH(splitLabelK(kind, 'buyer')) + '</div>'
       + '<input type="text" inputmode="decimal" value="' + escH(TF.buyerPct) + '" oninput="tfInput('
-        + jsArg('buyerPct') + ',this.value)">';
+        + jsArg('buyerPct') + ',this.value)">'
+      + '<div id="tfe_buyerPct"></div><div id="tfe_split"></div>';
   }
 
   h += '<div class="sec">⏱ ' + escH(t('cm_trigger_q')) + '</div>'
-    + TRIGGERS.map(x => '<button class="pick' + (TF.trigger === x ? ' on' : '') + '" onclick="tfPick('
+    + triggersFor(kind).map(x => '<button class="pick' + (TF.trigger === x ? ' on' : '') + '" onclick="tfPick('
         + jsArg('trigger') + ',' + jsArg(x) + ')">' + escH(triggerLabel(x))
         + '<span class="pd">' + escH(fmt('cm_trigger_at', {s: stageLabel(TRIGGER_STAGE[x])})) + '</span>'
         + '</button>').join('');
@@ -8096,12 +8327,16 @@ function drawTerms(){
   /* the button says what it is about to do — «save» and «save and post an adjustment» are not
      the same promise, and the one that writes money rows must say so on its face */
   const amending = !!(d && dealEarnRows(d.id).length && !(d.void && d.void.ts));
-  h += '<button class="btn primary full" id="tfSave"' + (ok ? '' : ' disabled')
+  h += (tfVoided() ? '<div class="notice bad">' + escH('⚠️ ' + t('cm_amend_void')) + '</div>' : '')
+    + '<button class="btn primary full" id="tfSave"' + (ok ? '' : ' disabled')
       + ' onclick="saveTerms()">' + escH(amending ? t('cm_amend_btn') : t('cm_save')) + '</button>'
-    + '<button class="btn ghost full" style="margin-top:9px"' + (ok ? '' : ' disabled')
+    + '<button class="btn ghost full" id="tfTpl" style="margin-top:9px"' + (ok ? '' : ' disabled')
       + ' onclick="saveUsualTerms()">' + escH(t('cm_tpl_save')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>';
   openModal(h);
+  /* the warning slots are filled by the same function that fills them as the owner types, so a
+     re-render — picking a payer, switching the mode — never drops a warning that still applies */
+  tfPaint();
 }
 
 /* the prefill is APPLIED BY A BUTTON and lands as a filled-in editable form the owner still has
@@ -8115,7 +8350,7 @@ function applyUsualTerms(){
 }
 function saveUsualTerms(){
   const tm = tfTerms();
-  if(!termsComplete(tm)) return;
+  if(!tfSaveOk()) return;
   tm.setBy = 'owner'; tm.setTs = Date.now();
   S.cfg.termsTemplate = normTerms(tm);
   S.cfg.termsTemplateTs = Date.now();   /* stamped, so two devices agree on which prefill is current */
@@ -8124,7 +8359,7 @@ function saveUsualTerms(){
 function saveTerms(){
   if(!TF) return;
   const tm = tfTerms();
-  if(!termsComplete(tm)) return;
+  if(!tfSaveOk()) return;
   if(TF.mandate){
     const mn = mandateById(TF.mandate); if(!mn) return;
     tm.setBy = 'owner'; tm.setTs = Date.now();
