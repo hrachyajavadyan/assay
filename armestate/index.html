@@ -1091,6 +1091,7 @@ nav button{flex:1 1 0;max-width:none}
   min-height:56px;padding:0 var(--s2);
   background:none;border:none;border-bottom:var(--bw) solid var(--sep);
   font-family:var(--font);color:var(--ink);cursor:pointer;text-align:left;
+  text-decoration:none;              /* the two link rows at the foot of the sheet are <a> */
 }
 .morerow:last-of-type{border-bottom:none}
 .morerow:active{background:var(--surface-2)}
@@ -2217,6 +2218,7 @@ T.hy = {
   cancel: "Չեղարկել",
   menu_title: "Բաժիններ",
   more_tab: "Ավելին",
+  what_is_this: "Ի՞նչ է սա", all_products: "Բոլոր ծրագրերը",
   none: "—",
   na: "չի կիրառվում",
   unset: "Նշված չէ",
@@ -2851,6 +2853,7 @@ T.en = {
   cancel: "Cancel",
   menu_title: "Sections",
   more_tab: "More",
+  what_is_this: "What is this?", all_products: "All products",
   none: "—",
   na: "not applicable",
   unset: "Not set",
@@ -3476,6 +3479,7 @@ T.ru = {
   cancel: "Отмена",
   menu_title: "Разделы",
   more_tab: "Ещё",
+  what_is_this: "Что это?", all_products: "Все программы",
   none: "—",
   na: "не применяется",
   unset: "Не указано",
@@ -5241,8 +5245,20 @@ const NAV_ACT_PAD = 10;
 /* and a floor, because the CSS gives the active cell min-width:44px and a plan that measured
    "Data" at 41.6px would disagree with the paint. Nothing under 44x44 anywhere. */
 const NAV_ACT_MIN = 44;
+/* A nav label may be shorter than the screen it opens — the rule this product already set for
+   «Ցուցադրում» in the bar against «Ցուցադրություններ» as the heading, and the rule ArmTrade now
+   follows for «Ընդունել». Armenian «Գործարքներ» measures 96px at 600 14px and «Վճարումներ» 90;
+   a 390px phone affords 74 per cell at five cells, so navPlan surrendered both and the owner got
+   THREE destinations plus a menu. The singular forms are 69 and 64 and fit. English and Russian
+   already fit and are untouched; the full plural still titles the screen, names the «Ավելին» row
+   and is what a screen reader announces. */
+const NAV_SHORT = { hy: { deals:'Գործարք', payouts:'Վճարում' } };
+function navLabel(k){
+  const m = NAV_SHORT[lang];
+  return (m && m[k]) || t('tab_'+k);
+}
 function navPlan(W){
-  const labels = {}; NAV_KEYS.forEach(k => labels[k] = t('tab_'+k));
+  const labels = {}; NAV_KEYS.forEach(k => labels[k] = navLabel(k));
   const moreW = navTextW(t('more_tab'));
   const active = NAV_PRIO.indexOf(U.tab) >= 0 ? U.tab : null;
   for(let k = NAV_KEYS.length; k >= 1; k--){
@@ -5277,7 +5293,7 @@ function renderNav(){
     const b = navBadge(k);
     return '<button class="' + (U.tab===k ? 'active' : '') + '" aria-label="' + escH(t('tab_'+k)) + '"'
       + ' onclick="setTab(' + jsArg(k) + ')">'
-      + '<span class="icw">' + NAV_ICON[k] + '</span><span>' + escH(t('tab_'+k)) + '</span>'
+      + '<span class="icw">' + NAV_ICON[k] + '</span><span>' + escH(navLabel(k)) + '</span>'
       + (b ? '<span class="navbadge">' + b + '</span>' : '') + '</button>';
   };
   /* the spill carries its badges with it: a hidden destination that needs a person still says so */
@@ -5294,7 +5310,13 @@ function openMoreNav(){
       + '<span class="mrico">' + NAV_ICON[k] + '</span><span class="mrnm">' + escH(t('tab_'+k)) + '</span>'
       + (b ? '<span class="dot">' + b + '</span>' : '') + '</button>';
   }).join('');
-  openModal('<h3>☰ ' + escH(t('menu_title')) + '</h3>' + rows
+  /* Once inside the app there was no way back to the explainer or to the other programs — a
+     director being shown three products had to retype the address. These are links, not tabs:
+     they leave the app, so they sit under a rule, below the destinations. */
+  const away = '<div style="border-top:var(--bw) solid var(--sep);margin:14px 0 4px"></div>'
+    + '<a class="morerow" href="/armestate/about/"><span class="mrico">❓</span><span class="mrnm">' + escH(t('what_is_this')) + '</span></a>'
+    + '<a class="morerow" href="/"><span class="mrico">🏠</span><span class="mrnm">' + escH(t('all_products')) + '</span></a>';
+  openModal('<h3>☰ ' + escH(t('menu_title')) + '</h3>' + rows + away
     + '<button class="btn ghost full" style="margin-top:16px" onclick="closeModal()">' + escH(t('close')) + '</button>');
 }
 function setTab(k){
@@ -8064,8 +8086,13 @@ function offerRow(o){
 const RATE_MAX_BP  = 10000;    /* 100% of the basis. A commission larger than the thing sold is not a rate. */
 const MONTHS_MAX_BP = 100000;  /* ten months' rent. */
 function pctFromInput(v){
-  const s = String(v == null ? '' : v)
-    .replace(/[\s\u00a0\u202f\u2009]/g, '').replace(/%/g, '').replace(',', '.');
+  /* A rate and a month count are SMALL numbers. Unlike a dram figure they never carry a thousands
+     separator, so an internal space is not grouping — it is a typo. Stripping it read «2 5» as
+     25%, ten times the 2.5% the typist meant, and the only thing standing between that and a
+     signed contract was whether he re-read the preview. Leading and trailing space is still fine. */
+  const raw = String(v == null ? '' : v).trim();
+  if(/[\s\u00a0\u202f\u2009]/.test(raw)) return null;
+  const s = raw.replace(/%/g, '').replace(',', '.');
   if(s === '') return null;
   if(!/^[0-9]+(\.[0-9]+)?$/.test(s)) return null;
   const n = parseFloat(s);
