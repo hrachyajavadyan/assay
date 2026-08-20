@@ -6926,6 +6926,12 @@ function docParty(title, name, sub){
     + (sub ? '<div class="muted">' + escH(sub) + '</div>' : '') + '</div>';
 }
 const docTin = tin => t('doc_tin') + ' ' + (tin || '—');
+/* THE SAME SENTENCE UNDER EVERY MONEY FIELD IN THE PRODUCT. Four more forms typed dram through
+   safeAmd — the offer price, the deposit, the payout and the manual adjustment — so «200 000»,
+   the shape the screen beside them prints, read as 0 and the button went dark with no reason
+   given. One parser, one warning, everywhere a person types dram. */
+const amdWarnHtml = raw => (String(raw == null ? '' : raw).trim() !== '' && amdFromInput(raw) == null)
+  ? '<div class="notice bad">' + escH('⚠️ ' + t('cm_amd_bad')) + '</div>' : '';
 function docSign(label){
   return '<div class="signb" style="flex:1 1 150px;min-width:150px"><div class="doclbl">'
     + escH(label) + '</div><div class="actsignline"></div></div>';
@@ -7834,10 +7840,13 @@ function ofDate(v){
   OF.validTo = isFinite(ms) ? ms : 0;
   echoDate('ofvalid', OF.validTo);
 }
-const ofReady = () => !!(OF && OF.prop && OF.client && OF.agent && safeAmd(OF.price,0) > 0);
+const ofReady = () => !!(OF && OF.prop && OF.client && OF.agent && amdFromInput(OF.price) > 0
+  && !(String(OF.depAmount||'').trim() !== '' && amdFromInput(OF.depAmount) == null));
 function ofPaint(){
   const b = document.getElementById('ofSave');
   if(b) b.disabled = !ofReady();
+  const e1 = document.getElementById('ofePrice'); if(e1) e1.innerHTML = amdWarnHtml(OF.price);
+  const e2 = document.getElementById('ofeDep');   if(e2) e2.innerHTML = amdWarnHtml(OF.depAmount);
 }
 function drawNewOffer(){
   if(!OF) return;
@@ -7856,6 +7865,7 @@ function drawNewOffer(){
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('of_price')) + '</div>'
     + '<input type="text" inputmode="numeric" value="' + escH(OF.price) + '" oninput="ofField('
       + jsArg('price') + ',this.value)">'
+    + '<div id="ofePrice">' + amdWarnHtml(OF.price) + '</div>'
     + '<div class="sec">⚖️ ' + escH(t('dep_kind_q')) + '</div>'
     + '<div class="prov">' + escH(t('dep_diff')) + '</div>'
     + DEPOSIT_KINDS.map(k => '<button class="pick' + (OF.depKind === k ? ' on' : '') + '" onclick="ofPick('
@@ -7864,6 +7874,7 @@ function drawNewOffer(){
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('dep_amount')) + '</div>'
     + '<input type="text" inputmode="numeric" value="' + escH(OF.depAmount) + '" oninput="ofField('
       + jsArg('depAmount') + ',this.value)">'
+    + '<div id="ofeDep">' + amdWarnHtml(OF.depAmount) + '</div>'
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('of_validto')) + '</div>'
     + '<input type="date" value="' + escH(OF.validTo ? isoDate(OF.validTo) : '') + '" onchange="ofDate(this.value)">'
     + dateEcho('ofvalid', OF.validTo)
@@ -7877,7 +7888,7 @@ function drawNewOffer(){
 function saveOffer(){
   if(!OF || !ofReady()) return;
   const ts = S.today;
-  const price = safeAmd(OF.price, 0);
+  const price = amdFromInput(OF.price) || 0;
   /* the evidence row first, and the offer takes its identity from it — same discipline as the
      viewing, so two devices that recorded the same offer agree on the id. */
   const uuid = postRow({ agent:OF.agent, type:'offer', amt:0, ts:ts, prop:OF.prop, client:OF.client,
@@ -7886,7 +7897,7 @@ function saveOffer(){
   const id = 'o' + uuid.slice(1);
   if((S.offers||[]).some(o => o.id === id)){ toast(t('vw_dup')); return; }
   S.offers.push({ id:id, propertyId:OF.prop, clientId:OF.client, agentId:OF.agent, ts:ts,
-    price:price, depositKind: OF.depKind || 'kankh', depositAmount: safeAmd(OF.depAmount, 0),
+    price:price, depositKind: OF.depKind || 'kankh', depositAmount: amdFromInput(OF.depAmount) || 0,
     validTo: Math.max(0, safeInt(OF.validTo, 0)), status:'sent', statusTs:ts,
     note:String(OF.note || '') });
   OF = null;
@@ -8472,7 +8483,7 @@ function dpInput(v){
   const el = document.getElementById('dpNote');
   if(el) el.innerHTML = dpNoticeHtml();
   const b = document.getElementById('dpSave');
-  if(b) b.disabled = !(DP.kind && safeAmd(DP.amount, 0) > 0);
+  if(b) b.disabled = !(DP.kind && amdFromInput(DP.amount) > 0);
 }
 function dpDate(v){
   /* the app's own DD.MM.YYYY under a control the browser paints in its own locale */
@@ -8482,7 +8493,9 @@ function dpDate(v){
   echoDate('dpDateEcho', DP.ts);
 }
 function dpNoticeHtml(){
-  const amt = safeAmd(DP.amount, 0);
+  const amt = amdFromInput(DP.amount) || 0;
+  const warn = amdWarnHtml(DP.amount);
+  if(warn) return warn;
   /* A NOTICE, NOT A BLOCKER. Any payment over AMD 300,000 must be non-cash. The app is not the
      compliance officer; it is the thing that says the sentence out loud before the notary does. */
   return amt > 300000 ? '<div class="notice">' + escH('💳 ' + t('d_noncash')) + '</div>' : '';
@@ -8492,7 +8505,7 @@ function drawDeposit(){
   MODAL_RE = drawDeposit;
   const d = dealById(DP.deal); if(!d) return;
   const p = propById(d.propertyId);
-  const ok = !!(DP.kind && safeAmd(DP.amount, 0) > 0);
+  const ok = !!(DP.kind && amdFromInput(DP.amount) > 0);
   let h = '<h3>🤝 ' + escH(t('dep_title')) + '</h3>'
     + '<div class="muted">' + escH(p ? propAddr(p) : '') + '</div>'
     /* THE CONFIRMATION HAS TO BE TRUE. Recording a deposit on a deal with no commission terms
@@ -8518,7 +8531,7 @@ function drawDeposit(){
 function saveDeposit(){
   if(!DP) return;
   const d = dealById(DP.deal); if(!d) return;
-  const amt = safeAmd(DP.amount, 0);
+  const amt = amdFromInput(DP.amount) || 0;
   if(!DP.kind || amt <= 0) return;
   d.deposit = { kind:DP.kind, amount:amt, ts:Math.max(0, safeInt(DP.ts, S.today)) };
   if(!d.dates.depositTs) d.dates.depositTs = d.deposit.ts;
@@ -8593,15 +8606,16 @@ function poSet(v){ if(!PO) return; PO.amount = String(v); drawPayout(); }
 function poPaint(){
   const m = agentMoney(PO.agent);
   /* the input is parsed at the BOUNDARY: dram has no subunit, so a typed «123.5» is a mistyping
-     rather than a precision, and safeAmd normalises it before it can reach the ledger — where
-     postRow() would refuse a fraction outright. */
-  const amt = safeAmd(PO.amount, 0);
+     rather than a precision, and it is REFUSED with a sentence rather than rounded into the
+     ledger — where postRow() would refuse a fraction outright anyway. */
+  const warn = amdWarnHtml(PO.amount);
+  const amt = amdFromInput(PO.amount) || 0;
   const over = amt > m.payable;
   const el = document.getElementById('poNote');
-  if(el) el.innerHTML = over
-    ? '<div class="notice bad">' + escH('⚠️ ' + fmt('pay_over', {n: amdTxt(m.payable)})) + '</div>' : '';
+  if(el) el.innerHTML = warn || (over
+    ? '<div class="notice bad">' + escH('⚠️ ' + fmt('pay_over', {n: amdTxt(m.payable)})) + '</div>' : '');
   const b = document.getElementById('poSave');
-  if(b) b.disabled = !(amt > 0 && !over);
+  if(b) b.disabled = !(amt > 0 && !over && !warn);
 }
 function drawPayout(){
   if(!PO) return;
@@ -8609,8 +8623,8 @@ function drawPayout(){
   const a = agentById(PO.agent); if(!a) return;
   const m = agentMoney(PO.agent);
   const ds = payableDealsOf(PO.agent);
-  const amt = safeAmd(PO.amount, 0);
-  const ok = amt > 0 && amt <= m.payable;
+  const amt = amdFromInput(PO.amount) || 0;
+  const ok = amt > 0 && amt <= m.payable && !amdWarnHtml(PO.amount);
   let h = '<h3>💳 ' + escH(a.em + ' ' + a.name) + '</h3>'
     + '<div class="mlbl">' + escH(t('st_payable')) + '</div>' + amdBig(m.payable)
     + '<div class="prov">' + escH(t('st_payable_b')) + '</div>';
@@ -8653,7 +8667,7 @@ function drawPayout(){
 function savePayout(){
   if(!PO) return;
   const m = agentMoney(PO.agent);
-  const amt = safeAmd(PO.amount, 0);
+  const amt = amdFromInput(PO.amount) || 0;
   if(amt <= 0 || amt > m.payable) return;
   /* NEGATIVE, because the fold is one `+` over one book: an earn adds, a payout subtracts, and
      `owed` is the sum. There is no second table and no counter to keep in step. */
@@ -8678,13 +8692,15 @@ function ajInput(k, v){
   if(!AJ) return;
   AJ[k] = String(v == null ? '' : v);
   const b = document.getElementById('ajSave');
-  if(b) b.disabled = !(safeAmd(AJ.amount,0) > 0 && String(AJ.note).trim().length > 0);
+  if(b) b.disabled = !ajOk();
+  const e = document.getElementById('ajeAmt'); if(e) e.innerHTML = amdWarnHtml(AJ.amount);
 }
+const ajOk = () => !!(AJ && amdFromInput(AJ.amount) > 0 && String(AJ.note).trim().length > 0);
 function drawAdjust(){
   if(!AJ) return;
   MODAL_RE = drawAdjust;
   const a = agentById(AJ.agent); if(!a) return;
-  const ok = safeAmd(AJ.amount,0) > 0 && String(AJ.note).trim().length > 0;
+  const ok = ajOk();
   openModal('<h3>⚖️ ' + escH(t('adj_title')) + '</h3>'
     + '<div class="muted">' + escH(a.em + ' ' + a.name) + '</div>'
     + '<div class="prov">' + escH(t('adj_help')) + '</div>'
@@ -8695,6 +8711,7 @@ function drawAdjust(){
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('adj_amount')) + '</div>'
     + '<input type="text" inputmode="numeric" value="' + escH(AJ.amount) + '" oninput="ajInput('
       + jsArg('amount') + ',this.value)">'
+    + '<div id="ajeAmt">' + amdWarnHtml(AJ.amount) + '</div>'
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('adj_note')) + '</div>'
     + '<textarea rows="3" oninput="ajInput(' + jsArg('note') + ',this.value)">' + escH(AJ.note) + '</textarea>'
     /* THE NOTE IS NOT OPTIONAL. An unexplained money row is the thing that destroys trust in a
@@ -8706,7 +8723,7 @@ function drawAdjust(){
 }
 function saveAdjust(){
   if(!AJ) return;
-  const amt = safeAmd(AJ.amount, 0);
+  const amt = amdFromInput(AJ.amount) || 0;
   const note = String(AJ.note || '').trim();
   if(amt <= 0 || !note) return;
   postRow({ agent:AJ.agent, type:'adjust', amt:(AJ.sign < 0 ? -amt : amt), ts:S.today,
