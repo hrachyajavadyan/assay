@@ -1078,6 +1078,7 @@ nav button{flex:1 1 0;max-width:none}
   min-height:56px;padding:0 var(--s2);
   background:none;border:none;border-bottom:var(--bw) solid var(--sep);
   font-family:var(--font);color:var(--ink);cursor:pointer;text-align:left;
+  text-decoration:none;              /* the two link rows at the foot of the sheet are <a> */
 }
 .morerow:last-of-type{border-bottom:none}
 .morerow:active{background:var(--surface-2)}
@@ -1898,6 +1899,7 @@ T.hy = {
   tab_count:'Գույքագրում', tab_mark:'Հարգադրոշմ', tab_repair:'Վերանորոգում',
   tab_debts:'Պարտքեր', tab_data:'Տվյալներ',
   more_tab:'Ավելին', menu_title:'Ցանկ',
+  what_is_this:'Ի՞նչ է սա', all_products:'Բոլոր ծրագրերը',
   /* ---- units and shared words ---- */
   u_g:'գ', u_pcs:'հատ', close:'Փակել', save:'Պահպանել', cancel:'Չեղարկել', settings:'Կարգավորումներ',
   theme_lbl:'Տեսք', theme_light:'Լուսավոր', theme_dark:'Մուգ', lang_lbl:'Լեզու',
@@ -2223,6 +2225,7 @@ T.en = {
   tab_count:'Stock count', tab_mark:'Hallmarking', tab_repair:'Repairs',
   tab_debts:'Debts', tab_data:'Data',
   more_tab:'More', menu_title:'Menu',
+  what_is_this:'What is this?', all_products:'All products',
   u_g:'g', u_pcs:'pcs', close:'Close', save:'Save', cancel:'Cancel', settings:'Settings',
   theme_lbl:'Appearance', theme_light:'Light', theme_dark:'Dark', lang_lbl:'Language',
   yes:'Yes', no:'No', none:'none', total:'Total', of:'of',
@@ -2520,6 +2523,7 @@ T.ru = {
   tab_count:'Инвентаризация', tab_mark:'Клеймение', tab_repair:'Ремонт',
   tab_debts:'Долги', tab_data:'Данные',
   more_tab:'Ещё', menu_title:'Меню',
+  what_is_this:'Что это?', all_products:'Все программы',
   u_g:'г', u_pcs:'шт', close:'Закрыть', save:'Сохранить', cancel:'Отмена', settings:'Настройки',
   theme_lbl:'Оформление', theme_light:'Светлое', theme_dark:'Тёмное', lang_lbl:'Язык',
   yes:'Да', no:'Нет', none:'нет', total:'Итого', of:'из',
@@ -4085,7 +4089,13 @@ function openMoreNav(){
   const rows = NAV_HIDDEN.map(k =>
     '<button class="morerow' + (U.tab===k ? ' active' : '') + '" onclick="closeModal();setTab(' + jsArg(k) + ')">'
     + '<span class="mrico">' + NAV_ICON[k] + '</span><span class="mrnm">' + escH(t('tab_'+k)) + '</span></button>').join('');
-  openModal('<h3>☰ ' + escH(t('menu_title')) + '</h3>' + rows
+  /* Once inside the app there was no way back to the explainer or to the other programs — a
+     director being shown three products had to retype the address. These are links, not tabs:
+     they leave the app, so they sit under a rule, below the destinations. */
+  const away = '<div style="border-top:var(--bw) solid var(--sep);margin:14px 0 4px"></div>'
+    + '<a class="morerow" href="/armvoski/about/"><span class="mrico">❓</span><span class="mrnm">' + escH(t('what_is_this')) + '</span></a>'
+    + '<a class="morerow" href="/"><span class="mrico">🏠</span><span class="mrnm">' + escH(t('all_products')) + '</span></a>';
+  openModal('<h3>☰ ' + escH(t('menu_title')) + '</h3>' + rows + away
     + '<button class="btn ghost full" style="margin-top:16px" onclick="closeModal()">' + escH(t('close')) + '</button>');
 }
 function setTab(k){
