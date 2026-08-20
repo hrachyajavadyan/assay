@@ -2579,6 +2579,15 @@ T.hy = {
   cm_amend_note: "Պայմանների ճշգրտում՝ {a} → {b}",
   cm_amended: "Փոփոխվել է {d}-ին · նախկինում՝ {a}",
   cm_amend_void: "Չեղարկված գործարքի պայմանները չեն փոխվում։",
+  /* ---- correcting what is already recorded ---- */
+  p_edit: "Խմբագրել գույքը",
+  cl_edit: "Խմբագրել հաճախորդին",
+  ed_save: "Պահել ուղղումը",
+  ed_saved: "Ուղղումը պահվեց և գրանցվեց մատյանում",
+  ed_nochange: "Ոչինչ չի փոխվել",
+  ed_trail: "Ուղղումների պատմությունը",
+  rsn_client_edit: "հաճախորդի տվյալների ուղղում",
+  rsn_prop_edit: "գույքի տվյալների ուղղում",
   /* ---- the deposit, chosen explicitly ---- */
   dep_title: "Նախավճար / կանխավճար",
   dep_kind_q: "Ո՞ր գործիքն է",
@@ -3161,6 +3170,15 @@ T.en = {
   cm_amend_note: "Terms amended: {a} → {b}",
   cm_amended: "Amended {d} · previously {a}",
   cm_amend_void: "A voided deal's terms do not change.",
+  /* ---- correcting what is already recorded ---- */
+  p_edit: "Edit the property",
+  cl_edit: "Edit the client",
+  ed_save: "Save the correction",
+  ed_saved: "Correction saved and recorded in the ledger",
+  ed_nochange: "Nothing changed",
+  ed_trail: "Corrections",
+  rsn_client_edit: "client details corrected",
+  rsn_prop_edit: "property details corrected",
   /* ---- the deposit, chosen explicitly ---- */
   dep_title: "Նախավճար / կանխավճար",
   dep_kind_q: "Which instrument",
@@ -3739,6 +3757,15 @@ T.ru = {
   cm_amend_note: "Корректировка условий: {a} → {b}",
   cm_amended: "Изменено {d} · ранее {a}",
   cm_amend_void: "Условия аннулированной сделки не меняются.",
+  /* ---- correcting what is already recorded ---- */
+  p_edit: "Изменить объект",
+  cl_edit: "Изменить клиента",
+  ed_save: "Сохранить исправление",
+  ed_saved: "Исправление сохранено и записано в книгу",
+  ed_nochange: "Ничего не изменилось",
+  ed_trail: "История исправлений",
+  rsn_client_edit: "исправление данных клиента",
+  rsn_prop_edit: "исправление данных объекта",
   /* ---- the deposit, chosen explicitly ---- */
   dep_title: "Նախավճար / կանխավճար",
   dep_kind_q: "Какой инструмент",
@@ -7000,7 +7027,8 @@ function openProp(id){
         + dom.days + ' ' + escH(t('p_dom_d')) + '</span></div>'
         /* the number never appears without the sentence that says where it came from */
         + '<div class="prov">' + escH(domSrcText(dom.src)) + '</div>' : '')
-    + (m ? '' : '<div class="notice">' + escH('⚖️ ' + t('p_nomandate')) + '</div>');
+    + (m ? '' : '<div class="notice">' + escH('⚖️ ' + t('p_nomandate')) + '</div>')
+    + editTrail('prop', p.id, 'prop_edit');
 
   h += '<div class="sec">🔑 ' + escH(t('vw_history')) + '</div>';
   h += vs.length
@@ -7013,10 +7041,23 @@ function openProp(id){
 
   h += '<button class="btn primary full" style="margin-top:16px" onclick="closeModal();openNewViewing({prop:'
     + jsArg(p.id) + '})">🔑 ' + escH(t('vw_new')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="openEditProp('
+    + jsArg(p.id) + ')">✏️ ' + escH(t('p_edit')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal();openNewOffer({prop:'
     + jsArg(p.id) + '})">📝 ' + escH(t('of_new')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('close')) + '</button>';
   openModal(h);
+}
+
+/* THE CORRECTION TRAIL, read back out of the log onto the sheet that was corrected. The rows
+   already exist — this is what makes «a correction is not silent» true on screen and not only in
+   the export. Newest first, capped, because a sheet is not a ledger view. */
+function editTrail(key, id, reason){
+  const rows = (S.rows||[]).filter(r => r && r.reason === reason && r[key] === id)
+    .sort((a,b) => (b.ts - a.ts) || (a.uuid < b.uuid ? 1 : -1)).slice(0, 4);
+  if(!rows.length) return '';
+  return '<div class="sec">🧾 ' + escH(t('ed_trail')) + '</div>'
+    + rows.map(r => '<div class="prov">' + escH(fdate(r.ts) + sepC() + r.note) + '</div>').join('');
 }
 
 /* ---------- the client sheet: every property this person was shown ---------- */
@@ -7031,7 +7072,8 @@ function openClient(id){
     + (c.phone ? '<a class="telbtn" href="tel:' + escH(c.phone.replace(/[^\d+]/g,'')) + '">📞 '
         + escH(c.phone) + '</a>' : '')
     + (c.tin ? '<div class="row"><span class="mlbl">' + escH(t('doc_tin')) + '</span><span class="num">'
-        + escH(c.tin) + '</span></div>' : '');
+        + escH(c.tin) + '</span></div>' : '')
+    + editTrail('client', c.id, 'client_edit');
 
   h += '<div class="sec">🔑 ' + escH(t('vw_shown')) + '</div>';
   h += vs.length
@@ -7044,6 +7086,8 @@ function openClient(id){
 
   h += '<button class="btn primary full" style="margin-top:16px" onclick="closeModal();openNewViewing({client:'
     + jsArg(c.id) + '})">🔑 ' + escH(t('vw_new')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="openEditClient('
+    + jsArg(c.id) + ')">✏️ ' + escH(t('cl_edit')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal();openNewOffer({client:'
     + jsArg(c.id) + '})">📝 ' + escH(t('of_new')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal();openNewMandate({client:'
@@ -7111,9 +7155,28 @@ function echoDate(id, ts){
 let NC = null;
 function openNewClient(pref){
   const ags = activeAgents();
-  NC = { name:'', phone:'', email:'', tin:'', roles:(pref && pref.role) ? [pref.role] : [],
+  NC = { id:'', name:'', phone:'', email:'', tin:'', roles:(pref && pref.role) ? [pref.role] : [],
          agent: ags.length === 1 ? ags[0].id : '' };
   drawNewClient();
+}
+/* CORRECTING WHAT IS ALREADY RECORDED.
+   A system of record whose typos are permanent is not a system of record — a wrong phone number
+   on a client meant re-creating the person and orphaning every viewing that pointed at the old
+   id. The SAME form does both jobs, because a second half-built editor is how two screens of one
+   product start disagreeing about what a client is.
+   A correction is not silent: it writes an evidence row naming the fields that moved and what
+   they moved from, so the ten-year record shows the correction as well as the corrected value. */
+function openEditClient(id){
+  const c = clientById(id); if(!c) return;
+  NC = { id:c.id, name:c.name || '', phone:c.phone || '', email:c.email || '',
+         tin:c.tin || '', roles:(c.kind||[]).slice(), agent:c.agentId || '' };
+  drawNewClient();
+}
+/* the fields that actually moved, as «label: was → now», for the evidence row. Empty when
+   nothing changed, and an unchanged save then writes no row at all. */
+function diffNote(pairs){
+  return pairs.filter(x => String(x[1]) !== String(x[2]))
+    .map(x => x[0] + sepC() + (String(x[1]) || '—') + ' → ' + (String(x[2]) || '—')).join(' · ');
 }
 function ncField(k, v){
   if(!NC) return;
@@ -7131,7 +7194,7 @@ function ncAgent(id){ if(NC){ NC.agent = (NC.agent === id ? '' : id); drawNewCli
 function drawNewClient(){
   if(!NC) return;
   MODAL_RE = drawNewClient;
-  openModal('<h3>👤 ' + escH(t('cl_new')) + '</h3>'
+  openModal('<h3>👤 ' + escH(NC.id ? t('cl_edit') : t('cl_new')) + '</h3>'
     + '<div class="fieldlbl" style="margin-top:10px">' + escH(t('vw_nc_name')) + '</div>'
     + '<input type="text" value="' + escH(NC.name) + '" oninput="ncField(' + jsArg('name') + ',this.value)">'
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('vw_nc_phone')) + '</div>'
@@ -7149,7 +7212,7 @@ function drawNewClient(){
     + pickAgentChips(NC.agent, 'ncAgent')
     + '<button class="btn primary full" id="ncSave" style="margin-top:16px"'
       + (String(NC.name).trim() ? '' : ' disabled') + ' onclick="saveNewClient()">'
-      + escH(t('dep_save')) + '</button>'
+      + escH(NC.id ? t('ed_save') : t('dep_save')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>');
 }
 function saveNewClient(){
@@ -7157,6 +7220,23 @@ function saveNewClient(){
   const name = String(NC.name || '').trim();
   if(!name){ toast(t('cl_need')); return; }
   const phone = String(NC.phone || '').trim();
+  if(NC.id){
+    const c = clientById(NC.id); if(!c){ NC = null; closeModal(); return; }
+    const note = diffNote([
+      [t('vw_nc_name'), c.name, name], [t('vw_nc_phone'), c.phone, phone],
+      [t('doc_tin'), c.tin, String(NC.tin||'')],
+      [t('cl_roles_q'), (c.kind||[]).map(roleLabel).join('+'), NC.roles.map(roleLabel).join('+')],
+      [t('vw_agent'), agentName(c.agentId), agentName(NC.agent)]
+    ]);
+    c.name = name; c.phone = phone; c.tin = String(NC.tin || '');
+    c.kind = NC.roles.slice(); c.agentId = NC.agent;
+    if(note) postRow({ agent:AGENCY, type:'doc', amt:0, ts:S.today, client:c.id,
+      reason:'client_edit', actor:'owner', note:note });
+    const cid = c.id; NC = null;
+    saveState(); closeModal(); renderAll(); toast(note ? t('ed_saved') : t('ed_nochange'));
+    openClient(cid);
+    return;
+  }
   const exist = (S.clients||[]).find(c => c.name === name && c.phone === phone);
   if(exist){ NC = null; closeModal(); renderAll(); openClient(exist.id); return; }
   const id = contentId('c', name + KSEP + phone, (S.clients||[]).length);
@@ -7175,9 +7255,25 @@ function saveNewClient(){
 let NP = null;
 function openNewProp(){
   const ags = activeAgents();
-  NP = { kind:'flat', deal:'sale', district:'kentron', street:'', no:'', cad:'',
+  NP = { id:'', kind:'flat', deal:'sale', district:'kentron', street:'', no:'', cad:'',
          area:'', rooms:'', floor:'', floors:'', price:'', owner:'', oq:'',
          agent: ags.length === 1 ? ags[0].id : '' };
+  drawNewProp();
+}
+/* CORRECTING A PROPERTY. Same form, same duplicate rule — the cadastral code is still the
+   natural key and it is still refused if it collides, but with ITSELF excluded, or an edit that
+   changes nothing else would refuse its own record.
+   The ASK PRICE is the one field an edit cannot treat as a typo: a price that moved is a price
+   history entry, so the days-on-market provenance and the price history both stay true. */
+function openEditProp(id){
+  const p = propById(id); if(!p) return;
+  const a = p.addr || {};
+  NP = { id:p.id, kind:p.kind, deal:p.deal, district:a.district || 'kentron',
+         street:a.street || '', no:a.no || '', cad:p.cadCode || '',
+         area: p.area ? String(p.area) : '', rooms: p.rooms ? String(p.rooms) : '',
+         floor: p.floor ? String(p.floor) : '', floors: p.floors ? String(p.floors) : '',
+         price: propPrice(p) ? String(propPrice(p)) : '',
+         owner:p.ownerClientId || '', oq:'', agent:p.agentId || '' };
   drawNewProp();
 }
 function npField(k, v){ if(NP){ NP[k] = String(v == null ? '' : v); npPaint(); } }
@@ -7198,7 +7294,7 @@ function npPaint(){
 function drawNewProp(){
   if(!NP) return;
   MODAL_RE = drawNewProp;
-  openModal('<h3>🏠 ' + escH(t('p_new')) + '</h3>'
+  openModal('<h3>🏠 ' + escH(NP.id ? t('p_edit') : t('p_new')) + '</h3>'
     + '<div class="sec">🏷 ' + escH(t('p_kind_q')) + '</div>'
     + '<div class="chips wrap">' + PROP_KINDS.map(k => '<button class="' + (NP.kind === k ? 'active' : '')
         + '" onclick="npPick(' + jsArg('kind') + ',' + jsArg(k) + ')">' + (KIND_EM[k]||'🏠') + ' '
@@ -7244,14 +7340,50 @@ function drawNewProp(){
     + '<div class="sec">🧑‍💼 ' + escH(t('vw_agent')) + '</div>'
     + pickAgentChips(NP.agent, 'npAgent')
     + '<button class="btn primary full" id="npSave" style="margin-top:16px"'
-      + (npReady() ? '' : ' disabled') + ' onclick="saveNewProp()">' + escH(t('dep_save')) + '</button>'
+      + (npReady() ? '' : ' disabled') + ' onclick="saveNewProp()">'
+      + escH(NP.id ? t('ed_save') : t('dep_save')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>');
 }
 function saveNewProp(){
   if(!NP || !npReady()) return;
   const cad = String(NP.cad).trim();
-  if((S.props||[]).some(x => x.cadCode && x.cadCode === cad)){ toast(t('p_dup')); return; }
+  if((S.props||[]).some(x => x.cadCode && x.cadCode === cad && x.id !== NP.id)){ toast(t('p_dup')); return; }
   const street = String(NP.street).trim();
+  if(NP.id){
+    const p = propById(NP.id); if(!p){ NP = null; closeModal(); return; }
+    const a = p.addr || {};
+    const price = safeAmd(NP.price, 0);
+    const was = propPrice(p);
+    const note = diffNote([
+      [t('p_cad'), p.cadCode, cad], [t('p_street'), a.street, street], [t('p_no'), a.no, String(NP.no||'').trim()],
+      [t('p_district_q'), districtLabel(a.district), districtLabel(NP.district)],
+      [t('p_kind_q'), kindLabel(p.kind), kindLabel(NP.kind)],
+      [t('p_deal_q'), dealKindLabel(p.deal), dealKindLabel(NP.deal)],
+      [t('p_ask'), amdTxt(was), amdTxt(price)],
+      [t('p_owner'), clientName(p.ownerClientId), clientName(NP.owner)],
+      [t('vw_agent'), agentName(p.agentId), agentName(NP.agent)]
+    ]);
+    p.cadCode = cad; p.kind = NP.kind; p.deal = NP.deal;
+    p.addr = { marz:a.marz || '', city:a.city || 'yerevan', district:NP.district,
+               street:street, no:String(NP.no||'').trim() };
+    p.area = Math.max(0, Math.min(1000000, num(NP.area)));
+    p.rooms = Math.max(0, Math.min(99, safeInt(NP.rooms,0)));
+    p.floor = safeInt(NP.floor,0);
+    p.floors = Math.max(0, safeInt(NP.floors,0));
+    /* A PRICE THAT MOVED IS AN EVENT, NOT A CORRECTION. It joins the price history with the date
+       and who moved it, so the property sheet can never show a figure with no line behind it. */
+    if(price !== was){
+      p.askPrice = price; p.askTs = S.today;
+      (p.priceHist = p.priceHist || []).push({ ts:S.today, price:price, by:'owner' });
+    }
+    p.ownerClientId = NP.owner; p.agentId = NP.agent;
+    if(note) postRow({ agent:AGENCY, type:'doc', amt:0, ts:S.today, prop:p.id,
+      client:p.ownerClientId || '', reason:'prop_edit', actor:'owner', note:note });
+    const pid = p.id; NP = null;
+    saveState(); closeModal(); renderAll(); toast(note ? t('ed_saved') : t('ed_nochange'));
+    openProp(pid);
+    return;
+  }
   const id = contentId('p', cad + KSEP + street, (S.props||[]).length);
   const price = safeAmd(NP.price, 0);
   S.props.push({ id:id, cadCode:cad, kind:NP.kind, deal:NP.deal,
@@ -9000,6 +9132,38 @@ function estateSelfTest(){
       })());
       restore();
     })();
+
+    /* ---- CORRECTING WHAT IS ALREADY RECORDED ---- */
+    ok('a correction names only the fields that moved, with what they moved from',
+       diffNote([['A','x','x'], ['B','1','2'], ['C','','q']]) === 'B' + sepC() + '1 → 2 · C'
+         + sepC() + '— → q');
+    ok('an unchanged save produces no note and therefore no row',
+       diffNote([['A','x','x'], ['B','7','7']]) === '');
+    /* THE CADASTRAL CODE IS STILL THE NATURAL KEY WHEN EDITING — but a record must not collide
+       with itself, or an edit that changes only the street would refuse its own property. */
+    ok('the duplicate rule excludes the record being edited', (() => {
+      const ps = (S.props||[]).filter(x => x.cadCode);
+      if(ps.length < 2) return false;
+      const dup = (cad, self) => (S.props||[]).some(x => x.cadCode && x.cadCode === cad && x.id !== self);
+      return ps.every(x => !dup(x.cadCode, x.id)) && dup(ps[1].cadCode, ps[0].id);
+    })());
+    /* A CORRECTION MUST NOT ORPHAN THE EVIDENCE. Editing is in place on the same id precisely so
+       every viewing, offer, mandate and deal that points at this record still points at it. */
+    ok('a correction keeps the id, so nothing that points at the record is orphaned', (() => {
+      const c = (S.clients||[])[0];
+      const vs = (S.viewings||[]).filter(v => v.clientId === c.id).length;
+      c.name = c.name + ' (ուղղված)';
+      return (S.viewings||[]).filter(v => v.clientId === c.id).length === vs;
+    })());
+    ok('a correction row is evidence and carries no money', (() => {
+      const n = (S.rows||[]).length;
+      postRow({ agent:AGENCY, type:'doc', amt:0, ts:S.today, prop:(S.props||[])[0].id,
+        reason:'prop_edit', actor:'owner', note:'x' });
+      const r = (S.rows||[])[S.rows.length-1];
+      const good = (S.rows||[]).length === n+1 && r.amt === 0 && !isMoneyRow(r);
+      S.rows = S.rows.slice(0, n); S.owed = rebuildOwed();
+      return good;
+    })());
 
     /* the whole fee lands somewhere: agents plus the agency, per deal */
     ok('every dram of every earned fee is attributed', (() => {
