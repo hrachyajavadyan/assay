@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F4F6F8">
+<meta name="description" content="ԱրմԷստեյտ — անշարժ գույքի գործակալության հաշվառում՝ գործակալներ, տոկոսներ, ցուցադրություններ և գործարքի ընթացք։">
+<title>Ի՞նչ է ԱրմԷստեյտը</title>
+<link rel="icon" href="data:,">
+<link rel="preload" href="/armtrade/vendor/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/armtrade/vendor/fonts/noto-sans-armenian-armenian-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Inter';font-style:normal;font-display:swap;font-weight:100 900;
+  src:url(/armtrade/vendor/fonts/inter-latin-wght-normal.woff2) format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Noto Sans Armenian';font-style:normal;font-display:swap;font-weight:100 900;
+  src:url(/armtrade/vendor/fonts/noto-sans-armenian-armenian-wght-normal.woff2) format('woff2');
+  unicode-range:U+0308,U+0530-058F,U+2010,U+2024,U+25CC,U+FB13-FB17}
+
+/* tokens: taken verbatim from the products' light theme, so the door and the room match */
+:root{
+  --bg:#F4F6F8; --surface:#FFFFFF; --surface-2:#F1F4F8; --surface-3:#E6EBF2;
+  --ink:#0E1726; --muted:#54607A; --dim:#5D6880;
+  --sep:#E6EAF0; --stroke:#E1E6EE; --stroke2:#C9D2E0;
+  --acc:#A85A07; --acc-ink:#FFFFFF; --acc-tint:#FFF4E3; --acc-line:#EBCFA4; --acc-text:#8A4B00;
+  --ok:#0B6B3A; --ok-tint:#EEF9F2; --ok-line:#B7E3C9;
+  --warn:#B42318; --warn-tint:#FEF1F1; --warn-line:#F5C9C4;
+  --sh-1:0 1px 2px rgba(14,23,38,.06); --sh-2:0 4px 16px rgba(14,23,38,.08);
+  --focus:0 0 0 3px rgba(168,90,7,.30);
+  --font:'Inter','Noto Sans Armenian',-apple-system,'Segoe UI',Roboto,sans-serif;
+  --emoji:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",var(--font);
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s10:40px;
+}
+body.dark{
+  --bg:#0B0F17; --surface:#161C2A; --surface-2:#1E2637; --surface-3:#28324A;
+  --ink:#E8EDF7; --muted:#A3B0C7; --dim:#8B97AE;
+  --sep:#242D40; --stroke:#242D40; --stroke2:#313C55;
+  --acc:#F0A93B; --acc-ink:#1A1205; --acc-tint:#2A1F0C; --acc-line:#5A431A; --acc-text:#F5C06A;
+  --ok:#5AD79A; --ok-tint:#0E2A1E; --ok-line:#1E5540;
+  --warn:#FF9C9C; --warn-tint:#2A1315; --warn-line:#5A2226;
+  --sh-1:0 1px 2px rgba(0,0,0,.30); --sh-2:0 6px 20px rgba(0,0,0,.35);
+  --focus:0 0 0 3px rgba(240,169,59,.35);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p,ul,ol,figure{margin:0}
+img{max-width:100%;height:auto;display:block}
+
+.top{display:flex;align-items:center;gap:var(--s2);max-width:760px;margin:0 auto;
+  padding:var(--s3) var(--s4) 0}
+.home{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 var(--s3);
+  background:var(--surface);border:1px solid var(--stroke);border-radius:12px;
+  color:var(--muted);text-decoration:none;font-size:14px;font-weight:600;box-shadow:var(--sh-1)}
+.top .sp{margin-left:auto}
+.tbtn{width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  background:var(--surface);border:1px solid var(--stroke);border-radius:12px;cursor:pointer;
+  font-size:18px;font-family:var(--emoji);line-height:1;box-shadow:var(--sh-1)}
+.tbtn:focus-visible,.home:focus-visible,a:focus-visible{outline:none;box-shadow:var(--focus)}
+
+.wrap{max-width:760px;margin:0 auto;padding:var(--s5) var(--s4) var(--s10)}
+.eyebrow{font-size:14px;font-weight:700;letter-spacing:.4px;color:var(--acc-text)}
+h1{font-size:clamp(28px,8vw,38px);line-height:1.12;letter-spacing:-.6px;font-weight:700;
+  margin:var(--s2) 0 var(--s3)}
+.lede{font-size:18px;line-height:1.5;color:var(--ink);max-width:46ch}
+.lede + .lede{margin-top:var(--s3)}
+.sub{color:var(--muted);font-size:15px;margin-top:var(--s3);max-width:52ch}
+
+.cta{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s5)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;
+  padding:0 var(--s5);border-radius:13px;text-decoration:none;font-weight:700;font-size:16px;
+  background:var(--acc);color:var(--acc-ink);border:1px solid var(--acc)}
+.btn.ghost{background:var(--surface);color:var(--ink);border-color:var(--stroke2)}
+.demo{font-size:14px;color:var(--dim);margin-top:var(--s2)}
+
+h2{font-size:clamp(20px,5.4vw,24px);line-height:1.25;letter-spacing:-.3px;font-weight:700;
+  margin:var(--s10) 0 var(--s3);padding-top:var(--s6);border-top:1px solid var(--sep)}
+h3{font-size:17px;font-weight:700;margin:var(--s6) 0 var(--s2)}
+p{margin:var(--s3) 0;max-width:60ch}
+.card{background:var(--surface);border:1px solid var(--stroke);border-radius:16px;
+  padding:var(--s4) var(--s5);box-shadow:var(--sh-1);margin:var(--s4) 0}
+.card h3{margin-top:0}
+.card p:last-child{margin-bottom:0}
+
+ul.plain{list-style:none;padding:0;margin:var(--s3) 0}
+ul.plain li{position:relative;padding-left:30px;margin:var(--s3) 0;max-width:58ch}
+ul.plain li b{font-weight:700}
+ul.plain li::before{content:"·";position:absolute;left:10px;top:-2px;font-size:22px;color:var(--acc-text)}
+ul.yes li::before{content:"✓";left:4px;top:0;font-size:16px;font-weight:800;color:var(--ok)}
+ul.no  li::before{content:"—";left:4px;top:0;font-size:16px;font-weight:800;color:var(--dim)}
+
+.note{border-left:3px solid var(--acc-line);background:var(--acc-tint);
+  border-radius:0 12px 12px 0;padding:var(--s3) var(--s4);margin:var(--s4) 0;
+  font-size:15px;color:var(--ink);max-width:60ch}
+.note b{color:var(--acc-text)}
+.flag{border-left:3px solid var(--warn-line);background:var(--warn-tint);
+  border-radius:0 12px 12px 0;padding:var(--s3) var(--s4);margin:var(--s4) 0;
+  font-size:15px;max-width:60ch}
+
+figure{margin:var(--s5) 0}
+.shot{display:inline-block;max-width:320px;width:100%;border:1px solid var(--stroke2);
+  border-radius:16px;overflow:hidden;background:var(--surface);box-shadow:var(--sh-2)}
+figcaption{font-size:14px;color:var(--muted);margin-top:var(--s2);max-width:46ch;line-height:1.5}
+
+.pair{display:grid;gap:var(--s5)}
+@media(min-width:720px){
+  .pair{grid-template-columns:1fr 1fr;align-items:start}
+  .pair figure{margin:0}
+}
+
+.cmp{width:100%;border-collapse:collapse;margin:var(--s4) 0;font-size:15px}
+.cmp th,.cmp td{text-align:left;padding:var(--s3) var(--s3);border-bottom:1px solid var(--sep);
+  vertical-align:top}
+.cmp th{font-size:14px;color:var(--dim);font-weight:700}
+.cmp td:first-child{font-weight:600;width:34%}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+.foot{margin-top:var(--s10);padding-top:var(--s5);border-top:1px solid var(--sep);
+  font-size:14px;color:var(--muted)}
+.foot a{color:var(--acc-text);font-weight:600}
+.foot .links{display:flex;flex-wrap:wrap;gap:var(--s4);margin-bottom:var(--s3)}
+.foot .links a{min-height:44px;display:inline-flex;align-items:center}
+a{color:var(--acc-text)}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="home" href="/">← Բոլոր ծրագրերը</a>
+  <span class="sp"></span>
+  <button class="tbtn" id="themebtn" type="button" aria-label="Թեմա">🌙</button>
+</div>
+
+<div class="wrap">
+
+  <p class="eyebrow">ԱրմԷստեյտ · Երիտասարդ ծրագիր</p>
+  <h1>Անշարժ գույքի գործակալության հաշվառում</h1>
+
+  <p class="lede">Ո՞ր գործակալն է ցույց տվել այդ բնակարանը։ Ո՞ր գործարքից որքան
+  միջնորդավճար է հասնում նրան։ Եվ ի՞նչ փուլում է կանգնած գործարքը հիմա։</p>
+
+  <p class="lede">ԱրմԷստեյտը գործակալության ներքին հաշվառումն է՝ օբյեկտները, գործակալները
+  և նրանց տոկոսը, ցուցադրությունները և գործարքի ընթացքը՝ նախնական պայմանագրից մինչև
+  կադաստրի գրանցում։</p>
+
+  <div class="flag">
+    <b>Ծրագիրը դեռ կառուցվում է։</b> Հիմնական մասերն աշխատում են, բայց այն դեռ
+    ամեն օր փոխվում է։ Մի հենվեք դրա վրա իրական գործարքի փաստաթղթի համար՝ առանց ստուգելու։
+  </div>
+
+  <div class="cta">
+    <a class="btn" href="/armestate/">Բացել ծրագիրը</a>
+  </div>
+  <p class="demo">Բացվում է ցուցադրական տվյալներով — կարող եք ամեն ինչ սեղմել առանց վախի։</p>
+
+  <div class="card">
+    <h2>Ո՞ւմ համար է</h2>
+    <p>Գործակալության տիրոջ համար, որ մի քանի գործակալ ունի և պետք է իմանա՝ ո՞վ ինչ է
+    փակել և ո՞ւմ որքան է հասնում։ Եվ գործակալի համար, որ ցուցադրությունը գրանցում է
+    հեռախոսով՝ շենքի դռան մոտ կանգնած։</p>
+  </div>
+
+  <div class="card">
+    <h2>Ցուցադրությունը ապացույց է, ոչ թե օրացույցի գրառում</h2>
+    <p>Գործակալության իրավունքը միջնորդավճարի վրա հենվում է նրա վրա, որ հենց <b>ինքն է</b>
+    այդ օբյեկտը ցույց տվել այդ հաճախորդին։ Դրա համար ամեն ցուցադրություն գրանցվում է
+    առանձին, և փակված գործարքի կողքին երևում է, թե որ ցուցադրությունն է այն հիմնավորում։</p>
+  </div>
+
+  <div class="card">
+    <h2>Միջնորդավճարի տոկոսը լռելյայն չկա — և դա միտումնավոր է</h2>
+    <p>Հայաստանում միջնորդավճարի հաստատված դրույքաչափ չկա։ Գործակալությունները այն
+    չեն հրապարակում, իսկ բաց աղբյուրները միմյանց հակասում են։ Վարձակալության դեպքում
+    հաշվարկի ձևն ընդհանրապես տարբեր է։</p>
+    <p>Այդ պատճառով ծրագիրը <b>ոչ մի տոկոս չի ենթադրում</b>։ Ամեն գործարքի պայմանները
+    մուտքագրվում են առանձին՝ տոկոս, հաստատագրված գումար կամ ամիսների քանակ, և նշվում է՝
+    ո՞վ է վճարում։ Առանց պայմանների գործարքն առաջ չի գնում։</p>
+    <p class="note">Սխալ լռելյայն թիվն ավելի վտանգավոր է, քան դատարկ դաշտը — այն նկատվում է
+    միայն այն ժամանակ, երբ գումարն արդեն շարժվել է։</p>
+  </div>
+
+  <div class="card">
+    <h2>Ի՞նչ է անում</h2>
+    <ul class="plain yes">
+      <li><b>Օբյեկտներ և հաճախորդներ։</b> Վաճառք և վարձակալություն։</li>
+      <li><b>Գործակալներ և նրանց բաժինը։</b> Ընդհանուր դրույք գործակալի համար և
+      առանձին բաժին՝ կոնկրետ գործարքի համար, երբ պայմանավորվածությունը տարբեր է։</li>
+      <li><b>Ցուցադրություններ։</b> Չորս սեղմումով գրանցում՝ ո՞ր օբյեկտը, ո՞ւմ, ո՞ր գործակալը։</li>
+      <li><b>Գործարքի ընթացքը։</b> Նախնական պայմանագիր և նախավճար, նոտարական
+      առուվաճառքի պայմանագիր, պետական գրանցում, վկայական։</li>
+      <li><b>Ո՞ւմ որքան է հասնում։</b> Վաստակած և վճարված գումարները՝ ըստ գործակալի,
+      հաշվարկված գրառումներից, ոչ թե առանձին հաշվիչից։</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Ի՞նչ չի անում</h2>
+    <ul class="plain no">
+      <li>Հայտարարությունների կայք չէ և ոչ մի պորտալ չի թարմացնում։</li>
+      <li>Իրավաբանական խորհրդատվություն չի տալիս և պայմանագրի իրավական ճշտությունը չի երաշխավորում։</li>
+      <li>Չի հաշվարկում հարկ և չի ուղարկում ոչ մի տվյալ պետական մարմնի։</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Օրենսդրության մասին՝ ազնիվ</h2>
+    <p>2025 թվականին կառավարությունը հավանություն է տվել «Ռիելթորական գործունեության մասին»
+    օրենքի նախագծին, որը նախատեսում է գործակալների պետական գրանցում, որակավորում,
+    գրավոր պայմանագիր ամեն հաճախորդի հետ և փաստաթղթերի երկարաժամկետ պահպանում։</p>
+    <p><b>Մենք չենք հաստատում, որ այդ նախագիծն արդեն ուժի մեջ է։</b> Ծրագիրը կառուցված է
+    այնպես, որ նման պահանջի դեպքում գրառումներն արդեն տեղում լինեն — բայց ոչ մի պահանջ
+    չի ներկայացվում որպես գործող օրենք։ Ճշտեք ձեր իրավաբանի հետ։</p>
+  </div>
+
+  <div class="foot"><div class="links">
+    <a href="/armestate/">Բացել ծրագիրը →</a>
+    <a href="/">Մյուս ծրագրերը →</a>
+  </div></div>
+
+  <p class="foot">ԱրմԷստեյտ · assay-9e6.pages.dev</p>
+
+</div>
+
+<script>
+(function(){
+  var K='suite_theme';
+  function set(t){ document.body.classList.toggle('dark', t==='dark');
+    var m=document.querySelector('meta[name=theme-color]');
+    if(m) m.setAttribute('content', t==='dark' ? '#0B0F17' : '#F4F6F8');
+    var b=document.getElementById('themebtn'); if(b) b.textContent = t==='dark' ? '☀️' : '🌙'; }
+  var t='light'; try{ t=localStorage.getItem(K)||'light'; }catch(e){}
+  set(t);
+  var b=document.getElementById('themebtn');
+  if(b) b.addEventListener('click', function(){
+    t = t==='dark' ? 'light' : 'dark';
+    try{ localStorage.setItem(K,t); }catch(e){}
+    set(t);
+  });
+})();
+</script>
+</body>
+</html>
