@@ -4383,11 +4383,15 @@ function feeOf(terms){
    left of `total` after the parts, and it is returned to the caller to assign DELIBERATELY AND
    VISIBLY — it is never dropped.
    MATH.ROUND #2 OF 2 IN THE MONEY ARITHMETIC. The other is feeOf(). A third HERE is a bug.
-   THE FULL CENSUS, so the next reviewer counts what this comment counts: `Math.round` also
-   appears in safeInt() — the one input normaliser every stored integer passes through — and in
-   bpFromPct()/bpFromMonths(), which round a RATE into basis points and never touch dram. Those
-   are normalisation and parsing, not money arithmetic; grep finds them and they are accounted
-   for here. A money round outside feeOf() and allocBp() is still a bug. */
+   THE CENSUS, so the next reviewer counts what this comment counts rather than stopping at a
+   number that does not match `grep -c`. There are fourteen `Math.round` calls in this file. TWO
+   are money: feeOf() and this function. The other twelve are none of them dram —
+     · safeInt(), the one input normaliser every stored integer passes through;
+     · bpFromPct() and bpFromMonths(), which quantise a RATE into basis points;
+     · bpTxt() and monthsTxt(), display formatting for a rate;
+     · a viewing conversion rate, an exclusivity progress bar, an hour of the day;
+     · and two assertions in the suite that CHECK for a fraction rather than making one.
+   A money round outside feeOf() and allocBp() is still a bug. */
 function allocBp(total, bps){
   const T2 = safeInt(total, 0);
   let acc = 0, cum = 0;
