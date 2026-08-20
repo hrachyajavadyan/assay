@@ -2645,6 +2645,11 @@ T.hy = {
   stmt_words: "Գումարը բառերով",
   stmt_month: "Այս ամիս",
   stmt_all: "Ամբողջ ժամանակը",
+  stmt_p_month: "Այս ամիս",
+  stmt_p_prev: "Անցած ամիս",
+  stmt_p_quarter: "Այս եռամսյակ",
+  stmt_p_year: "Այս տարի",
+  stmt_p_all: "Ամբողջ ժամանակը",
   stmt_none: "Այս ժամանակահատվածում գումարի տող չկա։",
   stmt_note: "Հաշվարկը վերականգնվում է մատյանից՝ չի պահվում առանձին։ Կազմվում է երկու օրինակից։",
   stmt_owed: "Գործակալությունը պարտք է գործակալին։",
@@ -3257,6 +3262,11 @@ T.en = {
   stmt_words: "Amount in words",
   stmt_month: "This month",
   stmt_all: "All time",
+  stmt_p_month: "This month",
+  stmt_p_prev: "Last month",
+  stmt_p_quarter: "This quarter",
+  stmt_p_year: "This year",
+  stmt_p_all: "All time",
   stmt_none: "No money rows in this period.",
   stmt_note: "The statement is rebuilt from the log, not stored. Two copies are made.",
   stmt_owed: "The agency owes the agent.",
@@ -3865,6 +3875,11 @@ T.ru = {
   stmt_words: "Сумма прописью",
   stmt_month: "Этот месяц",
   stmt_all: "Всё время",
+  stmt_p_month: "Этот месяц",
+  stmt_p_prev: "Прошлый месяц",
+  stmt_p_quarter: "Этот квартал",
+  stmt_p_year: "Этот год",
+  stmt_p_all: "Всё время",
   stmt_none: "В этом периоде нет строк с деньгами.",
   stmt_note: "Расчёт восстанавливается из журнала, а не хранится. Составляется в двух экземплярах.",
   stmt_owed: "Агентство должно агенту.",
@@ -6367,26 +6382,45 @@ function setGate(g){
    fold and not a counter. */
 let STMT_P = 'all';
 function setStmtPeriod(agentId, p){ STMT_P = p; openStatement(agentId); }
-function stmtDocNo(agentId, from){
+/* THE PERIOD IS A CLOSED INTERVAL, both ends computed here and nowhere else, so the opening
+   balance, the rows and the closing balance cannot be computed against three different windows.
+   «Previous month» needs an upper bound as much as a lower one — a statement that says
+   «July» and silently includes August is worse than one that offers only «everything». */
+const STMT_PERIODS = ['month','prev','quarter','year','all'];
+function stmtWindow(kind, rows){
+  const now = new Date(S.today);
+  const y = now.getUTCFullYear(), m = now.getUTCMonth();
+  const first = rows.length ? rows[0].ts : S.today;
+  const end = S.today;
+  if(kind === 'month')   return { from: Date.UTC(y, m, 1), to: end };
+  if(kind === 'prev')    return { from: Date.UTC(y, m-1, 1), to: Date.UTC(y, m, 1) - 1 };
+  if(kind === 'quarter') return { from: Date.UTC(y, Math.floor(m/3)*3, 1), to: end };
+  if(kind === 'year')    return { from: Date.UTC(y, 0, 1), to: end };
+  return { from: first, to: end };
+}
+/* the number carries the PERIOD, not just a month, or two statements for the same agent over
+   different windows would quote the same number down a telephone. */
+function stmtDocNo(agentId, from, kind){
   const d = new Date(safeInt(from, 0));
   const p = n => (n < 10 ? '0' : '') + n;
-  return 'ՄՀ-' + d.getUTCFullYear() + '-' + p(d.getUTCMonth()+1) + '-' + String(agentId).toUpperCase();
+  const tag = kind === 'year' ? 'Տ' : kind === 'quarter' ? ('Ք' + (Math.floor(d.getUTCMonth()/3)+1))
+            : kind === 'all' ? 'Ը' : p(d.getUTCMonth()+1);
+  return 'ՄՀ-' + d.getUTCFullYear() + '-' + tag + '-' + String(agentId).toUpperCase();
 }
 function openStatement(agentId){
   const a = agentById(agentId); if(!a) return;
   MODAL_RE = () => openStatement(agentId);
   const m = agentMoney(agentId);
   const all = moneyRowsFor(agentId).slice().sort((x,y) => (x.ts - y.ts) || (x.uuid < y.uuid ? -1 : 1));
-  const now = new Date(S.today);
-  const monthFrom = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1);
-  const from = STMT_P === 'month' ? monthFrom : (all.length ? all[0].ts : S.today);
+  const win = stmtWindow(STMT_P, all);
+  const from = win.from, upto = win.to;
   /* THE OPENING BALANCE IS THE FOLD OVER EVERYTHING BEFORE THE PERIOD — the same `+` as the
      closing balance, over the same book. A statement whose opening figure came from anywhere
      else is a statement that can disagree with itself. */
   let bal = 0;
   all.forEach(r => { if(r.ts < from) bal += r.amt; });
   const opening = bal;
-  const inPeriod = all.filter(r => r.ts >= from);
+  const inPeriod = all.filter(r => r.ts >= from && r.ts <= upto);
 
   const body = inPeriod.map(r => {
     bal += r.amt;
@@ -6413,9 +6447,10 @@ function openStatement(agentId){
   }).join('');
 
   const ag = S.agency || {};
-  const to = S.today;
+  const to = upto;
   let h = '<h3>📄 ' + escH(t('stmt_title')) + '</h3>'
-    + '<div class="muted">' + escH(t('doc_no') + ' ' + stmtDocNo(agentId, from) + ' · ' + fdate(to)) + '</div>'
+    + '<div class="muted">' + escH(t('doc_no') + ' ' + stmtDocNo(agentId, from, STMT_P)
+      + ' · ' + fdate(S.today)) + '</div>'
     + '<hr class="actrule">'
     + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
       + docParty(t('doc_agency'), ag.name, docTin(ag.tin))
@@ -6423,9 +6458,9 @@ function openStatement(agentId){
     + '</div>'
     /* the period selector is a control, not part of the document */
     + '<div class="chips wrap noprint" style="margin-top:10px">'
-      + [['month', t('stmt_month')], ['all', t('stmt_all')]].map(x =>
-          '<button class="' + (STMT_P === x[0] ? 'active' : '') + '" onclick="setStmtPeriod('
-          + jsArg(agentId) + ',' + jsArg(x[0]) + ')">' + escH(x[1]) + '</button>').join('')
+      + STMT_PERIODS.map(k =>
+          '<button class="' + (STMT_P === k ? 'active' : '') + '" onclick="setStmtPeriod('
+          + jsArg(agentId) + ',' + jsArg(k) + ')">' + escH(t('stmt_p_' + k)) + '</button>').join('')
     + '</div>'
     + '<div class="row" style="margin-top:10px"><span class="mlbl">' + escH(t('stmt_period'))
       + '</span><b>' + escH(fdate(from) + ' — ' + fdate(to)) + '</b></div>'
@@ -6441,8 +6476,11 @@ function openStatement(agentId){
       + escH(amWords(bal)) + '</b></div>'
     + '<div class="muted" style="margin-top:8px">' + escH(bal === 0 ? t('stmt_settled')
         : bal > 0 ? t('stmt_owed') : t('stmt_credit')) + '</div>'
-    + '<div class="row" style="margin-top:10px"><span class="mlbl">' + escH(t('st_payable'))
-      + '</span>' + amd(m.payable) + '</div>'
+    /* THE PAYABLE FIGURE IS AS OF TODAY, NOT AS OF THE PERIOD. On a «last month» statement whose
+       rows are all zero, an unlabelled 185,000 reads as a July figure and is not one — so the
+       line carries the date it is true on, beside a closing balance that is true of the window. */
+    + '<div class="row" style="margin-top:10px"><span class="mlbl">'
+      + escH(t('st_payable') + sepC() + fdate(S.today)) + '</span>' + amd(m.payable) + '</div>'
     + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
       + docSign(t('doc_sign_agency') + (ag.name ? ' · ' + ag.name : ''))
       + docSign(t('doc_sign_agent') + ' · ' + a.name) + '</div>'
@@ -9499,6 +9537,34 @@ function estateSelfTest(){
       if(!d) return true;
       return t('d_landlord') !== t('d_seller') && t('d_tenant') !== t('d_buyer')
         && payerLabelK('lease','seller') !== payerLabelK('sale','seller');
+    })());
+
+    /* ---- the commission statement's period ----
+       THE OPENING BALANCE, THE ROWS AND THE CLOSING BALANCE MUST SEE ONE WINDOW. A statement
+       whose «previous month» quietly included this month would foot perfectly and be a lie. */
+    ok('every statement period is a closed interval with from ≤ to', (() => {
+      const rows = moneyRowsFor('a1').slice().sort((x,y) => x.ts - y.ts);
+      return STMT_PERIODS.every(k => { const w = stmtWindow(k, rows); return w.from <= w.to; });
+    })());
+    ok('opening + the period\'s rows = the closing balance, for every period', (() => {
+      const rows = moneyRowsFor('a1').slice().sort((x,y) => x.ts - y.ts);
+      return STMT_PERIODS.every(k => {
+        const w = stmtWindow(k, rows);
+        const open = rows.filter(r => r.ts < w.from).reduce((a,r) => a + r.amt, 0);
+        const inp  = rows.filter(r => r.ts >= w.from && r.ts <= w.to).reduce((a,r) => a + r.amt, 0);
+        const after = rows.filter(r => r.ts > w.to).reduce((a,r) => a + r.amt, 0);
+        return open + inp + after === agentMoney('a1').owed;
+      });
+    })());
+    ok('«last month» ends before this month begins', (() => {
+      const rows = moneyRowsFor('a1');
+      const prev = stmtWindow('prev', rows), cur = stmtWindow('month', rows);
+      return prev.to < cur.from;
+    })());
+    ok('two periods for one agent do not quote the same document number', (() => {
+      const rows = moneyRowsFor('a1');
+      const nos = STMT_PERIODS.map(k => stmtDocNo('a1', stmtWindow(k, rows).from, k));
+      return new Set(nos.filter(x => x)).size >= 4;
     })());
 
     /* ---- stage as a monotone rank on the row ---- */
