@@ -2509,6 +2509,43 @@ T.hy = {
   dep_saved: "Գրանցվեց",
   dep_record: "Գրանցել նախավճարը",
   dep_diff: "Երկուսը իրավաբանորեն տարբեր են։ Ընտրությունը կատարվում է գիտակցաբար, ոչ թե սովորույթով։",
+  /* ---- recording a payout, and correcting one ---- */
+  pay_amount: "Վճարվող գումարը, ֏",
+  pay_full: "Ամբողջը",
+  pay_half: "Կեսը",
+  pay_note: "Նշում (ըստ ցանկության)",
+  pay_confirm: "Գրանցել վճարումը",
+  pay_done: "Վճարումը գրանցվեց",
+  pay_over: "Վճարման ենթակա գումարից ավելին չի կարելի գրանցել։ Առավելագույնը՝ {n} ֏։",
+  pay_nothing: "Այս գործակալին վճարման ենթակա գումար չկա։",
+  pay_partial: "Մասնակի վճարումը սովորական է․ գումարը կարելի է իջեցնել։",
+  adj_open: "Ճշգրտում",
+  adj_title: "Միջնորդավճարի ճշգրտում",
+  adj_amount: "Գումարը, ֏",
+  adj_plus: "Ավելացնել գործակալին",
+  adj_minus: "Նվազեցնել",
+  adj_note: "Պատճառը",
+  adj_note_req: "Պատճառը պարտադիր է։ Առանց բացատրության գումարի տողը վստահություն է քանդում։",
+  adj_saved: "Ճշգրտումը գրանցվեց",
+  adj_help: "Ճշգրտումը չի ջնջում և չի փոխում ոչինչ․ այն նոր տող է մատյանում՝ իր պատճառով։",
+  /* ---- the commission statement: the agent's own book, rebuilt from the log ---- */
+  stmt_title: "Միջնորդավճարի հաշվարկ",
+  stmt_period: "Ժամանակահատված",
+  stmt_open: "Սկզբնական մնացորդ",
+  stmt_close: "Վերջնական մնացորդ",
+  stmt_words: "Գումարը բառերով",
+  stmt_month: "Այս ամիս",
+  stmt_all: "Ամբողջ ժամանակը",
+  stmt_none: "Այս ժամանակահատվածում գումարի տող չկա։",
+  stmt_note: "Հաշվարկը վերականգնվում է մատյանից՝ չի պահվում առանձին։ Կազմվում է երկու օրինակից։",
+  stmt_owed: "Գործակալությունը պարտք է գործակալին։",
+  stmt_settled: "Փոխադարձ պարտավորություններ չկան։",
+  stmt_credit: "Գործակալը կանխավճարված է։",
+  stmt_basis: "Հիմքը",
+  doc_col: "Հիմնավորում",
+  amount_col: "Գումար",
+  balance: "Մնացորդ",
+  doc_sign_agency: "Գործակալության ստորագրություն",
   d_mark: "Նշել՝ {s}",
 };
 
@@ -2926,6 +2963,43 @@ T.en = {
   dep_saved: "Recorded",
   dep_record: "Record the deposit",
   dep_diff: "The two are legally different. The choice is made deliberately, not by habit.",
+  /* ---- recording a payout, and correcting one ---- */
+  pay_amount: "Amount to pay, ֏",
+  pay_full: "All of it",
+  pay_half: "Half",
+  pay_note: "Note (optional)",
+  pay_confirm: "Record the payout",
+  pay_done: "Payout recorded",
+  pay_over: "A payout cannot exceed what is payable. The maximum is {n} ֏.",
+  pay_nothing: "Nothing is payable to this agent.",
+  pay_partial: "Partial payouts are normal — the figure can be edited down.",
+  adj_open: "Adjustment",
+  adj_title: "Commission adjustment",
+  adj_amount: "Amount, ֏",
+  adj_plus: "Add to the agent",
+  adj_minus: "Take off",
+  adj_note: "Reason",
+  adj_note_req: "The reason is mandatory. An unexplained money row destroys trust in a payout table.",
+  adj_saved: "Adjustment recorded",
+  adj_help: "An adjustment deletes and changes nothing — it is a new row in the log, with its reason.",
+  /* ---- the commission statement: the agent's own book, rebuilt from the log ---- */
+  stmt_title: "Միջնորդավճարի հաշվարկ · Commission statement",
+  stmt_period: "Period",
+  stmt_open: "Opening balance",
+  stmt_close: "Closing balance",
+  stmt_words: "Amount in words",
+  stmt_month: "This month",
+  stmt_all: "All time",
+  stmt_none: "No money rows in this period.",
+  stmt_note: "The statement is rebuilt from the log, not stored. Two copies are made.",
+  stmt_owed: "The agency owes the agent.",
+  stmt_settled: "Nothing is outstanding either way.",
+  stmt_credit: "The agent has been paid in advance.",
+  stmt_basis: "Basis",
+  doc_col: "Basis",
+  amount_col: "Amount",
+  balance: "Balance",
+  doc_sign_agency: "Agency signature",
   d_mark: "Mark: {s}",
 };
 
@@ -3339,6 +3413,43 @@ T.ru = {
   dep_saved: "Записано",
   dep_record: "Записать задаток / аванс",
   dep_diff: "Эти два инструмента юридически различны. Выбор делается осознанно, а не по привычке.",
+  /* ---- recording a payout, and correcting one ---- */
+  pay_amount: "Сумма к выплате, ֏",
+  pay_full: "Всё",
+  pay_half: "Половина",
+  pay_note: "Примечание (необязательно)",
+  pay_confirm: "Записать выплату",
+  pay_done: "Выплата записана",
+  pay_over: "Выплата не может превышать сумму к выплате. Максимум — {n} ֏.",
+  pay_nothing: "Этому агенту нечего выплачивать.",
+  pay_partial: "Частичная выплата — норма, сумму можно уменьшить.",
+  adj_open: "Корректировка",
+  adj_title: "Корректировка комиссии",
+  adj_amount: "Сумма, ֏",
+  adj_plus: "Добавить агенту",
+  adj_minus: "Уменьшить",
+  adj_note: "Причина",
+  adj_note_req: "Причина обязательна. Строка денег без объяснения разрушает доверие к таблице выплат.",
+  adj_saved: "Корректировка записана",
+  adj_help: "Корректировка ничего не удаляет и не меняет — это новая строка в журнале со своей причиной.",
+  /* ---- the commission statement: the agent's own book, rebuilt from the log ---- */
+  stmt_title: "Միջնորդավճարի հաշվարկ · Расчёт комиссии",
+  stmt_period: "Период",
+  stmt_open: "Входящий остаток",
+  stmt_close: "Исходящий остаток",
+  stmt_words: "Сумма прописью",
+  stmt_month: "Этот месяц",
+  stmt_all: "Всё время",
+  stmt_none: "В этом периоде нет строк с деньгами.",
+  stmt_note: "Расчёт восстанавливается из журнала, а не хранится. Составляется в двух экземплярах.",
+  stmt_owed: "Агентство должно агенту.",
+  stmt_settled: "Взаимных обязательств нет.",
+  stmt_credit: "Агенту выплачено авансом.",
+  stmt_basis: "Основание",
+  doc_col: "Основание",
+  amount_col: "Сумма",
+  balance: "Остаток",
+  doc_sign_agency: "Подпись агентства",
   d_mark: "Отметить: {s}",
 };
 
@@ -5116,8 +5227,14 @@ function payoutRow(a, m){
       + '<div><div class="l">' + escH(t('pay_owed')) + '</div><div class="v">' + amdTxt(m.owed) + '<span class="cur">֏</span></div></div>'
     + '</div>'
     + (m.advance ? '<div class="notice">' + escH(t('pay_advance') + ': ' + amdTxt(m.advance) + ' ֏') + '</div>' : '')
-    + '<div class="row" style="margin-top:12px"><button class="btn ghost small" onclick="openStatement('
-      + jsArg(a.id) + ')">' + escH(t('dt_ledger')) + '</button></div>'
+    + '<div class="row" style="margin-top:12px">'
+      + '<button class="btn ghost small" onclick="openStatement(' + jsArg(a.id) + ')">📄 '
+        + escH(t('stmt_title')) + '</button>'
+      + (m.payable ? '<button class="btn small primary" onclick="openPayout(' + jsArg(a.id) + ')">💳 '
+          + escH(t('pay_pay')) + '</button>'
+        : '<button class="btn small ghost" onclick="openAdjust(' + jsArg(a.id) + ')">⚖️ '
+          + escH(t('adj_open')) + '</button>')
+    + '</div>'
     + '</div>';
 }
 function setGate(g){
@@ -5129,30 +5246,98 @@ function setGate(g){
 /* the agent's own book — every earn and payout row with its deal and its trigger. This is the
    commission statement REBUILT FROM THE LOG rather than stored, so two devices holding the same
    rows render the same statement. */
+/* ---------- DOCUMENT 2 · Միջնորդավճարի հաշվարկ (to the agent) ----------
+   The monthly statement: period, opening balance, every earn / payout / reverse / adjust row
+   with its deal, its basis and its trigger, closing balance, the amount in words in Armenian,
+   and two signature rules. REBUILT FROM THE LOG rather than stored, so two devices holding the
+   same rows render the same statement byte for byte — which is the whole reason `owed` is a
+   fold and not a counter. */
+let STMT_P = 'all';
+function setStmtPeriod(agentId, p){ STMT_P = p; openStatement(agentId); }
+function stmtDocNo(agentId, from){
+  const d = new Date(safeInt(from, 0));
+  const p = n => (n < 10 ? '0' : '') + n;
+  return 'ՄՀ-' + d.getUTCFullYear() + '-' + p(d.getUTCMonth()+1) + '-' + String(agentId).toUpperCase();
+}
 function openStatement(agentId){
   const a = agentById(agentId); if(!a) return;
+  MODAL_RE = () => openStatement(agentId);
   const m = agentMoney(agentId);
-  const rows = moneyRowsFor(agentId).slice().sort((x,y) => x.ts - y.ts);
+  const all = moneyRowsFor(agentId).slice().sort((x,y) => (x.ts - y.ts) || (x.uuid < y.uuid ? -1 : 1));
+  const now = new Date(S.today);
+  const monthFrom = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1);
+  const from = STMT_P === 'month' ? monthFrom : (all.length ? all[0].ts : S.today);
+  /* THE OPENING BALANCE IS THE FOLD OVER EVERYTHING BEFORE THE PERIOD — the same `+` as the
+     closing balance, over the same book. A statement whose opening figure came from anywhere
+     else is a statement that can disagree with itself. */
   let bal = 0;
-  const body = rows.map(r => {
+  all.forEach(r => { if(r.ts < from) bal += r.amt; });
+  const opening = bal;
+  const inPeriod = all.filter(r => r.ts >= from);
+
+  const body = inPeriod.map(r => {
     bal += r.amt;
     const d = r.deal ? dealById(r.deal) : null;
     const p = d ? propById(d.propertyId) : null;
-    return '<tr><td>' + escH(fdate(r.ts)) + '<div class="muted">' + escH(rowTypeLabel(r.type)
-        + (r.trigger ? ' · ' + triggerLabel(r.trigger) : '')
-        + (r.reason === 'deal_void' ? ' · ' + t('rsn_deal_void') : '')) + '</div>'
-      + (p ? '<div class="muted">' + escH(propAddr(p)) + '</div>' : '') + '</td>'
+    const mine = d ? (d.agents||[]).find(x => x.agentId === agentId) : null;
+    /* the BASIS, per the brief: which deal, what rate, which share of it, and what made it
+       earned — «why is this money mine now» is the question a payout has to survive. */
+    const basis = [
+      p ? propAddr(p) : '',
+      d && d.terms ? rateAsTyped(d.terms) : '',
+      mine ? t('cm_share') + ' ' + bpTxt(mine.shareBp) : '',
+      r.trigger ? triggerLabel(r.trigger) : '',
+      r.reason === 'deal_void' ? t('rsn_deal_void') : '',
+      r.reason === 'negotiated' ? t('adj_open') : ''
+    ].filter(Boolean).join(' · ');
+    return '<tr><td>' + escH(fdate(r.ts)) + '<div class="muted">' + escH(rowTypeLabel(r.type))
+        + (d ? ' · ' + escH(d.id) : '') + '</div>'
+      + (basis ? '<div class="muted">' + escH(basis) + '</div>' : '')
+      + (r.note ? '<div class="muted">' + escH(r.note) + '</div>' : '') + '</td>'
       + '<td class="n">' + (r.amt < 0 ? '−' : '') + amdTxt(Math.abs(r.amt)) + '</td>'
-      + '<td class="n">' + amdTxt(bal) + '</td></tr>';
+      + '<td class="n">' + (bal < 0 ? '−' : '') + amdTxt(Math.abs(bal)) + '</td></tr>';
   }).join('');
-  openModal('<h3>' + escH(a.em + ' ' + a.name) + '</h3>'
-    + '<div class="prov">' + escH(t('pay_derived')) + '</div>'
-    + '<table class="sp"><thead><tr><th>' + escH(t('dt_ledger')) + '</th><th class="n">'
-      + escH(t('cm_amount')) + '</th><th class="n">' + escH(t('pay_owed')) + '</th></tr></thead>'
-    + '<tbody>' + (body || '<tr><td colspan="3" class="muted">—</td></tr>')
-    + '<tr class="tot"><td>' + escH(t('pay_owed')) + '</td><td class="n"></td><td class="n">'
-      + amdTxt(m.owed) + '</td></tr></tbody></table>'
-    + '<button class="btn ghost full" style="margin-top:14px" onclick="closeModal()">' + escH(t('close')) + '</button>');
+
+  const ag = S.agency || {};
+  const to = S.today;
+  let h = '<h3>📄 ' + escH(t('stmt_title')) + '</h3>'
+    + '<div class="muted">' + escH(t('doc_no') + ' ' + stmtDocNo(agentId, from) + ' · ' + fdate(to)) + '</div>'
+    + '<hr class="actrule">'
+    + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
+      + docParty(t('doc_agency'), ag.name, docTin(ag.tin))
+      + docParty(t('doc_agent'), a.em + ' ' + a.name, a.phone)
+    + '</div>'
+    /* the period selector is a control, not part of the document */
+    + '<div class="chips wrap noprint" style="margin-top:10px">'
+      + [['month', t('stmt_month')], ['all', t('stmt_all')]].map(x =>
+          '<button class="' + (STMT_P === x[0] ? 'active' : '') + '" onclick="setStmtPeriod('
+          + jsArg(agentId) + ',' + jsArg(x[0]) + ')">' + escH(x[1]) + '</button>').join('')
+    + '</div>'
+    + '<div class="row" style="margin-top:10px"><span class="mlbl">' + escH(t('stmt_period'))
+      + '</span><b>' + escH(fdate(from) + ' — ' + fdate(to)) + '</b></div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('stmt_open')) + '</span>' + amd(opening) + '</div>'
+    + '<table class="sp"><thead><tr><th>' + escH(t('doc_col')) + '</th><th class="n">'
+      + escH(t('amount_col')) + '</th><th class="n">' + escH(t('balance')) + '</th></tr></thead>'
+    + '<tbody>' + (body || '<tr><td colspan="3" class="muted">' + escH(t('stmt_none')) + '</td></tr>')
+    + '<tr class="tot"><td>' + escH(t('stmt_close')) + '</td><td class="n"></td><td class="n">'
+      + (bal < 0 ? '−' : '') + amdTxt(Math.abs(bal)) + '</td></tr></tbody></table>'
+    /* THE AMOUNT IN WORDS IS WRITTEN IN ARMENIAN ON EVERY LANGUAGE OF THE UI, because that is
+       the language the document is signed in. */
+    + '<div class="muted" style="margin-top:8px">' + escH(t('stmt_words')) + sepC() + '<b>'
+      + escH(amWords(bal)) + '</b></div>'
+    + '<div class="muted" style="margin-top:8px">' + escH(bal === 0 ? t('stmt_settled')
+        : bal > 0 ? t('stmt_owed') : t('stmt_credit')) + '</div>'
+    + '<div class="row" style="margin-top:10px"><span class="mlbl">' + escH(t('st_payable'))
+      + '</span>' + amd(m.payable) + '</div>'
+    + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
+      + docSign(t('doc_sign_agency') + (ag.name ? ' · ' + ag.name : ''))
+      + docSign(t('doc_sign_agent') + ' · ' + a.name) + '</div>'
+    + docFoot(t('stmt_note'))
+    + '<div class="prov noprint">' + escH(t('pay_derived')) + '</div>'
+    + '<button class="btn ghost full noprint" style="margin-top:12px" onclick="openAdjust('
+      + jsArg(agentId) + ')">⚖️ ' + escH(t('adj_open')) + '</button>'
+    + docTail();
+  openModal(h);
 }
 
 /* =====================================================================================
@@ -6032,6 +6217,140 @@ function saveDeposit(){
   DP = null;
   saveState(); closeModal(); renderAll(); toast(t('dep_saved'));
   openDeal(id);
+}
+
+
+/* =====================================================================================
+   RECORDING A PAYOUT, AND CORRECTING ONE
+   §1.8. `owed` is Σ(earn) − Σ(payout) over one book and there is no counter anywhere; paying an
+   agent is therefore not an update, it is one more row. Partial payouts are normal, which is why
+   the sheet opens prefilled with the payable figure and editable DOWN rather than locked to it.
+   Corrections never mutate and never delete: an adjustment is a second row carrying a mandatory
+   reason, and both lines show on the agent's statement, because an agent whose money moved is
+   owed the explanation as much as the money.
+   ===================================================================================== */
+let PO = null;
+function openPayout(agentId){
+  const a = agentById(agentId); if(!a) return;
+  const m = agentMoney(agentId);
+  PO = { agent:agentId, amount:String(m.payable || ''), note:'' };
+  drawPayout();
+}
+function poInput(k, v){
+  if(!PO) return;
+  PO[k] = String(v == null ? '' : v);
+  poPaint();
+}
+function poSet(v){ if(!PO) return; PO.amount = String(v); drawPayout(); }
+function poPaint(){
+  const m = agentMoney(PO.agent);
+  /* the input is parsed at the BOUNDARY: dram has no subunit, so a typed «123.5» is a mistyping
+     rather than a precision, and safeAmd normalises it before it can reach the ledger — where
+     postRow() would refuse a fraction outright. */
+  const amt = safeAmd(PO.amount, 0);
+  const over = amt > m.payable;
+  const el = document.getElementById('poNote');
+  if(el) el.innerHTML = over
+    ? '<div class="notice bad">' + escH('⚠️ ' + fmt('pay_over', {n: amdTxt(m.payable)})) + '</div>' : '';
+  const b = document.getElementById('poSave');
+  if(b) b.disabled = !(amt > 0 && !over);
+}
+function drawPayout(){
+  if(!PO) return;
+  MODAL_RE = drawPayout;
+  const a = agentById(PO.agent); if(!a) return;
+  const m = agentMoney(PO.agent);
+  const amt = safeAmd(PO.amount, 0);
+  const ok = amt > 0 && amt <= m.payable;
+  let h = '<h3>💳 ' + escH(a.em + ' ' + a.name) + '</h3>'
+    + '<div class="mlbl">' + escH(t('st_payable')) + '</div>' + amdBig(m.payable)
+    + '<div class="prov">' + escH(t('st_payable_b')) + '</div>';
+  if(!m.payable){
+    h += '<div class="notice">' + escH(t('pay_nothing')) + '</div>'
+      + '<div class="prov">' + escH(t('pay_gate') + sepC() + t('pay_gate_' + (S.cfg.payWhen || 'received'))) + '</div>';
+  } else {
+    h += '<div class="fieldlbl" style="margin-top:14px">' + escH(t('pay_amount')) + '</div>'
+      + '<input type="text" inputmode="numeric" value="' + escH(PO.amount) + '" oninput="poInput('
+        + jsArg('amount') + ',this.value)">'
+      + '<div class="chips wrap" style="margin-top:8px">'
+        + '<button onclick="poSet(' + jsArg(String(m.payable)) + ')">' + escH(t('pay_full')) + '</button>'
+        /* half, computed the same way every division in this product is: one exact partial sum,
+           never a second independent rounding. */
+        + '<button onclick="poSet(' + jsArg(String(allocBp(m.payable,[5000]).parts[0])) + ')">'
+          + escH(t('pay_half')) + '</button>'
+      + '</div>'
+      + '<div class="prov">' + escH(t('pay_partial')) + '</div>'
+      + '<div id="poNote"></div>'
+      + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('pay_note')) + '</div>'
+      + '<textarea rows="2" oninput="poInput(' + jsArg('note') + ',this.value)">' + escH(PO.note) + '</textarea>'
+      + '<button class="btn primary full" id="poSave" style="margin-top:16px"' + (ok ? '' : ' disabled')
+        + ' onclick="savePayout()">' + escH(t('pay_confirm')) + '</button>';
+  }
+  h += '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal();openStatement('
+      + jsArg(PO.agent) + ')">📄 ' + escH(t('stmt_title')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('close')) + '</button>';
+  openModal(h);
+}
+function savePayout(){
+  if(!PO) return;
+  const m = agentMoney(PO.agent);
+  const amt = safeAmd(PO.amount, 0);
+  if(amt <= 0 || amt > m.payable) return;
+  /* NEGATIVE, because the fold is one `+` over one book: an earn adds, a payout subtracts, and
+     `owed` is the sum. There is no second table and no counter to keep in step. */
+  postRow({ agent:PO.agent, type:'payout', amt:-amt, ts:S.today, actor:'owner', note:PO.note });
+  const id = PO.agent; PO = null;
+  saveState(); closeModal(); renderAll(); toast(t('pay_done'));
+  openPayout(id);
+}
+
+let AJ = null;
+function openAdjust(agentId){
+  if(!agentById(agentId)) return;
+  AJ = { agent:agentId, amount:'', sign:1, note:'' };
+  drawAdjust();
+}
+function ajPick(v){ if(AJ){ AJ.sign = v; drawAdjust(); } }
+function ajInput(k, v){
+  if(!AJ) return;
+  AJ[k] = String(v == null ? '' : v);
+  const b = document.getElementById('ajSave');
+  if(b) b.disabled = !(safeAmd(AJ.amount,0) > 0 && String(AJ.note).trim().length > 0);
+}
+function drawAdjust(){
+  if(!AJ) return;
+  MODAL_RE = drawAdjust;
+  const a = agentById(AJ.agent); if(!a) return;
+  const ok = safeAmd(AJ.amount,0) > 0 && String(AJ.note).trim().length > 0;
+  openModal('<h3>⚖️ ' + escH(t('adj_title')) + '</h3>'
+    + '<div class="muted">' + escH(a.em + ' ' + a.name) + '</div>'
+    + '<div class="prov">' + escH(t('adj_help')) + '</div>'
+    + '<div class="chips wrap" style="margin-top:10px">'
+      + '<button class="' + (AJ.sign > 0 ? 'active' : '') + '" onclick="ajPick(1)">＋ ' + escH(t('adj_plus')) + '</button>'
+      + '<button class="' + (AJ.sign < 0 ? 'active' : '') + '" onclick="ajPick(-1)">− ' + escH(t('adj_minus')) + '</button>'
+    + '</div>'
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('adj_amount')) + '</div>'
+    + '<input type="text" inputmode="numeric" value="' + escH(AJ.amount) + '" oninput="ajInput('
+      + jsArg('amount') + ',this.value)">'
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('adj_note')) + '</div>'
+    + '<textarea rows="3" oninput="ajInput(' + jsArg('note') + ',this.value)">' + escH(AJ.note) + '</textarea>'
+    /* THE NOTE IS NOT OPTIONAL. An unexplained money row is the thing that destroys trust in a
+       payout table, so the button stays off until there is a reason. */
+    + '<div class="prov warn">' + escH(t('adj_note_req')) + '</div>'
+    + '<button class="btn primary full" id="ajSave" style="margin-top:14px"' + (ok ? '' : ' disabled')
+      + ' onclick="saveAdjust()">' + escH(t('adj_open')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>');
+}
+function saveAdjust(){
+  if(!AJ) return;
+  const amt = safeAmd(AJ.amount, 0);
+  const note = String(AJ.note || '').trim();
+  if(amt <= 0 || !note) return;
+  postRow({ agent:AJ.agent, type:'adjust', amt:(AJ.sign < 0 ? -amt : amt), ts:S.today,
+    actor:'owner', reason:'negotiated', note:note });
+  const id = AJ.agent; AJ = null;
+  saveState(); closeModal(); renderAll(); toast(t('adj_saved'));
+  openStatement(id);
 }
 
 /* =====================================================================================
