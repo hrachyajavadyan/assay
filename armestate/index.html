@@ -2468,6 +2468,7 @@ T.hy = {
   dt_reset_b: "Այս սարքի տվյալները կփոխարինվեն։",
   dt_priv: "Ի՞նչ է տեսնում գործակալի սարքը",
   dt_priv_b: "Գործակալը գրանցում է ցուցադրություններ, առաջարկներ և փուլեր։ Գումարի ոչ մի տող չի կարող ստեղծել՝ ոչ վաստակած, ոչ վճարում, ոչ բաժին, ոչ պայման։",
+  dt_priv_soon: "Գործակալի սարքն ու համաժամացումը դեռ այս տարբերակում չկան։ Սա այն կանոնն է, որով դրանք կկառուցվեն։",
   /* Today's cards — the sentences, kept together so a translator sees them as a set */
   c_payout_b: "{n} գործակալի պետք է վճարել",
   c_invoice: "Վաստակած միջնորդավճարը դեռ հաշվարկված չէ",
@@ -3034,6 +3035,7 @@ T.en = {
   dt_reset_b: "The data on this device will be replaced.",
   dt_priv: "What an agent's device can see",
   dt_priv_b: "An agent records viewings, offers and stage advances. An agent's device can create no money row at all — not an earning, not a payout, not a share, not a term.",
+  dt_priv_soon: "The agent's device and sync are not in this build yet. This is the rule they will be built to.",
   /* Today's cards — the sentences, kept together so a translator sees them as a set */
   c_payout_b: "Agents to pay: {n}",
   c_invoice: "Earned commission is not invoiced yet",
@@ -3596,6 +3598,7 @@ T.ru = {
   dt_reset_b: "Данные на этом устройстве будут заменены.",
   dt_priv: "Что видит устройство агента",
   dt_priv_b: "Агент фиксирует показы, предложения и этапы. Устройство агента не может создать ни одной денежной строки — ни начисления, ни выплаты, ни доли, ни условия.",
+  dt_priv_soon: "Устройства агента и синхронизации в этой сборке ещё нет. Это правило, по которому они будут построены.",
   /* Today's cards — the sentences, kept together so a translator sees them as a set */
   c_payout_b: "Агентов к выплате: {n}",
   c_invoice: "Заработанная комиссия ещё не выставлена",
@@ -6472,7 +6475,12 @@ function dataView(){
   /* the privacy card: exactly what an agent's device can and cannot see. Written as a promise the
      code keeps, not as a reassurance. */
   h += '<div class="card"><h3>🔒 ' + escH(t('dt_priv')) + '</h3>'
-    + '<div class="muted">' + escH(t('dt_priv_b')) + '</div></div>';
+    + '<div class="muted">' + escH(t('dt_priv_b')) + '</div>'
+    /* THE CARD DESCRIBES A RULE, AND THE RULE IS NOT YET A FEATURE. There is no agent device and
+       no sync in this build, so the card would otherwise be describing a wall around a room that
+       has not been built — and a privacy promise about a capability that does not exist is the
+       kind of sentence a product should never make. */
+    + '<div class="prov">' + escH(t('dt_priv_soon')) + '</div></div>';
 
   h += '<div class="card"><h3>🎨 ' + escH(t('dt_theme')) + '</h3><div class="chips wrap">'
     + ['light','dark'].map(v => '<button class="' + (U.theme === v ? 'active' : '') + '" onclick="setTheme('
@@ -6899,6 +6907,8 @@ function openProp(id){
 
   h += '<button class="btn primary full" style="margin-top:16px" onclick="closeModal();openNewViewing({prop:'
     + jsArg(p.id) + '})">🔑 ' + escH(t('vw_new')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal();openNewOffer({prop:'
+    + jsArg(p.id) + '})">📝 ' + escH(t('of_new')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('close')) + '</button>';
   openModal(h);
 }
@@ -6928,6 +6938,10 @@ function openClient(id){
 
   h += '<button class="btn primary full" style="margin-top:16px" onclick="closeModal();openNewViewing({client:'
     + jsArg(c.id) + '})">🔑 ' + escH(t('vw_new')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal();openNewOffer({client:'
+    + jsArg(c.id) + '})">📝 ' + escH(t('of_new')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal();openNewMandate({client:'
+    + jsArg(c.id) + '})">📄 ' + escH(t('mn_new')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('close')) + '</button>';
   openModal(h);
 }
