@@ -7978,9 +7978,10 @@ function savePayout(){
   /* NEGATIVE, because the fold is one `+` over one book: an earn adds, a payout subtracts, and
      `owed` is the sum. There is no second table and no counter to keep in step. */
   const d = PO.deal ? dealById(PO.deal) : null;
+  /* NO TRIGGER ON A PAYOUT. The trigger is what made a fee EARNED; printing it on the line that
+     pays the fee out reads as though the payment itself had a condition. */
   postRow({ agent:PO.agent, type:'payout', amt:-amt, ts:S.today, actor:'owner', note:PO.note,
-    deal: d ? d.id : '', prop: d ? d.propertyId : '',
-    trigger: d && d.terms ? d.terms.trigger : '' });
+    deal: d ? d.id : '', prop: d ? d.propertyId : '' });
   const id = PO.agent; PO = null;
   saveState(); closeModal(); renderAll(); toast(t('pay_done'));
   openPayout(id);
