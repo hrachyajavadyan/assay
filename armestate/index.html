@@ -2057,6 +2057,16 @@ function fdate(ts){
   return p(d.getUTCDate()) + '.' + p(d.getUTCMonth()+1) + '.' + d.getUTCFullYear();
 }
 const daysBetween = (a,b) => Math.floor((safeInt(b,0) - safeInt(a,0)) / DAY);
+/* THE TIME OF DAY IS PART OF THE EVIDENCE. «This client saw this property with this agent on this
+   date» is what a viewing sheet proves, and when two agencies both claim the same showing the
+   hour is what separates them — §4 doc 2 asks for date AND time. A timestamp that happens to sit
+   on midnight carries no time, and the sheet says so rather than printing «00:00». */
+const minsOfDay = ts => { const d = new Date(safeInt(ts,0));
+  return d.getUTCHours()*60 + d.getUTCMinutes(); };
+const ftime = ts => { const d = new Date(safeInt(ts,0)); const q = n => (n<10?'0':'') + n;
+  return q(d.getUTCHours()) + ':' + q(d.getUTCMinutes()); };
+const fdatetime = ts => fdate(ts) + (minsOfDay(ts) ? ' · ' + ftime(ts) : '');
+const dayStart = ts => Math.floor(safeInt(ts,0) / DAY) * DAY;
 /* TEN YEARS IS TEN YEARS, NOT 3,650 DAYS. 10*365 days loses the 2028/2032/2036 leap days and
    printed a statutory retention date three days early on a signed contract — and the draft law's
    ten-year duty is the entire reason the field exists. Calendar arithmetic, with 29 February
@@ -4719,19 +4729,22 @@ function seedState(){
   ];
   st.props.forEach(p => { const m = st.mandates.find(x => x.propertyIds.indexOf(p.id) >= 0); if(m) p.mandateId = m.id; });
 
-  const V = (id, prop, client, agent, days, outcome, signed) => ({
-    id:id, propertyId:prop, clientId:client, agentId:agent, ts:ago(days), outcome:outcome,
+  /* the hour is part of the evidence, so the seed carries one */
+  const V = (id, prop, client, agent, days, outcome, signed, hhmm) => ({
+    id:id, propertyId:prop, clientId:client, agentId:agent,
+    ts: ago(days) + Math.round((hhmm == null ? 12 : hhmm) * 3600000),
+    outcome:outcome,
     signedTs: signed ? ago(days) : 0, signedBy: signed ? client : '', note:'', uuid:'' });
   st.viewings = [
-    V('v1','p1','c2','a2', 71,'interested', true),
-    V('v2','p1','c4','a1', 64,'declined',   true),
-    V('v3','p3','c2','a1', 58,'held',       true),
-    V('v4','p2','c2','a2', 44,'interested', true),
-    V('v5','p4','c6','a3', 19,'held',       false),
-    V('v6','p5','c4','a3', 31,'interested', true),
-    V('v7','p6','c4','a1', 10,'noshow',     false),
-    V('v8','p7','c6','a2',  8,'held',       false),
-    V('v9','p1','c6','a1',  5,'held',       false)
+    V('v1','p1','c2','a2', 71,'interested', true,  11.5),
+    V('v2','p1','c4','a1', 64,'declined',   true,  16),
+    V('v3','p3','c2','a1', 58,'held',       true,  10),
+    V('v4','p2','c2','a2', 44,'interested', true,  18.5),
+    V('v5','p4','c6','a3', 19,'held',       false, 13),
+    V('v6','p5','c4','a3', 31,'interested', true,  15.5),
+    V('v7','p6','c4','a1', 10,'noshow',     false, 17),
+    V('v8','p7','c6','a2',  8,'held',       false, 12.5),
+    V('v9','p1','c6','a1',  5,'held',       false, 19)
   ];
 
   st.offers = [
@@ -5298,6 +5311,8 @@ function propsView(){
   const chip = (k, v, label) => '<button class="' + (PROP_F[k] === v ? 'active' : '') + '" onclick="setPropF('
     + jsArg(k) + ',' + jsArg(v) + ')">' + escH(label) + '</button>';
   let h = secTitle('🏠', t('props_title'));
+  h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewProp()">➕ '
+    + escH(t('p_new')) + '</button>';
   h += '<input class="search" type="text" inputmode="search" value="' + escH(PROP_F.q)
     + '" placeholder="' + escH(t('p_search')) + '" oninput="setPropQ(this.value)">';
   h += '<div class="chips">'
@@ -5494,6 +5509,17 @@ function dealCard(d){
 
 function dealsView(){
   let h = secTitle('🤝', t('deals_title'));
+  /* THE OFFER IS WHERE A DEAL COMES FROM. §2.7: a deal exists when an offer is accepted and not
+     one moment before — so the offers sit above the deals on this screen, the open ones first,
+     and accepting one is the tap that creates the deal. */
+  h += '<button class="btn ghost full" style="margin-bottom:12px" onclick="openNewOffer()">📝 '
+    + escH(t('of_new')) + '</button>';
+  const open = (S.offers||[]).filter(o => o.status === 'sent')
+    .sort((a,b) => safeInt(b.ts,0) - safeInt(a.ts,0));
+  if(open.length){
+    h += secTitle('📝', t('of_title')) + open.map(offerRow).join('');
+    h += secTitle('🤝', t('deals_title'));
+  }
   h += '<div class="chips"><button class="' + (!DEAL_F ? 'active' : '') + '" onclick="setDealF('
     + jsArg('') + ')">' + escH(t('p_all')) + '</button>'
     + DEAL_STAGES.map(s => '<button class="' + (DEAL_F === s ? 'active' : '') + '" onclick="setDealF('
@@ -6203,7 +6229,7 @@ function viewingRow(v){
       + '<div class="pav">' + (p ? (KIND_EM[p.kind]||'🏠') : '🏠') + '</div>'
       + '<div class="info"><div class="addr">' + escH(p ? propAddr(p) : '—') + '</div>'
         + '<div class="muted">' + escH(clientName(v.clientId) + ' · ' + agentEm(v.agentId) + ' '
-          + agentName(v.agentId) + ' · ' + fdate(v.ts)) + '</div></div>'
+          + agentName(v.agentId) + ' · ' + fdatetime(v.ts)) + '</div></div>'
     + '</div>'
     + '<div class="row" style="margin-top:10px">'
       + '<div class="badgerow">' + badge(VO_CLASS[v.outcome]||'b-neutral', outcomeLabel(v.outcome))
@@ -6217,6 +6243,38 @@ function viewingRow(v){
         + escH(t('vw_sign')) + '</button>') + '</div>'
     + '</div>';
 }
+/* THE EVIDENCE LOG HAS TO BE REACHABLE. This is the screen an owner opens when a client
+   disputes a fee and one row has to be found — the row proving this client saw this property
+   with this agent on this date. Nine rows need no filter; an agency a year in has hundreds.
+   Filterable by property, client and agent (§5.3), plus the unsigned sheets, which are the ones
+   that are not yet evidence at all. */
+let VIEW_F = { q:'', agent:'', unsigned:false };
+function setViewQ(v){ VIEW_F.q = String(v||''); renderViewList(); }
+function setViewF(k, v){ VIEW_F[k] = (VIEW_F[k] === v ? '' : v); renderAll(); }
+function toggleUnsigned(){ VIEW_F.unsigned = !VIEW_F.unsigned; renderAll(); }
+function viewMatches(v){
+  if(VIEW_F.unsigned && v.signedTs) return false;
+  if(VIEW_F.agent && v.agentId !== VIEW_F.agent) return false;
+  const q = VIEW_F.q.trim().toLowerCase();
+  if(!q) return true;
+  const p = propById(v.propertyId);
+  const hay = [p ? propAddr(p) : '', p ? p.cadCode : '', clientName(v.clientId),
+               agentName(v.agentId), outcomeLabel(v.outcome), viewDocNo(v), v.note]
+              .join(' ').toLowerCase();
+  return hay.indexOf(q) >= 0;
+}
+function viewList(){
+  return (S.viewings||[]).filter(viewMatches)
+    /* unsigned sheets float to the top: an unsigned sheet is an unenforceable claim */
+    .sort((a,b) => (!!a.signedTs - !!b.signedTs) || (b.ts - a.ts));
+}
+function renderViewList(){
+  const el = document.getElementById('viewlist');
+  if(!el) return;
+  const list = viewList();
+  el.innerHTML = list.length ? list.map(viewingRow).join('')
+    : emptyCard(VIEW_F.q || VIEW_F.agent || VIEW_F.unsigned ? t('nothing_found') : t('vw_none'), '');
+}
 function viewsView(){
   let h = secTitle('🔑', t('views_title'));
   /* the sentence that makes this screen worth having, said once at the top */
@@ -6225,12 +6283,22 @@ function viewsView(){
      this in four taps with no network, and everything below it is a ghost. */
   h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewViewing()">🔑 '
     + escH(t('vw_new')) + '</button>';
-  const list = (S.viewings||[]).slice()
-    /* unsigned sheets float to the top: an unsigned sheet is an unenforceable claim */
-    .sort((a,b) => (!!a.signedTs - !!b.signedTs) || (b.ts - a.ts));
-  h += list.length ? list.map(viewingRow).join('') : emptyCard(t('vw_none'), '');
+  h += '<input class="search" type="text" inputmode="search" value="' + escH(VIEW_F.q)
+    + '" placeholder="' + escH(t('vw_filter')) + '" oninput="setViewQ(this.value)">';
+  h += '<div class="chips">'
+    + '<button class="' + (!VIEW_F.agent && !VIEW_F.unsigned ? 'active' : '')
+      + '" onclick="clearViewF()">' + escH(t('p_all')) + '</button>'
+    + '<button class="' + (VIEW_F.unsigned ? 'active' : '') + '" onclick="toggleUnsigned()">'
+      + escH(t('vw_unsigned')) + '</button>'
+    + activeAgents().map(a => '<button class="' + (VIEW_F.agent === a.id ? 'active' : '')
+        + '" onclick="setViewF(' + jsArg('agent') + ',' + jsArg(a.id) + ')">'
+        + escH(a.em + ' ' + a.name) + '</button>').join('')
+    + '</div>';
+  h += '<div id="viewlist">' + (viewList().length ? viewList().map(viewingRow).join('')
+      : emptyCard(VIEW_F.q || VIEW_F.agent || VIEW_F.unsigned ? t('nothing_found') : t('vw_none'), '')) + '</div>';
   return h;
 }
+function clearViewF(){ VIEW_F.agent = ''; VIEW_F.unsigned = false; renderAll(); }
 
 /* =====================================================================================
    CLIENTS
@@ -6253,10 +6321,40 @@ function clientCard(c){
       + viewingsOfClient(c.id).length + '</span></div>'
     + '</div>';
 }
+let CL_F = { q:'', role:'' };
+function setClientQ(v){ CL_F.q = String(v||''); renderClientList(); }
+function setClientRole(v){ CL_F.role = (CL_F.role === v ? '' : v); renderAll(); }
+function clientMatches(c){
+  if(c.archivedTs) return false;
+  if(CL_F.role && (c.kind||[]).indexOf(CL_F.role) < 0) return false;
+  const q = CL_F.q.trim().toLowerCase();
+  if(!q) return true;
+  return [c.name, c.phone, c.email, agentName(c.agentId)].join(' ').toLowerCase().indexOf(q) >= 0;
+}
+function renderClientList(){
+  const el = document.getElementById('clientlist');
+  if(!el) return;
+  const list = (S.clients||[]).filter(clientMatches);
+  el.innerHTML = list.length ? list.map(clientCard).join('')
+    : emptyCard(CL_F.q || CL_F.role ? t('nothing_found') : t('cl_none'), '');
+}
 function clientsView(){
   let h = secTitle('👥', t('clients_title'));
-  const list = (S.clients||[]).filter(c => !c.archivedTs);
-  h += list.length ? list.map(clientCard).join('') : emptyCard(t('cl_none'), '');
+  h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewClient()">➕ '
+    + escH(t('cl_new')) + '</button>';
+  /* search, and the four role chips — վաճառող / գնորդ / տանտեր / վարձակալ. A list with role
+     badges on every card and no way to filter by one is a list that stops working at a screenful. */
+  h += '<input class="search" type="text" inputmode="search" value="' + escH(CL_F.q)
+    + '" placeholder="' + escH(t('cl_search')) + '" oninput="setClientQ(this.value)">';
+  h += '<div class="chips">'
+    + '<button class="' + (!CL_F.role ? 'active' : '') + '" onclick="setClientRole(' + jsArg('') + ')">'
+      + escH(t('p_all')) + '</button>'
+    + CLIENT_ROLES.map(r => '<button class="' + (CL_F.role === r ? 'active' : '')
+        + '" onclick="setClientRole(' + jsArg(r) + ')">' + escH(roleLabel(r)) + '</button>').join('')
+    + '</div>';
+  const list = (S.clients||[]).filter(clientMatches);
+  h += '<div id="clientlist">' + (list.length ? list.map(clientCard).join('')
+      : emptyCard(CL_F.q || CL_F.role ? t('nothing_found') : t('cl_none'), '')) + '</div>';
   return h;
 }
 
@@ -6304,6 +6402,8 @@ function mandateCard(m){
 }
 function docsView(){
   let h = secTitle('📄', t('docs_title'));
+  h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewMandate()">➕ '
+    + escH(t('mn_new')) + '</button>';
   const list = (S.mandates||[]).slice().sort((a,b) => b.signedTs - a.signedTs);
   h += list.length ? list.map(mandateCard).join('') : emptyCard(t('docs_title'), '');
   return h;
@@ -6466,8 +6566,13 @@ function viewDocNo(v){
 let VW = null;   /* the capture draft. Nothing reaches the log until saveViewing(). */
 function openNewViewing(pref){
   const ags = activeAgents();
+  const now = new Date();
+  const q = n => (n<10?'0':'') + n;
   VW = { prop:(pref && pref.prop) || '', client:(pref && pref.client) || '',
          agent: ags.length === 1 ? ags[0].id : '', outcome:'held', ts:S.today,
+         /* prefilled from the device clock, because the agent recording this is standing at the
+            door and the hour they are standing there is the one that goes on the sheet */
+         time: q(now.getHours()) + ':' + q(now.getMinutes()),
          note:'', pq:'', cq:'', nc:false, ncName:'', ncPhone:'' };
   drawNewViewing();
 }
@@ -6486,6 +6591,22 @@ function vwDate(v){
   if(!VW) return;
   const ms = Date.parse(String(v || '') + 'T00:00:00Z');
   VW.ts = isFinite(ms) ? ms : S.today;
+  echoDate('vwDateEcho', vwStamp());
+}
+function vwTime(v){
+  if(!VW) return;
+  VW.time = String(v || '');
+  echoDate('vwDateEcho', vwStamp());
+}
+/* the date and the time as one instant. The minutes ride on the timestamp, which is what the
+   ledger row and the printed sheet both read. */
+function vwStamp(){
+  const base = dayStart(safeInt(VW.ts, S.today));
+  const m = /^(\d{1,2}):(\d{2})$/.exec(String(VW.time || ''));
+  if(!m) return base;
+  const hh = Math.max(0, Math.min(23, parseInt(m[1],10)));
+  const mm = Math.max(0, Math.min(59, parseInt(m[2],10)));
+  return base + hh*3600000 + mm*60000;
 }
 const isoDate = ts => new Date(safeInt(ts,0)).toISOString().slice(0,10);
 
@@ -6580,7 +6701,12 @@ function drawNewViewing(){
         + '</button>').join('') + '</div>';
 
   h += '<div class="sec">🗓️ ' + escH(t('vw_when')) + '</div>'
-    + '<input type="date" value="' + escH(isoDate(VW.ts)) + '" onchange="vwDate(this.value)">';
+    + '<input type="date" value="' + escH(isoDate(VW.ts)) + '" onchange="vwDate(this.value)">'
+    + '<div class="fieldlbl" style="margin-top:10px">' + escH(t('vw_time')) + '</div>'
+    + '<input type="time" value="' + escH(VW.time || '') + '" onchange="vwTime(this.value)">'
+    /* the app formats every other date itself as DD.MM.YYYY; the native control is painted in the
+       BROWSER's locale and cannot be restyled, so the app states the instant it actually holds. */
+    + dateEcho('vwDateEcho', vwStamp());
 
   h += '<div class="sec">✍️ ' + escH(t('vw_note')) + '</div>'
     + '<textarea rows="2" oninput="vwField(' + jsArg('note') + ',this.value)">' + escH(VW.note) + '</textarea>';
@@ -6611,7 +6737,7 @@ function saveViewing(){
     }
   }
   if(!VW.prop || !cid || !VW.agent) return;
-  const ts = Math.max(0, safeInt(VW.ts, S.today));
+  const ts = Math.max(0, vwStamp());
   const note = String(VW.note || '');
   /* THE EVIDENCE ROW IS WRITTEN FIRST and the viewing takes its identity from it, so two devices
      that recorded the same viewing agree on the id and a replay is a no-op rather than a
@@ -6670,11 +6796,16 @@ function openViewingSheet(id){
         + '</span></div>' : '')
     + '<div class="row"><span class="mlbl">' + escH(t('doc_agent')) + '</span><span>'
       + escH(a ? (a.em + ' ' + a.name + (a.phone ? ' · ' + a.phone : '')) : '—') + '</span></div>'
-    + '<div class="row"><span class="mlbl">' + escH(t('doc_when')) + '</span><span>'
-      + escH(fdate(v.ts)) + '</span></div>'
-    + '<div class="row"><span class="mlbl">' + escH(t('vw_outcome')) + '</span><span>'
+    + '<div class="row"><span class="mlbl">' + escH(minsOfDay(v.ts) ? t('doc_when_t') : t('doc_when'))
+      + '</span><span>' + escH(fdatetime(v.ts))
+      + (minsOfDay(v.ts) ? '' : ' <span class="muted">' + escH('· ' + t('vw_time_none')) + '</span>')
+      + '</span></div>'
+    /* THE OUTCOME IS NOT ON THE PAPER THE CLIENT SIGNS. It is set after the fact, by the agent
+       alone, and it sat above the client's signature line on a sheet that is signed at the door
+       before anybody knows how it went. It stays on screen, where the owner reads it. */
+    + '<div class="row noprint"><span class="mlbl">' + escH(t('vw_outcome')) + '</span><span>'
       + escH(outcomeLabel(v.outcome)) + '</span></div>'
-    + (v.note ? '<div class="prov">' + escH(v.note) + '</div>' : '')
+    + (v.note ? '<div class="prov noprint">' + escH(v.note) + '</div>' : '')
     + '<hr class="actrule">'
     /* THE SENTENCE THAT MAKES THE FEE OWED. It is the document, not a footnote to it. */
     + '<div style="font-size:var(--fs-body-l);line-height:1.5;margin:12px 0">'
@@ -6765,6 +6896,563 @@ function openClient(id){
   openModal(h);
 }
 
+
+
+/* =====================================================================================
+   CREATING THINGS — the way into the product
+   Everything in this block exists because the product could not be STARTED. Five deals came out
+   of the seed and there was no way to record a property, a client, a service contract or an
+   offer, so the offer → deal step of the end-to-end path — the step §2.7 says creates a deal —
+   could not be exercised at all. Each form asks for the minimum a person standing in an agency
+   actually types, each one writes its evidence row, and none of them invents a number.
+   ===================================================================================== */
+
+/* ONE PICKER, FOUR FORMS. A search box over a recent-first list, six rows and a count of the
+   rest — the shape the viewing capture already uses, because someone who has learned one list in
+   this product should not have to learn a second. The handler is a function NAME and the id goes
+   through jsArg(), so an apostrophe in a street name cannot end up as a syntax error in an
+   inline handler. */
+function pickPropRows(q, sel, fn, only){
+  const qq = String(q||'').trim().toLowerCase();
+  let list = (S.props||[]).filter(p => !p.archivedTs && (!only || p.deal === only));
+  if(qq) list = list.filter(p => [propAddr(p), p.cadCode, kindLabel(p.kind)].join(' ').toLowerCase().indexOf(qq) >= 0);
+  list = list.sort((a,b) => Math.max(safeInt(b.listedTs,0), safeInt(b.createdTs,0))
+                          - Math.max(safeInt(a.listedTs,0), safeInt(a.createdTs,0)));
+  const show = list.slice(0, 6);
+  return show.map(x => '<button class="pick' + (sel === x.id ? ' on' : '') + '" onclick="' + fn
+      + '(' + jsArg(x.id) + ')">' + (KIND_EM[x.kind] || '🏠') + ' ' + escH(propAddr(x))
+      + '<span class="pd">' + escH((x.cadCode || '—') + ' · ' + dealKindLabel(x.deal)) + '</span></button>').join('')
+    + (list.length > show.length ? '<div class="prov">' + escH(fmt('vw_more', {n:list.length - show.length})) + '</div>' : '')
+    + (list.length ? '' : '<div class="prov">' + escH(t('p_none_b')) + '</div>');
+}
+function pickClientRows(q, sel, fn){
+  const qq = String(q||'').trim().toLowerCase();
+  let list = (S.clients||[]).filter(c => !c.archivedTs);
+  if(qq) list = list.filter(c => [c.name, c.phone].join(' ').toLowerCase().indexOf(qq) >= 0);
+  list = list.sort((a,b) => safeInt(b.createdTs,0) - safeInt(a.createdTs,0));
+  const show = list.slice(0, 6);
+  return show.map(c => '<button class="pick' + (sel === c.id ? ' on' : '') + '" onclick="' + fn
+      + '(' + jsArg(c.id) + ')">👤 ' + escH(c.name)
+      + '<span class="pd">' + escH(c.phone || '—') + '</span></button>').join('')
+    + (list.length > show.length ? '<div class="prov">' + escH(fmt('vw_more', {n:list.length - show.length})) + '</div>' : '');
+}
+function pickAgentChips(sel, fn){
+  return '<div class="chips wrap">' + activeAgents().map(a => '<button class="'
+    + (sel === a.id ? 'active' : '') + '" onclick="' + fn + '(' + jsArg(a.id) + ')">'
+    + escH(a.em + ' ' + a.name) + '</button>').join('') + '</div>';
+}
+/* the app's own date format, printed under a native date input. Chromium paints that control in
+   the BROWSER's locale — «08/20/2026» three fields below a header reading «20.08.2026» — and the
+   control cannot be restyled, so the app states the date it actually holds. */
+const dateEcho = (id, ts) => '<div class="prov" id="' + id + '">'
+  + escH(ts ? fdate(ts) + ' · ' + t('fmt_date_hint') : t('unset')) + '</div>';
+function echoDate(id, ts){
+  const el = document.getElementById(id);
+  if(el) el.innerHTML = escH(ts ? fdate(ts) + ' · ' + t('fmt_date_hint') : t('unset'));
+}
+
+/* ---------- a client ---------- */
+let NC = null;
+function openNewClient(pref){
+  const ags = activeAgents();
+  NC = { name:'', phone:'', email:'', tin:'', roles:(pref && pref.role) ? [pref.role] : [],
+         agent: ags.length === 1 ? ags[0].id : '' };
+  drawNewClient();
+}
+function ncField(k, v){
+  if(!NC) return;
+  NC[k] = String(v == null ? '' : v);
+  const b = document.getElementById('ncSave');
+  if(b) b.disabled = !String(NC.name).trim();
+}
+function ncRole(r){
+  if(!NC) return;
+  const i = NC.roles.indexOf(r);
+  if(i >= 0) NC.roles.splice(i,1); else NC.roles.push(r);
+  drawNewClient();
+}
+function ncAgent(id){ if(NC){ NC.agent = (NC.agent === id ? '' : id); drawNewClient(); } }
+function drawNewClient(){
+  if(!NC) return;
+  MODAL_RE = drawNewClient;
+  openModal('<h3>👤 ' + escH(t('cl_new')) + '</h3>'
+    + '<div class="fieldlbl" style="margin-top:10px">' + escH(t('vw_nc_name')) + '</div>'
+    + '<input type="text" value="' + escH(NC.name) + '" oninput="ncField(' + jsArg('name') + ',this.value)">'
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('vw_nc_phone')) + '</div>'
+    + '<input type="tel" inputmode="tel" value="' + escH(NC.phone) + '" oninput="ncField('
+      + jsArg('phone') + ',this.value)">'
+    /* the ՀՎՀՀ and the passport are what the NOTARY needs, and they are optional until then */
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('doc_tin')) + '</div>'
+    + '<input type="text" value="' + escH(NC.tin) + '" oninput="ncField(' + jsArg('tin') + ',this.value)">'
+    + '<div class="sec">🏷 ' + escH(t('cl_roles_q')) + '</div>'
+    /* a person can be two things at once — a seller who is also a buyer — so these are toggles */
+    + '<div class="chips wrap">' + CLIENT_ROLES.map(r => '<button class="'
+        + (NC.roles.indexOf(r) >= 0 ? 'active' : '') + '" onclick="ncRole(' + jsArg(r) + ')">'
+        + escH(roleLabel(r)) + '</button>').join('') + '</div>'
+    + '<div class="sec">🧑‍💼 ' + escH(t('vw_agent')) + '</div>'
+    + pickAgentChips(NC.agent, 'ncAgent')
+    + '<button class="btn primary full" id="ncSave" style="margin-top:16px"'
+      + (String(NC.name).trim() ? '' : ' disabled') + ' onclick="saveNewClient()">'
+      + escH(t('dep_save')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>');
+}
+function saveNewClient(){
+  if(!NC) return;
+  const name = String(NC.name || '').trim();
+  if(!name){ toast(t('cl_need')); return; }
+  const phone = String(NC.phone || '').trim();
+  const exist = (S.clients||[]).find(c => c.name === name && c.phone === phone);
+  if(exist){ NC = null; closeModal(); renderAll(); openClient(exist.id); return; }
+  const id = contentId('c', name + KSEP + phone, (S.clients||[]).length);
+  S.clients.push({ id:id, name:name, phone:phone, email:String(NC.email||''),
+    kind:NC.roles.slice(), tin:String(NC.tin||''), passport:{series:'',no:''}, source:'',
+    note:'', agentId:NC.agent, createdTs:S.today, archivedTs:0 });
+  NC = null;
+  saveState(); closeModal(); renderAll(); toast(t('cl_saved'));
+  openClient(id);
+}
+
+/* ---------- a property ----------
+   Natural key: the կադաստրային ծածկագիր. It is what the contract, the վկայական and the future
+   state platform all key on, and two agents entering the same flat is the commonest data mess in
+   an agency — so the duplicate check runs against it and refuses rather than warns. */
+let NP = null;
+function openNewProp(){
+  const ags = activeAgents();
+  NP = { kind:'flat', deal:'sale', district:'kentron', street:'', no:'', cad:'',
+         area:'', rooms:'', floor:'', floors:'', price:'', owner:'', oq:'',
+         agent: ags.length === 1 ? ags[0].id : '' };
+  drawNewProp();
+}
+function npField(k, v){ if(NP){ NP[k] = String(v == null ? '' : v); npPaint(); } }
+function npPick(k, v){ if(NP){ NP[k] = v; drawNewProp(); } }
+function npOwner(id){ if(NP){ NP.owner = (NP.owner === id ? '' : id); drawNewProp(); } }
+function npAgent(id){ if(NP){ NP.agent = (NP.agent === id ? '' : id); drawNewProp(); } }
+function npSearch(v){
+  if(!NP) return;
+  NP.oq = String(v || '');
+  const el = document.getElementById('npOwnerList');
+  if(el) el.innerHTML = pickClientRows(NP.oq, NP.owner, 'npOwner');
+}
+function npReady(){ return !!(NP && String(NP.street).trim() && String(NP.cad).trim()); }
+function npPaint(){
+  const b = document.getElementById('npSave');
+  if(b) b.disabled = !npReady();
+}
+function drawNewProp(){
+  if(!NP) return;
+  MODAL_RE = drawNewProp;
+  openModal('<h3>🏠 ' + escH(t('p_new')) + '</h3>'
+    + '<div class="sec">🏷 ' + escH(t('p_kind_q')) + '</div>'
+    + '<div class="chips wrap">' + PROP_KINDS.map(k => '<button class="' + (NP.kind === k ? 'active' : '')
+        + '" onclick="npPick(' + jsArg('kind') + ',' + jsArg(k) + ')">' + (KIND_EM[k]||'🏠') + ' '
+        + escH(kindLabel(k)) + '</button>').join('') + '</div>'
+    + '<div class="sec">🤝 ' + escH(t('p_deal_q')) + '</div>'
+    + '<div class="chips wrap">' + DEAL_KINDS.map(k => '<button class="' + (NP.deal === k ? 'active' : '')
+        + '" onclick="npPick(' + jsArg('deal') + ',' + jsArg(k) + ')">' + escH(dealKindLabel(k))
+        + '</button>').join('') + '</div>'
+    + '<div class="sec">📍 ' + escH(t('p_district_q')) + '</div>'
+    + '<div class="chips wrap">' + YER_DISTRICTS.map(dd => '<button class="'
+        + (NP.district === dd ? 'active' : '') + '" onclick="npPick(' + jsArg('district') + ','
+        + jsArg(dd) + ')">' + escH(districtLabel(dd)) + '</button>').join('') + '</div>'
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('p_street')) + '</div>'
+    + '<input type="text" value="' + escH(NP.street) + '" oninput="npField(' + jsArg('street') + ',this.value)">'
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('p_no')) + '</div>'
+    + '<input type="text" value="' + escH(NP.no) + '" oninput="npField(' + jsArg('no') + ',this.value)">'
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('p_cad')) + '</div>'
+    + '<input type="text" value="' + escH(NP.cad) + '" oninput="npField(' + jsArg('cad') + ',this.value)">'
+    + '<div class="prov">' + escH(t('p_need')) + '</div>'
+    + '<div class="row" style="gap:10px;margin-top:12px">'
+      + '<div style="flex:1"><div class="fieldlbl">' + escH(t('p_area')) + '</div>'
+        + '<input type="text" inputmode="decimal" value="' + escH(NP.area) + '" oninput="npField('
+          + jsArg('area') + ',this.value)"></div>'
+      + '<div style="flex:1"><div class="fieldlbl">' + escH(t('p_rooms')) + '</div>'
+        + '<input type="text" inputmode="numeric" value="' + escH(NP.rooms) + '" oninput="npField('
+          + jsArg('rooms') + ',this.value)"></div>'
+    + '</div>'
+    + '<div class="row" style="gap:10px;margin-top:10px">'
+      + '<div style="flex:1"><div class="fieldlbl">' + escH(t('p_floor')) + '</div>'
+        + '<input type="text" inputmode="numeric" value="' + escH(NP.floor) + '" oninput="npField('
+          + jsArg('floor') + ',this.value)"></div>'
+      + '<div style="flex:1"><div class="fieldlbl">' + escH(t('p_floor')) + ' / ' + escH(t('total')) + '</div>'
+        + '<input type="text" inputmode="numeric" value="' + escH(NP.floors) + '" oninput="npField('
+          + jsArg('floors') + ',this.value)"></div>'
+    + '</div>'
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(NP.deal === 'lease' ? t('p_permo') : t('p_ask')) + '</div>'
+    + '<input type="text" inputmode="numeric" value="' + escH(NP.price) + '" oninput="npField('
+      + jsArg('price') + ',this.value)">'
+    + '<div class="sec">👤 ' + escH(t('p_owner')) + '</div>'
+    + '<input class="search" type="text" inputmode="search" placeholder="' + escH(t('cl_search'))
+      + '" value="' + escH(NP.oq) + '" oninput="npSearch(this.value)">'
+    + '<div id="npOwnerList">' + pickClientRows(NP.oq, NP.owner, 'npOwner') + '</div>'
+    + '<div class="sec">🧑‍💼 ' + escH(t('vw_agent')) + '</div>'
+    + pickAgentChips(NP.agent, 'npAgent')
+    + '<button class="btn primary full" id="npSave" style="margin-top:16px"'
+      + (npReady() ? '' : ' disabled') + ' onclick="saveNewProp()">' + escH(t('dep_save')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>');
+}
+function saveNewProp(){
+  if(!NP || !npReady()) return;
+  const cad = String(NP.cad).trim();
+  if((S.props||[]).some(x => x.cadCode && x.cadCode === cad)){ toast(t('p_dup')); return; }
+  const street = String(NP.street).trim();
+  const id = contentId('p', cad + KSEP + street, (S.props||[]).length);
+  const price = safeAmd(NP.price, 0);
+  S.props.push({ id:id, cadCode:cad, kind:NP.kind, deal:NP.deal,
+    addr:{ marz:'', city:'yerevan', district:NP.district, street:street, no:String(NP.no||'').trim() },
+    area: Math.max(0, Math.min(1000000, num(NP.area))),
+    rooms: Math.max(0, Math.min(99, safeInt(NP.rooms,0))),
+    floor: safeInt(NP.floor,0), floors: Math.max(0, safeInt(NP.floors,0)), built:0,
+    askPrice: price, askTs: price ? S.today : 0,
+    priceHist: price ? [{ ts:S.today, price:price, by:'owner' }] : [],
+    ownerClientId:NP.owner, mandateId:'', agentId:NP.agent,
+    /* DRAFT, not active. A property becomes active when somebody says it is on the market, and
+       the days-on-market clock takes its provenance from that moment (§8). */
+    status:'draft', statusTs:S.today, statusBy:'owner',
+    listedTs:0, createdTs:S.today, photos:[], note:'', archivedTs:0 });
+  NP = null;
+  saveState(); closeModal(); renderAll(); toast(t('p_saved'));
+  openProp(id);
+}
+
+/* ---------- a service contract ----------
+   The spine of the system: the draft law would make a written contract per client mandatory, and
+   the object is built now so the record is ready the day it passes. The six-month exclusivity cap
+   is printed as information beside the dates and never enforced as a limit — the law is not in
+   force, and a product that enforces an unenacted rule is lying about which is which. */
+let NM = null;
+function nextMandateNo(){
+  const y = new Date(S.today).getUTCFullYear();
+  const n = (S.mandates||[]).filter(m => new Date(safeInt(m.signedTs,0)).getUTCFullYear() === y).length + 1;
+  return 'ԾՄՊ-' + y + '-' + ('00' + n).slice(-3);
+}
+function openNewMandate(pref){
+  NM = { client:(pref && pref.client) || '', cq:'', kind:'sell', prop:(pref && pref.prop) || '', pq:'',
+         signed:S.today, end:0, exclusive:false, from:S.today, to:0, docNo:nextMandateNo() };
+  drawNewMandate();
+}
+function nmPick(k, v){ if(NM){ NM[k] = v; drawNewMandate(); } }
+function nmClient(id){ if(NM){ NM.client = (NM.client === id ? '' : id); drawNewMandate(); } }
+function nmProp(id){ if(NM){ NM.prop = (NM.prop === id ? '' : id); drawNewMandate(); } }
+function nmField(k, v){ if(NM) NM[k] = String(v == null ? '' : v); }
+function nmSearch(k, v){
+  if(!NM) return;
+  NM[k] = String(v || '');
+  if(k === 'cq'){ const el = document.getElementById('nmClientList');
+    if(el) el.innerHTML = pickClientRows(NM.cq, NM.client, 'nmClient'); }
+  else { const el = document.getElementById('nmPropList');
+    if(el) el.innerHTML = pickPropRows(NM.pq, NM.prop, 'nmProp'); }
+}
+function nmDate(k, v){
+  if(!NM) return;
+  const ms = Date.parse(String(v || '') + 'T00:00:00Z');
+  NM[k] = isFinite(ms) ? ms : 0;
+  echoDate('nm' + k, NM[k]);
+}
+function drawNewMandate(){
+  if(!NM) return;
+  MODAL_RE = drawNewMandate;
+  const needsProp = ['sell','let'].indexOf(NM.kind) >= 0;
+  const ok = !!NM.client;
+  openModal('<h3>📄 ' + escH(t('mn_new')) + '</h3>'
+    + '<div class="sec">🏷 ' + escH(t('mn_kind_q')) + '</div>'
+    + '<div class="chips wrap">' + ['sell','buy','let','rent'].map(k => '<button class="'
+        + (NM.kind === k ? 'active' : '') + '" onclick="nmPick(' + jsArg('kind') + ',' + jsArg(k) + ')">'
+        + escH(t('mn_kind_'+k)) + '</button>').join('') + '</div>'
+    + '<div class="sec">👤 ' + escH(t('vw_client')) + '</div>'
+    + '<input class="search" type="text" inputmode="search" placeholder="' + escH(t('cl_search'))
+      + '" value="' + escH(NM.cq) + '" oninput="nmSearch(' + jsArg('cq') + ',this.value)">'
+    + '<div id="nmClientList">' + pickClientRows(NM.cq, NM.client, 'nmClient') + '</div>'
+    + (needsProp ? '<div class="sec">🏠 ' + escH(t('vw_prop')) + '</div>'
+        + '<input class="search" type="text" inputmode="search" placeholder="' + escH(t('p_search'))
+          + '" value="' + escH(NM.pq) + '" oninput="nmSearch(' + jsArg('pq') + ',this.value)">'
+        + '<div id="nmPropList">' + pickPropRows(NM.pq, NM.prop, 'nmProp') + '</div>' : '')
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('doc_mn_no')) + '</div>'
+    + '<input type="text" value="' + escH(NM.docNo) + '" oninput="nmField(' + jsArg('docNo') + ',this.value)">'
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('mn_signed_on')) + '</div>'
+    + '<input type="date" value="' + escH(NM.signed ? isoDate(NM.signed) : '') + '" onchange="nmDate('
+      + jsArg('signed') + ',this.value)">' + dateEcho('nmsigned', NM.signed)
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('doc_mn_term')) + '</div>'
+    + '<input type="date" value="' + escH(NM.end ? isoDate(NM.end) : '') + '" onchange="nmDate('
+      + jsArg('end') + ',this.value)">' + dateEcho('nmend', NM.end)
+    + '<div class="sec">🔒 ' + escH(t('mn_exclusive')) + '</div>'
+    + '<div class="chips wrap">'
+      + '<button class="' + (NM.exclusive ? 'active' : '') + '" onclick="nmPick(' + jsArg('exclusive') + ',true)">'
+        + escH(t('mn_exclusive')) + '</button>'
+      + '<button class="' + (!NM.exclusive ? 'active' : '') + '" onclick="nmPick(' + jsArg('exclusive') + ',false)">'
+        + escH(t('cm_vat_none')) + '</button>'
+    + '</div>'
+    + (NM.exclusive
+        ? '<div class="fieldlbl" style="margin-top:12px">' + escH(t('doc_mn_excl_from')) + '</div>'
+          + '<input type="date" value="' + escH(NM.from ? isoDate(NM.from) : '') + '" onchange="nmDate('
+            + jsArg('from') + ',this.value)">' + dateEcho('nmfrom', NM.from)
+          + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('doc_mn_excl_to')) + '</div>'
+          + '<input type="date" value="' + escH(NM.to ? isoDate(NM.to) : '') + '" onchange="nmDate('
+            + jsArg('to') + ',this.value)">' + dateEcho('nmto', NM.to)
+          + '<div class="prov">' + escH(t('mn_excl_cap')) + '</div>'
+        : '')
+    + '<button class="btn primary full" style="margin-top:16px"' + (ok ? '' : ' disabled')
+      + ' onclick="saveNewMandate()">' + escH(t('dep_save')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>');
+}
+function saveNewMandate(){
+  if(!NM || !NM.client){ toast(t('mn_need')); return; }
+  const needsProp = ['sell','let'].indexOf(NM.kind) >= 0;
+  const signed = Math.max(0, safeInt(NM.signed, S.today)) || S.today;
+  const id = contentId('m', NM.client + KSEP + NM.kind + KSEP + signed, (S.mandates||[]).length);
+  const m = { id:id, clientId:NM.client, kind:NM.kind,
+    propertyIds: (needsProp && NM.prop) ? [NM.prop] : [],
+    brief:{ minPrice:0, maxPrice:0, rooms:0, marz:'', note:'' },
+    signedTs:signed, endTs:Math.max(0, safeInt(NM.end,0)),
+    exclusive:!!NM.exclusive,
+    exclusiveFrom: NM.exclusive ? Math.max(0, safeInt(NM.from, signed)) : 0,
+    exclusiveTo:   NM.exclusive ? Math.max(0, safeInt(NM.to, 0)) : 0,
+    /* NO TERMS. The fee is typed on the terms sheet, by a person, per contract — there is no
+       default here for the same reason there is none anywhere else in this product. */
+    terms:null, status:'signed', statusTs:signed, closedAs:'', platformRegTs:0,
+    docTs:signed, docNo:String(NM.docNo || ''), retainUntil:plusYears(signed, 10) };
+  S.mandates.push(m);
+  if(needsProp && NM.prop){
+    const pr = propById(NM.prop);
+    if(pr){ pr.mandateId = id; if(!pr.listedTs) pr.listedTs = signed;
+      if(pr.status === 'draft'){ pr.status = 'active'; pr.statusTs = signed; pr.statusBy = 'owner'; } }
+  }
+  postRow({ agent:AGENCY, type:'mandate', amt:0, ts:signed, client:m.clientId,
+    prop:(m.propertyIds||[])[0] || '', reason:'signed', actor:'owner', note:m.docNo });
+  NM = null;
+  saveState(); closeModal(); renderAll(); toast(t('doc_mn_saved'));
+  openMandateDoc(id);
+}
+
+/* =====================================================================================
+   THE OFFER — §2.6 and §3.2
+   One of the three things an agent may do, and the step that creates a deal: a deal exists when
+   an offer is ACCEPTED and not one moment before, because a pipeline full of "leads" is the CRM
+   disease this product is designed against.
+   depositKind is legally load-bearing and the sheet prints the consequence under the chosen
+   option rather than in a tooltip: նախավճար is forfeit if the payer walks and repaid DOUBLE if
+   the seller does; կանխավճար is simply returned. Agents use both words loosely; the paper does
+   not get to.
+   ===================================================================================== */
+let OF = null;
+function openNewOffer(pref){
+  const ags = activeAgents();
+  OF = { prop:(pref && pref.prop) || '', pq:'', client:(pref && pref.client) || '', cq:'',
+         agent: ags.length === 1 ? ags[0].id : '', price:'', depKind:'', depAmount:'',
+         validTo: S.today + 7*DAY, note:'' };
+  drawNewOffer();
+}
+function ofPick(k, v){ if(OF){ OF[k] = v; drawNewOffer(); } }
+function ofProp(id){ if(OF){ OF.prop = (OF.prop === id ? '' : id); drawNewOffer(); } }
+function ofClient(id){ if(OF){ OF.client = (OF.client === id ? '' : id); drawNewOffer(); } }
+function ofAgent(id){ if(OF){ OF.agent = (OF.agent === id ? '' : id); drawNewOffer(); } }
+function ofField(k, v){ if(OF){ OF[k] = String(v == null ? '' : v); ofPaint(); } }
+function ofSearch(k, v){
+  if(!OF) return;
+  OF[k] = String(v || '');
+  if(k === 'pq'){ const el = document.getElementById('ofPropList');
+    if(el) el.innerHTML = pickPropRows(OF.pq, OF.prop, 'ofProp'); }
+  else { const el = document.getElementById('ofClientList');
+    if(el) el.innerHTML = pickClientRows(OF.cq, OF.client, 'ofClient'); }
+}
+function ofDate(v){
+  if(!OF) return;
+  const ms = Date.parse(String(v || '') + 'T00:00:00Z');
+  OF.validTo = isFinite(ms) ? ms : 0;
+  echoDate('ofvalid', OF.validTo);
+}
+const ofReady = () => !!(OF && OF.prop && OF.client && OF.agent && safeAmd(OF.price,0) > 0);
+function ofPaint(){
+  const b = document.getElementById('ofSave');
+  if(b) b.disabled = !ofReady();
+}
+function drawNewOffer(){
+  if(!OF) return;
+  MODAL_RE = drawNewOffer;
+  openModal('<h3>📝 ' + escH(t('of_new')) + '</h3>'
+    + '<div class="sec">🏠 ' + escH(t('vw_prop')) + '</div>'
+    + '<input class="search" type="text" inputmode="search" placeholder="' + escH(t('p_search'))
+      + '" value="' + escH(OF.pq) + '" oninput="ofSearch(' + jsArg('pq') + ',this.value)">'
+    + '<div id="ofPropList">' + pickPropRows(OF.pq, OF.prop, 'ofProp') + '</div>'
+    + '<div class="sec">👤 ' + escH(t('vw_client')) + '</div>'
+    + '<input class="search" type="text" inputmode="search" placeholder="' + escH(t('cl_search'))
+      + '" value="' + escH(OF.cq) + '" oninput="ofSearch(' + jsArg('cq') + ',this.value)">'
+    + '<div id="ofClientList">' + pickClientRows(OF.cq, OF.client, 'ofClient') + '</div>'
+    + '<div class="sec">🧑‍💼 ' + escH(t('vw_agent')) + '</div>'
+    + pickAgentChips(OF.agent, 'ofAgent')
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('of_price')) + '</div>'
+    + '<input type="text" inputmode="numeric" value="' + escH(OF.price) + '" oninput="ofField('
+      + jsArg('price') + ',this.value)">'
+    + '<div class="sec">⚖️ ' + escH(t('dep_kind_q')) + '</div>'
+    + '<div class="prov">' + escH(t('dep_diff')) + '</div>'
+    + DEPOSIT_KINDS.map(k => '<button class="pick' + (OF.depKind === k ? ' on' : '') + '" onclick="ofPick('
+        + jsArg('depKind') + ',' + jsArg(k) + ')">' + escH(t('dep_' + k))
+        + '<span class="pd">' + escH(t('dep_' + k + '_law')) + '</span></button>').join('')
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('dep_amount')) + '</div>'
+    + '<input type="text" inputmode="numeric" value="' + escH(OF.depAmount) + '" oninput="ofField('
+      + jsArg('depAmount') + ',this.value)">'
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('of_validto')) + '</div>'
+    + '<input type="date" value="' + escH(OF.validTo ? isoDate(OF.validTo) : '') + '" onchange="ofDate(this.value)">'
+    + dateEcho('ofvalid', OF.validTo)
+    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('vw_note')) + '</div>'
+    + '<textarea rows="2" oninput="ofField(' + jsArg('note') + ',this.value)">' + escH(OF.note) + '</textarea>'
+    + '<button class="btn primary full" id="ofSave" style="margin-top:16px"' + (ofReady() ? '' : ' disabled')
+      + ' onclick="saveOffer()">' + escH(t('of_save')) + '</button>'
+    + (ofReady() ? '' : '<div class="prov warn">' + escH(t('of_need')) + '</div>')
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>');
+}
+function saveOffer(){
+  if(!OF || !ofReady()) return;
+  const ts = S.today;
+  const price = safeAmd(OF.price, 0);
+  /* the evidence row first, and the offer takes its identity from it — same discipline as the
+     viewing, so two devices that recorded the same offer agree on the id. */
+  const uuid = postRow({ agent:OF.agent, type:'offer', amt:0, ts:ts, prop:OF.prop, client:OF.client,
+    reason:'sent', actor:OF.agent, note:amdTxt(price) + ' ֏' });
+  if(!uuid){ toast(t('vw_dup')); return; }
+  const id = 'o' + uuid.slice(1);
+  if((S.offers||[]).some(o => o.id === id)){ toast(t('vw_dup')); return; }
+  S.offers.push({ id:id, propertyId:OF.prop, clientId:OF.client, agentId:OF.agent, ts:ts,
+    price:price, depositKind: OF.depKind || 'kankh', depositAmount: safeAmd(OF.depAmount, 0),
+    validTo: Math.max(0, safeInt(OF.validTo, 0)), status:'sent', statusTs:ts,
+    note:String(OF.note || '') });
+  OF = null;
+  saveState(); closeModal(); renderAll(); toast(t('of_saved'));
+  openOfferSheet(id);
+}
+const offerById = id => (S.offers||[]).find(o => o && o.id === id) || null;
+/* SET-ONCE on the terminal status: an offer was accepted or it was not, and rewriting that after
+   a deal was created from it would make the deal's own origin a fiction. */
+function setOfferStatus(id, st){
+  const o = offerById(id); if(!o) return;
+  if(o.status !== 'sent'){ toast(t('of_locked')); return; }
+  o.status = st; o.statusTs = S.today;
+  postRow({ agent:o.agentId, type:'offer', amt:0, ts:S.today, prop:o.propertyId, client:o.clientId,
+    reason:st, actor:'owner', note:amdTxt(o.price) + ' ֏' });
+  if(st === 'accepted'){
+    const d = dealFromOffer(o);
+    saveState(); closeModal(); renderAll(); toast(t('of_accepted_deal'));
+    if(d) openDeal(d.id);
+    return;
+  }
+  saveState(); renderAll(); repaintSheet(); toast(offerStLabel(st));
+}
+/* THE DEAL IS BORN HERE, and it is born with NO TERMS. §2.7: an accepted offer creates the deal;
+   §1.1: it cannot leave the first stage until a human has typed the commission. The agent's share
+   is SEEDED from their standing share and frozen on the deal from this instant. */
+function dealFromOffer(o){
+  const pr = propById(o.propertyId);
+  const exists = (S.deals||[]).find(d => d.propertyId === o.propertyId && d.buyerClientId === o.clientId
+    && !(d.void && d.void.ts));
+  if(exists) return exists;
+  const id = contentId('d', o.propertyId + KSEP + o.clientId + KSEP + o.ts, (S.deals||[]).length);
+  const ag = agentById(o.agentId);
+  const kind = (pr && pr.deal === 'lease') ? 'lease' : 'sale';
+  const d = { id:id, propertyId:o.propertyId,
+    buyerClientId:o.clientId, sellerClientId:(pr && pr.ownerClientId) || '',
+    mandateId:(pr && pr.mandateId) || '', kind:kind, price:safeAmd(o.price,0),
+    agents: o.agentId ? [{ agentId:o.agentId, side:'selling',
+      shareBp: (ag && ag.defaultShareBp != null) ? ag.defaultShareBp : 0, joinedTs:S.today }] : [],
+    terms:null, stage:'agreed', stageTs:S.today,
+    dates:{ agreedTs:S.today, depositTs:0, notaryTs:0, filedTs:0, registeredTs:0, invoicedTs:0, settledTs:0 },
+    deposit:{ kind:o.depositKind || '', amount:safeAmd(o.depositAmount,0), ts:o.depositAmount ? S.today : 0 },
+    notary:{ name:'', addr:'', actNo:'' }, cert:{ no:'', ts:0 },
+    consents:{ spouse:false, coOwners:false, checkedTs:0 },
+    unifiedCertTs:0, void:null, docs:[], note:'' };
+  S.deals.push(d);
+  postRow({ agent:AGENCY, type:'stage', amt:0, ts:S.today, deal:id, prop:d.propertyId,
+    reason:'agreed', rank:0, actor:'owner' });
+  /* the property is off the market while the deal runs — stamped, and it comes back if the deal
+     falls through, which is exactly why status is stamped rather than monotone. */
+  if(pr && ['sold','leased'].indexOf(pr.status) < 0){
+    pr.status = 'reserved'; pr.statusTs = S.today; pr.statusBy = 'owner';
+  }
+  return d;
+}
+
+/* ---------- DOCUMENT 3 · Առաջարկի թերթիկ ----------
+   Price, the deposit instrument with its legal consequence printed in Armenian under the chosen
+   option, the validity date, and the offering client's signature. */
+function openOfferSheet(id){
+  const o = offerById(id); if(!o) return;
+  MODAL_RE = () => openOfferSheet(id);
+  const pr = propById(o.propertyId), c = clientById(o.clientId), a = agentById(o.agentId);
+  const ag = S.agency || {};
+  let h = '<h3>📝 ' + escH(t('doc_of_title')) + '</h3>'
+    + '<div class="muted">' + escH(t('doc_no') + ' ' + offerDocNo(o) + ' · ' + fdate(o.ts)) + '</div>'
+    + '<hr class="actrule">'
+    + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
+      + docParty(t('doc_agency'), ag.name, docTin(ag.tin))
+      + docParty(t('doc_client'), c ? c.name : '—', c ? c.phone : '')
+    + '</div>'
+    + '<div class="sec">🏠 ' + escH(t('doc_prop')) + '</div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('props_title')) + '</span><span>'
+      + escH(pr ? propAddr(pr) : '—') + '</span></div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('p_cad')) + '</span><span class="cad">'
+      + escH(pr ? pr.cadCode : '—') + '</span></div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('of_price')) + '</span>' + amd(o.price) + '</div>'
+    + '<div class="muted">' + escH(t('stmt_words')) + sepC() + '<b>' + escH(amWords(o.price)) + '</b></div>';
+  if(o.depositAmount){
+    h += '<div class="sec">⚖️ ' + escH(t('dep_title')) + '</div>'
+      + '<div class="row"><span class="mlbl">' + escH(t('dep_' + o.depositKind)) + '</span>'
+      + amd(o.depositAmount) + '</div>'
+      /* THE CONSEQUENCE IS ON THE PAPER, under the chosen option, not in a tooltip. */
+      + '<div>' + escH(t(o.depositKind === 'nakh' ? 'dep_nakh_law' : 'dep_kankh_law')) + '</div>'
+      + (o.depositAmount > 300000 ? '<div class="prov">' + escH('💳 ' + t('d_noncash')) + '</div>' : '');
+  }
+  h += '<div class="row" style="margin-top:10px"><span class="mlbl">' + escH(t('of_validto'))
+      + '</span><span>' + escH(fdate(o.validTo)) + '</span></div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('doc_agent')) + '</span><span>'
+      + escH(a ? (a.em + ' ' + a.name + (a.phone ? ' · ' + a.phone : '')) : '—') + '</span></div>'
+    + (o.note ? '<div class="prov">' + escH(o.note) + '</div>' : '')
+    + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
+      + docSign(t('doc_sign_client') + (c ? ' · ' + c.name : ''))
+      + docSign(t('doc_sign_agent') + (a ? ' · ' + a.name : '')) + '</div>'
+    + docFoot(t('doc_of_note'))
+    + '<div class="badgerow noprint" style="margin-top:10px">'
+      + badge('b-neutral', offerStLabel(o.status)) + '</div>'
+    + (o.status === 'sent'
+        ? '<div class="row noprint" style="margin-top:10px">'
+          + '<button class="btn primary" onclick="setOfferStatus(' + jsArg(o.id) + ',' + jsArg('accepted') + ')">'
+            + escH(t('of_accept')) + '</button>'
+          + '<button class="btn ghost" onclick="setOfferStatus(' + jsArg(o.id) + ',' + jsArg('rejected') + ')">'
+            + escH(t('of_reject')) + '</button></div>'
+          + '<div class="prov noprint">' + escH(t('of_locked')) + '</div>'
+        : '')
+    + docTail();
+  openModal(h);
+}
+/* the offer's own quotable number, on the same rule as the viewing sheet's */
+function offerDocNo(o){
+  if(!o) return '';
+  const y = new Date(safeInt(o.ts,0)).getUTCFullYear();
+  const yr = (S.offers||[]).filter(x => new Date(safeInt(x.ts,0)).getUTCFullYear() === y)
+    .sort((a,b) => (a.ts - b.ts) || (a.id < b.id ? -1 : 1));
+  const i = yr.findIndex(x => x.id === o.id) + 1;
+  return 'ԱԹ-' + y + '-' + (i < 100 ? ('00' + i).slice(-3) : i);
+}
+const OS_CLASS = { sent:'b-gold', accepted:'b-green', rejected:'b-neutral',
+                   expired:'b-neutral', withdrawn:'b-neutral' };
+function offerRow(o){
+  const pr = propById(o.propertyId);
+  return '<div class="card' + (o.status === 'sent' ? ' rail rail-note' : '') + '">'
+    + '<div class="sug" style="border-bottom:none;padding:0">'
+      + '<div class="pav">' + (pr ? (KIND_EM[pr.kind]||'🏠') : '🏠') + '</div>'
+      + '<div class="info"><div class="addr">' + escH(pr ? propAddr(pr) : '—') + '</div>'
+        + '<div class="muted">' + escH(clientName(o.clientId) + ' · ' + agentEm(o.agentId) + ' '
+          + agentName(o.agentId) + ' · ' + fdate(o.ts)) + '</div></div>'
+    + '</div>'
+    + '<div style="margin-top:10px">' + amdBig(o.price) + '</div>'
+    + '<div class="badgerow" style="margin-top:8px">' + badge(OS_CLASS[o.status]||'b-neutral', offerStLabel(o.status))
+      + (o.depositAmount ? badge('b-neutral', t('dep_' + o.depositKind) + ' ' + amdTxt(o.depositAmount) + ' ֏') : '')
+      + (o.validTo ? badge('b-neutral', t('of_validto') + ' ' + fdate(o.validTo)) : '') + '</div>'
+    + '<div class="row" style="margin-top:12px">'
+      + '<button class="btn ghost small" onclick="openOfferSheet(' + jsArg(o.id) + ')">🖨 '
+        + escH(t('doc_of_print')) + '</button>'
+      + (o.status === 'sent' ? '<button class="btn small primary" onclick="setOfferStatus('
+          + jsArg(o.id) + ',' + jsArg('accepted') + ')">' + escH(t('of_accept')) + '</button>' : '')
+    + '</div></div>';
+}
 
 /* =====================================================================================
    THE COMMISSION TERMS FORM
@@ -7071,9 +7759,11 @@ function dpInput(v){
   if(b) b.disabled = !(DP.kind && safeAmd(DP.amount, 0) > 0);
 }
 function dpDate(v){
+  /* the app's own DD.MM.YYYY under a control the browser paints in its own locale */
   if(!DP) return;
   const ms = Date.parse(String(v || '') + 'T00:00:00Z');
   DP.ts = isFinite(ms) ? ms : S.today;
+  echoDate('dpDateEcho', DP.ts);
 }
 function dpNoticeHtml(){
   const amt = safeAmd(DP.amount, 0);
@@ -7103,6 +7793,7 @@ function drawDeposit(){
     + '<div id="dpNote">' + dpNoticeHtml() + '</div>'
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('dep_when')) + '</div>'
     + '<input type="date" value="' + escH(isoDate(DP.ts)) + '" onchange="dpDate(this.value)">'
+    + dateEcho('dpDateEcho', DP.ts)
     + '<button class="btn primary full" id="dpSave" style="margin-top:16px"' + (ok ? '' : ' disabled')
       + ' onclick="saveDeposit()">' + escH(t('dep_save')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>';
