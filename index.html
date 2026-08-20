@@ -120,7 +120,7 @@ h1{
 
 /* ---------- section headings ---------- */
 .sec{margin:var(--s8) 0 var(--s4)}
-.sec h2{font-size:14px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--dim)}
+.sec h2{font-size:16px;font-weight:700;letter-spacing:-.1px;color:var(--ink)}
 .sec p{font-size:14px;color:var(--muted);margin-top:var(--s1)}
 
 /* ---------- product cards ---------- */
@@ -154,8 +154,12 @@ h1{
 .badge.b-new{background:var(--new-tint);color:var(--new);border-color:var(--new-line)}
 .badge.b-tool{background:var(--surface-2);color:var(--muted);border-color:var(--stroke2)}
 .what{margin-top:var(--s3);font-size:15px;line-height:1.5;color:var(--ink)}
+.feats{margin-top:var(--s2);font-size:14px;line-height:1.5;color:var(--muted)}
 .who{margin-top:var(--s2);font-size:14px;line-height:1.45;color:var(--muted)}
 .who b{color:var(--ink);font-weight:600}
+/* the one line that stops the site's most likely mistake — a jeweller opening the wrong
+   gold product — is not allowed to look like a caption. */
+.choose{margin-top:var(--s3);font-size:15px;line-height:1.5;color:var(--ink)}
 .note{
   margin-top:var(--s3);font-size:14px;line-height:1.45;color:var(--acc-text);
   background:var(--acc-tint);border:1px solid var(--acc-line);border-radius:10px;
@@ -245,7 +249,8 @@ h1{
           <span class="badge" data-i18n="b_work">Աշխատող համակարգ</span>
         </div>
       </div>
-      <p class="what" data-i18n="w_trade">Խանութի ապրանքի հաշվառում և պատվեր մատակարարից՝ ընդունում մատակարարի փաստաթղթով, մնացորդ, ժամկետներ և խմբաքանակներ, գույքագրում, հաշիվներ ու ճշտում։</p>
+      <p class="what" data-i18n="w_trade">Խանութի ապրանքի հաշվառում և պատվերներ մատակարարից։</p>
+      <p class="feats" data-i18n="f_trade">Ընդունում մատակարարի փաստաթղթով · մնացորդ · ժամկետներ և խմբաքանակներ · գույքագրում · հաշիվներ և ճշտում</p>
       <p class="who"><b data-i18n="whopfx">Ում համար է՝</b> <span data-i18n="o_trade">խանութ, որը ապրանք է պատվիրում մատակարարից և պետք է իմանա՝ ինչ կա պահեստում։</span></p>
       <div class="foot">
         <span class="cta"><span data-i18n="open">Բացել</span><i aria-hidden="true">→</i></span>
@@ -262,7 +267,8 @@ h1{
           <span class="badge" data-i18n="b_work">Աշխատող համակարգ</span>
         </div>
       </div>
-      <p class="what" data-i18n="w_voski">Ոսկերչական խանութի հաշվառում՝ ապրանքը քաշով և հարգով, օրվա մետաղի փոխարժեք՝ գնի բացվածքով, բնակչությունից գնում՝ տպվող գնման ակտով, հարգադրոշմ, գույքագրում, վերանորոգում։</p>
+      <p class="what" data-i18n="w_voski">Ոսկերչական խանութի ամբողջ հաշվառումը՝ քաշով և հարգով։</p>
+      <p class="feats" data-i18n="f_voski">Օրվա մետաղի փոխարժեք՝ գնի բացվածքով · գնում բնակչությունից՝ տպվող գնման ակտով · հարգադրոշմ · գույքագրում · վերանորոգում</p>
       <p class="who"><b data-i18n="whopfx">Ում համար է՝</b> <span data-i18n="o_voski">ոսկերչական խանութ, որը ապրանք է պահում, գնում և վաճառում։</span></p>
       <div class="foot">
         <span class="cta"><span data-i18n="open">Բացել</span><i aria-hidden="true">→</i></span>
@@ -279,7 +285,8 @@ h1{
           <span class="badge b-new" data-i18n="b_new">Երիտասարդ · կառուցվում է</span>
         </div>
       </div>
-      <p class="what" data-i18n="w_estate">Անշարժ գույքի գործակալության գրասենյակ՝ գույքի ցանկ, գործակալներ և նրանց տոկոսը, ցուցադրություններ, գործարքի ընթացքը մինչև նոտար և կադաստր, վճարումներ գործակալներին։</p>
+      <p class="what" data-i18n="w_estate">Անշարժ գույքի գործակալության գրասենյակը՝ մեկ տեղում։</p>
+      <p class="feats" data-i18n="f_estate">Գույքի ցանկ · գործակալներ և նրանց տոկոսը · ցուցադրություններ · գործարքի ընթացքը մինչև նոտար և կադաստր · վճարումներ</p>
       <p class="who"><b data-i18n="whopfx">Ում համար է՝</b> <span data-i18n="o_estate">անշարժ գույքի գործակալություն՝ մեկ կամ մի քանի գործակալով։</span></p>
       <p class="who" data-i18n="young">Ամենանորն է չորսից․ դեռ վաղ փուլում է, և բաժինները լրանում են։</p>
       <div class="foot">
@@ -305,9 +312,10 @@ h1{
           <span class="badge b-tool" data-i18n="b_tool">Գործիք</span>
         </div>
       </div>
-      <p class="what" data-i18n="w_gold">Ոսկու գնի հաշվիչ և վաճառքի գրանցամատյան։ Մուտքագրում եք քաշը, հարգը և գրամի գինը՝ ստանում եք գինը։ Վաճառքը գրանցվում է, կա պարզ հաշվետվություն։</p>
+      <p class="what" data-i18n="w_gold">Ոսկու գնի հաշվիչ և վաճառքի գրանցամատյան։</p>
+      <p class="feats" data-i18n="f_gold">Մուտքագրում եք քաշը, հարգը և գրամի գինը՝ ստանում եք գինը։ Վաճառքը գրանցվում է, կա պարզ հաշվետվություն։</p>
       <p class="note"><b data-i18n="g_warn_t">Պահեստ չի պահում։</b><span data-i18n="g_warn">Ընդունում, գույքագրում և մնացորդի հաշվառում այստեղ չկան։</span></p>
-      <p class="who" data-i18n="g_choose">Ոսկյա ծրագիրը երկուսն է։ Եթե պետք է միայն գին հաշվել և վաճառքը գրանցել — ARMGOLD։ Եթե պետք է ամբողջ խանութի հաշվառումը (մնացորդ, ընդունում, գնման ակտ, գույքագրում) — ԱրմՈսկի։</p>
+      <p class="choose" data-i18n="g_choose">Ոսկյա ծրագիրը երկուսն է։ Եթե պետք է միայն գին հաշվել և վաճառքը գրանցել — ARMGOLD։ Եթե պետք է ամբողջ խանութի հաշվառումը (մնացորդ, ընդունում, գնման ակտ, գույքագրում) — ԱրմՈսկի։</p>
       <div class="foot">
         <span class="cta"><span data-i18n="open">Բացել</span><i aria-hidden="true">→</i></span>
       </div>
@@ -333,14 +341,18 @@ hy:{
   t2s:"Փոքր ծրագիր՝ մեկ գործի համար։ Հաշվառում չի վարում։",
   n_trade:"ArmTrade", n_voski:"ԱրմՈսկի", n_estate:"ԱրմԷստեյտ", n_gold:"ARMGOLD",
   b_work:"Աշխատող համակարգ", b_new:"Երիտասարդ · կառուցվում է", b_tool:"Գործիք",
-  w_trade:"Խանութի ապրանքի հաշվառում և պատվեր մատակարարից՝ ընդունում մատակարարի փաստաթղթով, մնացորդ, ժամկետներ և խմբաքանակներ, գույքագրում, հաշիվներ ու ճշտում։",
+  w_trade:"Խանութի ապրանքի հաշվառում և պատվերներ մատակարարից։",
+  f_trade:"Ընդունում մատակարարի փաստաթղթով · մնացորդ · ժամկետներ և խմբաքանակներ · գույքագրում · հաշիվներ և ճշտում",
   o_trade:"խանութ, որը ապրանք է պատվիրում մատակարարից և պետք է իմանա՝ ինչ կա պահեստում։",
-  w_voski:"Ոսկերչական խանութի հաշվառում՝ ապրանքը քաշով և հարգով, օրվա մետաղի փոխարժեք՝ գնի բացվածքով, բնակչությունից գնում՝ տպվող գնման ակտով, հարգադրոշմ, գույքագրում, վերանորոգում։",
+  w_voski:"Ոսկերչական խանութի ամբողջ հաշվառումը՝ քաշով և հարգով։",
+  f_voski:"Օրվա մետաղի փոխարժեք՝ գնի բացվածքով · գնում բնակչությունից՝ տպվող գնման ակտով · հարգադրոշմ · գույքագրում · վերանորոգում",
   o_voski:"ոսկերչական խանութ, որը ապրանք է պահում, գնում և վաճառում։",
-  w_estate:"Անշարժ գույքի գործակալության գրասենյակ՝ գույքի ցանկ, գործակալներ և նրանց տոկոսը, ցուցադրություններ, գործարքի ընթացքը մինչև նոտար և կադաստր, վճարումներ գործակալներին։",
+  w_estate:"Անշարժ գույքի գործակալության գրասենյակը՝ մեկ տեղում։",
+  f_estate:"Գույքի ցանկ · գործակալներ և նրանց տոկոսը · ցուցադրություններ · գործարքի ընթացքը մինչև նոտար և կադաստր · վճարումներ",
   o_estate:"անշարժ գույքի գործակալություն՝ մեկ կամ մի քանի գործակալով։",
   young:"Ամենանորն է չորսից․ դեռ վաղ փուլում է, և բաժինները լրանում են։",
-  w_gold:"Ոսկու գնի հաշվիչ և վաճառքի գրանցամատյան։ Մուտքագրում եք քաշը, հարգը և գրամի գինը՝ ստանում եք գինը։ Վաճառքը գրանցվում է, կա պարզ հաշվետվություն։",
+  w_gold:"Ոսկու գնի հաշվիչ և վաճառքի գրանցամատյան։",
+  f_gold:"Մուտքագրում եք քաշը, հարգը և գրամի գինը՝ ստանում եք գինը։ Վաճառքը գրանցվում է, կա պարզ հաշվետվություն։",
   g_warn_t:"Պահեստ չի պահում։",
   g_warn:"Ընդունում, գույքագրում և մնացորդի հաշվառում այստեղ չկան։",
   g_choose:"Ոսկյա ծրագիրը երկուսն է։ Եթե պետք է միայն գին հաշվել և վաճառքը գրանցել — ARMGOLD։ Եթե պետք է ամբողջ խանութի հաշվառումը (մնացորդ, ընդունում, գնման ակտ, գույքագրում) — ԱրմՈսկի։",
@@ -359,14 +371,18 @@ en:{
   t2s:"A small program for one job. It does not keep records for you.",
   n_trade:"ArmTrade", n_voski:"ArmVoski", n_estate:"ArmEstate", n_gold:"ARMGOLD",
   b_work:"Working system", b_new:"Young · being built", b_tool:"Tool",
-  w_trade:"Stock records for a shop and ordering from its distributor: goods receipt against the supplier's own document, balances, expiry dates and batches, stock counts, bills and reconciliation.",
+  w_trade:"Stock records for a shop, and its orders to the distributor.",
+  f_trade:"Goods receipt against the supplier's own document · balances · expiry dates and batches · stock counts · bills and reconciliation",
   o_trade:"a shop that orders from a distributor and needs to know what is on the shelf.",
-  w_voski:"Records for a jewellery shop: stock held by weight and fineness, a daily metal rate with the price broken down, buying scrap from walk-ins with a printable buy-in act, hallmarking, stock counts, repairs.",
+  w_voski:"The whole record of a jewellery shop, kept by weight and fineness.",
+  f_voski:"A daily metal rate with the price broken down · buying scrap from walk-ins with a printable buy-in act · hallmarking · stock counts · repairs",
   o_voski:"a jewellery shop that holds stock, buys and sells.",
-  w_estate:"The back office of an estate agency: properties, agents and their commission percentage, viewings, a deal's progress through notary and cadastre, payouts to agents.",
+  w_estate:"An estate agency's back office, in one place.",
+  f_estate:"Properties · agents and their commission percentage · viewings · a deal's progress through notary and cadastre · payouts",
   o_estate:"an estate agency with one or several agents.",
   young:"The newest of the four: still early, and sections are still being filled in.",
-  w_gold:"A gold price calculator and a sales log. Enter the weight, the fineness and the price per gram, and it gives you the price. Each sale is recorded, with a simple report.",
+  w_gold:"A gold price calculator and a sales log.",
+  f_gold:"Enter the weight, the fineness and the price per gram, and it gives you the price. Each sale is recorded, with a simple report.",
   g_warn_t:"It does not hold stock.",
   g_warn:"There is no goods receipt, no stock count and no balance here.",
   g_choose:"There are two gold programs. If you only need to work out a price and log the sale — ARMGOLD. If you need the whole shop's records (balances, goods receipt, buy-in act, stock count) — ArmVoski.",
@@ -385,14 +401,18 @@ ru:{
   t2s:"Небольшая программа для одной задачи. Учёт она не ведёт.",
   n_trade:"ArmTrade", n_voski:"ArmVoski", n_estate:"ArmEstate", n_gold:"ARMGOLD",
   b_work:"Рабочая система", b_new:"Молодая · в разработке", b_tool:"Инструмент",
-  w_trade:"Учёт товара в магазине и заказы у дистрибьютора: приёмка по документу поставщика, остатки, сроки годности и партии, инвентаризация, счета и сверка.",
+  w_trade:"Учёт товара в магазине и заказы у дистрибьютора.",
+  f_trade:"Приёмка по документу поставщика · остатки · сроки годности и партии · инвентаризация · счета и сверка",
   o_trade:"магазин, который заказывает у дистрибьютора и должен знать, что есть на складе.",
-  w_voski:"Учёт ювелирного магазина: товар по весу и пробе, дневной курс металла с расшифровкой цены, закупка лома у населения с печатным актом, клеймение, инвентаризация, ремонт.",
+  w_voski:"Полный учёт ювелирного магазина — по весу и пробе.",
+  f_voski:"Дневной курс металла с расшифровкой цены · закупка лома у населения с печатным актом · клеймение · инвентаризация · ремонт",
   o_voski:"ювелирный магазин, который держит товар, покупает и продаёт.",
-  w_estate:"Бэк-офис агентства недвижимости: объекты, агенты и их процент, показы, ход сделки через нотариуса и кадастр, выплаты агентам.",
+  w_estate:"Бэк-офис агентства недвижимости — в одном месте.",
+  f_estate:"Объекты · агенты и их процент · показы · ход сделки через нотариуса и кадастр · выплаты",
   o_estate:"агентство недвижимости с одним или несколькими агентами.",
   young:"Самая новая из четырёх: пока на раннем этапе, разделы дополняются.",
-  w_gold:"Калькулятор цены золота и журнал продаж. Вводите вес, пробу и цену за грамм — получаете цену. Продажа записывается, есть простой отчёт.",
+  w_gold:"Калькулятор цены золота и журнал продаж.",
+  f_gold:"Вводите вес, пробу и цену за грамм — получаете цену. Продажа записывается, есть простой отчёт.",
   g_warn_t:"Склад не ведёт.",
   g_warn:"Здесь нет ни приёмки, ни инвентаризации, ни остатков.",
   g_choose:"Золотых программ две. Нужно только посчитать цену и записать продажу — ARMGOLD. Нужен учёт всего магазина (остатки, приёмка, акт закупки, инвентаризация) — ArmVoski.",
