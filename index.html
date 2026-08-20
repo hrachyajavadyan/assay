@@ -3,72 +3,450 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#080C18">
-<title>Hrachya's Apps</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&family=Noto+Sans+Armenian:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#F4F6F8">
+<meta name="description" content="Ի՞նչ եք հաշվառում — չորս ծրագիր հայկական խանութների և գրասենյակների համար։">
+<title>Ի՞նչ եք հաշվառում</title>
+
+<!-- FONTS ARE SELF-HOSTED, shared with the products at /armtrade/vendor/fonts/ and referenced
+     absolutely so this page and every /app/ screen render in the same metrics. There is no link
+     to fonts.googleapis.com in this file and there must never be one: the old hub had two, which
+     meant the front door of an offline-first product family did not render offline. -->
+<link rel="preload" href="/armtrade/vendor/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/armtrade/vendor/fonts/noto-sans-armenian-armenian-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-:root{--bg:#080C18;--ink:#EDF1FA;--muted:#93A0BD;--dim:#5E6D8C;--gold:#E39A3B;--gold2:#F7C572;--cyan:#22D3EE;--violet:#A78BFA;--green:#34D399;
-  --glass:rgba(255,255,255,.055);--stroke:rgba(255,255,255,.12);--stroke2:rgba(255,255,255,.2)}
+@font-face{font-family:'Inter';font-style:normal;font-display:swap;font-weight:100 900;
+  src:url(/armtrade/vendor/fonts/inter-latin-wght-normal.woff2) format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Inter';font-style:normal;font-display:swap;font-weight:100 900;
+  src:url(/armtrade/vendor/fonts/inter-cyrillic-wght-normal.woff2) format('woff2');
+  unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Noto Sans Armenian';font-style:normal;font-display:swap;font-weight:100 900;
+  src:url(/armtrade/vendor/fonts/noto-sans-armenian-armenian-wght-normal.woff2) format('woff2');
+  unicode-range:U+0308,U+0530-058F,U+2010,U+2024,U+25CC,U+FB13-FB17}
+
+/* ============ tokens: the products' design system, light theme default ============
+   ArmTrade, ArmVoski and ArmEstate all boot in `body.light`. The hub used to be the one
+   dark, blurred surface in the family — a stranger met a look he then never saw again,
+   and a 55-year-old shopkeeper met it outdoors. Same tokens as the apps, same 4px grid,
+   same 44px tap floor, same accent. */
+:root{
+  --bg:#F4F6F8;
+  --surface:#FFFFFF;
+  --surface-2:#F1F4F8;
+  --surface-3:#E6EBF2;
+  --ink:#0E1726;              /* 16.6:1 on --bg */
+  --muted:#54607A;            /* 5.8:1 on --bg, 6.3:1 on white */
+  --dim:#5D6880;              /* 5.2:1 on --bg — never lighter than this */
+  --sep:#E6EAF0;
+  --stroke:#E1E6EE;
+  --stroke2:#C9D2E0;
+  --acc:#A85A07;              /* white-on-accent 5.08:1 */
+  --acc-ink:#FFFFFF;
+  --acc-tint:#FFF4E3;
+  --acc-line:#EBCFA4;
+  --acc-text:#8A4B00;         /* 6.8:1 on white, 6.25:1 on --acc-tint */
+  --ok:#0B6B3A; --ok-tint:#EEF9F2; --ok-line:#B7E3C9;
+  --new:#5B21B6; --new-tint:#F5F2FF; --new-line:#DDD5F8;
+  --sh-1:0 1px 2px rgba(14,23,38,.06);
+  --sh-2:0 4px 16px rgba(14,23,38,.08);
+  --focus:0 0 0 3px rgba(168,90,7,.30);
+  --font:'Inter','Noto Sans Armenian',-apple-system,'Segoe UI',Roboto,sans-serif;
+  --emoji:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",var(--font);
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px;
+}
+body.dark{
+  --bg:#0B0F17;
+  --surface:#161C2A;
+  --surface-2:#1E2637;
+  --surface-3:#28324A;
+  --ink:#E8EDF7;
+  --muted:#A3B0C7;
+  --dim:#8B97AE;
+  --sep:#242D40;
+  --stroke:#242D40;
+  --stroke2:#313C55;
+  --acc:#F0A93B;
+  --acc-ink:#1A1205;
+  --acc-tint:#2A1F0C;
+  --acc-line:#5A431A;
+  --acc-text:#F5C06A;
+  --ok:#5AD79A; --ok-tint:#0E2A1E; --ok-line:#1E5540;
+  --new:#C4B5FD; --new-tint:#1E1A33; --new-line:#3B3161;
+  --sh-1:0 1px 2px rgba(0,0,0,.30);
+  --sh-2:0 6px 20px rgba(0,0,0,.35);
+  --focus:0 0 0 3px rgba(240,169,59,.35);
+}
+
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Inter','Noto Sans Armenian',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
-body::before{content:"";position:fixed;inset:0;z-index:-2;background:
-  radial-gradient(55vw 45vh at 10% -6%, rgba(227,154,59,.24), transparent 60%),
-  radial-gradient(55vw 45vh at 95% 2%, rgba(167,139,250,.22), transparent 60%),
-  radial-gradient(70vw 55vh at 50% 116%, rgba(34,211,238,.18), transparent 60%),
-  #080C18;}
-body::after{content:"";position:fixed;inset:0;z-index:-1;background-image:radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);background-size:26px 26px;opacity:.5}
-.wrap{max-width:540px;margin:0 auto;padding:11vh 20px 40px;animation:up .4s ease both}
-@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-h1{font-family:'Space Grotesk','Noto Sans Armenian',sans-serif;font-size:28px;letter-spacing:.3px;margin:0 0 6px}
-.sub{color:var(--dim);font-size:12.5px;margin:0 0 32px;text-transform:uppercase;letter-spacing:2.4px;font-weight:700}
-a.app{position:relative;display:flex;align-items:center;gap:16px;background:var(--glass);backdrop-filter:blur(18px) saturate(135%);-webkit-backdrop-filter:blur(18px) saturate(135%);border:1px solid var(--stroke);border-radius:22px;padding:20px;margin-bottom:16px;text-decoration:none;color:var(--ink);transition:transform .18s,border-color .18s,box-shadow .2s;overflow:hidden;box-shadow:0 10px 34px rgba(0,0,0,.25)}
-a.app::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.10),transparent 40%);pointer-events:none}
-a.app:hover{border-color:var(--stroke2);box-shadow:0 14px 44px rgba(0,0,0,.35)}
-a.app:active{transform:scale(.98)}
-.icon{width:60px;height:60px;border-radius:17px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;border:1px solid rgba(255,255,255,.2)}
-.gold{background:linear-gradient(135deg,var(--gold2),var(--gold));box-shadow:0 8px 26px rgba(227,154,59,.4)}
-.trade{background:linear-gradient(135deg,rgba(34,211,238,.9),rgba(167,139,250,.9));box-shadow:0 8px 26px rgba(34,211,238,.35);color:#04121a}
-.info{flex:1;min-width:0}
-.nm{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:.3px}
-.ds{color:var(--muted);font-size:12.5px;margin-top:4px;line-height:1.55}
-.tag{display:inline-block;margin-top:9px;font-size:9.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;padding:3px 10px;border-radius:8px;border:1px solid transparent}
-.t-live{background:rgba(52,211,153,.14);color:#6EE7B7;border-color:rgba(52,211,153,.3)}
-.t-demo{background:rgba(247,197,114,.14);color:var(--gold2);border-color:rgba(247,197,114,.3)}
-.arrow{color:var(--dim);font-size:22px;flex-shrink:0}
-.foot{text-align:center;color:var(--dim);font-size:11px;margin-top:34px;font-family:'IBM Plex Mono',monospace}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--font);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+h1,h2,h3,p{margin:0}
+
+/* ---------- top bar: switchers only. The page opens with the question, not a brand. ---------- */
+.top{
+  display:flex;justify-content:flex-end;align-items:center;gap:var(--s2);
+  max-width:1080px;margin:0 auto;padding:var(--s3) var(--s4) 0;
+}
+.seg{display:flex;background:var(--surface);border:1px solid var(--stroke);border-radius:12px;padding:3px;box-shadow:var(--sh-1)}
+.seg button{
+  min-height:38px;min-width:46px;padding:0 var(--s3);
+  background:none;border:none;border-radius:9px;cursor:pointer;
+  font-family:var(--font);font-size:14px;font-weight:700;letter-spacing:.3px;
+  color:var(--muted);
+}
+.seg button[aria-pressed="true"]{background:var(--acc);color:var(--acc-ink)}
+.seg button:focus-visible,.tbtn:focus-visible{outline:none;box-shadow:var(--focus)}
+/* the 44px tap floor is met by an invisible extension, so the control stays visually compact */
+.seg button::before,.tbtn::before{content:"";position:absolute;left:0;right:0;top:50%;height:44px;transform:translateY(-50%)}
+.seg button,.tbtn{position:relative}
+.tbtn{
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  background:var(--surface);border:1px solid var(--stroke);border-radius:12px;
+  cursor:pointer;font-size:18px;font-family:var(--emoji);line-height:1;box-shadow:var(--sh-1);
+}
+
+/* ---------- the question ---------- */
+.wrap{max-width:1080px;margin:0 auto;padding:var(--s5) var(--s4) var(--s8)}
+h1{
+  font-size:clamp(26px,7.4vw,34px);line-height:1.1;letter-spacing:-.6px;font-weight:700;
+  margin:0 0 var(--s3);
+}
+.lede{color:var(--muted);font-size:16px;line-height:1.45;max-width:44ch}
+
+/* ---------- section headings ---------- */
+.sec{margin:var(--s8) 0 var(--s4)}
+.sec h2{font-size:14px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--dim)}
+.sec p{font-size:14px;color:var(--muted);margin-top:var(--s1)}
+
+/* ---------- product cards ---------- */
+.tier{display:grid;gap:var(--s3)}
+.card{
+  position:relative;display:flex;flex-direction:column;
+  background:var(--surface);border:1px solid var(--stroke);border-radius:16px;
+  padding:var(--s4);box-shadow:var(--sh-1);
+  transition:box-shadow .16s,border-color .16s,transform .16s;
+}
+.card:hover{border-color:var(--stroke2);box-shadow:var(--sh-2)}
+.card:active{transform:scale(.995)}
+.hd{display:flex;align-items:flex-start;gap:var(--s3)}
+.ic{
+  width:48px;height:48px;flex:0 0 48px;border-radius:13px;
+  background:var(--acc-tint);border:1px solid var(--acc-line);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;line-height:1;font-family:var(--emoji);font-style:normal;
+}
+.hdt{flex:1;min-width:0}
+.nm{font-size:19px;font-weight:700;letter-spacing:-.2px;line-height:1.2}
+.nm a{color:inherit;text-decoration:none}
+.nm a::after{content:"";position:absolute;inset:0;border-radius:16px;z-index:1}
+.nm a:focus-visible{outline:none}
+.nm a:focus-visible::after{outline:3px solid var(--acc);outline-offset:2px}
+.badge{
+  display:inline-block;margin-top:6px;
+  font-size:14px;font-weight:700;line-height:1.2;padding:3px 9px;border-radius:8px;
+  background:var(--ok-tint);color:var(--ok);border:1px solid var(--ok-line);
+}
+.badge.b-new{background:var(--new-tint);color:var(--new);border-color:var(--new-line)}
+.badge.b-tool{background:var(--surface-2);color:var(--muted);border-color:var(--stroke2)}
+.what{margin-top:var(--s3);font-size:15px;line-height:1.5;color:var(--ink)}
+.who{margin-top:var(--s2);font-size:14px;line-height:1.45;color:var(--muted)}
+.who b{color:var(--ink);font-weight:600}
+.note{
+  margin-top:var(--s3);font-size:14px;line-height:1.45;color:var(--acc-text);
+  background:var(--acc-tint);border:1px solid var(--acc-line);border-radius:10px;
+  padding:10px 12px;
+}
+.note b{font-weight:700;display:block;margin-bottom:2px}
+.foot{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--s2);flex-wrap:wrap;
+  margin-top:var(--s4);padding-top:var(--s2);border-top:1px solid var(--sep);
+}
+.cta{
+  display:inline-flex;align-items:center;min-height:44px;
+  font-size:15px;font-weight:700;color:var(--acc-text);
+}
+.cta i{font-style:normal;margin-left:6px}
+.doc{
+  position:relative;z-index:2;
+  display:inline-flex;align-items:center;min-height:44px;padding:0 var(--s3);margin-right:calc(var(--s3) * -1);
+  font-size:14px;font-weight:600;color:var(--muted);text-decoration:none;
+  border-radius:10px;
+}
+.doc:hover{color:var(--acc-text);background:var(--surface-2)}
+.doc:focus-visible{outline:none;box-shadow:var(--focus);color:var(--acc-text)}
+.doc u{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.demo{
+  width:100%;order:3;margin-top:var(--s1);
+  font-size:14px;color:var(--dim);line-height:1.4;
+}
+
+/* ---------- tier 2: the tool ---------- */
+.card.tool{background:var(--surface-2)}
+.card.tool .ic{width:40px;height:40px;flex-basis:40px;border-radius:11px;font-size:20px;
+  background:var(--surface);border-color:var(--stroke2)}
+.card.tool .nm{font-size:17px}
+
+/* ---------- footer ---------- */
+.pagefoot{
+  margin-top:var(--s8);padding-top:var(--s5);border-top:1px solid var(--sep);
+  display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);align-items:center;
+}
+.pagefoot a{
+  display:inline-flex;align-items:center;min-height:44px;
+  color:var(--muted);text-decoration:none;font-size:14px;font-weight:600;
+  border-bottom:1px solid transparent;
+}
+.pagefoot a:hover{color:var(--acc-text)}
+.pagefoot a:focus-visible{outline:none;box-shadow:var(--focus);border-radius:8px}
+.pagefoot span{font-size:14px;color:var(--dim);margin-left:auto}
+
+@media (min-width:900px){
+  .tier1{grid-template-columns:repeat(3,1fr)}
+  .tier1 .foot{margin-top:auto}
+  .tier1 .card{padding:var(--s5)}
+  .card.tool{max-width:640px}
+  h1{font-size:38px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
-<body>
-<div class="wrap">
-  <h1>Իմ հավելվածները</h1>
-  <p class="sub">My apps</p>
+<body class="light">
 
-  <a class="app" href="/armgold/">
-    <div class="icon gold">💍</div>
-    <div class="info">
-      <div class="nm">ARMGOLD</div>
-      <div class="ds">Ոսկերիչների գնի հաշվիչ և վաճառքի հաշվառում · Jewelry price calculator &amp; sales</div>
-      <span class="tag t-live">Live</span>
-    </div>
-    <div class="arrow">›</div>
-  </a>
+<header class="top">
+  <div class="seg" role="group" id="langseg">
+    <button type="button" data-lang="hy" aria-pressed="true" lang="hy">ՀԱՅ</button>
+    <button type="button" data-lang="en" aria-pressed="false" lang="en">ENG</button>
+    <button type="button" data-lang="ru" aria-pressed="false" lang="ru">РУС</button>
+  </div>
+  <button type="button" class="tbtn" id="themebtn" aria-label="Թեմա">🌙</button>
+</header>
 
-  <a class="app" href="/armtrade/">
-    <div class="icon trade">⇄</div>
-    <div class="info">
-      <div class="nm">ArmTrade</div>
-      <div class="ds">Խանութ–մատակարար պատվերների հարթակ · Shop–supplier ordering &amp; replenishment</div>
-      <span class="tag t-demo">Prototype</span>
-    </div>
-    <div class="arrow">›</div>
-  </a>
+<main class="wrap">
+  <h1 data-i18n="q">Ի՞նչ եք հաշվառում</h1>
+  <p class="lede" data-i18n="lede">Չորս ծրագիր՝ հայկական խանութների և գրասենյակների համար։ Ընտրեք այն, ինչ ամեն օր ձեռքի տակ ունեք։</p>
 
-  <div class="foot" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
-    <a href="/guide/" style="color:var(--gold2);text-decoration:none">📖 Ուղեցույց / Guide</a>
-    <a href="/pitch/" style="color:var(--gold2);text-decoration:none">📄 Pitch</a>
+  <div class="sec">
+    <h2 data-i18n="t1">Խանութի և գրասենյակի համակարգեր</h2>
+    <p data-i18n="t1s">Սրանք վարում են ձեր ապրանքի մնացորդը կամ ձեր գործարքները։</p>
+  </div>
+
+  <div class="tier tier1">
+
+    <article class="card">
+      <div class="hd">
+        <div class="ic" aria-hidden="true">🏪</div>
+        <div class="hdt">
+          <h3 class="nm"><a href="/armtrade/" data-i18n="n_trade">ArmTrade</a></h3>
+          <span class="badge" data-i18n="b_work">Աշխատող համակարգ</span>
+        </div>
+      </div>
+      <p class="what" data-i18n="w_trade">Խանութի ապրանքի հաշվառում և պատվեր մատակարարից՝ ընդունում մատակարարի փաստաթղթով, մնացորդ, ժամկետներ և խմբաքանակներ, գույքագրում, հաշիվներ ու ճշտում։</p>
+      <p class="who"><b data-i18n="whopfx">Ում համար է՝</b> <span data-i18n="o_trade">խանութ, որը ապրանք է պատվիրում մատակարարից և պետք է իմանա՝ ինչ կա պահեստում։</span></p>
+      <div class="foot">
+        <span class="cta"><span data-i18n="open">Բացել</span><i aria-hidden="true">→</i></span>
+        <a class="doc" href="/armtrade/about/"><u data-i18n="whatis">Ի՞նչ է սա</u></a>
+        <span class="demo" data-i18n="demo">Բացվում է ցուցադրական տվյալներով։</span>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="hd">
+        <div class="ic" aria-hidden="true">💍</div>
+        <div class="hdt">
+          <h3 class="nm"><a href="/armvoski/" data-i18n="n_voski">ԱրմՈսկի</a></h3>
+          <span class="badge" data-i18n="b_work">Աշխատող համակարգ</span>
+        </div>
+      </div>
+      <p class="what" data-i18n="w_voski">Ոսկերչական խանութի հաշվառում՝ ապրանքը քաշով և հարգով, օրվա մետաղի փոխարժեք՝ գնի բացվածքով, բնակչությունից գնում՝ տպվող գնման ակտով, հարգադրոշմ, գույքագրում, վերանորոգում։</p>
+      <p class="who"><b data-i18n="whopfx">Ում համար է՝</b> <span data-i18n="o_voski">ոսկերչական խանութ, որը ապրանք է պահում, գնում և վաճառում։</span></p>
+      <div class="foot">
+        <span class="cta"><span data-i18n="open">Բացել</span><i aria-hidden="true">→</i></span>
+        <a class="doc" href="/armvoski/about/"><u data-i18n="whatis">Ի՞նչ է սա</u></a>
+        <span class="demo" data-i18n="demo">Բացվում է ցուցադրական տվյալներով։</span>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="hd">
+        <div class="ic" aria-hidden="true">🔑</div>
+        <div class="hdt">
+          <h3 class="nm"><a href="/armestate/" data-i18n="n_estate">ԱրմԷստեյտ</a></h3>
+          <span class="badge b-new" data-i18n="b_new">Երիտասարդ · կառուցվում է</span>
+        </div>
+      </div>
+      <p class="what" data-i18n="w_estate">Անշարժ գույքի գործակալության գրասենյակ՝ գույքի ցանկ, գործակալներ և նրանց տոկոսը, ցուցադրություններ, գործարքի ընթացքը մինչև նոտար և կադաստր, վճարումներ գործակալներին։</p>
+      <p class="who"><b data-i18n="whopfx">Ում համար է՝</b> <span data-i18n="o_estate">անշարժ գույքի գործակալություն՝ մեկ կամ մի քանի գործակալով։</span></p>
+      <p class="who" data-i18n="young">Ամենանորն է չորսից․ դեռ վաղ փուլում է, և բաժինները լրանում են։</p>
+      <div class="foot">
+        <span class="cta"><span data-i18n="open">Բացել</span><i aria-hidden="true">→</i></span>
+        <a class="doc" href="/armestate/about/"><u data-i18n="whatis">Ի՞նչ է սա</u></a>
+        <span class="demo" data-i18n="demo">Բացվում է ցուցադրական տվյալներով։</span>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="sec">
+    <h2 data-i18n="t2">Գործիք</h2>
+    <p data-i18n="t2s">Փոքր ծրագիր՝ մեկ գործի համար։ Հաշվառում չի վարում։</p>
+  </div>
+
+  <div class="tier">
+    <article class="card tool">
+      <div class="hd">
+        <div class="ic" aria-hidden="true">🧮</div>
+        <div class="hdt">
+          <h3 class="nm"><a href="/armgold/" data-i18n="n_gold">ARMGOLD</a></h3>
+          <span class="badge b-tool" data-i18n="b_tool">Գործիք</span>
+        </div>
+      </div>
+      <p class="what" data-i18n="w_gold">Ոսկու գնի հաշվիչ և վաճառքի գրանցամատյան։ Մուտքագրում եք քաշը, հարգը և գրամի գինը՝ ստանում եք գինը։ Վաճառքը գրանցվում է, կա պարզ հաշվետվություն։</p>
+      <p class="note"><b data-i18n="g_warn_t">Պահեստ չի պահում։</b><span data-i18n="g_warn">Ընդունում, գույքագրում և մնացորդի հաշվառում այստեղ չկան։</span></p>
+      <p class="who" data-i18n="g_choose">Ոսկյա ծրագիրը երկուսն է։ Եթե պետք է միայն գին հաշվել և վաճառքը գրանցել — ARMGOLD։ Եթե պետք է ամբողջ խանութի հաշվառումը (մնացորդ, ընդունում, գնման ակտ, գույքագրում) — ԱրմՈսկի։</p>
+      <div class="foot">
+        <span class="cta"><span data-i18n="open">Բացել</span><i aria-hidden="true">→</i></span>
+      </div>
+    </article>
+  </div>
+
+  <div class="pagefoot">
+    <a href="/guide/" data-i18n="f_guide">ArmTrade-ի ուղեցույց</a>
+    <a href="/pitch/" data-i18n="f_pitch">ArmTrade-ի ներկայացում</a>
     <span>assay-9e6.pages.dev</span>
   </div>
-</div>
+</main>
+
+<script>
+var T = {
+hy:{
+  title:"Ի՞նչ եք հաշվառում",
+  q:"Ի՞նչ եք հաշվառում",
+  lede:"Չորս ծրագիր՝ հայկական խանութների և գրասենյակների համար։ Ընտրեք այն, ինչ ամեն օր ձեռքի տակ ունեք։",
+  t1:"Խանութի և գրասենյակի համակարգեր",
+  t1s:"Սրանք վարում են ձեր ապրանքի մնացորդը կամ ձեր գործարքները։",
+  t2:"Գործիք",
+  t2s:"Փոքր ծրագիր՝ մեկ գործի համար։ Հաշվառում չի վարում։",
+  n_trade:"ArmTrade", n_voski:"ԱրմՈսկի", n_estate:"ԱրմԷստեյտ", n_gold:"ARMGOLD",
+  b_work:"Աշխատող համակարգ", b_new:"Երիտասարդ · կառուցվում է", b_tool:"Գործիք",
+  w_trade:"Խանութի ապրանքի հաշվառում և պատվեր մատակարարից՝ ընդունում մատակարարի փաստաթղթով, մնացորդ, ժամկետներ և խմբաքանակներ, գույքագրում, հաշիվներ ու ճշտում։",
+  o_trade:"խանութ, որը ապրանք է պատվիրում մատակարարից և պետք է իմանա՝ ինչ կա պահեստում։",
+  w_voski:"Ոսկերչական խանութի հաշվառում՝ ապրանքը քաշով և հարգով, օրվա մետաղի փոխարժեք՝ գնի բացվածքով, բնակչությունից գնում՝ տպվող գնման ակտով, հարգադրոշմ, գույքագրում, վերանորոգում։",
+  o_voski:"ոսկերչական խանութ, որը ապրանք է պահում, գնում և վաճառում։",
+  w_estate:"Անշարժ գույքի գործակալության գրասենյակ՝ գույքի ցանկ, գործակալներ և նրանց տոկոսը, ցուցադրություններ, գործարքի ընթացքը մինչև նոտար և կադաստր, վճարումներ գործակալներին։",
+  o_estate:"անշարժ գույքի գործակալություն՝ մեկ կամ մի քանի գործակալով։",
+  young:"Ամենանորն է չորսից․ դեռ վաղ փուլում է, և բաժինները լրանում են։",
+  w_gold:"Ոսկու գնի հաշվիչ և վաճառքի գրանցամատյան։ Մուտքագրում եք քաշը, հարգը և գրամի գինը՝ ստանում եք գինը։ Վաճառքը գրանցվում է, կա պարզ հաշվետվություն։",
+  g_warn_t:"Պահեստ չի պահում։",
+  g_warn:"Ընդունում, գույքագրում և մնացորդի հաշվառում այստեղ չկան։",
+  g_choose:"Ոսկյա ծրագիրը երկուսն է։ Եթե պետք է միայն գին հաշվել և վաճառքը գրանցել — ARMGOLD։ Եթե պետք է ամբողջ խանութի հաշվառումը (մնացորդ, ընդունում, գնման ակտ, գույքագրում) — ԱրմՈսկի։",
+  whopfx:"Ում համար է՝", open:"Բացել", whatis:"Ի՞նչ է սա",
+  demo:"Բացվում է ցուցադրական տվյալներով։",
+  f_guide:"ArmTrade-ի ուղեցույց", f_pitch:"ArmTrade-ի ներկայացում",
+  theme:"Թեմա"
+},
+en:{
+  title:"What do you keep records of?",
+  q:"What do you keep records of?",
+  lede:"Four programs for Armenian shops and offices. Pick the one that matches what you handle every day.",
+  t1:"Shop and office systems",
+  t1s:"These hold your stock or your deals.",
+  t2:"Tool",
+  t2s:"A small program for one job. It does not keep records for you.",
+  n_trade:"ArmTrade", n_voski:"ArmVoski", n_estate:"ArmEstate", n_gold:"ARMGOLD",
+  b_work:"Working system", b_new:"Young · being built", b_tool:"Tool",
+  w_trade:"Stock records for a shop and ordering from its distributor: goods receipt against the supplier's own document, balances, expiry dates and batches, stock counts, bills and reconciliation.",
+  o_trade:"a shop that orders from a distributor and needs to know what is on the shelf.",
+  w_voski:"Records for a jewellery shop: stock held by weight and fineness, a daily metal rate with the price broken down, buying scrap from walk-ins with a printable buy-in act, hallmarking, stock counts, repairs.",
+  o_voski:"a jewellery shop that holds stock, buys and sells.",
+  w_estate:"The back office of an estate agency: properties, agents and their commission percentage, viewings, a deal's progress through notary and cadastre, payouts to agents.",
+  o_estate:"an estate agency with one or several agents.",
+  young:"The newest of the four: still early, and sections are still being filled in.",
+  w_gold:"A gold price calculator and a sales log. Enter the weight, the fineness and the price per gram, and it gives you the price. Each sale is recorded, with a simple report.",
+  g_warn_t:"It does not hold stock.",
+  g_warn:"There is no goods receipt, no stock count and no balance here.",
+  g_choose:"There are two gold programs. If you only need to work out a price and log the sale — ARMGOLD. If you need the whole shop's records (balances, goods receipt, buy-in act, stock count) — ArmVoski.",
+  whopfx:"Who it is for:", open:"Open", whatis:"What is this?",
+  demo:"Opens with demo data.",
+  f_guide:"ArmTrade guide", f_pitch:"ArmTrade one-pager",
+  theme:"Theme"
+},
+ru:{
+  title:"Что вы учитываете?",
+  q:"Что вы учитываете?",
+  lede:"Четыре программы для армянских магазинов и офисов. Выберите ту, что совпадает с вашим ежедневным делом.",
+  t1:"Системы для магазина и офиса",
+  t1s:"Они ведут остаток вашего товара или ваши сделки.",
+  t2:"Инструмент",
+  t2s:"Небольшая программа для одной задачи. Учёт она не ведёт.",
+  n_trade:"ArmTrade", n_voski:"ArmVoski", n_estate:"ArmEstate", n_gold:"ARMGOLD",
+  b_work:"Рабочая система", b_new:"Молодая · в разработке", b_tool:"Инструмент",
+  w_trade:"Учёт товара в магазине и заказы у дистрибьютора: приёмка по документу поставщика, остатки, сроки годности и партии, инвентаризация, счета и сверка.",
+  o_trade:"магазин, который заказывает у дистрибьютора и должен знать, что есть на складе.",
+  w_voski:"Учёт ювелирного магазина: товар по весу и пробе, дневной курс металла с расшифровкой цены, закупка лома у населения с печатным актом, клеймение, инвентаризация, ремонт.",
+  o_voski:"ювелирный магазин, который держит товар, покупает и продаёт.",
+  w_estate:"Бэк-офис агентства недвижимости: объекты, агенты и их процент, показы, ход сделки через нотариуса и кадастр, выплаты агентам.",
+  o_estate:"агентство недвижимости с одним или несколькими агентами.",
+  young:"Самая новая из четырёх: пока на раннем этапе, разделы дополняются.",
+  w_gold:"Калькулятор цены золота и журнал продаж. Вводите вес, пробу и цену за грамм — получаете цену. Продажа записывается, есть простой отчёт.",
+  g_warn_t:"Склад не ведёт.",
+  g_warn:"Здесь нет ни приёмки, ни инвентаризации, ни остатков.",
+  g_choose:"Золотых программ две. Нужно только посчитать цену и записать продажу — ARMGOLD. Нужен учёт всего магазина (остатки, приёмка, акт закупки, инвентаризация) — ArmVoski.",
+  whopfx:"Для кого:", open:"Открыть", whatis:"Что это?",
+  demo:"Открывается с демо-данными.",
+  f_guide:"Руководство ArmTrade", f_pitch:"Презентация ArmTrade",
+  theme:"Тема"
+}
+};
+
+var LS_LANG='assay_lang', LS_THEME='assay_theme';
+function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+
+var lang = get(LS_LANG);
+if(lang!=='hy' && lang!=='en' && lang!=='ru') lang='hy';
+
+function applyLang(l){
+  lang=l; set(LS_LANG,l);
+  var d=T[l];
+  document.documentElement.lang=l;
+  document.title=d.title;
+  var nodes=document.querySelectorAll('[data-i18n]');
+  for(var i=0;i<nodes.length;i++){
+    var k=nodes[i].getAttribute('data-i18n');
+    if(d[k]!=null) nodes[i].textContent=d[k];
+  }
+  var btns=document.querySelectorAll('#langseg button');
+  for(var j=0;j<btns.length;j++){
+    btns[j].setAttribute('aria-pressed', btns[j].getAttribute('data-lang')===l ? 'true':'false');
+  }
+  document.getElementById('themebtn').setAttribute('aria-label', d.theme);
+}
+
+var theme = get(LS_THEME)==='dark' ? 'dark' : 'light';
+function applyTheme(t){
+  theme=t; set(LS_THEME,t);
+  document.body.classList.toggle('dark', t==='dark');
+  document.body.classList.toggle('light', t!=='dark');
+  document.getElementById('themebtn').textContent = t==='dark' ? '☀️' : '🌙';
+  var m=document.querySelector('meta[name="theme-color"]');
+  if(m) m.setAttribute('content', t==='dark' ? '#0B0F17' : '#F4F6F8');
+}
+
+document.getElementById('langseg').addEventListener('click', function(e){
+  var b=e.target.closest('button[data-lang]');
+  if(b) applyLang(b.getAttribute('data-lang'));
+});
+document.getElementById('themebtn').addEventListener('click', function(){
+  applyTheme(theme==='dark' ? 'light' : 'dark');
+});
+
+applyTheme(theme);
+applyLang(lang);
+</script>
 </body>
 </html>
