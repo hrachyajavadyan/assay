@@ -4320,22 +4320,46 @@ function agentMoney(agentId){
    button. Two screens of one product disagreeing about whether a person has been paid.
    The fold is the same `+` as everywhere: earn and adjust add, payout and reverse subtract, and
    what is left above zero is what is still owed on THIS deal. */
-function dealOutstanding(dealId, agentId){
-  let n = 0;
-  rowsOfDeal(dealId).forEach(r => {
-    if(isMoneyRow(r) && r.agent === agentId) n += safeInt(r.amt, 0);
+/* AN UNATTRIBUTED PAYOUT STILL PAYS FOR SOMETHING. The payout sheet offers the deal and does not
+   require it, because an agency pays a round sum against a running balance and the ledger is right
+   to tolerate that — so a payout carrying no deal is applied against that agent's earned deals
+   OLDEST FIRST when the question is «is this particular deal settled with its agents».
+   This is a DERIVATION over the log, not a second book: nothing is written, the order is a total
+   order on (stageTs, id), and two devices holding the same rows compute the same answer. */
+function agentDealBalances(agentId){
+  const per = Object.create(null);   /* never {} — '__proto__' as a deal id would be truthy */
+  let loose = 0;
+  (S.rows||[]).forEach(r => {
+    if(!isMoneyRow(r) || r.agent !== agentId) return;
+    if(r.deal) per[r.deal] = (per[r.deal] || 0) + safeInt(r.amt, 0);
+    else loose += safeInt(r.amt, 0);
   });
-  return n;
+  /* DEALS WHOSE PAYOUT GATE IS OPEN COME FIRST, then oldest first inside each group. A lump sum
+     handed to an agent is money the agency owed, and what it owed is precisely the gate-open
+     earnings; allocating it against a deal that is not payable yet would leave a settled deal
+     reading as unpaid while an unsettled one read as paid. */
+  Object.keys(per).sort((a,b) => {
+    const x = dealById(a), y = dealById(b);
+    return ((gateOpen(x) ? 0 : 1) - (gateOpen(y) ? 0 : 1))
+      || (safeInt(x && x.stageTs, 0) - safeInt(y && y.stageTs, 0)) || (a < b ? -1 : 1);
+  }).forEach(id => {
+    if(loose >= 0 || per[id] <= 0) return;    /* only a NEGATIVE loose balance pays anything */
+    const take = Math.min(per[id], -loose);
+    per[id] -= take; loose += take;
+  });
+  return per;
 }
+const dealOutstanding = (dealId, agentId) => safeInt(agentDealBalances(agentId)[dealId], 0);
 function dealUnpaid(deal){
   if(!deal) return 0;
-  const by = Object.create(null);
-  rowsOfDeal(deal.id).forEach(r => {
-    if(!isMoneyRow(r) || r.agent === AGENCY) return;
-    by[r.agent] = (by[r.agent] || 0) + safeInt(r.amt, 0);
-  });
+  const seen = Object.create(null);
   let n = 0;
-  Object.keys(by).forEach(a => { if(by[a] > 0) n += by[a]; });
+  rowsOfDeal(deal.id).forEach(r => {
+    if(!isMoneyRow(r) || r.agent === AGENCY || seen[r.agent]) return;
+    seen[r.agent] = 1;
+    const left = dealOutstanding(deal.id, r.agent);
+    if(left > 0) n += left;
+  });
   return n;
 }
 /* the forward button withholds the one stage the owner is not entitled to assert. Everything
@@ -8851,6 +8875,18 @@ function estateSelfTest(){
       const clear = stageBlock(dealById('d2')) === null;
       S.rows = S.rows.filter(r => r.uuid !== u); S.owed = rebuildOwed();
       return blocked && clear;
+    })());
+    /* a lump sum with no deal on it still settles the deals it was owed against */
+    ok('an unattributed payout is applied to the gate-open deals, oldest first', (() => {
+      const before = dealOutstanding('d2','a1');
+      const u = postRow({ agent:'a1', type:'payout', amt:-185000, ts:S.today, actor:'owner',
+        note:'probe, no deal' });
+      const settled = dealOutstanding('d2','a1') === 0 && before === 185000
+        && stageBlock(dealById('d2')) === null
+        /* and it did not reach a deal whose gate is still shut */
+        && dealOutstanding('d1','a1') === 380000;
+      S.rows = S.rows.filter(r => r.uuid !== u); S.owed = rebuildOwed();
+      return settled;
     })());
     ok('a payout can name the deal it pays for', (() => {
       const ds = payableDealsOf('a1');
