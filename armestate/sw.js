@@ -11,9 +11,13 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = "armestate-shell-v6";   /* v6: five cells in the bar (NAV_SHORT puts the singular
-      «Գործարք»/«Վճարում» in the bar only), a rate field that refuses «2 5» rather than reading it
-      as 25%, and two link rows at the foot of «Ավելին» — the explainer and the hub.
+const CACHE = "armestate-shell-v6";   /* v6: every worded filter chip gets its own width back.
+      `min-width:44px` on `.chips button` REPLACED the flex default `min-width:auto`, which is the
+      only thing stopping a flex item shrinking below its own text — so in the nowrap chip
+      scroller «Նախնական պայմանագիր», «Թերթիկը ստորագրված չէ» and «Վարձակալություն» all collapsed
+      to 44px squares with their labels printed across each other, on the deals, properties,
+      clients and viewings filters at 320 and 390. A stale shell here strands an owner on a build
+      whose stage filter cannot be read at all on a phone.
       v5: a money field that cannot be read is null, not zero.
       The terms form, the property price, the payer split, the agent share and the ՀՎՀՀ all refuse
       what they cannot read instead of substituting a figure nobody typed; the preview no longer
