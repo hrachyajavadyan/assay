@@ -1968,7 +1968,6 @@ function monthsTxt(bp){
   const v = safeBp(bp,0) / 10000;
   return (Math.round(v*100)/100).toLocaleString('en-US', {maximumFractionDigits:2});
 }
-const pctOfTxt = bp => bpTxt(bp);
 
 /* =====================================================================================
    CONTENT-ADDRESSED IDS
@@ -2351,6 +2350,7 @@ T.hy = {
   dt_export_comm: "Միջնորդավճարի տողերը՝ հաշվապահի համար",
   dt_export_ledger: "Ամբողջ մատյանը",
   dt_export_b: "UTF-8 BOM-ով՝ որ հաշվապահի Excel-ը հայերենը ճիշտ բացի։ Բանաձևի ներարկումից պաշտպանված։",
+  dt_refused: "Մատյանը մերժել է տողեր",
   dt_selftest: "Ինքնաստուգում",
   dt_theme: "Տեսք",
   dt_light: "Լուսավոր",
@@ -2674,6 +2674,7 @@ T.en = {
   dt_export_comm: "Commission lines, for the accountant",
   dt_export_ledger: "The whole log",
   dt_export_b: "With a UTF-8 BOM so the accountant's Excel opens Armenian correctly. Formula-injection guarded.",
+  dt_refused: "Rows the ledger refused",
   dt_selftest: "Self-test",
   dt_theme: "Appearance",
   dt_light: "Light",
@@ -2993,6 +2994,7 @@ T.ru = {
   dt_export_comm: "Строки комиссии — для бухгалтера",
   dt_export_ledger: "Весь журнал",
   dt_export_b: "С UTF-8 BOM, чтобы Excel бухгалтера открыл армянский корректно. Защита от формульной инъекции.",
+  dt_refused: "Журнал отклонил строки",
   dt_selftest: "Самопроверка",
   dt_theme: "Оформление",
   dt_light: "Светлая",
@@ -3211,14 +3213,7 @@ function rankFromLog(dealId){
 
 /* =====================================================================================
    ENTITY ACCESS
-   Object.create(null) for the id maps, never {} — a bare object literal makes '__proto__' a
-   truthy id, which is how a previous product in this suite grew a supplier nobody hired.
    ===================================================================================== */
-function indexBy(list, key){
-  const m = Object.create(null);
-  (list||[]).forEach(x => { if(x && x[key]) m[x[key]] = x; });
-  return m;
-}
 const agentById  = id => (S.agents  ||[]).find(x => x && x.id === id) || null;
 const clientById = id => (S.clients ||[]).find(x => x && x.id === id) || null;
 const propById   = id => (S.props   ||[]).find(x => x && x.id === id) || null;
@@ -3236,7 +3231,6 @@ const propAddr = p => {
   const place = a.district ? districtLabel(a.district) : (a.city || '');
   return [street, place].filter(Boolean).join(', ');
 };
-const propCity = p => { const a = (p && p.addr) || {}; return a.city === 'yerevan' ? t('city_yerevan') : String(a.city||''); };
 const propPrice = p => safeAmd(p && p.askPrice, 0);
 const isLease = p => p && p.deal === 'lease';
 
@@ -3653,6 +3647,9 @@ function migrate(st){
   /* ---- THE LEDGER. Rows are normalised but never reordered and never dropped for being out of
      sequence: the fold is commutative, so sequence is not a property this log has. A row with an
      unknown type IS dropped, because a row nothing can fold is not a row. ---- */
+  /* Object.create(null), never {} — a bare object literal makes '__proto__' a truthy key, which
+     is how a sibling product in this suite grew a supplier nobody hired. Here it would let a row
+     whose uuid is the string '__proto__' claim to have been seen before any row was read. */
   const seen = Object.create(null);
   st.rows = st.rows.filter(r => r && ROW_TYPES.indexOf(r.type) >= 0 && r.uuid)
     .filter(r => { if(seen[r.uuid]) return false; seen[r.uuid] = 1; return true; })
@@ -4617,7 +4614,7 @@ function openDeal(id){
     h += '<div class="row"><span class="mlbl">' + escH(t('d_filing')) + '</span><span class="num">'
       + escH(fmt('d_filing_left', {n:left})) + '</span></div>'
       /* A COUNTDOWN THAT CANNOT SAY WHAT CALENDAR IT USED IS A COUNTDOWN NOBODY TRUSTS. */
-      + '<div class="prov">' + escH(t(holidayTableKnown(S.today) ? 'd_filing_src' : 'd_filing_src_unknown')) + '</div>';
+      + '<div class="prov">' + escH(t(holidayTableKnown(d.dates.notaryTs) ? 'd_filing_src' : 'd_filing_src_unknown')) + '</div>';
   }
   if(DEAL_RANK[d.stage] >= DEAL_RANK.deposit && d.price > 300000 && !d.void){
     /* a NOTICE, not a blocker. The app is not the compliance officer; it is the thing that says
@@ -4857,6 +4854,12 @@ function dataView(){
         + escH(t('dt_rebuild')) + '</button>' : '')
     + '<button class="btn ghost full" style="margin-top:10px" onclick="runSelfTest()">🧪 '
       + escH(t('dt_selftest')) + '</button>'
+    /* A REFUSED ROW IS NEVER SILENT. The ledger drops a row it cannot fold — an evidence row
+       carrying money, an unknown agent, a non-finite amount — and the count of those refusals is
+       on screen with its reason, because a books product that discards a row without saying so is
+       a books product nobody should trust. */
+    + (LEDGER_REJECTS.length ? '<div class="notice bad">' + escH('⚠ ' + t('dt_refused') + ': '
+        + LEDGER_REJECTS.length + ' · ' + LEDGER_REJECTS.map(x => x.why).join(', ')) + '</div>' : '')
     + '</div>';
 
   /* the privacy card: exactly what an agent's device can and cannot see. Written as a promise the
@@ -5267,6 +5270,18 @@ function estateSelfTest(){
        (S.deals||[]).map(d => d.id + ':' + rankFromLog(d.id) + '/' + DEAL_RANK[d.stage]).join(' '));
     ok('a lease never offers the cadastre stage',
        !stageApplies(dealById('d3'), 'registered') && stageApplies(dealById('d1'), 'registered'));
+
+    /* ---- THE 30-WORKING-DAY CADASTRE CLOCK ----
+       Counted Mon–Fri minus the shipped Armenian holiday table. 20 April 2026 is a Monday;
+       the weekdays after it up to and including Monday 27 April are 21, 22, 23, 24 and 27 — five
+       — of which 24 April is a shipped non-working day, so four are used and 26 remain. */
+    ok('the filing clock skips weekends and shipped holidays',
+       workingDaysLeft(D(2026,4,20), 30, D(2026,4,27)) === 26,
+       String(workingDaysLeft(D(2026,4,20), 30, D(2026,4,27))));
+    ok('the filing clock never runs below zero',
+       workingDaysLeft(D(2026,1,1), 5, D(2026,6,1)) === 0);
+    ok('an unknown year degrades to weekdays AND SAYS SO',
+       !holidayTableKnown(D(2031,4,20)) && holidayTableKnown(D(2026,4,20)));
 
     /* ---- migrate ---- */
     ok('migrate is idempotent', (() => {
