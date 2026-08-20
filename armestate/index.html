@@ -2102,8 +2102,19 @@ const holidayTableKnown = ts => HOLIDAY_YEARS.indexOf(new Date(safeInt(ts,0)).ge
    FOUR KEYS ARE FLAGGED UNVERIFIED and are marked in the comments below rather than quietly
    shipped. One twenty-minute call with a working Yerevan agent settles all four:
      · «ցուցադրություն» for a viewing        (alternative: «դիտում»)
+       — and with it the SHORT nav label «ցուցադրում», a second derivation of the same root.
+         The two forms are deliberate, not an oversight: the nav measures labels at 14px and
+         «Ցուցադրություն» (14 chars) is long enough to take the whole active cell and push
+         Գործարքներ and Վճարումներ behind «Ավելին» on a 390px phone. Everywhere there is room —
+         the screen title, the agent card, the Today card, the document — the full word is used.
+         Both forms go to the practitioner together, so one look settles both.
      · «առաջարկ» for an offer as a stage
      · «բացառիկ պայմանագիր» for an exclusive mandate
+     · the mandate kinds «Հանձնման» (to let) and «Վարձակալման» (to rent). The research's
+       attested form is «վարձակալության», so these two are UNVERIFIED trade shorthand and are
+       named here rather than shipped as settled vocabulary.
+     · the amount in words drops a leading single unit — «միլիոն դրամ», not «մեկ միլիոն դրամ».
+       That is the convention the sibling products already print; see amWords().
      · the word for the pipeline itself      («փուլ»? a Russian loanword in speech?)
    Nothing in this file invents an Armenian term. Where the research could not confirm one, the
    key carries a flag instead of a confident translation.
@@ -2134,7 +2145,7 @@ T.hy = {
   tab_props: "Գույք",
   tab_agents: "Գործակալներ",
   tab_clients: "Հաճախորդներ",
-  tab_views: "Ցուցադրություն",
+  tab_views: "Ցուցադրում",
   tab_docs: "Պայմանագրեր",
   tab_data: "Տվյալներ",
   /* the recovery net */
@@ -2334,6 +2345,7 @@ T.hy = {
   docs_title: "Պայմանագրեր",
   mn_kind_sell: "Վաճառքի",
   mn_kind_buy: "Գնման",
+  /* [?] both UNVERIFIED — see the terminology flag at the head of this table */
   mn_kind_let: "Հանձնման",
   mn_kind_rent: "Վարձակալման",
   ms_draft: "Սևագիր",
