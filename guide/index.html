@@ -40,10 +40,21 @@ h3{font-size:15px;margin:20px 0 6px}
 p{margin:8px 0}
 .card{background:#fff;border:1px solid var(--stroke);border-radius:14px;padding:18px 20px;margin:14px 0;box-shadow:0 1px 3px rgba(16,24,40,.05)}
 .tag{display:inline-block;background:#F1F3F6;border-radius:7px;padding:3px 9px;font-size:14px;font-weight:600;margin-right:4px;white-space:nowrap}
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
 table{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
+.tblwrap table{margin:0;min-width:300px}
+/* 44px floor. The language buttons were 60x37 and the footer links 17px tall — every other
+   document in this family already carries the floor, and these were the last three pages
+   that did not. An inline link inside flowing prose cannot BE 44px without breaking the
+   line box, so it gets the hit area instead: an absolutely positioned ::before that reaches
+   past the line box in both directions and takes the tap. */
+.langs button{min-height:44px}
+.foot a{display:inline-flex;align-items:center;min-height:44px}
+.wrap p a:not(.btn), .wrap li a:not(.btn){position:relative}
+.wrap p a:not(.btn)::before, .wrap li a:not(.btn)::before{content:"";position:absolute;inset:-13px 0;z-index:0}
 th{text-align:left;color:var(--dim);font-size:14px;text-transform:uppercase;letter-spacing:.4px;padding:8px 8px;border-bottom:1px solid var(--stroke)}
 td{padding:9px 8px;border-bottom:1px solid var(--sep);vertical-align:top}
-code,.mono{font-family:'IBM Plex Mono',monospace;font-size:14px;background:#F1F3F6;border-radius:6px;padding:1px 7px}
+code,.mono{font-family:'IBM Plex Mono',monospace;font-size:14px;background:#F1F3F6;border-radius:6px;padding:1px 7px;overflow-wrap:anywhere}
 a{color:#1D4ED8}
 .btn{display:inline-block;background:var(--gold);color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:11px;margin:6px 8px 0 0}
 .muted{color:var(--muted);font-size:14px}
@@ -51,7 +62,7 @@ a{color:#1D4ED8}
 ul{margin:8px 0;padding-left:22px}
 li{margin:5px 0}
 .foot{margin-top:48px;padding-top:20px;border-top:1px solid var(--stroke);color:var(--dim);font-size:14px}
-@media print{.langs,.btn{display:none}body{background:#fff}}
+@media print{.langs,.btn{display:none}body{background:#fff}.foot a{min-height:0;display:inline}}
 </style>
 </head>
 <body>
@@ -77,11 +88,11 @@ li{margin:5px 0}
   </div>
 
   <h2>Արագ մեկնարկ</h2>
-  <table>
+  <div class="tblwrap"><table>
     <tr><th>Դեր</th><th>Գաղտնաբառ</th><th>Ինչ է տեսնում</th></tr>
     <tr><td>🏪 Խանութ</td><td><code>nran2026</code></td><td>Պատվերներ, վաճառք, պարտքեր</td></tr>
     <tr><td>🚚 Մատակարար</td><td><code>aqua2026</code></td><td>Պատվերներ, պահեստներ, հաշվառում</td></tr>
-  </table>
+  </table></div>
   <p>Բացեք <a href="/armtrade/">ծրագիրը</a> երկու տարբեր սարքի վրա, մուտք գործեք տարբեր դերերով — և նրանք ավտոմատ կմիանան իրար․ պատվերը մի սարքից երևում է մյուսի վրա մի քանի վայրկյանում։ «Դեմո ռեժիմ» կոճակը բացում է երկու կողմը մեկ էկրանին՝ ներկայացումների համար։</p>
   <p>Վերևի կոճակներ՝ <span class="tag">🌙/☀️ թեմա</span> <span class="tag">🔗 կապ</span> <span class="tag">🔔 ծանուցումներ</span> <span class="tag">EN/РУ/ՀԱՅ լեզու</span> <span class="tag">⏭ հաջորդ օր (դեմո)</span></p>
 
@@ -136,11 +147,11 @@ li{margin:5px 0}
   </div>
 
   <h2>Quick start</h2>
-  <table>
+  <div class="tblwrap"><table>
     <tr><th>Role</th><th>Password</th><th>Sees</th></tr>
     <tr><td>🏪 Shop</td><td><code>nran2026</code></td><td>Orders, sales, debts</td></tr>
     <tr><td>🚚 Supplier</td><td><code>aqua2026</code></td><td>Orders, store stock, accounting</td></tr>
-  </table>
+  </table></div>
   <p>Open the <a href="/armtrade/">app</a> on two different devices and sign in with different roles — they connect automatically: an order placed on one device appears on the other within seconds. The "Demo mode" link shows both sides on one screen for presentations.</p>
   <p>Top bar: <span class="tag">🌙/☀️ theme</span> <span class="tag">🔗 connection</span> <span class="tag">🔔 notifications</span> <span class="tag">EN/РУ/ՀԱՅ language</span> <span class="tag">⏭ next day (demo)</span></p>
 
@@ -195,11 +206,11 @@ li{margin:5px 0}
   </div>
 
   <h2>Быстрый старт</h2>
-  <table>
+  <div class="tblwrap"><table>
     <tr><th>Роль</th><th>Пароль</th><th>Видит</th></tr>
     <tr><td>🏪 Магазин</td><td><code>nran2026</code></td><td>Заказы, продажи, долги</td></tr>
     <tr><td>🚚 Поставщик</td><td><code>aqua2026</code></td><td>Заказы, склады, учёт</td></tr>
-  </table>
+  </table></div>
   <p>Откройте <a href="/armtrade/">программу</a> на двух устройствах и войдите под разными ролями — они соединятся автоматически: заказ с одного устройства появится на другом за несколько секунд. «Демо-режим» показывает обе стороны на одном экране — удобно для презентаций.</p>
   <p>Верхняя панель: <span class="tag">🌙/☀️ тема</span> <span class="tag">🔗 связь</span> <span class="tag">🔔 уведомления</span> <span class="tag">EN/РУ/ՀԱՅ язык</span> <span class="tag">⏭ следующий день (демо)</span></p>
 
@@ -243,7 +254,7 @@ li{margin:5px 0}
 </div>
 
   <div class="foot">
-    ArmTrade · <a href="/armtrade/">assay-9e6.pages.dev/armtrade</a> · <a href="/pitch/">/pitch</a> · <a href="/">Բոլոր ծրագրերը · All programs · Все программы</a> · <a href="mailto:hrachya.javadyan@gmail.com">hrachya.javadyan@gmail.com</a>
+    ArmTrade · <a href="/armtrade/">assay-9e6.pages.dev/armtrade</a> · <a href="/pitch/">Ներկայացում · One-pager · Презентация</a> · <a href="/">Բոլոր ծրագրերը · All programs · Все программы</a> · <a href="mailto:hrachya.javadyan@gmail.com">hrachya.javadyan@gmail.com</a>
   </div>
 </div>
 <script>
