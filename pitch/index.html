@@ -56,7 +56,8 @@ img.shot{width:100%;border-radius:16px;border:1px solid var(--stroke2);display:b
 .cta2{display:inline-block;background:var(--glass);border:1px solid var(--stroke2);color:var(--ink);text-decoration:none;font-weight:700;font-size:14px;padding:13px 22px;border-radius:13px;margin:8px 0 0 10px}
 .pill{display:inline-block;background:rgba(34,211,238,.14);border:1px solid rgba(34,211,238,.3);color:#7DE9F7;font-size:14px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;padding:5px 13px;border-radius:99px;margin-bottom:18px}
 .foot{margin-top:54px;color:var(--dim);font-size:14px;border-top:1px solid var(--stroke);padding-top:22px}
-.foot a{color:var(--gold2);text-decoration:none}
+.foot a{color:var(--gold2);text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
+@media print{.foot a{min-height:0;display:inline}}
 .prob{color:var(--muted);font-size:14.5px}
 .prob b{color:var(--ink)}
 </style>
