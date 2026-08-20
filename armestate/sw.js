@@ -11,7 +11,16 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armestate-shell-v3';   /* v3: the deal that can be marked Տապալված (with its derived
+const CACHE = 'armestate-shell-v4';   /* v4: amending commission terms on a deal that has ALREADY
+      EARNED — the product adjusts rather than refuses, showing every adjustment row before it
+      posts one and never rewriting the earn rows; editing a property and a client in place, with
+      the cadastral duplicate rule excluding the record itself, a moved ask price joining the
+      price history, and a correction trail read back out of the log; DOCUMENT 5, the deal closing
+      sheet, whose commission act foots to its own printed column and prints the ledger beside it;
+      and a commission statement whose period is a closed interval — this month, last month, this
+      quarter, this year, all time — with the period in the document number.
+      A stale shell strands an agent on a build with no way to correct a fee.
+      v3: the deal that can be marked Տապալված (with its derived
       reversal rows), the agent and per-deal share editors, the offer → deal path and the printable
       Առաջարկի թերթիկ, the ways into the product (a property, a client, a service contract), a
       commission export that no longer bills a collapsed deal, and the lease that bills the
