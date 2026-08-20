@@ -2588,6 +2588,27 @@ T.hy = {
   ed_trail: "Ուղղումների պատմությունը",
   rsn_client_edit: "հաճախորդի տվյալների ուղղում",
   rsn_prop_edit: "գույքի տվյալների ուղղում",
+  /* ---- DOCUMENT 5 · the closing sheet ---- */
+  doc_ds_title: "Գործարքի ամփոփաթերթ",
+  doc_ds_open: "Ամփոփաթերթ",
+  doc_ds_walk: "Փուլերի ընթացքը",
+  doc_ds_closing: "Փակման տվյալները",
+  doc_ds_notary: "Նոտար · ակտի համար",
+  doc_ds_cert: "Վկայական",
+  doc_ds_filed: "Ներկայացվել է կադաստր",
+  doc_ds_unified: "Միասնական տեղեկանք",
+  doc_ds_evid: "Ցուցադրությունները՝ որպես հիմնավորում",
+  doc_ds_evid_none: "Այս գործարքի համար ցուցադրության թերթիկ գրանցված չէ։",
+  doc_ds_split: "Միջնորդավճարի բաշխումը",
+  doc_ds_nofoot: "Տողերի գումարը չի համապատասխանում միջնորդավճարին։",
+  doc_ds_ledger: "Ինչ է գրված մատյանում",
+  doc_ds_ledger_tot: "Մատյանի գումարը",
+  doc_ds_agrees: "Մատյանը համընկնում է պայմանների հետ։",
+  doc_ds_differs: "Մատյանը տարբերվում է պայմաններից՝ {n} ֏։ Տես ճշգրտման տողերը։",
+  doc_ds_nofee: "Միջնորդավճարը սույն գործարքով համաձայնեցված չէ։",
+  doc_ds_reversed: "Գործարքը տապալվել է. միջնորդավճարը հետ է շրջվել, մատյանում մնացորդը զրո է։",
+  doc_ds_sameparty: "Երկու կողմում նույն անձն է գրանցված։ Ստուգեք գործարքի տվյալները։",
+  doc_ds_note: "Սույն ամփոփաթերթը գործարքի ներքին փաստաթուղթ է և պահվում է գործի թղթապանակում։",
   /* ---- the deposit, chosen explicitly ---- */
   dep_title: "Նախավճար / կանխավճար",
   dep_kind_q: "Ո՞ր գործիքն է",
@@ -3179,6 +3200,27 @@ T.en = {
   ed_trail: "Corrections",
   rsn_client_edit: "client details corrected",
   rsn_prop_edit: "property details corrected",
+  /* ---- DOCUMENT 5 · the closing sheet ---- */
+  doc_ds_title: "Deal closing sheet",
+  doc_ds_open: "Closing sheet",
+  doc_ds_walk: "How the deal walked",
+  doc_ds_closing: "Closing facts",
+  doc_ds_notary: "Notary · act number",
+  doc_ds_cert: "Certificate",
+  doc_ds_filed: "Filed with the cadastre",
+  doc_ds_unified: "Unified reference",
+  doc_ds_evid: "The viewings that support the claim",
+  doc_ds_evid_none: "No viewing record was logged for this deal.",
+  doc_ds_split: "How the commission is split",
+  doc_ds_nofoot: "The rows do not sum to the commission.",
+  doc_ds_ledger: "What the ledger says",
+  doc_ds_ledger_tot: "Ledger total",
+  doc_ds_agrees: "The ledger agrees with the terms.",
+  doc_ds_differs: "The ledger differs from the terms by {n} AMD. See the adjustment rows.",
+  doc_ds_nofee: "No commission has been agreed for this deal.",
+  doc_ds_reversed: "The deal fell through; the commission was reversed and the ledger nets to zero.",
+  doc_ds_sameparty: "The same person is recorded on both sides. Check the deal record.",
+  doc_ds_note: "This sheet is an internal record of the deal and is kept in the case file.",
   /* ---- the deposit, chosen explicitly ---- */
   dep_title: "Նախավճար / կանխավճար",
   dep_kind_q: "Which instrument",
@@ -3766,6 +3808,27 @@ T.ru = {
   ed_trail: "История исправлений",
   rsn_client_edit: "исправление данных клиента",
   rsn_prop_edit: "исправление данных объекта",
+  /* ---- DOCUMENT 5 · the closing sheet ---- */
+  doc_ds_title: "Итоговый лист сделки",
+  doc_ds_open: "Итоговый лист",
+  doc_ds_walk: "Ход этапов",
+  doc_ds_closing: "Данные закрытия",
+  doc_ds_notary: "Нотариус · номер акта",
+  doc_ds_cert: "Свидетельство",
+  doc_ds_filed: "Подано в кадастр",
+  doc_ds_unified: "Единая справка",
+  doc_ds_evid: "Показы как основание",
+  doc_ds_evid_none: "По этой сделке лист показа не зарегистрирован.",
+  doc_ds_split: "Распределение комиссии",
+  doc_ds_nofoot: "Сумма строк не совпадает с комиссией.",
+  doc_ds_ledger: "Что записано в книге",
+  doc_ds_ledger_tot: "Итог по книге",
+  doc_ds_agrees: "Книга совпадает с условиями.",
+  doc_ds_differs: "Книга отличается от условий на {n} ֏. См. корректирующие строки.",
+  doc_ds_nofee: "Комиссия по этой сделке не согласована.",
+  doc_ds_reversed: "Сделка сорвалась; комиссия сторнирована, остаток по книге — ноль.",
+  doc_ds_sameparty: "С обеих сторон записан один и тот же человек. Проверьте данные сделки.",
+  doc_ds_note: "Настоящий лист — внутренний документ сделки, хранится в деле.",
   /* ---- the deposit, chosen explicitly ---- */
   dep_title: "Նախավճար / կանխավճար",
   dep_kind_q: "Какой инструмент",
@@ -4817,7 +4880,7 @@ function seedState(){
     P('p1','01-001-0234-0012','flat','sale','kentron','Թումանյան','12', 84, 3, 4, 9, 1975, 78000000,'c1','a1','reserved', 96),
     P('p2','01-002-0117-0043','flat','sale','arabkir','Կոմիտաս','52',   62, 2, 7,14, 2019, 46500000,'c6','a2','active',   61),
     P('p3','01-005-0091-0208','flat','sale','davtashen','4-րդ թաղ.','21',90, 3, 2, 9, 1988, 39000000,'c5','a1','sold',    174),
-    P('p4','01-009-0330-0077','flat','sale','shengavit','Բագրատունյաց','8',42,1, 5,16, 2021, 27900000,'c6','a3','active',  22),
+    P('p4','01-009-0330-0077','flat','sale','shengavit','Բագրատունյաց','8',42,1, 5,16, 2021, 27900000,'c5','a3','active',  22),
     P('p5','01-004-0155-0031','flat','lease','kanaker','Ազատության','24', 58, 2, 3, 9, 1982,   320000,'c3','a3','reserved', 34),
     P('p6','01-001-0208-0004','flat','lease','kentron','Սարյան','30',    66, 2, 6, 8, 2016,   450000,'c3','a1','active',    12),
     P('p7','01-003-0402-0119','house','sale','avan','Ձորափի','7',       210, 5, 0, 2, 2008, 95000000,'c5','a2','active',   130),
@@ -4923,7 +4986,7 @@ function seedState(){
     /* d4 — THE DEAL THAT CANNOT MOVE. An accepted offer, an agent attached, and NO TERMS. It
        shows on Today as the card that says a human has to type a number, and it is the whole
        argument of §1.1 rendered as a screen. */
-    { id:'d4', propertyId:'p4', sellerClientId:'c6', buyerClientId:'c6', mandateId:'', kind:'sale',
+    { id:'d4', propertyId:'p4', sellerClientId:'c5', buyerClientId:'c6', mandateId:'', kind:'sale',
       price:27000000,
       agents:[ {agentId:'a3', side:'selling', shareBp:2500, joinedTs:ago(10)} ],
       terms:null, stage:'agreed', stageTs:ago(10),
@@ -5853,6 +5916,10 @@ function openDeal(id){
   /* ---- THE DEAL CAN FAIL, AND THE PRODUCT HAS TO BE ABLE TO SAY SO ----
      Failure is not a stage and it is not a delete: it is a set-once record with a reason, and it
      unwinds the money it has to unwind, on the record, in front of the owner. */
+  /* THE CLOSING SHEET — what goes in the folder when this is over, and the one document that
+     collects the parties, the property, the evidence and the money in one place. */
+  h += '<button class="btn ghost full" style="margin-top:12px" onclick="openDealSheetDoc('
+    + jsArg(d.id) + ')">🧾 ' + escH(t('doc_ds_open')) + '</button>';
   if(!(d.void && d.void.ts)){
     h += '<button class="btn ghost full" style="margin-top:8px" onclick="openVoid(' + jsArg(d.id)
       + ')">✖️ ' + escH(t('d_void_do')) + '</button>';
@@ -8557,6 +8624,222 @@ function saveMandateEdit(){
 }
 
 /* =====================================================================================
+   DOCUMENT 5 · Գործարքի ամփոփաթերթ — the closing sheet for the file
+   The one document that is not signed by a counterparty and is not sent anywhere: it is what
+   goes in the folder when the deal is done, and what gets pulled out three years later when
+   somebody asks what happened. So it carries everything the other four documents each carry a
+   piece of — the parties, the property by its cadastral code, the price in words, the deposit
+   and which instrument it was, how the deal walked its stages and on what dates, the viewings
+   that support the fee claim, the commission with its basis and its split, and what each subject
+   actually netted OUT OF THE LEDGER rather than out of the terms.
+   THE ACT FOOTS. The commission table's total is the sum of the printed column, each row
+   reproduces from its own printed operands (share of the fee, in dram), and the ledger table
+   beside it foots to the same figure or says plainly that it does not — which is the only honest
+   way to print a deal that has been amended or reversed.
+   ===================================================================================== */
+function dealDocDate(d){
+  const dt = (d && d.dates) || {};
+  return dt.registeredTs || dt.notaryTs || dt.settledTs || dt.agreedTs || d.stageTs || S.today;
+}
+/* the stages this deal actually reached, with the date each one is stamped with. Read from the
+   deal's own date fields — the log carries the same walk, but a printed sheet must not depend on
+   a row having survived a compaction. */
+function dealStageWalk(d){
+  const dt = (d && d.dates) || {};
+  return [['agreed', dt.agreedTs], ['deposit', dt.depositTs], ['notary', dt.notaryTs],
+          ['registered', dt.registeredTs], ['invoiced', dt.invoicedTs], ['settled', dt.settledTs]]
+    .filter(x => x[1] && DEAL_RANK[x[0]] <= DEAL_RANK[d.stage]);
+}
+function openDealSheetDoc(dealId){
+  const d = dealById(dealId); if(!d) return;
+  MODAL_RE = () => openDealSheetDoc(dealId);
+  const ag = S.agency || {};
+  const pr = propById(d.propertyId);
+  const lease = d.kind === 'lease';
+  const seller = clientById(d.sellerClientId), buyer = clientById(d.buyerClientId);
+  const al = allocation(d);
+  const fee = feeOf(d.terms);
+  const ps = (fee != null) ? payerSplit(d.terms, fee) : null;
+  const net = dealNetBySubject(d.id);
+  const vs = supportingViewings(d);
+
+  let h = '<h3>🧾 ' + escH(t('doc_ds_title')) + '</h3>'
+    + '<div class="muted">' + escH(t('doc_no') + ' ' + dealDocNo(d) + ' · ' + fdate(dealDocDate(d))) + '</div>'
+    + '<hr class="actrule">'
+    /* BOTH PARTIES, with ՀՎՀՀ where it applies — and named for the KIND of deal, so a lease
+       never prints a landlord as a seller. */
+    + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
+      + docParty(lease ? t('d_landlord') : t('d_seller'), seller ? seller.name : '—',
+          [seller && seller.phone, seller && seller.tin ? docTin(seller.tin) : ''].filter(Boolean).join(' · '))
+      + docParty(lease ? t('d_tenant') : t('d_buyer'), buyer ? buyer.name : '—',
+          [buyer && buyer.phone, buyer && buyer.tin ? docTin(buyer.tin) : ''].filter(Boolean).join(' · '))
+    + '</div>'
+    + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap;margin-top:10px">'
+      + docParty(t('doc_agency'), ag.name, docTin(ag.tin) + (ag.addr ? ' · ' + ag.addr : ''))
+    + '</div>';
+
+  /* ---- the thing that was sold or let ---- */
+  h += '<div class="sec">🏠 ' + escH(t('doc_prop')) + '</div>';
+  if(pr){
+    h += '<div class="row"><span>' + (KIND_EM[pr.kind] || '🏠') + ' ' + escH(propAddr(pr))
+        + '</span><span class="cad">' + escH(pr.cadCode) + '</span></div>'
+      + '<div class="prov">' + escH([kindLabel(pr.kind), dealKindLabel(pr.deal),
+          pr.area ? pr.area + ' մ²' : '', pr.rooms ? pr.rooms + ' ' + t('p_rooms') : '',
+          pr.floors ? pr.floor + '/' + pr.floors + ' ' + t('p_floor') : ''].filter(Boolean).join(' · ')) + '</div>';
+  } else { h += '<div class="muted">—</div>'; }
+
+  h += '<div class="row" style="margin-top:10px"><span class="mlbl">'
+      + escH(lease ? t('p_permo') : t('d_price')) + '</span>' + amd(d.price) + '</div>'
+    /* THE PRICE IN WORDS, IN ARMENIAN, on every language of the UI — it is the language the
+       document is filed in. */
+    + '<div class="muted">' + escH(t('stmt_words')) + sepC() + '<b>' + escH(amWords(d.price)) + '</b></div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('d_stage')) + '</span><span>'
+      + escH(stageLabel(d.stage)) + '</span></div>'
+    /* ONE PERSON ON BOTH SIDES IS A DATA ERROR, and a document that prints it twice without
+       comment is a document that discredits itself. Say it on the paper. */
+    + ((seller && buyer && seller.id === buyer.id)
+        ? '<div class="notice bad">' + escH('⚠️ ' + t('doc_ds_sameparty')) + '</div>' : '');
+
+  if(d.void && d.void.ts){
+    h += '<div class="notice bad">' + escH('✖️ ' + t('d_void') + sepC() + d.void.reason
+      + ' · ' + fdate(d.void.ts)) + '</div>';
+  }
+
+  /* ---- the deposit, and WHICH instrument it was: the two have different consequences ---- */
+  if(d.deposit && d.deposit.amount){
+    h += '<div class="sec">🤝 ' + escH(t('dep_title')) + '</div>'
+      + '<div class="row"><span class="mlbl">' + escH(t('dep_' + d.deposit.kind)) + '</span>'
+        + amd(d.deposit.amount) + '</div>'
+      + '<div class="prov">' + escH(fdate(d.deposit.ts)) + '</div>'
+      /* BOTH SENTENCES ARE PRINTED UNDER THE CHOSEN OPTION: նախավճար is forfeit / returned
+         double, կանխավճար is simply returned. The consequence belongs on the paper. */
+      + '<div class="prov">' + escH(t(d.deposit.kind === 'nakh' ? 'dep_nakh_law' : 'dep_kankh_law')) + '</div>';
+  }
+
+  /* ---- how it walked ---- */
+  const walk = dealStageWalk(d);
+  if(walk.length){
+    h += '<div class="sec">🗓️ ' + escH(t('doc_ds_walk')) + '</div>'
+      + walk.map(x => '<div class="row"><span class="mlbl">' + escH(stageLabel(x[0]))
+          + '</span><span>' + escH(fdate(x[1])) + '</span></div>').join('');
+  }
+
+  /* ---- the notary, the certificate, the filing: the closing facts, printed if recorded ---- */
+  const closing = [
+    [t('doc_ds_notary'), [d.notary && d.notary.name, d.notary && d.notary.actNo].filter(Boolean).join(' · ')],
+    [t('doc_ds_cert'), [d.cert && d.cert.no, d.cert && d.cert.ts ? fdate(d.cert.ts) : ''].filter(Boolean).join(' · ')],
+    [t('doc_ds_filed'), d.dates && d.dates.filedTs ? fdate(d.dates.filedTs) : ''],
+    [t('doc_ds_unified'), d.unifiedCertTs ? fdate(d.unifiedCertTs) : '']
+  ].filter(x => x[1]);
+  if(closing.length){
+    h += '<div class="sec">🏛 ' + escH(t('doc_ds_closing')) + '</div>'
+      + closing.map(x => '<div class="row"><span class="mlbl">' + escH(x[0]) + '</span><span>'
+          + escH(x[1]) + '</span></div>').join('');
+  }
+
+  /* ---- THE EVIDENCE. The viewing, not the listing, is what supports the fee claim in this
+     product, and the closing sheet is where an owner needs that list without hunting for it. ---- */
+  h += '<div class="sec">🔑 ' + escH(t('doc_ds_evid')) + '</div>'
+    + (vs.length
+        ? vs.map(v => '<div class="row"><span>' + escH(viewDocNo(v) + sepC() + fdatetime(v.ts))
+            + '</span><span>' + escH(clientName(v.clientId) + ' · '
+              + (v.signedTs ? t('vw_signed') : t('vw_unsigned'))) + '</span></div>').join('')
+        : '<div class="muted">' + escH(t('doc_ds_evid_none')) + '</div>');
+
+  /* ---- THE COMMISSION ---- */
+  h += '<div class="sec">💼 ' + escH(t('cm_terms')) + '</div>';
+  if(!termsComplete(d.terms)){
+    /* A CLOSING SHEET WITH NO AGREED FEE SAYS SO ON THE PAPER, in a sentence about this deal —
+       never the product's own reasoning, which a reader holding the sheet cannot see. */
+    h += '<div>' + escH(t('doc_ds_nofee')) + '</div>'
+      + '<button class="btn primary full noprint" style="margin-top:10px" onclick="openTerms('
+        + jsArg(d.id) + ')">' + escH(t('cm_fill')) + '</button>';
+  } else {
+    h += '<div class="row"><span class="mlbl">' + escH(t('cm_base')) + '</span><span>'
+        + escH(basisLabel(d.terms.basis)) + ' · ' + amdTxt(d.terms.base) + ' ֏</span></div>'
+      + '<div class="row"><span class="mlbl">' + escH(t('cm_rate')) + '</span><span class="num">'
+        + escH(rateAsTyped(d.terms)) + '</span></div>'
+      + '<div class="row"><span class="mlbl">' + escH(t('cm_payer')) + '</span><span>'
+        + escH(payerLabelK(d.kind, d.terms.payer)) + '</span></div>'
+      + (d.terms.payer === 'split' && ps
+          ? '<div class="row"><span class="mlbl">' + escH(payerLabelK(d.kind,'seller') + ' · ' + bpTxt(ps.sellerBp))
+            + '</span>' + amd(ps.seller) + '</div>'
+          + '<div class="row"><span class="mlbl">' + escH(payerLabelK(d.kind,'buyer') + ' · ' + bpTxt(ps.buyerBp))
+            + '</span>' + amd(ps.buyer) + '</div>' : '')
+      + '<div class="row"><span class="mlbl">' + escH(t('cm_trigger')) + '</span><span>'
+        + escH(triggerLabel(d.terms.trigger)) + '</span></div>'
+      + '<div class="row"><span class="mlbl">' + escH(t('cm_vat')) + '</span><span>'
+        + escH(vatLabel(d.terms.vat)) + '</span></div>'
+      + '<div class="row actsep" style="margin-top:9px;padding-top:9px"><b>' + escH(t('cm_fee'))
+        + '</b>' + amd(fee) + '</div>'
+      + '<div class="muted" style="margin-top:6px">' + escH(t('stmt_words')) + sepC() + '<b>'
+        + escH(amWords(fee)) + '</b></div>'
+      + (d.terms.amendTs ? '<div class="prov">' + escH(fmt('cm_amended',
+          {d: fdate(d.terms.amendTs), a: d.terms.amendedFrom || '—'})) + '</div>' : '')
+      + (d.terms.setTs ? '<div class="prov">' + escH(t('cm_setby') + sepC()
+          + actorName(d.terms.setBy) + ' · ' + fdate(d.terms.setTs)) + '</div>' : '');
+
+    /* THE ACT TABLE, AND IT FOOTS. Every row prints its own operands — the share, then the dram
+       that share produced — and the last line is the sum of the printed column, not a separately
+       computed figure. */
+    if(al && !al.over){
+      const printed = al.rows.reduce((a, r) => a + r.amount, 0) + al.agencyKeep;
+      h += '<div class="sec">💰 ' + escH(t('doc_ds_split')) + '</div>'
+        + '<div class="spwrap"><table class="sp"><thead><tr><th>' + escH(t('doc_col'))
+          + '</th><th class="n">' + escH(t('cm_share')) + '</th><th class="n">'
+          + escH(t('amount_col')) + '</th></tr></thead><tbody>'
+        + al.rows.map(r => '<tr><td>' + escH(agentEm(r.agentId) + ' ' + agentName(r.agentId))
+            + (r.side ? '<div class="muted">' + escH(t('ag_side_' + r.side)) + '</div>' : '')
+            + '</td><td class="n">' + escH(bpTxt(r.shareBp)) + '</td><td class="n">'
+            + amdTxt(r.amount) + '</td></tr>').join('')
+        + '<tr><td>' + escH(t('cm_keep')) + '</td><td class="n">'
+          + escH(bpTxt(Math.max(0, 10000 - al.sumBp))) + '</td><td class="n">'
+          + amdTxt(al.agencyKeep) + '</td></tr>'
+        + '<tr class="tot"><td>' + escH(t('cm_fee')) + '</td><td class="n"></td><td class="n">'
+          + amdTxt(printed) + '</td></tr></tbody></table></div>'
+        + '<div class="prov">' + escH(printed === fee ? '✓ ' + t('cm_recon')
+            : '⚠️ ' + t('doc_ds_nofoot')) + '</div>';
+    } else if(al && al.over){
+      h += '<div class="notice bad">' + escH('⚠️ ' + t('cm_over')) + '</div>';
+    }
+
+    /* WHAT THE LEDGER ACTUALLY SAYS, beside what the terms say. On a clean deal the two agree
+       and the sheet says so; on an amended or reversed one they do not, and a closing sheet that
+       printed only the terms would be the more comfortable of two documents and the wrong one. */
+    const ids = Object.keys(net);
+    if(ids.length){
+      const ledger = ids.reduce((a,k) => a + net[k], 0);
+      h += '<div class="sec">📒 ' + escH(t('doc_ds_ledger')) + '</div>'
+        + '<div class="spwrap"><table class="sp"><tbody>'
+        + ids.sort().map(k => '<tr><td>' + escH(subjectName(k)) + '</td><td class="n">'
+            + (net[k] < 0 ? '−' : '') + amdTxt(Math.abs(net[k])) + '</td></tr>').join('')
+        + '<tr class="tot"><td>' + escH(t('doc_ds_ledger_tot')) + '</td><td class="n">'
+          + (ledger < 0 ? '−' : '') + amdTxt(Math.abs(ledger)) + '</td></tr></tbody></table></div>'
+        /* A VOIDED DEAL'S LEDGER NETS TO ZERO BY DESIGN — the reversal is the record, not a
+           discrepancy — so the sheet must not point the reader at adjustment rows that do not
+           exist. Three states, three sentences, and never the wrong one. */
+        + '<div class="prov">' + escH(
+            (d.void && d.void.ts) ? '✖️ ' + t('doc_ds_reversed')
+            : ledger === fee ? '✓ ' + t('doc_ds_agrees')
+            : fmt('doc_ds_differs', {n: amdTxt(Math.abs(fee - ledger))})) + '</div>';
+    }
+  }
+
+  /* THE SIGNATURE RULE FOR AN INTERNAL SHEET IS NOT THE ONE FOR A CONTRACT. Nobody outside the
+     agency signs this — printing a client signature line on a file document would invite somebody
+     to collect a signature that means nothing. The two who attest that the file is complete are
+     the agency and the agent who ran the deal, so those are the two lines. */
+  const lead = (al && al.rows.length) ? agentById(al.rows[0].agentId) : null;
+  h += '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
+      + docSign(t('doc_sign_agency') + (ag.name ? ' · ' + ag.name : ''))
+      + docSign(t('doc_agent') + (lead ? ' · ' + lead.name : ''))
+    + '</div>'
+    + docFoot(t('doc_ds_note'))
+    + docTail();
+  openModal(h);
+}
+
+/* =====================================================================================
    CSV
    Two non-obvious properties, both deliberate and both easy to lose in a rewrite:
    1. A UTF-8 BOM, because the accountant opens this in Windows Excel and without the BOM every
@@ -9173,6 +9456,49 @@ function estateSelfTest(){
         const earn = rowsOfDeal(d.id).filter(r => r.type === 'earn').reduce((a,r) => a+r.amt, 0);
         return earn === al.fee;
       });
+    })());
+
+    /* ---- DOCUMENT 5 · the closing sheet ----
+       An act foots or it is not an act: the printed total must be the SUM OF THE PRINTED COLUMN,
+       and each printed row must reproduce from its own printed operands. */
+    ok('the closing sheet\'s commission table foots to the printed column', (() => {
+      return (S.deals||[]).every(d => {
+        const al = allocation(d);
+        if(!al || al.over) return true;
+        const printed = al.rows.reduce((a,r) => a + r.amount, 0) + al.agencyKeep;
+        return printed === al.fee && printed === feeOf(d.terms);
+      });
+    })());
+    ok('the closing sheet\'s ledger table foots to the fold', (() => {
+      return (S.deals||[]).every(d => {
+        const net = dealNetBySubject(d.id);
+        const sum = Object.keys(net).reduce((a,k) => a + net[k], 0);
+        const rows = rowsOfDeal(d.id).filter(isMoneyRow).filter(r => r.type !== 'payout');
+        return sum === rows.reduce((a,r) => a + r.amt, 0);
+      });
+    })());
+    /* A VOIDED DEAL NETS TO ZERO, which is why the sheet prints «reversed» rather than pointing
+       the reader at adjustment rows that do not exist. */
+    ok('a voided deal nets to zero in the closing sheet\'s ledger table', (() => {
+      const vs = (S.deals||[]).filter(d => d.void && d.void.ts);
+      if(!vs.length) return true;
+      return vs.every(d => { const n = dealNetBySubject(d.id);
+        return Object.keys(n).reduce((a,k) => a + n[k], 0) === 0; });
+    })());
+    ok('the stage walk never runs ahead of the deal\'s own stage',
+       (S.deals||[]).every(d => dealStageWalk(d).every(x => x[1] > 0
+         && DEAL_RANK[x[0]] <= DEAL_RANK[d.stage])));
+    ok('every deal prints a real document date',
+       (S.deals||[]).every(d => dealDocDate(d) > 0));
+    /* ONE PERSON CANNOT BE BOTH SIDES OF ONE DEAL. The sheet flags it; the seed must not have it. */
+    ok('no deal records the same client on both sides',
+       (S.deals||[]).every(d => !d.sellerClientId || d.sellerClientId !== d.buyerClientId),
+       (S.deals||[]).filter(d => d.sellerClientId === d.buyerClientId).map(d => d.id).join(' '));
+    ok('a lease closing sheet names the landlord and the tenant, never the seller', (() => {
+      const d = (S.deals||[]).find(x => x.kind === 'lease');
+      if(!d) return true;
+      return t('d_landlord') !== t('d_seller') && t('d_tenant') !== t('d_buyer')
+        && payerLabelK('lease','seller') !== payerLabelK('sale','seller');
     })());
 
     /* ---- stage as a monotone rank on the row ---- */
