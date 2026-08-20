@@ -612,7 +612,10 @@ body.light .acc>summary{background:var(--surface)}
   font-size:var(--fs-micro);font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.9)}
 
 /* ---------- inputs ---------- */
-.search,input[type="text"],input[type="number"],input[type="password"],input[type="date"],textarea,select{
+/* every control this product uses, not only the three it started with: a tel field and a time
+   field are inputs a person types into with one thumb and they get the same 48px target */
+.search,input[type="text"],input[type="number"],input[type="password"],input[type="date"],
+input[type="tel"],input[type="time"],input[type="email"],textarea,select{
   width:100%;padding:0 var(--s3);min-height:48px;
   border:var(--bw-strong) solid var(--stroke2);border-radius:var(--r-sm);
   font-size:16px;                                  /* 16px prevents iOS zoom-on-focus */
@@ -2693,6 +2696,7 @@ T.hy = {
   of_new: "Առաջարկ գրանցել",
   of_none: "Առաջարկ չկա",
   of_price: "Առաջարկվող գինը, ֏",
+  of_price_lbl: "Առաջարկվող գինը",
   of_save: "Պահել առաջարկը",
   of_saved: "Առաջարկը գրանցվեց",
   of_accept: "Ընդունել",
@@ -3258,6 +3262,7 @@ T.en = {
   of_new: "Record an offer",
   of_none: "No offers",
   of_price: "Offered price, ֏",
+  of_price_lbl: "Offered price",
   of_save: "Save the offer",
   of_saved: "Offer recorded",
   of_accept: "Accept",
@@ -3819,6 +3824,7 @@ T.ru = {
   of_new: "Записать предложение",
   of_none: "Предложений нет",
   of_price: "Предлагаемая цена, ֏",
+  of_price_lbl: "Предлагаемая цена",
   of_save: "Сохранить предложение",
   of_saved: "Предложение записано",
   of_accept: "Принять",
@@ -4732,7 +4738,7 @@ function seedState(){
   /* the hour is part of the evidence, so the seed carries one */
   const V = (id, prop, client, agent, days, outcome, signed, hhmm) => ({
     id:id, propertyId:prop, clientId:client, agentId:agent,
-    ts: ago(days) + Math.round((hhmm == null ? 12 : hhmm) * 3600000),
+    ts: dayStart(ago(days)) + Math.round((hhmm == null ? 12 : hhmm) * 3600000),
     outcome:outcome,
     signedTs: signed ? ago(days) : 0, signedBy: signed ? client : '', note:'', uuid:'' });
   st.viewings = [
@@ -5104,6 +5110,9 @@ function feeWhy(deal){
    the front page — the sibling product's hardest lesson was that capability without focus reads
    as complexity.
    ===================================================================================== */
+/* a card body joins the parts that EXIST. A property whose row is missing from an adopted
+   payload used to leave the sentence starting with a bare «·». */
+const cardBody = parts => parts.filter(x => x != null && String(x).trim() !== '').join(' · ');
 function homeCards(){
   const out = [];
 
@@ -5135,7 +5144,7 @@ function homeCards(){
     /* A MISSED DEADLINE IS NOT THE SAME CARD AS A DEADLINE APPROACHING, and it goes to the top. */
     out.push({ k:'filing:'+d.id, tone:'bad', icon:'⏳', prio: left < 0 ? -1 : 0,
       title: left < 0 ? t('c_clock_over') : t('c_clock'),
-      body: propAddr(propById(d.propertyId)) + ' · ' + filingLeftText(left),
+      body: cardBody([propAddr(propById(d.propertyId)), filingLeftText(left)]),
       tab:'deals', btn:t('c_btn_deal'), act:'openDeal(' + jsArg(d.id) + ')' });
   });
   (S.mandates||[]).forEach(m => {
@@ -5167,7 +5176,7 @@ function homeCards(){
     const idle = daysBetween(d.stageTs, S.today);
     if(idle < S.cfg.stuckDays) return;
     out.push({ k:'stuck:'+d.id, tone:'', icon:'🐌', title:t('c_stuck'), btn:t('c_btn_deal'),
-      body: propAddr(propById(d.propertyId)) + ' · ' + stageLabel(d.stage) + ' · ' + fmt('c_stuck_b',{n:idle}),
+      body: cardBody([propAddr(propById(d.propertyId)), stageLabel(d.stage), fmt('c_stuck_b',{n:idle})]),
       tab:'deals', act:'openDeal(' + jsArg(d.id) + ')' });
   });
 
@@ -5175,7 +5184,7 @@ function homeCards(){
      has to type a number. There is no default to fall back on and that is deliberate. */
   (S.deals||[]).filter(d => !d.void && !termsComplete(d.terms)).forEach(d => {
     out.push({ k:'terms:'+d.id, tone:'bad', icon:'✍️', title:t('c_terms'), btn:t('cm_fill'),
-      body: propAddr(propById(d.propertyId)) + ' · ' + t('c_terms_b'), tab:'deals',
+      body: cardBody([propAddr(propById(d.propertyId)), t('c_terms_b')]), tab:'deals',
       act:'openTerms(' + jsArg(d.id) + ')' });
   });
 
@@ -7390,7 +7399,7 @@ function openOfferSheet(id){
       + escH(pr ? propAddr(pr) : '—') + '</span></div>'
     + '<div class="row"><span class="mlbl">' + escH(t('p_cad')) + '</span><span class="cad">'
       + escH(pr ? pr.cadCode : '—') + '</span></div>'
-    + '<div class="row"><span class="mlbl">' + escH(t('of_price')) + '</span>' + amd(o.price) + '</div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('of_price_lbl')) + '</span>' + amd(o.price) + '</div>'
     + '<div class="muted">' + escH(t('stmt_words')) + sepC() + '<b>' + escH(amWords(o.price)) + '</b></div>';
   if(o.depositAmount){
     h += '<div class="sec">⚖️ ' + escH(t('dep_title')) + '</div>'
