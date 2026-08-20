@@ -2255,6 +2255,7 @@ T.hy = {
   d_filing_left: "մնաց {n} աշխատանքային օր",
   d_filing_src: "աշխատանքային օր · 2026 թ. տոնական օրերի ցանկով",
   d_filing_src_unknown: "աշխատանքային օր · այս տարվա տոնական օրերի ցանկը չկա",
+  d_checklist: "Կնքման ստուգաթերթ",
   d_consents: "Համաձայնություններ",
   d_cons_spouse: "Ամուսնու համաձայնություն",
   d_cons_co: "Համասեփականատերերի համաձայնություն",
@@ -2345,6 +2346,11 @@ T.hy = {
   dt_ok: "Մատյանը և հաշվիչը համընկնում են։",
   dt_bad: "Հաշվիչը չի համընկնում մատյանի հետ։ Մատյանը ճիշտ է։",
   dt_rebuild: "Վերականգնել մատյանից",
+  dt_money_rows: "Գումարի տողեր",
+  dt_ev_rows: "Ապացույցի տողեր",
+  dt_export_comm: "Միջնորդավճարի տողերը՝ հաշվապահի համար",
+  dt_export_ledger: "Ամբողջ մատյանը",
+  dt_export_b: "UTF-8 BOM-ով՝ որ հաշվապահի Excel-ը հայերենը ճիշտ բացի։ Բանաձևի ներարկումից պաշտպանված։",
   dt_selftest: "Ինքնաստուգում",
   dt_theme: "Տեսք",
   dt_light: "Լուսավոր",
@@ -2572,6 +2578,7 @@ T.en = {
   d_filing_left: "Working days left: {n}",
   d_filing_src: "working days, on the 2026 holiday table",
   d_filing_src_unknown: "working days, no holiday table for this year",
+  d_checklist: "Closing checklist",
   d_consents: "Consents",
   d_cons_spouse: "Spouse's consent",
   d_cons_co: "Co-owners' consent",
@@ -2662,6 +2669,11 @@ T.en = {
   dt_ok: "The log and the cache agree.",
   dt_bad: "The cache disagrees with the log. The log wins.",
   dt_rebuild: "Rebuild from the log",
+  dt_money_rows: "Money rows",
+  dt_ev_rows: "Evidence rows",
+  dt_export_comm: "Commission lines, for the accountant",
+  dt_export_ledger: "The whole log",
+  dt_export_b: "With a UTF-8 BOM so the accountant's Excel opens Armenian correctly. Formula-injection guarded.",
   dt_selftest: "Self-test",
   dt_theme: "Appearance",
   dt_light: "Light",
@@ -2885,6 +2897,7 @@ T.ru = {
   d_filing_left: "Рабочих дней осталось: {n}",
   d_filing_src: "рабочие дни, по таблице праздников 2026",
   d_filing_src_unknown: "рабочие дни, таблицы праздников на этот год нет",
+  d_checklist: "Чек-лист сделки",
   d_consents: "Согласия",
   d_cons_spouse: "Согласие супруга",
   d_cons_co: "Согласие сособственников",
@@ -2975,6 +2988,11 @@ T.ru = {
   dt_ok: "Журнал и кэш совпадают.",
   dt_bad: "Кэш расходится с журналом. Журнал главнее.",
   dt_rebuild: "Пересобрать из журнала",
+  dt_money_rows: "Денежные строки",
+  dt_ev_rows: "Строки-доказательства",
+  dt_export_comm: "Строки комиссии — для бухгалтера",
+  dt_export_ledger: "Весь журнал",
+  dt_export_b: "С UTF-8 BOM, чтобы Excel бухгалтера открыл армянский корректно. Защита от формульной инъекции.",
   dt_selftest: "Самопроверка",
   dt_theme: "Оформление",
   dt_light: "Светлая",
@@ -4588,7 +4606,11 @@ function openDeal(id){
   }
 
   /* ---- the two clocks and the checklist ---- */
-  h += '<div class="sec">📌 ' + escH(t('d_stage')) + '</div>';
+  /* THE CLOSING CHECKLIST IS A SCREEN, NOT A DOCUMENT. It is a working aid — unified certificate
+     pulled, consents obtained, the non-cash sentence said out loud, the notary, the filing
+     deadline — and printing a to-do list is how a product signals it does not know what a
+     document is for. */
+  h += '<div class="sec">📌 ' + escH(t('d_checklist')) + '</div>';
   h += '<div class="card" style="margin:0 0 12px">';
   if(d.dates.notaryTs && !d.dates.filedTs && !d.void){
     const left = workingDaysLeft(d.dates.notaryTs, S.cfg.filingDays, S.today);
@@ -4792,11 +4814,19 @@ function mandateCard(m){
     + '<div class="row" style="margin-top:10px"><span class="mlbl">' + escH(t('mn_signed_on')) + '</span><span>'
       + escH(fdate(m.signedTs)) + '</span></div>'
     /* THE EXCLUSIVITY CLOCK IS FIRST-CLASS AND VISIBLE. An agency running an expired exclusive is
-       exposed, and the point of a back office is to know that before the client's lawyer does. */
-    + (m.exclusive ? '<div class="hbar" style="margin-top:8px"><i style="width:' + pct + '%"></i></div>'
-        + '<div class="prov' + (left != null && left <= 14 ? ' warn' : '') + '">'
-        + escH('🔒 ' + t('mn_exclusive') + ' · ' + t('p_excl_left') + ' ' + Math.max(0, left||0) + ' '
-          + t('p_dom_d') + ' · ' + t('mn_excl_cap')) + '</div>' : '')
+       exposed, and the point of a back office is to know that before the client's lawyer does.
+       A CLOSED MANDATE GETS NO COUNTDOWN. exclLeft() returns null once the contract is fulfilled,
+       terminated or expired, and printing «մնաց 0 օր» against a contract that is already finished
+       says something false about a document somebody signed — it gets its date range instead. */
+    + (m.exclusive
+        ? (left != null
+            ? '<div class="hbar" style="margin-top:8px"><i style="width:' + pct + '%"></i></div>'
+              + '<div class="prov' + (left <= 14 ? ' warn' : '') + '">'
+              + escH('🔒 ' + t('mn_exclusive') + ' · ' + t('p_excl_left') + ' ' + Math.max(0, left) + ' '
+                + t('p_dom_d') + ' · ' + t('mn_excl_cap')) + '</div>'
+            : '<div class="prov">' + escH('🔒 ' + t('mn_exclusive') + ' · '
+                + fdate(m.exclusiveFrom) + ' — ' + fdate(m.exclusiveTo)) + '</div>')
+        : '')
     + (m.retainUntil ? '<div class="prov">' + escH('🗄 ' + t('mn_retain') + ' ' + fdate(m.retainUntil)) + '</div>' : '')
     /* the platform field exists so the record is ready; it is greyed and says why. */
     + '<div class="prov">' + escH('🏛 ' + t('mn_platform') + ': ' + t('mn_platform_off')) + '</div>'
@@ -4820,8 +4850,8 @@ function dataView(){
   const ev = (S.rows||[]).length - money;
   let h = secTitle('📈', t('data_title'));
   h += '<div class="card' + (bad.length ? ' rail rail-bad' : '') + '"><h3>📒 ' + escH(t('dt_ledger')) + '</h3>'
-    + '<div class="row"><span class="mlbl">' + escH(t('cm_amount')) + '</span><span class="num">' + money + ' ' + escH(t('dt_rows')) + '</span></div>'
-    + '<div class="row"><span class="mlbl">' + escH(t('lt_view')) + '</span><span class="num">' + ev + ' ' + escH(t('dt_rows')) + '</span></div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('dt_money_rows')) + '</span><span class="num">' + money + ' ' + escH(t('dt_rows')) + '</span></div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('dt_ev_rows')) + '</span><span class="num">' + ev + ' ' + escH(t('dt_rows')) + '</span></div>'
     + '<div class="prov">' + escH(bad.length ? t('dt_bad') : '✓ ' + t('dt_ok')) + '</div>'
     + (bad.length ? '<button class="btn primary full" style="margin-top:10px" onclick="doHeal()">'
         + escH(t('dt_rebuild')) + '</button>' : '')
@@ -4842,11 +4872,74 @@ function dataView(){
         + (lang === x[0] ? 'active' : '') + '" onclick="setLang(' + jsArg(x[0]) + ')">' + escH(x[1]) + '</button>').join('')
     + '</div></div>';
 
+  h += '<div class="card"><h3>⬇ ' + escH(t('dt_export')) + '</h3>'
+    + '<button class="btn ghost full" onclick="exportCommission()">' + escH(t('dt_export_comm')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:10px" onclick="exportLedger()">' + escH(t('dt_export_ledger')) + '</button>'
+    + '<div class="prov">' + escH(t('dt_export_b')) + '</div></div>';
+
   h += '<div class="card"><h3>♻ ' + escH(t('dt_reset')) + '</h3>'
     + '<div class="muted">' + escH(t('dt_reset_b')) + '</div>'
     + '<button class="btn danger full" style="margin-top:10px" onclick="startFresh()">' + escH(t('dt_reset')) + '</button></div>';
   return h;
 }
+/* =====================================================================================
+   CSV
+   Two non-obvious properties, both deliberate and both easy to lose in a rewrite:
+   1. A UTF-8 BOM, because the accountant opens this in Windows Excel and without the BOM every
+      Armenian character arrives as mojibake.
+   2. A FORMULA-INJECTION GUARD. Client names, street names and notes are free text typed by a
+      person, and a cell beginning = + - @ TAB or CR is executed as a formula when the file is
+      opened. Prefixing an apostrophe is the fix; forgetting it turns an export into an attack
+      surface aimed at the one person in the agency who handles the money.
+   ArmEstate does NOT attempt to be an e-invoicing client — Armenia's հաշիվ-ապրանքագիր system
+   needs digital certificates and prescribed machine-readable formats. It produces a clean line
+   the accountant re-keys or imports. That boundary is a decision, not a gap.
+   ===================================================================================== */
+function csvCell(v){
+  let x = v == null ? '' : String(v);
+  if(/^[=+\-@\t\r]/.test(x)) x = "'" + x;
+  return '"' + x.replace(/"/g, '""') + '"';
+}
+function downloadCSV(name, rows){
+  const body = rows.map(r => r.map(csvCell).join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF' + body], { type:'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { try{ document.body.removeChild(a); URL.revokeObjectURL(url); }catch(e){} }, 0);
+}
+/* THE COMMISSION LINE. Exactly the columns an Armenian accountant needs to raise the invoice:
+   client, property, cadastral code, service, base amount, rate AS TYPED, fee, VAT flag, date.
+   No tax is computed — whether brokerage sits inside the professional-services turnover-tax
+   exclusion is UNVERIFIED and is the agency accountant's question, not this product's. */
+function exportCommission(){
+  const rows = [[ t('cm_setby'), t('clients_title'), t('props_title'), t('p_cad'),
+                  t('cm_mode_pct'), t('cm_base'), t('cm_fee'), t('cm_vat'), t('cm_trigger'), t('d_stage') ]];
+  (S.deals||[]).forEach(d => {
+    const al = allocation(d); if(!al) return;
+    const p = propById(d.propertyId);
+    const tm = d.terms;
+    const rate = tm.mode === 'pct' ? bpTxt(tm.bp)
+      : tm.mode === 'flat' ? amdTxt(tm.flat) : monthsTxt(tm.monthsBp) + ' ' + t('cm_months_u');
+    rows.push([ fdate(d.stageTs), clientName(tm.payer === 'buyer' ? d.buyerClientId : d.sellerClientId),
+      p ? propAddr(p) : '', p ? p.cadCode : '', rate, tm.base, al.fee, vatLabel(tm.vat),
+      triggerLabel(tm.trigger), stageLabel(d.stage) + (d.void ? ' · ' + t('d_void') : '') ]);
+  });
+  downloadCSV('armestate-commission-' + fdate(S.today).replace(/\./g,'-') + '.csv', rows);
+}
+/* THE WHOLE LOG. The draft law would require ten-year retention, and every document this product
+   makes is re-derivable from these rows — so retention is a property of the log, and an export
+   that carries it out of the browser is the cheapest possible insurance against that. */
+function exportLedger(){
+  const rows = [['uuid','ts','agent','type','amt','deal','prop','client','trigger','reason','actor','rank','note']];
+  (S.rows||[]).slice().sort((a,b) => a.ts - b.ts).forEach(r => {
+    rows.push([r.uuid, fdate(r.ts), agentName(r.agent) || r.agent, rowTypeLabel(r.type), r.amt,
+      r.deal, r.prop, r.client, r.trigger, r.reason, r.actor, r.rank, r.note]);
+  });
+  downloadCSV('armestate-ledger-' + fdate(S.today).replace(/\./g,'-') + '.csv', rows);
+}
+
 function doHeal(){ healLedger(); saveState(); renderAll(); toast(t('dt_ok')); }
 function runSelfTest(){
   const r = estateSelfTest();
@@ -5230,6 +5323,10 @@ function estateSelfTest(){
        Object.keys(K).every(k => !/^(assay_|voski_|at_|armtrade)/.test(String(K[k]))));
 
     /* ---- escaping ---- */
+    /* the export is aimed at the one person in the agency who handles the money */
+    ok('the CSV guard neutralises a formula and keeps a plain cell',
+       csvCell('=1+1') === '"\'=1+1"' && csvCell('@SUM(A1)') === '"\'@SUM(A1)"'
+       && csvCell('Կոմիտաս 52') === '"Կոմիտաս 52"' && csvCell('a"b') === '"a""b"');
     ok('escH neutralises a quote and a bracket',
        escH('<b x="1">\'&') === '&lt;b x=&quot;1&quot;&gt;&#39;&amp;');
     ok('jsArg survives an apostrophe', jsArg("O'Brien") === '&#39;O\\&#39;Brien&#39;');
