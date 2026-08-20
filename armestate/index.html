@@ -829,6 +829,11 @@ input.err,textarea.err{border-color:var(--danger)}
 .actrule{border:none;border-top:var(--bw) solid var(--stroke2);margin:var(--s3) 0}
 .actsep{border-top:var(--bw) solid var(--stroke2)}
 .actsignline{border-bottom:var(--bw) solid var(--stroke2);height:26px;max-width:180px}
+/* TWO SIGNATURE RULES ON A DOCUMENT MUST SIT ON THE SAME LINE. The captions carry a party's
+   name, one of them wraps to two lines and the other does not, and a rule that steps down 14px
+   below its neighbour is the first thing a person notices about a piece of paper. The blocks
+   are equal-height columns whose rule is pinned to the bottom. */
+.signb{display:flex;flex-direction:column;justify-content:flex-end;min-height:56px}
 .acttbl .actsub{display:none}
 .thshort{display:none}
 /* On a phone the 7-column act is ~465px wide inside a 352px wrapper, so ՓԱՍՏԱՑԻ, Δ and ֏ —
@@ -1421,7 +1426,8 @@ tr.hlflash{animation:none;background:var(--acc-tint)}
          -webkit-backdrop-filter:none !important;animation:none !important}
   .mbody .muted{color:#555 !important}
   .mbody .big,.mbody .osum{color:#111 !important}
-  .tblwrap{max-height:none !important;overflow:visible !important;background:none !important}
+  .tblwrap,.spwrap{max-height:none !important;overflow:visible !important;background:none !important;
+                   margin:0 !important;padding:0 !important}
   .tbl{table-layout:auto !important}
   .tbl th,.tbl td{width:auto !important;display:table-cell !important;white-space:normal !important}
   .tblsub{display:none !important}
@@ -1746,8 +1752,13 @@ input:disabled{
    «380,000380,000» — the screen that answers «what do I owe this agent» was unreadable in the
    primary language. English survived only because its description column was narrower. */
 .sp td.n,.sp th.n{text-align:right;font-variant-numeric:tabular-nums lining-nums;
-  white-space:nowrap;padding-left:14px}
+  white-space:nowrap;padding-left:10px}
 .sp td.n:first-child,.sp th.n:first-child{padding-left:0}
+/* A MONEY TABLE MAY NOT PUSH THE SHEET SIDEWAYS. Two right-aligned nowrap money columns plus
+   their gap have a hard minimum width, and at 320px in Armenian — «Գործակալությանը» beside
+   «1,520,000» — that minimum is 9px wider than the card it sits in. The table scrolls inside its
+   own box rather than dragging the document with it; the sheet itself never scrolls sideways. */
+.spwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 calc(-1 * var(--s1));padding:0 var(--s1)}
 .sp tr.tot td{border-bottom:none;border-top:var(--bw-strong) solid var(--stroke2);font-weight:700}
 .sp tr.keep td{color:var(--muted)}
 
@@ -5143,7 +5154,7 @@ function openDeal(id){
          agreement is worse than no table. */
       + (al.over ? '<div class="notice bad">' + escH('⚠️ ' + t('cm_over')) + '</div>'
           + '<div class="prov warn">' + escH(fmt('cm_over_b', {n:bpTxt(al.sumBp)})) + '</div>'
-        : '<table class="sp"><thead><tr><th>' + escH(t('tab_agents')) + '</th>'
+        : '<div class="spwrap"><table class="sp"><thead><tr><th>' + escH(t('tab_agents')) + '</th>'
         + '<th class="n">' + escH(t('cm_share')) + '</th><th class="n">' + escH(t('cm_amount')) + '</th></tr></thead><tbody>'
       + al.rows.map(r => '<tr><td>' + escH(agentEm(r.agentId) + ' ' + agentName(r.agentId))
           + '<div class="muted">' + escH(r.side ? t('ag_side_'+r.side) : '') + '</div></td>'
@@ -5154,7 +5165,7 @@ function openDeal(id){
       + '<tr class="tot"><td>' + escH(t('total')) + '</td><td class="n">'
         + escH(bpTxt(al.sumBp + Math.max(0, 10000 - al.sumBp))) + '</td><td class="n">'
         + amdTxt(al.rows.reduce((x,r) => x + r.amount, 0) + al.agencyKeep) + '</td></tr>'
-      + '</tbody></table>'
+      + '</tbody></table></div>'
       + '<div class="prov">' + escH((assertReconciles(al) ? '✓ ' : '⚠️ ') + t('cm_recon')) + '</div>')
       + '<button class="btn ghost full" style="margin-top:12px" onclick="openTerms(' + jsArg(d.id) + ')">'
         + escH(t('cm_edit')) + '</button>'
@@ -5366,11 +5377,11 @@ function openStatement(agentId){
     + '<div class="row" style="margin-top:10px"><span class="mlbl">' + escH(t('stmt_period'))
       + '</span><b>' + escH(fdate(from) + ' — ' + fdate(to)) + '</b></div>'
     + '<div class="row"><span class="mlbl">' + escH(t('stmt_open')) + '</span>' + amd(opening) + '</div>'
-    + '<table class="sp"><thead><tr><th>' + escH(t('doc_col')) + '</th><th class="n">'
+    + '<div class="spwrap"><table class="sp"><thead><tr><th>' + escH(t('doc_col')) + '</th><th class="n">'
       + escH(t('amount_col')) + '</th><th class="n">' + escH(t('balance')) + '</th></tr></thead>'
     + '<tbody>' + (body || '<tr><td colspan="3" class="muted">' + escH(t('stmt_none')) + '</td></tr>')
     + '<tr class="tot"><td>' + escH(t('stmt_close')) + '</td><td class="n"></td><td class="n">'
-      + (bal < 0 ? '−' : '') + amdTxt(Math.abs(bal)) + '</td></tr></tbody></table>'
+      + (bal < 0 ? '−' : '') + amdTxt(Math.abs(bal)) + '</td></tr></tbody></table></div>'
     /* THE AMOUNT IN WORDS IS WRITTEN IN ARMENIAN ON EVERY LANGUAGE OF THE UI, because that is
        the language the document is signed in. */
     + '<div class="muted" style="margin-top:8px">' + escH(t('stmt_words')) + sepC() + '<b>'
@@ -5609,8 +5620,8 @@ function docParty(title, name, sub){
 }
 const docTin = tin => t('doc_tin') + ' ' + (tin || '—');
 function docSign(label){
-  return '<div style="flex:1 1 150px;min-width:150px"><div class="doclbl">' + escH(label) + '</div>'
-    + '<div class="actsignline"></div></div>';
+  return '<div class="signb" style="flex:1 1 150px;min-width:150px"><div class="doclbl">'
+    + escH(label) + '</div><div class="actsignline"></div></div>';
 }
 function docFoot(note){
   return '<div class="muted" style="font-size:14px;margin-top:14px">' + escH(note) + '</div>';
@@ -5880,9 +5891,13 @@ function openViewingSheet(id){
     + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
       + docSign(t('doc_sign_client') + (c ? ' · ' + c.name : ''))
       + docSign(t('doc_sign_agent') + (a ? ' · ' + a.name : '')) + '</div>'
+    /* A REPRINT OF A SIGNED SHEET SAYS SO ON THE PAPER. The signature date is part of the
+       evidence — «this client saw this property on this date and signed for it» — not a screen
+       badge, so it prints beside the rules rather than being hidden with the controls. */
+    + (v.signedTs ? '<div class="muted" style="margin-top:8px">'
+        + escH('✓ ' + t('vw_signed_on') + ' · ' + fdate(v.signedTs)) + '</div>' : '')
     + docFoot(t('doc_view_note'))
-    + (v.signedTs
-        ? '<div class="notice noprint">' + escH('✓ ' + t('vw_signed_on') + ' · ' + fdate(v.signedTs)) + '</div>'
+    + (v.signedTs ? ''
         : '<button class="btn ghost full noprint" style="margin-top:14px" onclick="signViewing('
           + jsArg(v.id) + ')">✍️ ' + escH(t('vw_sign')) + '</button>'
           + '<div class="prov noprint">' + escH(t('vw_sign_q')) + '</div>')
@@ -6076,14 +6091,14 @@ function tfPreviewHtml(){
   if(d){
     const al = allocation({ agents:d.agents, terms:tm });
     if(al && !al.over){
-      h += '<table class="sp"><tbody>'
+      h += '<div class="spwrap"><table class="sp"><tbody>'
         + al.rows.map(r => '<tr><td>' + escH(agentEm(r.agentId) + ' ' + agentName(r.agentId))
             + '</td><td class="n">' + escH(bpTxt(r.shareBp)) + '</td><td class="n">'
             + amdTxt(r.amount) + '</td></tr>').join('')
         + '<tr class="keep"><td>' + escH(t('cm_keep')) + '</td><td class="n">'
           + escH(bpTxt(Math.max(0, 10000 - al.sumBp))) + '</td><td class="n">'
           + amdTxt(al.agencyKeep) + '</td></tr>'
-        + '</tbody></table>'
+        + '</tbody></table></div>'
         + '<div class="prov">' + escH((assertReconciles(al) ? '✓ ' : '⚠️ ') + t('cm_recon')) + '</div>';
     } else if(al && al.over){
       h += '<div class="notice bad">' + escH('⚠️ ' + t('cm_over')) + '</div>';
