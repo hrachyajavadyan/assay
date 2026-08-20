@@ -10,7 +10,7 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armvoski-shell-v5';   /* v5: the count no longer posts a movement against a book figure read AFTER the weighing (a
+const CACHE = 'armvoski-shell-v6';   /* v5: the count no longer posts a movement against a book figure read AFTER the weighing (a
       mid-session buy-in read as a shortage and the correction destroyed the metal), unvisited
       subjects no longer print as counted on the act, a zero metal rate is refused instead of
       being sold on, and five signed documents keep their sub-line data on paper. A cached v4
