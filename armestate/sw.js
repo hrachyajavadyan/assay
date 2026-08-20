@@ -11,8 +11,10 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armestate-shell-v1';   /* v1: the foundation — the shell, the six entities, the commission engine, the
-      append-only ledger, and the properties, agents, deals and payouts screens. */
+const CACHE = 'armestate-shell-v2';   /* v2: the viewing log (four-tap capture, evidence rows, the signed
+      Ցուցադրության թերթիկ), the commission terms form, the նախավճար/կանխավճար chooser, payouts and
+      adjustments, and the three printable documents. A stale v1 shell would leave an agent holding
+      a product with no way to enter a fee, so the version moves with the build. */
 
 /* THE DISPLAY FONTS ARE PART OF THE SHELL, not optional assets. An app that opens offline in
    fallback fonts is a different product from the one that was designed and reviewed: different
