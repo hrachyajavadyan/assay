@@ -4525,6 +4525,11 @@ function renderLogin(err){
       <button class="btn primary" onclick="doLogin()">${t('login_btn')} →</button>
       <button class="btn ghost full" style="margin-top:12px" onclick="demoLogin()">${t('demo_mode')}</button>
     </div>
+    <!-- A person who lands here from a link, or from the hub, has a password wall and nothing else.
+         The explainer is where the demo passwords are written down, so the wall must point at it. -->
+    <p class="muted" style="text-align:center;margin:18px 0 0;font-size:14px">
+      <a href="/armtrade/about/" style="color:var(--acc-text);text-decoration:none;padding:14px 6px;margin:-14px -6px;display:inline-block">${lang==='hy'?'Ի՞նչ է սա և ի՞նչ գաղտնաբառ մուտքագրել':(lang==='ru'?'Что это и какой пароль вводить':'What is this, and which password?')} \u203A</a>
+    </p>
   </div>`;
 }
 function askNotifPermission(){
