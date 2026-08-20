@@ -1054,7 +1054,10 @@ nav button.active{
   color:var(--acc-text);font-weight:700;
   background:var(--acc-tint);border-radius:var(--r-xs);
   box-shadow:inset 0 0 0 1.5px var(--acc-line);
-  flex:0 0 auto;padding:0 5px;
+  /* 44px FLOOR. The active cell sizes to its own word, and a short word — "Data" — sized it to
+     41.6px, the one place in the product the 44px tap floor was breached. navPlan() measures
+     with the same floor (NAV_ACT_MIN) so the plan and the paint agree. */
+  flex:0 0 auto;padding:0 5px;min-width:44px;
 }
 nav button.active .icw{background:transparent}
 nav button.active::before{
@@ -1731,7 +1734,14 @@ input:disabled{
 .sp{width:100%;border-collapse:collapse;margin-top:var(--s2)}
 .sp td,.sp th{padding:6px 0;text-align:left;font-size:var(--fs-body);border-bottom:var(--bw) solid var(--sep)}
 .sp th{font-size:var(--fs-caps);font-weight:var(--fw-caps);color:var(--dim)}
-.sp td.n,.sp th.n{text-align:right;font-variant-numeric:tabular-nums lining-nums;white-space:nowrap}
+/* THE NUMERIC COLUMNS ARE SEPARATED BY PADDING, NOT BY LUCK. Both money columns are
+   right-aligned and nowrap; with zero horizontal padding the Armenian and Russian description
+   column squeezed column 2 to exactly its widest number and the statement printed
+   «380,000380,000» — the screen that answers «what do I owe this agent» was unreadable in the
+   primary language. English survived only because its description column was narrower. */
+.sp td.n,.sp th.n{text-align:right;font-variant-numeric:tabular-nums lining-nums;
+  white-space:nowrap;padding-left:14px}
+.sp td.n:first-child,.sp th.n:first-child{padding-left:0}
 .sp tr.tot td{border-bottom:none;border-top:var(--bw-strong) solid var(--stroke2);font-weight:700}
 .sp tr.keep td{color:var(--muted)}
 
@@ -1767,9 +1777,27 @@ input:disabled{
   margin-top:3px;line-height:var(--lh-micro)}
 .pick.on .pd{color:var(--acc-text)}
 
+/* A PHONE NUMBER IS A CONTROL, NOT A CAPTION. On the Clients screen the tel: links were the
+   only interactive thing on the page and they measured 124x17 — the product's user is standing
+   outside a building holding a phone in one hand, and a 17px-tall target is a mis-tap. This is
+   a 44px row with the dial affordance in it. */
+.telbtn{
+  display:inline-flex;align-items:center;gap:var(--s2);min-height:44px;
+  padding:var(--s1) var(--s3) var(--s1) 0;margin-top:2px;
+  color:var(--acc-text);font-size:var(--fs-body);font-weight:600;text-decoration:none;
+  font-variant-numeric:tabular-nums lining-nums;
+}
+.telbtn:active{opacity:.6}
+.telbtn:focus-visible{outline:none;box-shadow:var(--focus);border-radius:var(--r-xs)}
+
 /* the property tile is 44px like every other avatar in the suite */
 .pmeta{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s3);margin-top:var(--s1)}
 .pmeta span{font-size:var(--fs-micro);color:var(--muted);white-space:nowrap}
+/* one exception, and it is a sentence rather than a figure: the conversion line carries its own
+   denominator («Показ → предложение: 33% · измерено по 3») and at 320px in Russian it was a
+   308px unbroken span that pushed the document 5px wide and clipped its last figure. A sentence
+   wraps; only the FIGURES in it are atomic. */
+.pmeta span.wrapok{white-space:normal;overflow-wrap:break-word}
 /* break-word, NOT anywhere. `anywhere` broke «Անի Հարությունյան» into «Անի Հարությունյ / ան»
    whenever a badge shared the line — a person's name split mid-syllable is the single most
    careless-looking thing a back office can print. `break-word` only breaks a token that cannot
@@ -1809,8 +1837,15 @@ input:disabled{
       until a human has typed the terms. Inventing a rate would be the worst thing this product
       could do, so `feeOf()` returns null — not zero — when the terms are unset.
    2. MONEY IS SIGNED INTEGER DRAM. No float touches a money field. Every rate is integer basis
-      points: 2% is 200, not 0.02. Math.round appears in exactly TWO places in this file — feeOf()
-      and allocBp() — and a code review that finds a third has found a bug.
+      points: 2% is 200, not 0.02. Money is ROUNDED in exactly THREE sanctioned places and they
+      are named here so a reviewer can check the claim rather than trust it:
+        · feeOf()  — the fee from a rate and a base;
+        · allocBp() — the cumulative allocator, which is the only thing that DIVIDES money;
+        · safeInt() — the boundary normaliser, reached by safeAmd/clampAmd, which turns a value
+          arriving from storage or a merge into an integer. It is a boundary, not arithmetic.
+      Beyond the boundary nothing rounds, because beyond the boundary nothing is fractional:
+      postRow() REFUSES a money row carrying a fractional amount rather than rounding it in
+      silence. A fourth money-rounding site in this file is a bug.
    3. A SPLIT RECONCILES TO THE DRAM. Whenever one amount is divided, the last part is the whole
       minus the parts already taken, never its own rounded share. allocBp() is that rule, and
       assertReconciles() asserts it at every mint and in the fuzz test.
@@ -2082,7 +2117,7 @@ T.hy = {
   tab_props: "Գույք",
   tab_agents: "Գործակալներ",
   tab_clients: "Հաճախորդներ",
-  tab_views: "Ցուցադրում",
+  tab_views: "Ցուցադրություն",
   tab_docs: "Պայմանագրեր",
   tab_data: "Տվյալներ",
   /* the recovery net */
@@ -2168,7 +2203,7 @@ T.hy = {
   ag_share_help: "Սա գործակալության միջնորդավճարի բաժինն է, ոչ թե գույքի գնի։",
   ag_deals: "գործարք",
   ag_views: "ցուցադրություն",
-  ag_conv: "Ցուցադրումից առաջարկ",
+  ag_conv: "Ցուցադրությունից առաջարկ",
   ag_conv_na: "չափելի չէ",
   ag_conv_n: "չափված՝ {n}",
   ag_payable: "Վճարման ենթակա",
@@ -2234,7 +2269,7 @@ T.hy = {
   pay_owed: "Պարտք",
   pay_advance: "կանխավճարված",
   pay_pay: "Վճարել",
-  pay_derived: "Պարտքը հաշվարկվում է երկու գրքից՝ վաստակած մինուս վճարած։ Հաշվիչ դաշտ չկա։",
+  pay_derived: "Պարտքը հաշվարկվում է երկու գրքից՝ վաստակածը մինուս վճարածը։",
   /* deals — «գործարք». Created when an offer is ACCEPTED; before that there is interest, not a
      deal. A pipeline full of leads is the CRM disease this product is designed against.
    */
@@ -2262,14 +2297,13 @@ T.hy = {
   d_unified: "Միասնական տեղեկանք",
   d_notary: "Նոտար",
   d_cert: "Վկայական",
-  d_deposit: "Կանխավճար",
   dep_nakh: "Նախավճար",
   dep_kankh: "Կանխավճար (առաջարկի)",
   dep_nakh_law: "Գրավոր ձևը պարտադիր է։ Վճարողը հրաժարվի՝ մնում է վաճառողին. վաճառողը հրաժարվի՝ վերադարձնում է կրկնակի։",
   dep_kankh_law: "Գրավոր ձևի պահանջ չկա։ Չկատարման դեպքում պարզապես վերադարձվում է նույն չափով։",
   /* the seven stages */
   dst_agreed: "Համաձայնեցված",
-  dst_deposit: "Նախավճար",
+  dst_deposit: "Նախնական պայմանագիր",
   dst_notary: "Նոտար",
   dst_registered: "Գրանցված",
   dst_invoiced: "Հաշվարկված",
@@ -2375,6 +2409,16 @@ T.hy = {
   c_stuck_b: "{n} օր առանց շարժի",
   c_unsigned: "Ցուցադրության թերթիկները ստորագրված չեն",
   c_unsigned_b: "{n} թերթիկ · առանց ստորագրության միջնորդավճարի պահանջը պաշտպանելի չէ",
+  cm_over_b: "Բաժինների գումարը՝ {n}։ Ուղղեք բաժինները, ապա հաշվարկը կցուցադրվի։",
+  cl_call: "Զանգել",
+  csv_date: "Ամսաթիվ",
+  csv_deal: "Գործարքի համար",
+  csv_party: "Վճարող կողմ",
+  csv_side: "Կողմը",
+  cm_rate: "Դրույքը՝ ինչպես մուտքագրված է",
+  cm_fee_total: "Միջնորդավճարն ամբողջությամբ",
+  cm_due: "Ենթակա է վճարման այս կողմից",
+  csv_noterms: "Պայմանները լրացված չեն — հաշիվ դուրս գրել հնարավոր չէ",
   d_mark: "Նշել՝ {s}",
 };
 
@@ -2558,7 +2602,7 @@ T.en = {
   pay_owed: "Owed",
   pay_advance: "advanced",
   pay_pay: "Pay",
-  pay_derived: "Owed is derived from two books: earned minus paid. There is no counter field.",
+  pay_derived: "Owed is derived from two books: earned minus paid.",
   /* deals — «գործարք». Created when an offer is ACCEPTED; before that there is interest, not a
      deal. A pipeline full of leads is the CRM disease this product is designed against.
    */
@@ -2586,14 +2630,13 @@ T.en = {
   d_unified: "Unified certificate",
   d_notary: "Notary",
   d_cert: "Certificate",
-  d_deposit: "Deposit",
   dep_nakh: "Նախավճար — earnest money",
   dep_kankh: "Կանխավճար — advance payment",
   dep_nakh_law: "Written form is required. If the payer walks away the seller keeps it; if the SELLER walks away the seller repays double.",
   dep_kankh_law: "No written-form requirement. On non-performance it is simply returned, the same amount.",
   /* the seven stages */
   dst_agreed: "Agreed",
-  dst_deposit: "Deposit",
+  dst_deposit: "Preliminary contract",
   dst_notary: "Notarised",
   dst_registered: "Registered",
   dst_invoiced: "Invoiced",
@@ -2699,6 +2742,16 @@ T.en = {
   c_stuck_b: "{n} d without a move",
   c_unsigned: "Viewing sheets are unsigned",
   c_unsigned_b: "Sheets: {n}. Without a signature the fee claim is not defensible.",
+  cm_over_b: "The shares add up to {n}. Correct them and the split appears.",
+  cl_call: "Call",
+  csv_date: "Date",
+  csv_deal: "Deal no.",
+  csv_party: "Paying party",
+  csv_side: "Side",
+  cm_rate: "Rate as entered",
+  cm_fee_total: "Commission in full",
+  cm_due: "Due from this party",
+  csv_noterms: "Terms not entered — no invoice can be raised",
   d_mark: "Mark: {s}",
 };
 
@@ -2878,7 +2931,7 @@ T.ru = {
   pay_owed: "Долг",
   pay_advance: "авансировано",
   pay_pay: "Выплатить",
-  pay_derived: "Долг выводится из двух книг: заработано минус выплачено. Счётчика нет.",
+  pay_derived: "Долг выводится из двух книг: заработано минус выплачено.",
   /* deals — «գործարք». Created when an offer is ACCEPTED; before that there is interest, not a
      deal. A pipeline full of leads is the CRM disease this product is designed against.
    */
@@ -2906,14 +2959,13 @@ T.ru = {
   d_unified: "Единая справка",
   d_notary: "Нотариус",
   d_cert: "Свидетельство",
-  d_deposit: "Задаток",
-  dep_nakh: "Նախավճар — задаток",
+  dep_nakh: "Նախավճար — задаток",
   dep_kankh: "Կանխավճար — аванс",
   dep_nakh_law: "Письменная форма обязательна. Если платящий отказывается — остаётся продавцу; если отказывается ПРОДАВЕЦ — он возвращает вдвойне.",
   dep_kankh_law: "Письменная форма не требуется. При неисполнении просто возвращается в том же размере.",
   /* the seven stages */
   dst_agreed: "Согласовано",
-  dst_deposit: "Задаток",
+  dst_deposit: "Предварительный договор",
   dst_notary: "Нотариус",
   dst_registered: "Зарегистр.",
   dst_invoiced: "Выставлено",
@@ -3019,6 +3071,16 @@ T.ru = {
   c_stuck_b: "{n} дн. без движения",
   c_unsigned: "Листы показа не подписаны",
   c_unsigned_b: "Листов: {n}. Без подписи требование комиссии не защитить.",
+  cm_over_b: "Сумма долей — {n}. Исправьте доли, и расчёт появится.",
+  cl_call: "Позвонить",
+  csv_date: "Дата",
+  csv_deal: "Номер сделки",
+  csv_party: "Платящая сторона",
+  csv_side: "Сторона",
+  cm_rate: "Ставка, как введена",
+  cm_fee_total: "Комиссия целиком",
+  cm_due: "К оплате с этой стороны",
+  csv_noterms: "Условия не заполнены — счёт выставить нельзя",
   d_mark: "Отметить: {s}",
 };
 
@@ -3139,6 +3201,14 @@ function postRow(r){
   const money = MONEY_TYPES.indexOf(r.type) >= 0;
   const rawAmt = +r.amt;
   if(money && !isFinite(rawAmt)){ LEDGER_REJECTS.push({ r:r, why:'nonfinite' }); return null; }
+  /* A MONEY ROW CARRYING A FRACTION IS REFUSED, NOT ROUNDED. The guard on the line above shouts
+     about a rule violation and the ledger clamp would have quietly turned 1234.56 into 1235 —
+     an asymmetry in the one function standing between the books and bad input. Dram has no
+     circulating subunit, so a fractional amount is not a precision question, it is a caller
+     that computed money with a float, and the caller has to hear about it. */
+  if(money && Math.floor(rawAmt) !== rawAmt){
+    LEDGER_REJECTS.push({ r:r, why:'fractional_amount' }); return null;
+  }
   /* AN EVIDENCE ROW CARRIES NO MONEY. A viewing that could move a balance would make the
      evidence log a second, unaudited books. Refuse rather than silently zero it. */
   if(!money && safeInt(rawAmt,0) !== 0){ LEDGER_REJECTS.push({ r:r, why:'evidence_amount' }); return null; }
@@ -3299,13 +3369,29 @@ function allocBp(total, bps){
    it has no default. */
 function payerSplit(terms, fee){
   if(fee == null) return null;
-  if(terms.payer === 'buyer')  return { seller:0, buyer:fee };
-  if(terms.payer === 'seller') return { seller:fee, buyer:0 };
-  const sb = (terms.splitBp && safeBp(terms.splitBp.seller,0)) || 0;
-  const bb = (terms.splitBp && safeBp(terms.splitBp.buyer,0)) || 0;
+  if(terms.payer === 'buyer')  return { seller:0, buyer:fee, sellerBp:0,     buyerBp:10000 };
+  if(terms.payer === 'seller') return { seller:fee, buyer:0, sellerBp:10000, buyerBp:0 };
+  if(terms.payer !== 'split') return null;
+  /* AN UNSET SPLIT IS NOT A 100% BUYER SPLIT. splitBp absent — or present and not summing to
+     100% — is the absence of a decision on the who-pays axis, and inventing one contradicts
+     invariant 1 exactly as inventing a rate would. feeOf() answers null for an unset rate; this
+     answers null for an unset payer split, and termsComplete() refuses the terms outright.
+     Before this, {seller:50%, buyer:30%} charged the buyer the unallocated 20% and
+     {seller:0, buyer:0} — normTerms' own fallback for an absent splitBp — charged the buyer the
+     whole fee nobody said they owed. */
+  if(!terms.splitBp) return null;
+  const sb = safeBp(terms.splitBp.seller, 0);
+  const bb = safeBp(terms.splitBp.buyer, 0);
+  if(sb + bb !== 10000) return null;
   const a = allocBp(fee, [sb, bb]);
-  /* the last part absorbs the remainder by construction: buyer = fee − seller */
-  return { seller: a.parts[0], buyer: a.parts[1] + a.rest };
+  /* the last part absorbs the remainder by construction: buyer = fee − seller, so the two
+     invoices sum to the fee to the dram */
+  return { seller: a.parts[0], buyer: a.parts[1] + a.rest, sellerBp: sb, buyerBp: bb };
+}
+/* the split as a sum that reconciles: seller + buyer === fee, asserted rather than assumed */
+function payerReconciles(terms, fee){
+  const ps = payerSplit(terms, fee);
+  return !ps || (safeInt(ps.seller,0) + safeInt(ps.buyer,0)) === safeInt(fee,0);
 }
 
 /* THE AGENT ALLOCATION.
@@ -3485,8 +3571,12 @@ function migrate(st){
        points, which is what "one emoji" actually means. */
     em: Array.from(String(a.em || '🧑')).slice(0, 5).join(''),
     /* NO DEFAULT SHARE. null means "the owner has not set it yet" and the agent card shows an
-       amber «Բաժինը նշված չէ» rather than a number nobody agreed to. */
-    defaultShareBp: a.defaultShareBp == null ? null : safeBp(a.defaultShareBp, 0),
+       amber «Բաժինը նշված չէ» rather than a number nobody agreed to. AN UNPARSEABLE VALUE IS
+       ALSO AN ABSENCE: safeBp('abc', 0) would have turned a corrupted adopted payload into a
+       confident «0%» badge, which is the no-default rule coerced into a number — the one thing
+       this file must never do. Only a value that survives Number() becomes a share. */
+    defaultShareBp: (a.defaultShareBp == null || !isFinite(+a.defaultShareBp))
+      ? null : safeBp(a.defaultShareBp, 0),
     joinedTs: Math.max(0, safeInt(a.joinedTs, 0)),
     leftTs: Math.max(0, safeInt(a.leftTs, 0)),
     /* the draft law's registration, exam and professional liability insurance. Recorded, with an
@@ -3679,7 +3769,10 @@ function migrate(st){
    supplies a rate: an absent bp stays absent, and feeOf() answers null for it. */
 function normTerms(x){
   if(!x || typeof x !== 'object') return null;
-  const sp = (x.splitBp && typeof x.splitBp === 'object') ? x.splitBp : {};
+  /* AN ABSENT splitBp STAYS ABSENT. Defaulting it to {0,0} looked harmless and was not: it made
+     «nobody has said who pays» indistinguishable from «the seller pays nothing», and payerSplit()
+     handed the whole fee to the buyer. Absence is a value here, exactly as a null rate is. */
+  const sp = (x.splitBp && typeof x.splitBp === 'object') ? x.splitBp : null;
   return {
     basis: TERM_BASES.indexOf(x.basis) >= 0 ? x.basis : 'price',
     base: safeAmd(x.base, 0),
@@ -3688,14 +3781,18 @@ function normTerms(x){
     flat: x.flat == null ? null : safeAmd(x.flat, 0),
     monthsBp: x.monthsBp == null ? null : safeBp(x.monthsBp, 0),
     payer: PAYERS.indexOf(x.payer) >= 0 ? x.payer : null,
-    splitBp: { seller: safeBp(sp.seller, 0), buyer: safeBp(sp.buyer, 0) },
+    splitBp: sp ? { seller: safeBp(sp.seller, 0), buyer: safeBp(sp.buyer, 0) } : null,
     vat: VAT_FLAGS.indexOf(x.vat) >= 0 ? x.vat : 'none',
     trigger: TRIGGERS.indexOf(x.trigger) >= 0 ? x.trigger : null,
     setBy: String(x.setBy || ''), setTs: Math.max(0, safeInt(x.setTs, 0)),
     note: String(x.note || '')
   };
 }
-const termsComplete = tm => !!(tm && tm.mode && tm.payer && tm.trigger && feeOf(tm) != null);
+/* COMPLETE MEANS EVERY AXIS IS DECIDED, not just the rate. A `split` payer with no splitBp, or
+   one whose halves do not sum to 100%, leaves the who-pays axis undecided, and the product's
+   answer to an undecided axis is always the same: say so and offer the form, never guess. */
+const termsComplete = tm => !!(tm && tm.mode && tm.payer && tm.trigger && feeOf(tm) != null
+  && (tm.payer !== 'split' || payerSplit(tm, feeOf(tm)) != null));
 
 function adopt(st){
   const s = migrate(st);
@@ -3831,7 +3928,9 @@ function seedState(){
   const terms = (basis, base, mode, v, payer, split, vat, trigger, by, ts) => ({
     basis:basis, base:base, mode:mode,
     bp: mode === 'pct' ? v : null, flat: mode === 'flat' ? v : null, monthsBp: mode === 'months' ? v : null,
-    payer:payer, splitBp: split || {seller:0, buyer:0}, vat:vat, trigger:trigger, setBy:by, setTs:ts, note:'' });
+    /* splitBp is NULL unless a split was actually agreed. {0,0} is not "no split", it is a
+       statement that neither party pays, and the fee has to land somewhere. */
+    payer:payer, splitBp: split || null, vat:vat, trigger:trigger, setBy:by, setTs:ts, note:'' });
 
   st.deals = [
     /* d1 — co-broked: a1 brought the property, a2 brought the buyer. Both shares OVERRIDDEN on
@@ -4016,6 +4115,9 @@ function navTextW(txt){
   }catch(e){ return String(txt).length * 8; }
 }
 const NAV_ACT_PAD = 10;
+/* and a floor, because the CSS gives the active cell min-width:44px and a plan that measured
+   "Data" at 41.6px would disagree with the paint. Nothing under 44x44 anywhere. */
+const NAV_ACT_MIN = 44;
 function navPlan(W){
   const labels = {}; NAV_KEYS.forEach(k => labels[k] = t('tab_'+k));
   const moreW = navTextW(t('more_tab'));
@@ -4029,7 +4131,8 @@ function navPlan(W){
     /* the ACTIVE cell is not measured against the shared width: it takes exactly the room its own
        word needs and the remaining cells divide the rest, so a long Armenian label costs one cell
        instead of collapsing the bar. Nothing is ellipsised and nothing is shrunk. */
-    const actW = active && keys.indexOf(active) >= 0 ? navTextW(labels[active]) + NAV_ACT_PAD : 0;
+    const actW = active && keys.indexOf(active) >= 0
+      ? Math.max(NAV_ACT_MIN, navTextW(labels[active]) + NAV_ACT_PAD) : 0;
     const rest = cells - (actW ? 1 : 0);
     if(rest < 1){ if(actW && actW <= W) return keys; continue; }
     const cw = ((W - actW) / rest) - 4;
@@ -4121,7 +4224,9 @@ function toast(msg){
 function topBar(){
   return '<div class="logo"><div class="logomark">Է</div><div>' + escH(t('app_name'))
     + '<small>' + escH(t('app_sub')) + '</small></div></div>'
-    + '<span class="datechip" title="' + escH(fdate(S.today)) + '">📅 ' + escH(fdate(S.today)) + '</span>'
+    /* 🗓️, not 📅: the tear-off calendar renders in Noto Color Emoji as a sheet reading JULY 17,
+       so the top bar showed a second, contradictory date beside the real one at any zoom. */
+    + '<span class="datechip" title="' + escH(fdate(S.today)) + '">🗓️ ' + escH(fdate(S.today)) + '</span>'
     + '<div class="spacer"></div>'
     + '<button class="tbtn" onclick="toggleTheme()" title="' + escH(t('theme_lbl')) + '" aria-label="'
       + escH(t('theme_lbl')) + '">' + (U.theme==='light' ? '🌙' : '☀️') + '</button>'
@@ -4177,8 +4282,11 @@ function homeCards(){
   const owing = activeAgents().map(a => ({ a:a, m:agentMoney(a.id) })).filter(x => x.m.payable > 0);
   if(owing.length){
     const total = owing.reduce((n,x) => n + x.m.payable, 0);
+    /* `html` rather than `body`: money on the highest-traffic screen in the product goes
+       through amd() like money everywhere else, so the figure keeps its tabular figures and the
+       dram mark rides INSIDE the number instead of breaking onto its own line at 320px. */
     out.push({ k:'payout', tone:'', icon:'💳', title:t('c_payout'),
-      body: fmt('c_payout_b', {n:owing.length}) + ' · ' + amdTxt(total) + ' ֏', tab:'payouts' });
+      html: escH(fmt('c_payout_b', {n:owing.length})) + ' · ' + amd(total), tab:'payouts' });
   }
 
   /* 2 — MONEY IN. Earned, and the agency has not invoiced it. */
@@ -4186,7 +4294,7 @@ function homeCards(){
   if(uninvoiced.length){
     let sum = 0; uninvoiced.forEach(d => { const al = allocation(d); if(al) sum += al.fee; });
     out.push({ k:'invoice', tone:'', icon:'🧾', title:t('c_invoice'),
-      body: fmt('c_invoice_b', {n:uninvoiced.length}) + ' · ' + amdTxt(sum) + ' ֏', tab:'deals' });
+      html: escH(fmt('c_invoice_b', {n:uninvoiced.length})) + ' · ' + amd(sum), tab:'deals' });
   }
 
   /* 3 — A LEGAL CLOCK RUNNING OUT. The 30-working-day cadastre filing deadline first, because
@@ -4209,7 +4317,7 @@ function homeCards(){
     if(!to) return;
     const left = daysBetween(S.today, to);
     if(left > 30) return;
-    out.push({ k:'ins:'+a.id, tone:'', icon:'🛡', title:t('c_ins'),
+    out.push({ k:'ins:'+a.id, tone:'', icon:'🛡️', title:t('c_ins'),
       body: a.name + ' · ' + fmt('c_ins_b', {n:Math.max(0,left)}), tab:'agents' });
   });
 
@@ -4267,7 +4375,7 @@ function homeView(){
     h += cards.map((c,i) =>
       '<div class="alert' + (c.tone === 'bad' ? ' bad' : '') + '">'
       + '<div class="t">' + c.icon + ' ' + escH(c.title) + '</div>'
-      + '<div class="d">' + escH(c.body) + '</div>'
+      + '<div class="d">' + (c.html || escH(c.body)) + '</div>'
       + '<div class="act"><button class="btn ' + (i === 0 ? 'primary' : 'ghost') + '" onclick="setTab('
         + jsArg(c.tab) + ')">' + escH(t('c_open')) + '</button></div></div>').join('');
   }
@@ -4407,14 +4515,19 @@ function agentCard(a){
       + '<div><div class="l">' + escH(t('st_paid')) + '</div><div class="v">' + amdTxt(m.paid) + '<span class="cur">֏</span></div></div>'
     + '</div>'
     + '<div class="pmeta" style="margin-top:12px">'
-      + '<span>' + deals + ' ' + escH(t('ag_deals')) + '</span>'
-      + '<span>' + views + ' ' + escH(t('ag_views')) + '</span>'
-      + '<span>' + escH(t('ag_conv')) + ': ' + (conv.pct == null ? escH(t('ag_conv_na'))
+      /* LABEL THEN COUNT — «գործարք 1», "deals 1", «сделок 1» — which is why the strings are
+         shaped as bare nouns and why this product needs no plural machine. Rendered
+         count-then-label they read "1 deals" and «1 сделок», and Russian would need
+         сделка/сделки/сделок at 1 / 2–4 / 5+. Either the render or the strings had to follow the
+         stated design; the render now does. */
+      + '<span>' + escH(t('ag_deals')) + ' ' + deals + '</span>'
+      + '<span>' + escH(t('ag_views')) + ' ' + views + '</span>'
+      + '<span class="wrapok">' + escH(t('ag_conv')) + sepC() + (conv.pct == null ? escH(t('ag_conv_na'))
           : conv.pct + '% · ' + escH(fmt('ag_conv_n', {n:conv.n}))) + '</span>'
     + '</div>'
     + (a.qual.insurerName || a.qual.regNo
         ? '<div class="prov' + (insLeft != null && insLeft <= 30 ? ' warn' : '') + '">'
-          + escH('🛡 ' + t('ag_ins') + ': ' + (a.qual.insurerName || '—')
+          + escH('🛡️ ' + t('ag_ins') + sepC() + (a.qual.insurerName || '—')
             + (a.qual.insuranceTo ? ' · ' + t('ag_ins_to') + ' ' + fdate(a.qual.insuranceTo) : '')) + '</div>'
         : '')
     + '</div>';
@@ -4426,7 +4539,7 @@ function agentsView(){
   h += list.length ? list.map(agentCard).join('') : emptyCard(t('ag_none'), '');
   /* the draft law's registration / exam / insurance fields are RECORDED, not required, and the
      screen says why rather than implying a duty that does not exist yet. */
-  h += '<div class="notice">' + escH('⚖ ' + t('ag_law_note')) + '</div>';
+  h += '<div class="notice">' + escH('⚖️ ' + t('ag_law_note')) + '</div>';
   return h;
 }
 
@@ -4486,7 +4599,7 @@ function dealCard(d){
     + '</div>'
     + (al ? '<div class="badgerow" style="margin-top:10px">' + al.rows.map(r =>
         badge('b-neutral', agentEm(r.agentId) + ' ' + agentName(r.agentId) + ' · ' + bpTxt(r.shareBp))).join('') + '</div>' : '')
-    + (d.void ? '<div class="notice bad">' + escH('✖ ' + t('d_void') + ': ' + d.void.reason
+    + (d.void ? '<div class="notice bad">' + escH('✖️ ' + t('d_void') + sepC() + d.void.reason
         + ' · ' + fdate(d.void.ts)) + '</div>' : '')
     + '<div class="row" style="margin-top:14px">'
       + '<button class="btn ghost small" onclick="openDeal(' + jsArg(d.id) + ')">' + escH(t('c_open')) + '</button>'
@@ -4560,9 +4673,7 @@ function openDeal(id){
       + '<div class="d">' + escH(t('cm_none_b')) + '</div></div>';
   } else {
     const tm = d.terms;
-    const rate = tm.mode === 'pct' ? bpTxt(tm.bp)
-      : tm.mode === 'flat' ? amdTxt(tm.flat) + ' ֏'
-      : monthsTxt(tm.monthsBp) + ' ' + t('cm_months_u');
+    const rate = rateAsTyped(tm);
     h += '<div class="card" style="margin:0 0 12px">'
       + '<div class="row"><span class="mlbl">' + escH(t('cm_base')) + '</span><span>'
         + escH(basisLabel(tm.basis)) + ' · ' + amdTxt(tm.base) + ' ֏</span></div>'
@@ -4570,9 +4681,15 @@ function openDeal(id){
         + escH(rate) + '</span></div>'
       + '<div class="row"><span class="mlbl">' + escH(t('cm_payer')) + '</span><span>'
         + escH(payerLabel(tm.payer)) + '</span></div>'
+      /* THE TWO INVOICES, EACH WITH THE PERCENTAGE THAT PRODUCED IT. A split-payer deal owes
+         two invoices, so the sheet prints both amounts beside both shares rather than a bare
+         pair of figures the owner has to trust. */
       + (tm.payer === 'split' && ps ? '<div class="row"><span class="mlbl">'
-          + escH(t('cm_payer_seller') + ' / ' + t('cm_payer_buyer')) + '</span><span>'
-          + amdTxt(ps.seller) + ' ֏ / ' + amdTxt(ps.buyer) + ' ֏</span></div>' : '')
+          + escH(t('cm_payer_seller')) + ' · ' + escH(bpTxt(ps.sellerBp)) + '</span>'
+          + amd(ps.seller) + '</div>'
+        + '<div class="row"><span class="mlbl">'
+          + escH(t('cm_payer_buyer')) + ' · ' + escH(bpTxt(ps.buyerBp)) + '</span>'
+          + amd(ps.buyer) + '</div>' : '')
       + '<div class="row"><span class="mlbl">' + escH(t('cm_trigger')) + '</span><span>'
         + escH(triggerLabel(tm.trigger)) + '</span></div>'
       + '<div class="row"><span class="mlbl">' + escH(t('cm_vat')) + '</span><span>'
@@ -4585,8 +4702,15 @@ function openDeal(id){
     h += '<div class="sec">💰 ' + escH(t('cm_fee')) + '</div>';
     h += '<div class="card" style="margin:0 0 12px">' + amdBig(al.fee)
       + '<div class="prov">' + escH(feeWhy(d)) + '</div>'
-      + (al.over ? '<div class="notice bad">' + escH('⚠ ' + t('cm_over')) + '</div>' : '')
-      + '<table class="sp"><thead><tr><th>' + escH(t('tab_agents')) + '</th>'
+      /* AN OVER-ALLOCATED DEAL GETS THE WARNING AND NOTHING ELSE. When Σ shareBp exceeds 10000
+         the numbers are known to be wrong — mintEarnings() refuses to post from them — and the
+         table printed anyway showed a NEGATIVE agency keep beside a «0%» share and a «130%»
+         total, with the ✓ reconciliation line under it because the assertion is true by
+         construction. A table that reconciles arithmetically while describing an impossible
+         agreement is worse than no table. */
+      + (al.over ? '<div class="notice bad">' + escH('⚠️ ' + t('cm_over')) + '</div>'
+          + '<div class="prov warn">' + escH(fmt('cm_over_b', {n:bpTxt(al.sumBp)})) + '</div>'
+        : '<table class="sp"><thead><tr><th>' + escH(t('tab_agents')) + '</th>'
         + '<th class="n">' + escH(t('cm_share')) + '</th><th class="n">' + escH(t('cm_amount')) + '</th></tr></thead><tbody>'
       + al.rows.map(r => '<tr><td>' + escH(agentEm(r.agentId) + ' ' + agentName(r.agentId))
           + '<div class="muted">' + escH(r.side ? t('ag_side_'+r.side) : '') + '</div></td>'
@@ -4598,7 +4722,7 @@ function openDeal(id){
         + escH(bpTxt(al.sumBp + Math.max(0, 10000 - al.sumBp))) + '</td><td class="n">'
         + amdTxt(al.rows.reduce((x,r) => x + r.amount, 0) + al.agencyKeep) + '</td></tr>'
       + '</tbody></table>'
-      + '<div class="prov">' + escH((assertReconciles(al) ? '✓ ' : '⚠ ') + t('cm_recon')) + '</div>'
+      + '<div class="prov">' + escH((assertReconciles(al) ? '✓ ' : '⚠️ ') + t('cm_recon')) + '</div>')
       + '</div>';
   }
 
@@ -4757,7 +4881,7 @@ function viewingRow(v){
 function viewsView(){
   let h = secTitle('🔑', t('views_title'));
   /* the sentence that makes this screen worth having, said once at the top */
-  h += '<div class="notice">' + escH('⚖ ' + t('vw_evidence')) + '</div>';
+  h += '<div class="notice">' + escH('⚖️ ' + t('vw_evidence')) + '</div>';
   const list = (S.viewings||[]).slice()
     /* unsigned sheets float to the top: an unsigned sheet is an unenforceable claim */
     .sort((a,b) => (!!a.signedTs - !!b.signedTs) || (b.ts - a.ts));
@@ -4776,7 +4900,8 @@ function clientCard(c){
     + '<div class="pav">👤</div>'
     + '<div class="pon"><div class="addr">' + escH(c.name) + '</div>'
       /* the agent's next action after opening a client is ALWAYS to call them */
-      + (c.phone ? '<a class="muted" href="tel:' + escH(c.phone.replace(/[^\d+]/g,'')) + '">'
+      + (c.phone ? '<a class="telbtn" href="tel:' + escH(c.phone.replace(/[^\d+]/g,'')) + '"'
+          + ' aria-label="' + escH(t('cl_call') + ' ' + c.name) + '">📞 '
           + escH(c.phone) + '</a>' : '') + '</div>'
     + '</div>'
     + '<div class="badgerow" style="margin-top:10px">' + roles
@@ -4916,18 +5041,46 @@ function downloadCSV(name, rows){
    client, property, cadastral code, service, base amount, rate AS TYPED, fee, VAT flag, date.
    No tax is computed — whether brokerage sits inside the professional-services turnover-tax
    exclusion is UNVERIFIED and is the agency accountant's question, not this product's. */
+/* the rate exactly as the owner typed it — a percentage, a flat dram figure, or months of rent.
+   Never normalised into one of the three, because «0.5 ամիս» under a column headed «percentage»
+   is a mislabelled cell in the one artefact this product hands to an accountant. */
+function rateAsTyped(tm){
+  if(!tm) return '';
+  return tm.mode === 'pct'  ? bpTxt(tm.bp)
+       : tm.mode === 'flat' ? amdTxt(tm.flat) + ' ֏'
+       : monthsTxt(tm.monthsBp) + ' ' + t('cm_months_u');
+}
 function exportCommission(){
-  const rows = [[ t('cm_setby'), t('clients_title'), t('props_title'), t('p_cad'),
-                  t('cm_mode_pct'), t('cm_base'), t('cm_fee'), t('cm_vat'), t('cm_trigger'), t('d_stage') ]];
+  const rows = [[ t('csv_deal'), t('csv_date'), t('csv_party'), t('csv_side'), t('props_title'),
+                  t('p_cad'), t('cm_base'), t('cm_rate'), t('cm_fee_total'), t('cm_due'),
+                  t('cm_vat'), t('cm_trigger'), t('d_stage') ]];
   (S.deals||[]).forEach(d => {
-    const al = allocation(d); if(!al) return;
     const p = propById(d.propertyId);
+    const addr = p ? propAddr(p) : '';
+    const cad = p ? p.cadCode : '';
+    const stage = stageLabel(d.stage) + (d.void ? ' · ' + t('d_void') : '');
+    const al = allocation(d);
+    /* A DEAL WITH NO TERMS STILL GETS A LINE. Dropping it exported five deals as four and left
+       the accountant to notice the absence; the line says what is missing instead. */
+    if(!al || !termsComplete(d.terms)){
+      rows.push([ d.id, fdate(d.stageTs), '', '', addr, cad, '', t('csv_noterms'), '', '', '', '', stage ]);
+      return;
+    }
     const tm = d.terms;
-    const rate = tm.mode === 'pct' ? bpTxt(tm.bp)
-      : tm.mode === 'flat' ? amdTxt(tm.flat) : monthsTxt(tm.monthsBp) + ' ' + t('cm_months_u');
-    rows.push([ fdate(d.stageTs), clientName(tm.payer === 'buyer' ? d.buyerClientId : d.sellerClientId),
-      p ? propAddr(p) : '', p ? p.cadCode : '', rate, tm.base, al.fee, vatLabel(tm.vat),
-      triggerLabel(tm.trigger), stageLabel(d.stage) + (d.void ? ' · ' + t('d_void') : '') ]);
+    const ps = payerSplit(tm, al.fee);
+    /* ONE LINE PER PAYING SIDE. A split-payer deal owes TWO invoices, and a single line naming
+       the seller for the whole fee overcharged the seller by exactly the buyer's half — in the
+       file whose comment promises the accountant the columns they need to raise the invoice. */
+    const sides = [];
+    if(ps.seller) sides.push({ side:'seller', cid:d.sellerClientId, amt:ps.seller, bp:ps.sellerBp });
+    if(ps.buyer)  sides.push({ side:'buyer',  cid:d.buyerClientId,  amt:ps.buyer,  bp:ps.buyerBp });
+    if(!sides.length) sides.push({ side:tm.payer, cid:d.sellerClientId, amt:0, bp:0 });
+    sides.forEach(x => {
+      rows.push([ d.id, fdate(d.stageTs), clientName(x.cid),
+        payerLabel(x.side) + (tm.payer === 'split' ? ' · ' + bpTxt(x.bp) : ''),
+        addr, cad, tm.base, rateAsTyped(tm), al.fee, x.amt,
+        vatLabel(tm.vat), triggerLabel(tm.trigger), stage ]);
+    });
   });
   downloadCSV('armestate-commission-' + fdate(S.today).replace(/\./g,'-') + '.csv', rows);
 }
@@ -5295,7 +5448,7 @@ function estateSelfTest(){
         cfg:{payWhen:'☠', stuckDays:-4} });
       return s.props.length === 0 && s.cfg.payWhen === 'received' && s.cfg.stuckDays === 1
         && s.deals[0].stage === 'agreed' && s.deals[0].agents[0].shareBp === 0
-        && s.agents.find(a => a.id === 'x').defaultShareBp === 0 && s.rows.length === 0;
+        && s.agents.find(a => a.id === 'x').defaultShareBp === null && s.rows.length === 0;
     })());
     ok('migrate never invents a commission rate', (() => {
       const s = migrate({ deals:[{ id:'d', terms:{ base:1000000 } }] });
