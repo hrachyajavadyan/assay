@@ -3270,7 +3270,7 @@ T.en = {
   of_accepted_deal: "Accepted · the deal is open",
   of_locked: "An offer's outcome is set once.",
   of_need: "The property, the client and the price are required.",
-  doc_of_title: "Offer sheet",
+  doc_of_title: "Առաջարկի թերթիկ · Offer sheet",
   doc_of_print: "Print the offer",
   doc_of_note: "This sheet is an offer and is not itself a contract.",
   p_new: "New property",
@@ -3832,7 +3832,7 @@ T.ru = {
   of_accepted_deal: "Принято · сделка открыта",
   of_locked: "Исход предложения задаётся один раз.",
   of_need: "Объект, клиент и цена обязательны.",
-  doc_of_title: "Лист предложения",
+  doc_of_title: "Առաջարկի թերթիկ · Лист предложения",
   doc_of_print: "Напечатать предложение",
   doc_of_note: "Настоящий лист является предложением и сам по себе договором не является.",
   p_new: "Новый объект",
@@ -6394,8 +6394,11 @@ function mandateCard(m){
         ? (left != null
             ? '<div class="hbar" style="margin-top:8px"><i style="width:' + pct + '%"></i></div>'
               + '<div class="prov' + (left <= 14 ? ' warn' : '') + '">'
-              + escH('🔒 ' + t('mn_exclusive') + ' · ' + t('p_excl_left') + ' ' + Math.max(0, left) + ' '
-                + t('p_dom_d') + ' · ' + t('mn_excl_cap')) + '</div>'
+              /* SAY IT ONCE. It read «🔒 Բացառիկ · բացառիկ՝ մնաց 81 օր» — the word twice in one
+                 line, because the property card's standalone phrase was reused after a label
+                 that already carries it. */
+              + escH('🔒 ' + t('mn_exclusive') + ' · ' + fmt('c_excl_b', {n:Math.max(0, left)})
+                + ' · ' + t('mn_excl_cap')) + '</div>'
             : '<div class="prov">' + escH('🔒 ' + t('mn_exclusive') + ' · '
                 + fdate(m.exclusiveFrom) + ' — ' + fdate(m.exclusiveTo)) + '</div>')
         : '')
@@ -7624,7 +7627,7 @@ function drawTerms(){
   /* «usual terms» — a prefill with a name on it, never a silent default */
   h += tpl
     ? '<button class="btn ghost full" onclick="applyUsualTerms()">' + escH(t('cm_tpl_apply')) + '</button>'
-      + '<div class="prov">' + escH(fmt('cm_tpl_set', {by: tpl.setBy || '—', d: fdate(S.cfg.termsTemplateTs)})) + '</div>'
+      + '<div class="prov">' + escH(fmt('cm_tpl_set', {by: actorName(tpl.setBy), d: fdate(S.cfg.termsTemplateTs)})) + '</div>'
     : '<div class="prov">' + escH(t('cm_tpl_none')) + '</div>';
 
   h += '<div class="sec">🧮 ' + escH(t('cm_base_lbl')) + '</div>'
@@ -8162,6 +8165,7 @@ function meDate(k, v){
   if(!ME) return;
   const ms = Date.parse(String(v || '') + 'T00:00:00Z');
   ME[k] = isFinite(ms) ? ms : 0;
+  echoDate('me' + k, ME[k]);
   const el = document.getElementById('meLen');
   if(el) el.innerHTML = meLenHtml();
 }
@@ -8190,15 +8194,15 @@ function drawMandateEdit(){
     + (ME.exclusive
         ? '<div class="fieldlbl" style="margin-top:12px">' + escH(t('doc_mn_excl_from')) + '</div>'
           + '<input type="date" value="' + escH(ME.from ? isoDate(ME.from) : '') + '" onchange="meDate('
-            + jsArg('from') + ',this.value)">'
+            + jsArg('from') + ',this.value)">' + dateEcho('mefrom', ME.from)
           + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('doc_mn_excl_to')) + '</div>'
           + '<input type="date" value="' + escH(ME.to ? isoDate(ME.to) : '') + '" onchange="meDate('
-            + jsArg('to') + ',this.value)">'
+            + jsArg('to') + ',this.value)">' + dateEcho('meto', ME.to)
           + '<div id="meLen">' + meLenHtml() + '</div>'
         : '')
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('mn_platform')) + '</div>'
     + '<input type="date" value="' + escH(ME.plat ? isoDate(ME.plat) : '') + '" onchange="meDate('
-      + jsArg('plat') + ',this.value)">'
+      + jsArg('plat') + ',this.value)">' + dateEcho('meplat', ME.plat)
     + '<div class="prov">' + escH(t('mn_platform_off')) + '</div>'
     + '<button class="btn primary full" style="margin-top:16px" onclick="saveMandateEdit()">'
       + escH(t('dep_save')) + '</button>'
@@ -8329,10 +8333,16 @@ function exportCommission(){
    makes is re-derivable from these rows — so retention is a property of the log, and an export
    that carries it out of the browser is the cheapest possible insurance against that. */
 function exportLedger(){
-  const rows = [['uuid','ts','agent','type','amt','deal','prop','client','trigger','reason','actor','rank','note']];
+  /* the raw row id and the raw deal key STAY — this file is the log, and a log that renames its
+     own keys cannot be joined back to the state it came from. The quotable deal number rides
+     beside it, because the commission export and the signed statement both speak that one and an
+     accountant reconciling three files needs the join to exist in at least one of them. */
+  const rows = [['uuid','ts','agent','type','amt','deal','deal_no','prop','client','trigger',
+                 'reason','actor','rank','note']];
   (S.rows||[]).slice().sort((a,b) => a.ts - b.ts).forEach(r => {
     rows.push([r.uuid, fdate(r.ts), agentName(r.agent) || r.agent, rowTypeLabel(r.type), r.amt,
-      r.deal, r.prop, r.client, r.trigger, r.reason, r.actor, r.rank, r.note]);
+      r.deal, r.deal ? dealNoOf(r.deal) : '', r.prop, r.client, r.trigger, r.reason, r.actor,
+      r.rank, r.note]);
   });
   downloadCSV('armestate-ledger-' + fdate(S.today).replace(/\./g,'-') + '.csv', rows);
 }
