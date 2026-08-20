@@ -343,7 +343,7 @@ for (var k in SHELL) T[k] = SHELL[k];
    throws on the first call and ARMGOLD renders a completely blank screen — verified in a
    browser. This page therefore keeps its own three-language key and mirrors into `assay_lang`
    only the two values ARMGOLD can survive; a 'ru' left there by an earlier build is healed. */
-var LS_LANG='assay_site_lang', LS_THEME='assay_theme', LS_GOLD='assay_lang';
+var LS_LANG='assay_site_lang', LS_THEME='suite_theme', LS_GOLD='assay_lang';
 function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
 
