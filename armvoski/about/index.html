@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F4F6F8">
+<meta name="description" content="ԱրմՈսկի — ոսկերչական խանութի հաշվառում քաշով և հարգով. ի՞նչ է ծրագիրը, ո՞ւմ համար է և ի՞նչ խնդիր է լուծում։">
+<title>Ի՞նչ է ԱրմՈսկին</title>
+<link rel="icon" href="data:,">
+
+<!-- Fonts are the products' own self-hosted files, referenced absolutely. There is no link to
+     fonts.googleapis.com in this file and there must never be one: the app it describes opens
+     without signal, and its explainer has to do the same. -->
+<link rel="preload" href="/armtrade/vendor/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/armtrade/vendor/fonts/noto-sans-armenian-armenian-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Inter';font-style:normal;font-display:swap;font-weight:100 900;
+  src:url(/armtrade/vendor/fonts/inter-latin-wght-normal.woff2) format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Noto Sans Armenian';font-style:normal;font-display:swap;font-weight:100 900;
+  src:url(/armtrade/vendor/fonts/noto-sans-armenian-armenian-wght-normal.woff2) format('woff2');
+  unicode-range:U+0308,U+0530-058F,U+2010,U+2024,U+25CC,U+FB13-FB17}
+
+/* tokens: taken verbatim from the products' light theme, so the door and the room match */
+:root{
+  --bg:#F4F6F8; --surface:#FFFFFF; --surface-2:#F1F4F8; --surface-3:#E6EBF2;
+  --ink:#0E1726; --muted:#54607A; --dim:#5D6880;
+  --sep:#E6EAF0; --stroke:#E1E6EE; --stroke2:#C9D2E0;
+  --acc:#A85A07; --acc-ink:#FFFFFF; --acc-tint:#FFF4E3; --acc-line:#EBCFA4; --acc-text:#8A4B00;
+  --ok:#0B6B3A; --ok-tint:#EEF9F2; --ok-line:#B7E3C9;
+  --warn:#B42318; --warn-tint:#FEF1F1; --warn-line:#F5C9C4;
+  --sh-1:0 1px 2px rgba(14,23,38,.06); --sh-2:0 4px 16px rgba(14,23,38,.08);
+  --focus:0 0 0 3px rgba(168,90,7,.30);
+  --font:'Inter','Noto Sans Armenian',-apple-system,'Segoe UI',Roboto,sans-serif;
+  --emoji:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",var(--font);
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s10:40px;
+}
+body.dark{
+  --bg:#0B0F17; --surface:#161C2A; --surface-2:#1E2637; --surface-3:#28324A;
+  --ink:#E8EDF7; --muted:#A3B0C7; --dim:#8B97AE;
+  --sep:#242D40; --stroke:#242D40; --stroke2:#313C55;
+  --acc:#F0A93B; --acc-ink:#1A1205; --acc-tint:#2A1F0C; --acc-line:#5A431A; --acc-text:#F5C06A;
+  --ok:#5AD79A; --ok-tint:#0E2A1E; --ok-line:#1E5540;
+  --warn:#FF9C9C; --warn-tint:#2A1315; --warn-line:#5A2226;
+  --sh-1:0 1px 2px rgba(0,0,0,.30); --sh-2:0 6px 20px rgba(0,0,0,.35);
+  --focus:0 0 0 3px rgba(240,169,59,.35);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p,ul,ol,figure{margin:0}
+img{max-width:100%;height:auto;display:block}
+
+.top{display:flex;align-items:center;gap:var(--s2);max-width:760px;margin:0 auto;
+  padding:var(--s3) var(--s4) 0}
+.home{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 var(--s3);
+  background:var(--surface);border:1px solid var(--stroke);border-radius:12px;
+  color:var(--muted);text-decoration:none;font-size:14px;font-weight:600;box-shadow:var(--sh-1)}
+.top .sp{margin-left:auto}
+.tbtn{width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  background:var(--surface);border:1px solid var(--stroke);border-radius:12px;cursor:pointer;
+  font-size:18px;font-family:var(--emoji);line-height:1;box-shadow:var(--sh-1)}
+.tbtn:focus-visible,.home:focus-visible,a:focus-visible{outline:none;box-shadow:var(--focus)}
+
+.wrap{max-width:760px;margin:0 auto;padding:var(--s5) var(--s4) var(--s10)}
+.eyebrow{font-size:14px;font-weight:700;letter-spacing:.4px;color:var(--acc-text)}
+h1{font-size:clamp(28px,8vw,38px);line-height:1.12;letter-spacing:-.6px;font-weight:700;
+  margin:var(--s2) 0 var(--s3)}
+.lede{font-size:18px;line-height:1.5;color:var(--ink);max-width:46ch}
+.lede + .lede{margin-top:var(--s3)}
+.sub{color:var(--muted);font-size:15px;margin-top:var(--s3);max-width:52ch}
+
+.cta{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s5)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;
+  padding:0 var(--s5);border-radius:13px;text-decoration:none;font-weight:700;font-size:16px;
+  background:var(--acc);color:var(--acc-ink);border:1px solid var(--acc)}
+.btn.ghost{background:var(--surface);color:var(--ink);border-color:var(--stroke2)}
+.demo{font-size:14px;color:var(--dim);margin-top:var(--s2)}
+
+h2{font-size:clamp(20px,5.4vw,24px);line-height:1.25;letter-spacing:-.3px;font-weight:700;
+  margin:var(--s10) 0 var(--s3);padding-top:var(--s6);border-top:1px solid var(--sep)}
+h3{font-size:17px;font-weight:700;margin:var(--s6) 0 var(--s2)}
+p{margin:var(--s3) 0;max-width:60ch}
+.card{background:var(--surface);border:1px solid var(--stroke);border-radius:16px;
+  padding:var(--s4) var(--s5);box-shadow:var(--sh-1);margin:var(--s4) 0}
+.card h3{margin-top:0}
+.card p:last-child{margin-bottom:0}
+
+ul.plain{list-style:none;padding:0;margin:var(--s3) 0}
+ul.plain li{position:relative;padding-left:30px;margin:var(--s3) 0;max-width:58ch}
+ul.plain li b{font-weight:700}
+ul.plain li::before{content:"·";position:absolute;left:10px;top:-2px;font-size:22px;color:var(--acc-text)}
+ul.yes li::before{content:"✓";left:4px;top:0;font-size:16px;font-weight:800;color:var(--ok)}
+ul.no  li::before{content:"—";left:4px;top:0;font-size:16px;font-weight:800;color:var(--dim)}
+
+.note{border-left:3px solid var(--acc-line);background:var(--acc-tint);
+  border-radius:0 12px 12px 0;padding:var(--s3) var(--s4);margin:var(--s4) 0;
+  font-size:15px;color:var(--ink);max-width:60ch}
+.note b{color:var(--acc-text)}
+.flag{border-left:3px solid var(--warn-line);background:var(--warn-tint);
+  border-radius:0 12px 12px 0;padding:var(--s3) var(--s4);margin:var(--s4) 0;
+  font-size:15px;max-width:60ch}
+
+figure{margin:var(--s5) 0}
+.shot{display:inline-block;max-width:320px;width:100%;border:1px solid var(--stroke2);
+  border-radius:16px;overflow:hidden;background:var(--surface);box-shadow:var(--sh-2)}
+figcaption{font-size:14px;color:var(--muted);margin-top:var(--s2);max-width:46ch;line-height:1.5}
+
+.pair{display:grid;gap:var(--s5)}
+@media(min-width:720px){
+  .pair{grid-template-columns:1fr 1fr;align-items:start}
+  .pair figure{margin:0}
+}
+
+.cmp{width:100%;border-collapse:collapse;margin:var(--s4) 0;font-size:15px}
+.cmp th,.cmp td{text-align:left;padding:var(--s3) var(--s3);border-bottom:1px solid var(--sep);
+  vertical-align:top}
+.cmp th{font-size:14px;color:var(--dim);font-weight:700}
+.cmp td:first-child{font-weight:600;width:34%}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+.foot{margin-top:var(--s10);padding-top:var(--s5);border-top:1px solid var(--sep);
+  font-size:14px;color:var(--muted)}
+.foot a{color:var(--acc-text);font-weight:600}
+.foot .links{display:flex;flex-wrap:wrap;gap:var(--s4);margin-bottom:var(--s3)}
+.foot .links a{min-height:44px;display:inline-flex;align-items:center}
+a{color:var(--acc-text)}
+</style>
+</head>
+<body class="light">
+
+<div class="top">
+  <a class="home" href="/">← Բոլոր ծրագրերը</a>
+  <span class="sp"></span>
+  <button class="tbtn" id="themebtn" type="button" aria-label="Թեմա">🌙</button>
+</div>
+
+<div class="wrap">
+
+  <p class="eyebrow">ԱրմՈսկի</p>
+  <h1>Ոսկերչական խանութի հաշվառում</h1>
+
+  <p class="lede">Դուք ջարդոն եք գնում վաճառասեղանի մոտ եկած մարդուց, և վաճառում պատրաստի իր։
+  2026 թվականի հուլիսի 1-ից ձեր հարկը կախված է նրանից՝ կարո՞ղ եք փաստաթղթով ցույց տալ,
+  թե որքան եք վճարել այդ մետաղի համար։</p>
+
+  <p class="lede">ԱրմՈսկին հենց այդ գրառումն է վարում՝ ամեն գրամի համար, գնման օրվանից մինչև
+  վաճառքի օրը։ Եվ դա անում է այնպես, ինչպես խանութն է աշխատում՝ քաշով և հարգով, ոչ թե հատով։</p>
+
+  <div class="flag">
+    <b>Ծրագիրը հարկի դրույքաչափ չի ցույց տալիս և հարկ չի հաշվարկում։</b>
+    Այն վարում է այն գրառումը, որի վրա հարկը հենվում է՝ ինքնարժեքը, փաստաթուղթը և ամսաթիվը։
+    Դրույքաչափերն ու պարտադիր փաստաթղթերը ճշտեք ձեր հաշվապահի հետ։
+  </div>
+
+  <div class="cta">
+    <a class="btn" href="/armvoski/">Բացել ծրագիրը</a>
+    <a class="btn ghost" href="/armvoski/guide/">Ուղեցույց</a>
+  </div>
+  <p class="demo">Բացվում է ցուցադրական տվյալներով — կարող եք ամեն ինչ սեղմել առանց վախի։</p>
+
+
+  <h2>Ո՞ւմ համար է</h2>
+
+  <ul class="plain yes">
+    <li>Ոսկերչական խանութ, որը <b>մետաղ է պահում</b> դարակում և պահարանում։</li>
+    <li>Խանութ, որը <b>գնում է բնակչությունից</b> — ջարդոն, կոտրված շղթա, հին մատանի։</li>
+    <li>Խանութ, որը <b>հանձնում է հարգադրոշմի</b> և պետք է հիշի, թե ինչ որտեղ է։</li>
+    <li>Խանութ, որը <b>վերանորոգում է ընդունում</b> և պետք է իմանա՝ ինչ կա իր մոտ, որը իրենը չէ։</li>
+    <li>Ոսկի և արծաթ՝ 375-ից 999 հարգ։ <b>583-ը 585-ից առանձին է</b>, ինչպես պետք է լինի։</li>
+  </ul>
+
+  <p><b>Ո՞ւմ համար չէ։</b></p>
+  <ul class="plain no">
+    <li>Եթե ձեզ պետք է <b>միայն գին հաշվել և վաճառքը գրանցել</b> — ARMGOLD-ը փոքր է և արագ։
+      Տարբերությունը գրված է այս էջի վերջում։</li>
+    <li>Գրավատուն, ձուլարան, հարգորոշման տեսչություն — դրանք այլ գործ են և այլ լիցենզիա։</li>
+  </ul>
+
+
+  <h2>Ի՞նչ է անում</h2>
+
+  <h3>1. Օրվա գինը մեկ թիվ է. մնացած ամեն ինչ դրանից է բխում</h3>
+  <p>Մուտքագրում եք 999 հարգի մեկ գրամի գինը։ Մնացած բոլոր հարգերը ծրագիրն ինքն է հաշվում՝
+  ըստ մետաղի պարունակության։ Կարտի վրա գրված է, թե որտեղից է թիվը և քանի ժամ առաջ եք այն դրել —
+  որպեսզի հին գնով չվաճառեք։</p>
+  <p>Երկու կարգավորում կա։ <b>Հավելագինը</b> ձեր վաճառքի գինն է 999 գնի վրա։
+  <b>Գնման զեղչը</b> այն է, թե որքանով եք ցածր գնում ջարդոնը։</p>
+
+  <figure>
+    <span class="shot"><img src="img/home.png" alt="«Այսօր» էկրանը՝ 999 հարգի օրվա գինը, վաճառքի և գնման գները, դարակի արժեքը" width="585" height="1150" loading="lazy"></span>
+    <figcaption>«Այսօր» էկրանը։ Գնման գնի տեղում գիծ է, քանի դեռ զեղչը նշված չէ — ծրագիրը թիվ չի հորինում։</figcaption>
+  </figure>
+
+  <h3>2. Գնում բնակչությունից՝ հաշվարկը հաճախորդի աչքի առաջ</h3>
+  <p>Դնում եք իրը կշեռքին, ընտրում հարգը — և ծրագիրը ցույց է տալիս ամբողջ հաշվարկը մեկ տողով.
+  999 գինը, հարգի փոխարկումը, քաշը, արդյունքը։ Այդ տողը ցույց է տրվում հաճախորդին։
+  Վեճ չի մնում, որովհետև թվերը երևում են։</p>
+  <p>Քարերը գնման կողմում լռելյայն չեն գնահատվում, և դա գրված է հենց տողի տակ։</p>
+
+  <figure>
+    <span class="shot"><img src="img/buycalc.png" alt="Գնման էկրանը՝ քաշի դաշտերը և վճարվող գումարի ամբողջական հաշվարկը" width="585" height="1210" loading="lazy"></span>
+    <figcaption>12.400 գ 585 հարգ, 12% գնման զեղչ։ Հաշվարկը՝ 45,529 × 585/999 = 26,661 ֏/գ, ապա 12.400 × 26,661 = 330,596 ֏։</figcaption>
+  </figure>
+
+  <h3>3. Եվ նույն տեղում՝ գնման ակտը</h3>
+  <p>«Վճարել» սեղմելուն պես կազմվում է <b>գնման ակտը</b>՝ համարով, ամսաթվով, կողմերով,
+  գումարը բառերով և երկու ստորագրության տեղով։ Տպվում է հեռախոսից։</p>
+  <p>Ամենակարևորը՝ <b>վճարած գումարը դառնում է այդ մետաղի ինքնարժեքը</b> և կապվում է ակտի համարին։
+  Հենց այդ կապն է, որ վաղը ցույց է տալիս՝ ինչ եք վճարել։</p>
+  <div class="note">
+    Վաճառողի անունը, անձնագիրը և ՀԾՀ-ն դաշտեր են, որոնք լրացվում են <b>ըստ ցանկության</b>։
+    Ծրագիրը չի պնդում, թե որոնք են պարտադիր — դա ձեր հաշվապահի հարցն է, և էկրանին էլ հենց այդպես է գրված։
+  </div>
+
+  <figure>
+    <span class="shot"><img src="img/buyact.png" alt="Գնման ակտ № ԳԱ-2026-0042՝ կողմերով, աղյուսակով, գումարը բառերով և ստորագրության տողերով" width="585" height="1258" loading="lazy"></span>
+    <figcaption>Գնման ակտը՝ այնպես, ինչպես տպվում է։ Գումարը բառերով՝ հայերեն, նույնիսկ երբ ծրագիրը անգլերեն է. ակտը հայերեն է ստորագրվում։</figcaption>
+  </figure>
+
+  <h3>4. Մնացորդը՝ քաշով և հարգով</h3>
+  <p>Դարակը խմբավորված է ըստ հարգի։ 585-ի գրամները և 750-ի գրամները <b>իրար չեն գումարվում</b> —
+  դրանք տարբեր բան են։ Ընդհանուրը տրվում է <b>մաքուր մետաղով</b>, և արժեքի տակ գրված է հենց այն
+  բազմապատկումը, որով ստացվել է։</p>
+
+  <figure>
+    <span class="shot"><img src="img/tray.png" alt="Դարակի էկրանը՝ մնացորդը խմբավորված ըստ հարգի, մաքուր մետաղով ընդհանուր" width="585" height="1200" loading="lazy"></span>
+    <figcaption>Ամեն խմբի արժեքը՝ մաքուր մետաղը × օրվա 999 գինը։ «&lt; 01.07.26» պիտակը նշում է հուլիսի 1-ից առաջ ձեռք բերված իրերը։</figcaption>
+  </figure>
+
+  <h3>5. Զեղչ տալիս եք — ծրագիրը զգուշացնում է, բայց չի արգելում</h3>
+  <p>Երբ ձեր ձեռքով գրած գինը իջնում է հաշվարկվածի 80%-ից ցածր, էկրանին հայտնվում է զգուշացում՝
+  երկու թվով, որ ինքներդ տեսնեք տարբերությունը։</p>
+  <p><b>Սա արգելք չէ։</b> Վաճառքը շարունակվում է ձեր հաստատմամբ, և երկու թիվն էլ պահվում է
+  վաճառքի գրառման մեջ։ Վաճառասեղանի մոտ հաճախորդին կանգնեցնելը ծրագրի գործը չէ։</p>
+
+  <figure>
+    <span class="shot"><img src="img/sellwarn.png" alt="Վաճառքի էկրանը՝ հաշվարկված գինը, ձեռքով գրված ցածր գինը և 80%-ի զգուշացումը" width="585" height="1040" loading="lazy"></span>
+    <figcaption>Հաշվարկված՝ 290,048 ֏։ Ձեռքով՝ 198,000 ֏, այսինքն 68%։ Զգուշացումը ցույց է տալիս և՛ 80%-ի շեմը, և՛ ձեր գինը։</figcaption>
+  </figure>
+
+  <h3>6. Հարգադրոշմ՝ որպես կարգավիճակ, ոչ թե արդյունք</h3>
+  <p>Հարգորոշումն ու հարգադրոշմավորումը կատարում է լիցենզավորված տեսչությունը, ոչ թե ոսկերիչը։
+  Ուստի ծրագիրը հարգորոշման արդյունք չի գրանցում — այն վարում է <b>հանձնման շրջափուլը</b>.
+  ինչ է հանձնման ենթակա, ինչ է տեսչությունում և քանի օր, ինչ է վերադարձել։</p>
+  <p>Ազատված իրերը ծրագիրն ինքն է առանձնացնում՝ ոսկին 1.5 գ-ից թեթև, արծաթը 3 գ-ից թեթև,
+  ջարդոնը, ինչպես նաև արդեն դրոշմված իրերը։ Դրանց բացակայող դրոշմը սխալ չէ։</p>
+  <div class="note">
+    Հանձնումը <b>տեղափոխություն է, ոչ թե շարժ</b>։ Իրը մնում է ձեր մնացորդում, փոխվում է միայն
+    «Տեղը»։ Հակառակ դեպքում տեսչություն ուղարկելը կերևար որպես վաճառք։
+  </div>
+
+  <figure>
+    <span class="shot"><img src="img/mark.png" alt="Հարգադրոշմի էկրանը՝ հանձնման ենթակա, տեսչությունում գտնվող և ազատված իրերի ցանկերը" width="585" height="1150" loading="lazy"></span>
+    <figcaption>«9 օր տեսչությունում»։ Հիշեցման շեմը ձերն է — ծրագիրը տեսչության ժամկետների մասին ոչինչ չի պնդում։</figcaption>
+  </figure>
+
+  <h3>7. Գույքագրում, որը ակտ է դառնում</h3>
+  <p>Հաշվարկը <b>կույր է</b>. հաշվապահական քաշերը թաքնված են, մինչև ակտը կազմվի — որպեսզի թիվը
+  չհուշի։ Իրը հաստատվում է մեկ հպումով՝ կա կամ չկա։ Ջարդոնի կուտակը դրվում է կշեռքին և կշռվում։</p>
+  <p>Խանութից դուրս գտնվող իրերը (տեսչությունում, արհեստանոցում, հաճախորդի մոտ) շրջանակում չեն և
+  ակտում նշվում են առանձին — այլապես հանձնված մատանին կերևար որպես պակասորդ։</p>
+  <p>Ակտը տալիս է ամեն հարգի հաշվապահական և փաստացի քաշը, տարբերությունը գրամով և հատով,
+  և տարբերության արժեքը դրամով։ Ներքևում՝ հաշվառողի և նյութական պատասխանատու անձի ստորագրությունները։</p>
+
+  <figure>
+    <span class="shot"><img src="img/countact.png" alt="Գույքագրման ակտ՝ հարգերով աղյուսակ, տարբերությունը գրամով և դրամով" width="585" height="1500" loading="lazy"></span>
+    <figcaption>0.350 գ 999-ի պակասորդը 18,090 ֏ է։ Ակտը դա գրում է դրամով, որովհետև հենց դա է ստորագրողի համար կարևորը։</figcaption>
+  </figure>
+
+  <h3>8. Վերանորոգումը պաշար չէ</h3>
+  <p>Հաճախորդի մետաղը մտնում և դուրս է գալիս խանութից՝ երբեք չդառնալով ձեր պաշար։
+  Այն չի մտնում ո՛չ մնացորդի, ո՛չ արժեքի, ո՛չ գույքագրման մեջ։ Գույքագրման ակտում այդ իրերը
+  նշվում են առանձին՝ քանակով և ընդհանուր քաշով, որպեսզի ստորագրողն իմանա, թե ինչ կա խանութում,
+  որը խանութինը չէ։</p>
+
+  <figure>
+    <span class="shot"><img src="img/repair.png" alt="Վերանորոգման էկրանը՝ խանութում գտնվող հաճախորդի իրերի քանակը և ընդհանուր քաշը" width="585" height="1050" loading="lazy"></span>
+    <figcaption>«Հաճախորդի մետաղը չի գնահատվում դրամով — այն խանութինը չէ»։</figcaption>
+  </figure>
+
+
+  <h2>Ի՞նչ դեռ չկա</h2>
+  <p>Ծրագիրը երիտասարդ է, և ավելի ազնիվ է ասել, թե ինչ չկա, քան հետո հիասթափեցնել։</p>
+  <ul class="plain no">
+    <li><b>«Ընդունում» էկրանը դեռ կառուցված չէ։</b> Մատակարարից ընդունումը քաշերով և ինքնարժեքով
+      դեռ չի աշխատում. էկրանը բացվում է և հենց այդպես էլ գրում է։</li>
+    <li><b>Սարքերի միջև համաժամացում չկա։</b> Տվյալները մնում են այն հեռախոսում կամ համակարգչում,
+      որտեղ մուտքագրվել են։</li>
+    <li><b>Լուսանկարներ չկան։</b> Իրի նկար չի պահվում. կա տեքստային նշում։</li>
+    <li><b>CSV արտահանում չկա։</b></li>
+    <li><b>ՀԴՄ-ի հետ կապ չկա և չի լինելու։</b> Կտրոնի համարը գրանցվում է որպես հղում, և ոչինչ ոչ մի
+      տեղ չի ուղարկվում։</li>
+    <li><b>Հարկային ռեժիմի ընտրություն և հարկի հաշվարկ չկան։</b></li>
+  </ul>
+
+  <div class="note">
+    <b>Գաղտնիություն։</b> ԱրմՈսկին ոչ մի տվյալ չի ուղարկում ՊԵԿ կամ որևէ պետական մարմին։
+    Ամեն ինչ մնում է այս սարքում, ARMGOLD-ից առանձին։ Ծրագիրը բացվում է նաև առանց ինտերնետի։
+  </div>
+
+
+  <h2 id="armgold">ARMGOLD-ը թե՞ ԱրմՈսկին</h2>
+  <p>Ոսկյա ծրագիրը երկուսն է, և սա ամենահավանական շփոթությունն է այս կայքում։
+  Երկուսն էլ գին են հաշվում նույն բանաձևով։ Տարբերությունը մեկն է՝ <b>պահեստ պահո՞ւմ է, թե ոչ</b>։</p>
+
+  <div class="card">
+    <h3>ARMGOLD — գնի հաշվիչ</h3>
+    <p>Մուտքագրում եք քաշը, հարգը և գրամի գինը — ստանում եք գինը։ Վաճառքը գրանցվում է,
+    կա պարզ հաշվետվություն, կան իրի լուսանկարներ։ Հայերեն և անգլերեն։</p>
+    <p><b>Պահեստ չի պահում։</b> Մնացորդ, ընդունում, ինքնարժեք, գնման ակտ, գույքագրում,
+    հարգադրոշմ — այս ամենը այնտեղ չկա։</p>
+  </div>
+
+  <div class="card">
+    <h3>ԱրմՈսկի — խանութի հաշվառում</h3>
+    <p>Նույն գնի բանաձևը, բայց դրա շուրջ՝ ամբողջ խանութը։ Մնացորդ քաշով և հարգով,
+    ամեն գրամի ինքնարժեքը, գնում բնակչությունից գնման ակտով, հարգադրոշմի հանձնում,
+    գույքագրում ակտով, վերանորոգում, մատակարարների պարտքեր։ Հայերեն, անգլերեն և ռուսերեն։</p>
+    <p><b>Լուսանկարներ չի պահում։</b></p>
+  </div>
+
+  <p>Երկուսը <b>առանձին ծրագրեր են</b>. առանձին տվյալներով և առանձին մուտքով։
+  Մեկում մուտքագրված իրը մյուսում չի հայտնվում, և մեկից մյուսը տվյալ չի տեղափոխվում։</p>
+
+  <div class="cta">
+    <a class="btn" href="/armvoski/">Բացել ԱրմՈսկին</a>
+    <a class="btn ghost" href="/armgold/">Բացել ARMGOLD-ը</a>
+  </div>
+
+
+  <div class="foot">
+    <div class="links">
+      <a href="/armvoski/">Ծրագիրը</a>
+      <a href="/armvoski/guide/">Ուղեցույց · Guide · Руководство</a>
+      <a href="/armvoski/pitch/">Ներկայացում</a>
+      <a href="/">Բոլոր ծրագրերը</a>
+    </div>
+    <p>Էկրանների նկարները վերցված են աշխատող ծրագրից՝ ցուցադրական տվյալներով։
+    Այս էջը հայերեն է. ուղեցույցը հասանելի է նաև անգլերեն և ռուսերեն։</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var LS='assay_theme';
+  function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+  var theme = get(LS)==='dark' ? 'dark' : 'light';
+  var btn = document.getElementById('themebtn');
+  function apply(t){
+    theme=t; set(LS,t);
+    document.body.classList.toggle('dark', t==='dark');
+    document.body.classList.toggle('light', t!=='dark');
+    btn.textContent = t==='dark' ? '☀️' : '🌙';
+    var m=document.querySelector('meta[name="theme-color"]');
+    if(m) m.setAttribute('content', t==='dark' ? '#0B0F17' : '#F4F6F8');
+  }
+  btn.addEventListener('click', function(){ apply(theme==='dark'?'light':'dark'); });
+  apply(theme);
+})();
+</script>
+</body>
+</html>
