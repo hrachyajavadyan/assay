@@ -916,6 +916,7 @@ input.err,textarea.err{border-color:var(--danger)}
   .tbtn.hdr-lg{display:none}
   .tbtn.hdr-sm{display:flex}
 }
+a.tbtn{text-decoration:none}   /* the header's ❓ is a link out of the app, not a control */
 .tbtn:active{transform:scale(.94);background:var(--surface-2)}
 .tbtn.wide{width:auto;min-width:44px;padding:0 var(--s3);font-size:var(--fs-label);
   flex:0 0 auto;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
@@ -1061,6 +1062,7 @@ nav button{flex:1 1 0;max-width:none}
   min-height:56px;padding:0 var(--s2);
   background:none;border:none;border-bottom:var(--bw) solid var(--sep);
   font-family:var(--font);color:var(--ink);cursor:pointer;text-align:left;
+  text-decoration:none;              /* the two link rows at the foot of the sheet are <a> */
 }
 .morerow:last-of-type{border-bottom:none}
 .morerow:active{background:var(--surface-2)}
@@ -1439,6 +1441,7 @@ tr.hlflash{animation:none;background:var(--acc-tint)}
 const T = {
   hy: {
     shop:'Խանութ', supplier:'Մատակարար',
+    what_is_this:'Ի՞նչ է սա', all_products:'Բոլոր ծրագրերը',
     tabs_shop:{home:'Այսօր',recv:'Ընդունում',count:'Գույքագրում',exp:'Ժամկետներ',catalog:'Ապրանքներ',pos:'Վաճառք',basket:'Զամբյուղ',orders:'Պատվերներ',debts:'Պարտքեր',data:'Տվյալներ'},
     tabs_sup:{dash:'Վահանակ',sellout:'Խանութի մնացորդ',inbox:'Պատվերներ',shops:'Խանութներ',alerts:'Ազդանշաններ',catalog:'Գնացուցակ',data:'Տվյալներ'},
     today_sug:'Առաջարկվող պատվերներ', all_ok:'Ամեն ինչ համալրված է', add:'Ավելացնել', added:'Ավելացված ✓',
@@ -1929,6 +1932,7 @@ const T = {
   },
   en: {
     shop:'Shop', supplier:'Supplier',
+    what_is_this:'What is this?', all_products:'All products',
     tabs_shop:{home:'Today',recv:'Receiving',count:'Count',exp:'Expiry',catalog:'Products',pos:'Sales',basket:'Basket',orders:'Orders',debts:'Debts',data:'Data'},
     tabs_sup:{dash:'Dashboard',sellout:'Shop stock',inbox:'Orders',shops:'Shops',alerts:'Alerts',catalog:'Price list',data:'Data'},
     today_sug:'Suggested reorders', all_ok:'Everything is stocked', add:'Add', added:'Added ✓',
@@ -2407,6 +2411,7 @@ const T = {
     /* nav chip only: «Инвентаризация» is 14 characters and does not fit a 9-tab bottom strip at
        ANY phone width (measured 320/360/390/412 — all ellipsise to «Инвентариза…»). An explicit
        abbreviation reads better than a CSS ellipsis; every screen it leads to spells it in full. */
+    what_is_this:'Что это?', all_products:'Все программы',
     tabs_shop:{home:'Сегодня',recv:'Приёмка',count:'Инвент.',exp:'Сроки',catalog:'Товары',pos:'Продажи',basket:'Корзина',orders:'Заказы',debts:'Долги',data:'Данные'},
     tabs_sup:{dash:'Панель',sellout:'Склад',inbox:'Заказы',shops:'Магазины',alerts:'Сигналы',catalog:'Прайс',data:'Данные'},
     today_sug:'Рекомендуемые заказы', all_ok:'Всё в наличии', add:'Добавить', added:'Добавлено ✓',
@@ -7346,6 +7351,9 @@ function topBar(){
     <button class="tbtn hdr-lg ${anyRoom()?'on':''}" onclick="openSync()" title="${t('sync')}" aria-label="${escH(t('sync'))}">🔗${syncDot()}</button>
     <button class="tbtn" onclick="openEvents()" title="${t('ev_title')}" aria-label="${escH(t('ev_title'))}">🔔${n?`<span class="dot">${n}</span>`:''}</button>
     <button class="tbtn hdr-sm" onclick="openSettings()" title="${t('settings')}" aria-label="${escH(t('settings'))}">⚙${syncDot()}</button>
+    <!-- ≥461px the bottom bar may fit every destination, so «Ավելին» — and with it the way back to
+         the explainer and the other programs — disappears. The header carries it at those widths. -->
+    <a class="tbtn hdr-lg" href="/armtrade/about/" title="${escH(t('what_is_this'))}" aria-label="${escH(t('what_is_this'))}">❓</a>
     ${roleLocked()?'':(sl=>`<button class="tbtn wide splitbtn ${U.split?'on':''}" onclick="toggleSplit()" title="${escH(sl)}" aria-label="${escH(sl)}">${U.split?'▚':'▙'}<span class="lbl">${sl}</span></button>`)(U.split?t('split_on'):t('split_off'))}
     <button class="tbtn wide hdr-lg" onclick="toggleLang()" aria-label="${escH(t('lang_lbl'))}">${({hy:'EN',en:'РУ',ru:'ՀԱՅ'})[lang]}</button>
     ${roleLocked()?'':`<button class="tbtn day" onclick="armDay()" title="${t('next_day')}" aria-label="${escH(t('next_day'))}">⏭</button>`}`;
@@ -7637,9 +7645,15 @@ function openMoreNav(){
       <span class="mrico">${ic}</span><span class="mrnm">${labels[k]}</span>
       ${badge?`<span class="dot">${badge}</span>`:''}
     </button>`).join('');
+  /* Once signed in there was no way back to the explainer or to the other programs — a director
+     being shown three products had to retype the address. These are links, not tabs: they leave
+     the app, so they sit under a rule, below the destinations. */
+  const away = `<div style="border-top:var(--bw) solid var(--sep);margin:14px 0 4px"></div>
+    <a class="morerow" href="/armtrade/about/"><span class="mrico">❓</span><span class="mrnm">${escH(t('what_is_this'))}</span></a>
+    <a class="morerow" href="/"><span class="mrico">🏠</span><span class="mrnm">${escH(t('all_products'))}</span></a>`;
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody"><div class="grabber"></div><h3>☰ ${t('menu_title')}</h3>
-    ${rows}
+    ${rows}${away}
     <button class="btn ghost full" style="margin-top:16px" onclick="closeModal()">${t('close')}</button></div></div>`;
 }
 
