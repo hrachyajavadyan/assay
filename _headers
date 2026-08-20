@@ -1,8 +1,18 @@
-/armtrade/
+# HTML is always revalidated: these are single-file apps and documents that change often,
+# and a stale shell served from the edge is indistinguishable to the user from a broken deploy.
+/
   Cache-Control: no-cache
 
-/armtrade/index.html
+/*/
   Cache-Control: no-cache
 
-/pitch/
+/*/index.html
   Cache-Control: no-cache
+
+/index.html
+  Cache-Control: no-cache
+
+# Fonts are content-addressed by name and never change in place — cache them hard,
+# because they are the largest thing a first visit downloads on a slow connection.
+/armtrade/vendor/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
