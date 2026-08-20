@@ -8522,9 +8522,23 @@ function mrSet(pid, v){
   const n = Math.max(0, Math.min(9999, Math.floor(+v||0)));
   if(n) MRECV.q[pid] = n; else delete MRECV.q[pid];
 }
+/* R18 · The app PRINTS money as «1,450,000֏», and saveNewItem() below deliberately tolerates the
+   separators a shopkeeper types back — «1 450», «1'450», a comma decimal. This field did not:
+   `+"1 450"` is NaN, `||0` made it zero, zero deleted the override, and the line silently reverted
+   to the catalogue cost with the typed figure still sitting in the box. Same tolerance, same
+   refusal: a value that is not a number leaves the previous one alone rather than erasing it. */
+function amdIn(v){
+  const raw = String(v==null?'':v).trim().replace(/[\s\u00a0'’,](?=\d{3}\b)/g,'').replace(/[\s\u00a0'’]/g,'').replace('֏','');
+  if(raw==='') return 0;                       // an emptied box IS a decision: no override
+  if(!/^\d+([.,]\d{1,2})?$/.test(raw)) return null;   // letters, a minus sign, junk — not a number
+  const n = +raw.replace(',','.');
+  return isFinite(n) ? n : null;
+}
 function mrPrice(pid, v){
   if(!MRECV) return;
-  const n = Math.max(0, Math.min(MAX_PRICE, Math.round(+v||0)));
+  const parsed = amdIn(v);
+  if(parsed === null) return;                  // keep whatever was there; do not erase on a typo
+  const n = Math.max(0, Math.min(MAX_PRICE, Math.round(parsed)));
   if(n) MRECV.q2[pid] = n; else delete MRECV.q2[pid];
 }
 function mrLines(){
