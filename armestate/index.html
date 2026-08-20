@@ -2057,6 +2057,17 @@ function fdate(ts){
   return p(d.getUTCDate()) + '.' + p(d.getUTCMonth()+1) + '.' + d.getUTCFullYear();
 }
 const daysBetween = (a,b) => Math.floor((safeInt(b,0) - safeInt(a,0)) / DAY);
+/* TEN YEARS IS TEN YEARS, NOT 3,650 DAYS. 10*365 days loses the 2028/2032/2036 leap days and
+   printed a statutory retention date three days early on a signed contract — and the draft law's
+   ten-year duty is the entire reason the field exists. Calendar arithmetic, with 29 February
+   clamped back to the 28th so the date is always real. */
+function plusYears(ts, n){
+  const d = new Date(safeInt(ts,0));
+  if(!safeInt(ts,0)) return 0;
+  const y = d.getUTCFullYear() + n, m = d.getUTCMonth(), day = d.getUTCDate();
+  const last = new Date(Date.UTC(y, m+1, 0)).getUTCDate();
+  return Date.UTC(y, m, Math.min(day, last), d.getUTCHours(), d.getUTCMinutes());
+}
 
 /* THE 30-WORKING-DAY CADASTRE CLOCK. Counted Mon–Fri minus a shipped Armenian public-holiday
    table, which is DATA, refreshed yearly — and the countdown states its own provenance, because
@@ -2077,15 +2088,32 @@ function isWorkingDay(ts){
   const p = n => (n<10?'0':'') + n;
   return list.indexOf(p(d.getUTCMonth()+1) + '-' + p(d.getUTCDate())) < 0;
 }
-/* working days remaining out of `span`, counted forward from `fromTs` */
+/* working days remaining out of `span`, counted forward from `fromTs`.
+   THE RESULT IS SIGNED AND IT IS ALLOWED TO GO NEGATIVE. Clamped at zero, one day before the
+   cadastre deadline and thirty days after it rendered identically — «0 աշխատանքային օր», no
+   escalation, on the single most urgent thing that can be on the owner's Today screen. */
 function workingDaysLeft(fromTs, span, nowTs){
   let used = 0, cur = safeInt(fromTs,0) + DAY;
   const now = safeInt(nowTs,0);
   let guard = 0;
   while(cur <= now && guard++ < 4000){ if(isWorkingDay(cur)) used++; cur += DAY; }
-  return Math.max(0, safeInt(span,0) - used);
+  return safeInt(span,0) - used;
 }
-const holidayTableKnown = ts => HOLIDAY_YEARS.indexOf(new Date(safeInt(ts,0)).getUTCFullYear()) >= 0;
+/* THE TABLE HAS TO COVER THE WHOLE WINDOW, NOT ONLY ITS FIRST DAY. A window opened in December
+   spends most of its days in the following year, and testing only the notarisation year let the
+   countdown claim «2026 թ. տոնական օրերի ցանկով» while counting 2027 days as plain weekdays. */
+function holidayTableCovers(fromTs, span){
+  const from = safeInt(fromTs,0);
+  if(!from) return false;
+  const end = from + Math.ceil(safeInt(span,0) * 7 / 5 + 21) * DAY;
+  for(let y = new Date(from).getUTCFullYear(); y <= new Date(end).getUTCFullYear(); y++){
+    if(HOLIDAY_YEARS.indexOf(y) < 0) return false;
+  }
+  return true;
+}
+const holidayTableKnownStart = ts => HOLIDAY_YEARS.indexOf(new Date(safeInt(ts,0)).getUTCFullYear()) >= 0;
+/* the countdown as a sentence: how many working days are left, or how far past the deadline it is */
+const filingLeftText = n => n < 0 ? fmt('d_filing_over', {n:-n}) : fmt('d_filing_left', {n:n});
 
 /* =====================================================================================
    THE TRILINGUAL TABLE
@@ -2367,7 +2395,11 @@ T.hy = {
   views_title: "Ցուցադրություններ",
   vw_new: "Ցուցադրում գրանցել",
   vw_none: "Ցուցադրություն չկա",
-  vw_evidence: "Ցուցադրությունը՝ ոչ հայտարարությունը, ծնում է միջնորդավճարի իրավունքը։",
+  /* [!] ATTRIBUTED, NOT ASSERTED. This is one Yerevan agency's published contractual terms
+     (Aparto), not Armenian statute — the right to a commission arises from the brokerage
+     contract, which is why the product models the mandate as the spine. The ⚖️ glyph is reserved
+     for the նախավճար/կանխավճար consequences and «Օրենքն ուժի մեջ չէ» and does not belong here. */
+  vw_evidence: "Ցուցադրությունը՝ ոչ հայտարարությունը, հիմնավորում է միջնորդավճարի պահանջը — ըստ երևանյան գործակալությունների հրապարակած պայմանների։ Օրենքով սահմանված չէ։",
   vw_signed: "Ստորագրված",
   vw_unsigned: "Թերթիկը ստորագրված չէ",
   vo_held: "Կայացավ",
@@ -2470,7 +2502,7 @@ T.hy = {
   vw_hist_none: "Այս գույքը դեռ ցույց չի տրվել։",
   vw_shown_none: "Այս հաճախորդին դեռ գույք ցույց չի տրվել։",
   vw_support: "Պահանջը հիմնավորող ցուցադրությունը",
-  vw_support_b: "Միջնորդավճարի իրավունքը հենվում է այն բանի վրա, որ գործակալությունը ցույց է տվել այս գույքն այս հաճախորդին։",
+  vw_support_b: "Միջնորդավճարի պահանջը հենվում է այն բանի վրա, որ գործակալությունը ցույց է տվել այս գույքն այս հաճախորդին։ Դա բխում է միջնորդության պայմանագրից, ոչ թե օրենքից։",
   vw_support_none: "Այս գնորդին այս գույքը ցույց տված ցուցադրություն գրանցված չէ։ Պահանջը հիմնավորված չէ։",
   vw_count: "ցուցադրություն",
   /* ---- the viewing record, the single most valuable piece of paper this product makes ---- */
@@ -2932,7 +2964,7 @@ T.en = {
   views_title: "Viewings",
   vw_new: "Log a viewing",
   vw_none: "No viewings",
-  vw_evidence: "The viewing, not the listing, is what makes the fee owed.",
+  vw_evidence: "The viewing, not the listing, is what supports a claim to the fee — per the published terms of Yerevan agencies. It is not set by statute.",
   vw_signed: "Signed",
   vw_unsigned: "The sheet is not signed",
   vo_held: "Held",
@@ -3035,7 +3067,7 @@ T.en = {
   vw_hist_none: "This property has not been shown yet.",
   vw_shown_none: "This client has not been shown a property yet.",
   vw_support: "The viewing that supports the claim",
-  vw_support_b: "The claim to a commission rests on the agency having shown this property to this client.",
+  vw_support_b: "The claim to a commission rests on the agency having shown this property to this client. That comes from the brokerage contract, not from statute.",
   vw_support_none: "No viewing records this buyer being shown this property. The claim is not supported.",
   vw_count: "viewings",
   /* ---- the viewing record, the single most valuable piece of paper this product makes ---- */
@@ -3493,7 +3525,7 @@ T.ru = {
   views_title: "Показы",
   vw_new: "Записать показ",
   vw_none: "Нет показов",
-  vw_evidence: "Право на комиссию рождает показ, а не объявление.",
+  vw_evidence: "Требование о комиссии обосновывает показ, а не объявление, — согласно опубликованным условиям ереванских агентств. Законом это не установлено.",
   vw_signed: "Подписан",
   vw_unsigned: "Лист не подписан",
   vo_held: "Состоялся",
@@ -3596,7 +3628,7 @@ T.ru = {
   vw_hist_none: "Этот объект ещё не показывали.",
   vw_shown_none: "Этому клиенту ещё не показывали объектов.",
   vw_support: "Показ, обосновывающий требование",
-  vw_support_b: "Право на комиссию опирается на то, что агентство показало этот объект этому клиенту.",
+  vw_support_b: "Требование о комиссии основано на том, что агентство показало этот объект этому клиенту. Это следует из договора с агентством, а не из закона.",
   vw_support_none: "Нет показа, где этому покупателю показывали этот объект. Требование не обосновано.",
   vw_count: "показов",
   /* ---- the viewing record, the single most valuable piece of paper this product makes ---- */
@@ -4265,6 +4297,40 @@ function agentMoney(agentId){
   };
 }
 
+/* WHAT THIS DEAL STILL OWES ITS AGENTS, from the deal's own rows.
+   Stage 6 is defined in the specification as «every agent on the deal is paid», which is the one
+   stage in the pipeline the ledger can contradict — and it did: the card read «Վճարված» while the
+   payouts screen showed 202,500 «Վճարման ենթակա» for the same money with an active «Վճարել»
+   button. Two screens of one product disagreeing about whether a person has been paid.
+   The fold is the same `+` as everywhere: earn and adjust add, payout and reverse subtract, and
+   what is left above zero is what is still owed on THIS deal. */
+function dealOutstanding(dealId, agentId){
+  let n = 0;
+  rowsOfDeal(dealId).forEach(r => {
+    if(isMoneyRow(r) && r.agent === agentId) n += safeInt(r.amt, 0);
+  });
+  return n;
+}
+function dealUnpaid(deal){
+  if(!deal) return 0;
+  const by = Object.create(null);
+  rowsOfDeal(deal.id).forEach(r => {
+    if(!isMoneyRow(r) || r.agent === AGENCY) return;
+    by[r.agent] = (by[r.agent] || 0) + safeInt(r.amt, 0);
+  });
+  let n = 0;
+  Object.keys(by).forEach(a => { if(by[a] > 0) n += by[a]; });
+  return n;
+}
+/* the forward button withholds the one stage the owner is not entitled to assert. Everything
+   else in the pipeline records something that happened outside the app and the owner is the
+   witness; «all agents paid» is a claim about this product's own books. */
+function stageBlock(deal){
+  if(!deal || nextStage(deal) !== 'paid') return null;
+  const left = dealUnpaid(deal);
+  return left > 0 ? { stage:'paid', left:left } : null;
+}
+
 /* the per-deal explanation of an agent's number — «why is this money mine, and since when» */
 function agentDeals(agentId){
   return (S.deals||[]).filter(d => d && (d.agents||[]).some(a => a.agentId === agentId));
@@ -4409,7 +4475,7 @@ function migrate(st){
       docTs: Math.max(0, safeInt(x.docTs,0)), docNo: String(x.docNo||''),
       /* ten years, per the draft law's retention duty. Cheap to record now, impossible to
          reconstruct later. */
-      retainUntil: signed ? signed + 10*365*DAY : 0
+      retainUntil: plusYears(signed, 10)
     };
   });
 
@@ -4462,7 +4528,11 @@ function migrate(st){
       })),
       terms: x.terms ? normTerms(x.terms) : null,
       stage: DEAL_STAGES.indexOf(x.stage) >= 0 ? x.stage : 'agreed',
-      stageTs: Math.max(0, safeInt(x.stageTs,0)),
+      /* EVERY KEY IS DEFAULTED AND CLAMPED HERE — including this one. An absent stageTs fell
+         through to the epoch and the Today screen reported a deal «20685 օր առանց շարժի». It
+         falls back to the deal's own agreement date, and failing that to today. */
+      stageTs: Math.max(0, safeInt(x.stageTs,0)) || Math.max(0, safeInt(dt.agreedTs,0))
+               || Math.max(0, safeInt(st.today, 0)),
       dates: {
         agreedTs:Math.max(0,safeInt(dt.agreedTs,0)), depositTs:Math.max(0,safeInt(dt.depositTs,0)),
         notaryTs:Math.max(0,safeInt(dt.notaryTs,0)), filedTs:Math.max(0,safeInt(dt.filedTs,0)),
@@ -5031,7 +5101,7 @@ function homeCards(){
     /* `html` rather than `body`: money on the highest-traffic screen in the product goes
        through amd() like money everywhere else, so the figure keeps its tabular figures and the
        dram mark rides INSIDE the number instead of breaking onto its own line at 320px. */
-    out.push({ k:'payout', tone:'', icon:'💳', title:t('c_payout'),
+    out.push({ k:'payout', tone:'', icon:'💳', title:t('c_payout'), btn:t('c_btn_pay'),
       html: escH(fmt('c_payout_b', {n:owing.length})) + ' · ' + amd(total), tab:'payouts' });
   }
 
@@ -5039,7 +5109,7 @@ function homeCards(){
   const uninvoiced = (S.deals||[]).filter(d => !d.void && isEarned(d) && DEAL_RANK[d.stage] < DEAL_RANK.invoiced);
   if(uninvoiced.length){
     let sum = 0; uninvoiced.forEach(d => { const al = allocation(d); if(al) sum += al.fee; });
-    out.push({ k:'invoice', tone:'', icon:'🧾', title:t('c_invoice'),
+    out.push({ k:'invoice', tone:'', icon:'🧾', title:t('c_invoice'), btn:t('c_btn_deals'),
       html: escH(fmt('c_invoice_b', {n:uninvoiced.length})) + ' · ' + amd(sum), tab:'deals' });
   }
 
@@ -5049,14 +5119,16 @@ function homeCards(){
     if(d.void || !d.dates.notaryTs || d.dates.filedTs) return;
     const left = workingDaysLeft(d.dates.notaryTs, S.cfg.filingDays, S.today);
     if(left > 7) return;
-    out.push({ k:'filing:'+d.id, tone:'bad', icon:'⏳', title:t('c_clock'),
-      body: propAddr(propById(d.propertyId)) + ' · ' + fmt('d_filing_left', {n:left}),
-      tab:'deals', act:'openDeal(' + jsArg(d.id) + ')' });
+    /* A MISSED DEADLINE IS NOT THE SAME CARD AS A DEADLINE APPROACHING, and it goes to the top. */
+    out.push({ k:'filing:'+d.id, tone:'bad', icon:'⏳', prio: left < 0 ? -1 : 0,
+      title: left < 0 ? t('c_clock_over') : t('c_clock'),
+      body: propAddr(propById(d.propertyId)) + ' · ' + filingLeftText(left),
+      tab:'deals', btn:t('c_btn_deal'), act:'openDeal(' + jsArg(d.id) + ')' });
   });
   (S.mandates||[]).forEach(m => {
     const left = exclLeft(m);
     if(left == null || left > 14) return;
-    out.push({ k:'excl:'+m.id, tone:'', icon:'📄', title:t('c_excl'),
+    out.push({ k:'excl:'+m.id, tone:'', icon:'📄', title:t('c_excl'), btn:t('c_btn_contract'),
       body: clientName(m.clientId) + ' · ' + fmt('c_excl_b', {n:Math.max(0,left)}), tab:'docs' });
   });
   activeAgents().forEach(a => {
@@ -5064,16 +5136,24 @@ function homeCards(){
     if(!to) return;
     const left = daysBetween(S.today, to);
     if(left > 30) return;
-    out.push({ k:'ins:'+a.id, tone:'', icon:'🛡️', title:t('c_ins'),
-      body: a.name + ' · ' + fmt('c_ins_b', {n:Math.max(0,left)}), tab:'agents' });
+    /* THE CAVEAT TRAVELS WITH THE CARD. Professional liability insurance is a DRAFT-law duty,
+       not an enacted one, and this card sits in the same stack as the 30-working-day cadastre
+       deadline — a clock that is genuinely legal. The disclaimer at the foot of the agents screen
+       is two screens away from a card that reads like an obligation. */
+    out.push({ k:'ins:'+a.id, tone:'', icon:'🛡️', title:t('c_ins'), btn:t('c_btn_agent'),
+      body: a.name + ' · ' + fmt('c_ins_b', {n:Math.max(0,left)}) + ' · ⚖️ ' + t('ag_law_note'),
+      tab:'agents', act:'openAgent(' + jsArg(a.id) + ')' });
   });
 
   /* 4 — A DEAL STUCK, with the stage NAMED. "Stalled" without a stage is a nag, not a fact. */
   (S.deals||[]).forEach(d => {
     if(d.void || DEAL_RANK[d.stage] >= DEAL_RANK.paid) return;
+    /* A DEAL WITH NO stageTs IS NOT A DEAL STUCK SINCE 1970. migrate() now defaults it, but a
+       card that would have to say «20685 օր» is a card that has nothing true to say. */
+    if(!d.stageTs) return;
     const idle = daysBetween(d.stageTs, S.today);
     if(idle < S.cfg.stuckDays) return;
-    out.push({ k:'stuck:'+d.id, tone:'', icon:'🐌', title:t('c_stuck'),
+    out.push({ k:'stuck:'+d.id, tone:'', icon:'🐌', title:t('c_stuck'), btn:t('c_btn_deal'),
       body: propAddr(propById(d.propertyId)) + ' · ' + stageLabel(d.stage) + ' · ' + fmt('c_stuck_b',{n:idle}),
       tab:'deals', act:'openDeal(' + jsArg(d.id) + ')' });
   });
@@ -5081,19 +5161,21 @@ function homeCards(){
   /* 5 — TERMS MISSING. A deal at stage 0 with no commission terms cannot advance, and a human
      has to type a number. There is no default to fall back on and that is deliberate. */
   (S.deals||[]).filter(d => !d.void && !termsComplete(d.terms)).forEach(d => {
-    out.push({ k:'terms:'+d.id, tone:'bad', icon:'✍️', title:t('c_terms'),
+    out.push({ k:'terms:'+d.id, tone:'bad', icon:'✍️', title:t('c_terms'), btn:t('cm_fill'),
       body: propAddr(propById(d.propertyId)) + ' · ' + t('c_terms_b'), tab:'deals',
-      act:'openDeal(' + jsArg(d.id) + ')' });
+      act:'openTerms(' + jsArg(d.id) + ')' });
   });
 
   /* 6 — FROM THE FIELD. An unsigned viewing sheet is an unenforceable fee claim, which is the
      one piece of paper this product exists to make sure gets signed. */
   const unsigned = (S.viewings||[]).filter(v => !v.signedTs);
   if(unsigned.length){
-    out.push({ k:'unsigned', tone:'', icon:'🔑', title:t('c_unsigned'),
+    out.push({ k:'unsigned', tone:'', icon:'🔑', title:t('c_unsigned'), btn:t('c_btn_sheets'),
       body: fmt('c_unsigned_b', {n:unsigned.length}), tab:'views' });
   }
-  return out;
+  /* an overdue legal deadline outranks everything, including money out: it is the one item on
+     this screen that costs the CLIENT money rather than the agency face. */
+  return out.sort((a,b) => (a.prio || 0) - (b.prio || 0));
 }
 
 function monthKPIs(){
@@ -5127,8 +5209,12 @@ function homeView(){
       + '<div class="d">' + (c.html || escH(c.body)) + '</div>'
       /* a card that names ONE deal opens that deal; a card that names a class of thing opens the
          tab. Sending the owner to a list to find the row the card just named is a tax. */
+      /* THE BUTTON NAMES THE ACTION. Six identical «Բացել»s differentiated only by an emoji is
+         the same failure the deal card's forward button was built to avoid: the owner knows what
+         they are about to do, and the app should use the same word they would. */
       + '<div class="act"><button class="btn ' + (i === 0 ? 'primary' : 'ghost') + '" onclick="'
-        + (c.act || ('setTab(' + jsArg(c.tab) + ')')) + '">' + escH(t('c_open')) + '</button></div></div>').join('');
+        + (c.act || ('setTab(' + jsArg(c.tab) + ')')) + '">' + escH(c.btn || t('c_open'))
+        + '</button></div></div>').join('');
   }
   const k = monthKPIs();
   h += secTitle('📈', t('kpi_month'));
@@ -5393,10 +5479,16 @@ function dealCard(d){
       /* AND IT IS ABSENT WHEN THE DEAL CANNOT MOVE. Offering a forward button on a deal with no
          commission terms, only to refuse the tap with a toast, teaches the owner that the
          product's buttons lie. The card's red rail and its sentence are the answer instead. */
-      + (ns && !d.void && termsComplete(d.terms)
+      + (ns && !d.void && termsComplete(d.terms) && !stageBlock(d)
           ? '<button class="btn small primary" onclick="advanceDeal(' + jsArg(d.id) + ')">'
-            + escH(fmt('d_mark', {s:stageLabel(ns)})) + '</button>' : '')
+            + escH(fmt('d_mark', {s:stageLabel(ns)})) + '</button>'
+        : (stageBlock(d) && !d.void)
+          ? '<button class="btn small ghost" onclick="setTab(' + jsArg('payouts') + ')">💳 '
+            + escH(t('c_btn_pay')) + '</button>' : '')
     + '</div>'
+    /* and it says WHY, on the card, rather than refusing the tap with a toast */
+    + (stageBlock(d) && !d.void ? '<div class="prov warn">' + escH(t('d_paid_block') + sepC()
+        + amdTxt(stageBlock(d).left) + ' ֏') + '</div>' : '')
     + '</div>';
 }
 
@@ -5421,6 +5513,10 @@ function advanceDeal(id){
   if(!termsComplete(d.terms)){ toast(t('cm_none')); openDeal(id); return; }
   const ns = nextStage(d);
   if(!ns) return;
+  /* checked again HERE and not only where the button is drawn: a sheet left open while a payout
+     was recorded on another screen must not be able to assert a stage the books contradict. */
+  const blk = stageBlock(d);
+  if(blk){ toast(t('d_paid_block')); openDeal(id); return; }
   d.stage = ns; d.stageTs = S.today;
   const key = { deposit:'depositTs', notary:'notaryTs', registered:'registeredTs',
                 invoiced:'invoicedTs', settled:'settledTs' }[ns];
@@ -5570,9 +5666,12 @@ function openDeal(id){
   if(d.dates.notaryTs && !d.dates.filedTs && !d.void){
     const left = workingDaysLeft(d.dates.notaryTs, S.cfg.filingDays, S.today);
     h += '<div class="row"><span class="mlbl">' + escH(t('d_filing')) + '</span><span class="num">'
-      + escH(fmt('d_filing_left', {n:left})) + '</span></div>'
+      + escH(filingLeftText(left)) + '</span></div>'
+      + (left < 0 ? '<div class="notice bad">' + escH('⏳ ' + t('c_clock_over')) + '</div>' : '')
       /* A COUNTDOWN THAT CANNOT SAY WHAT CALENDAR IT USED IS A COUNTDOWN NOBODY TRUSTS. */
-      + '<div class="prov">' + escH(t(holidayTableKnown(d.dates.notaryTs) ? 'd_filing_src' : 'd_filing_src_unknown')) + '</div>';
+      + '<div class="prov' + (left < 0 ? ' warn' : '') + '">'
+      + escH(t(holidayTableCovers(d.dates.notaryTs, S.cfg.filingDays) ? 'd_filing_src'
+            : holidayTableKnownStart(d.dates.notaryTs) ? 'd_filing_src_partial' : 'd_filing_src_unknown')) + '</div>';
   }
   if(DEAL_RANK[d.stage] >= DEAL_RANK.deposit && d.price > 300000 && !d.void){
     /* a NOTICE, not a blocker. The app is not the compliance officer; it is the thing that says
@@ -5599,6 +5698,14 @@ function openDeal(id){
     + (d.void ? '' : '<button class="btn ghost full" style="margin-top:12px" onclick="openDeposit('
         + jsArg(d.id) + ')">' + escH(d.deposit.amount ? t('dep_title') : t('dep_record')) + '</button>')
     + '</div>';
+
+  const blk = stageBlock(d);
+  if(blk && !(d.void && d.void.ts)){
+    h += '<div class="alert"><div class="t">💳 ' + escH(t('d_paid_block')) + '</div>'
+      + '<div class="d">' + escH(fmt('d_paid_block_b', {n:amdTxt(blk.left)})) + '</div>'
+      + '<div class="act"><button class="btn primary" onclick="closeModal();setTab('
+        + jsArg('payouts') + ')">' + escH(t('c_btn_pay')) + '</button></div></div>';
+  }
 
   /* ---- THE DEAL CAN FAIL, AND THE PRODUCT HAS TO BE ABLE TO SAY SO ----
      Failure is not a stage and it is not a delete: it is a set-once record with a reason, and it
@@ -6113,7 +6220,7 @@ function viewingRow(v){
 function viewsView(){
   let h = secTitle('🔑', t('views_title'));
   /* the sentence that makes this screen worth having, said once at the top */
-  h += '<div class="notice">' + escH('⚖️ ' + t('vw_evidence')) + '</div>';
+  h += '<div class="notice">' + escH('🔑 ' + t('vw_evidence')) + '</div>';
   /* THE ONE ACCENT BUTTON ON THIS SCREEN, at the top, always. An agent between viewings needs
      this in four taps with no network, and everything below it is a ghost. */
   h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewViewing()">🔑 '
@@ -6982,6 +7089,10 @@ function drawDeposit(){
   const ok = !!(DP.kind && safeAmd(DP.amount, 0) > 0);
   let h = '<h3>🤝 ' + escH(t('dep_title')) + '</h3>'
     + '<div class="muted">' + escH(p ? propAddr(p) : '') + '</div>'
+    /* THE CONFIRMATION HAS TO BE TRUE. Recording a deposit on a deal with no commission terms
+       said «Գրանցվեց» and silently left the pipeline where it was; the sheet now says so BEFORE
+       the tap, and the toast says what did and did not happen after it. */
+    + (termsComplete(d.terms) ? '' : '<div class="notice bad">' + escH('⚠️ ' + t('dep_noterms')) + '</div>')
     + '<div class="sec">⚖️ ' + escH(t('dep_kind_q')) + '</div>'
     + '<div class="prov">' + escH(t('dep_diff')) + '</div>'
     + DEPOSIT_KINDS.map(k => '<button class="pick' + (DP.kind === k ? ' on' : '') + '" onclick="dpPick('
@@ -7009,9 +7120,21 @@ function saveDeposit(){
   postRow({ agent:AGENCY, type:'doc', amt:0, ts:d.deposit.ts, deal:d.id, prop:d.propertyId,
     reason:'deposit_' + DP.kind, rank:DEAL_RANK[d.stage], actor:'owner',
     note: t('dep_' + DP.kind) + ' · ' + amdTxt(amt) + ' ֏' });
+  /* A DEPOSIT TAKEN IS THE նախնական պայմանագիր EVENT, so it moves the deal — when the deal is
+     allowed to move. When it is not, nothing is invented and the toast names the stage the deal
+     is still in rather than implying a change that did not happen. */
+  let moved = '';
+  if(termsComplete(d.terms) && DEAL_RANK[d.stage] < DEAL_RANK.deposit && stageApplies(d, 'deposit')){
+    d.stage = 'deposit'; d.stageTs = d.deposit.ts || S.today;
+    postRow({ agent:AGENCY, type:'stage', amt:0, ts:d.stageTs, deal:d.id, prop:d.propertyId,
+      reason:'deposit', rank:DEAL_RANK.deposit, actor:'owner' });
+    mintEarnings(d);
+    moved = stageLabel('deposit');
+  }
   const id = d.id;
   DP = null;
-  saveState(); closeModal(); renderAll(); toast(t('dep_saved'));
+  saveState(); closeModal(); renderAll();
+  toast(moved ? fmt('dep_saved_moved', {s:moved}) : fmt('dep_saved_stay', {s:stageLabel(d.stage)}));
   openDeal(id);
 }
 
@@ -7026,10 +7149,32 @@ function saveDeposit(){
    owed the explanation as much as the money.
    ===================================================================================== */
 let PO = null;
+/* the agent's deals that still owe them something, most recent first. This is what makes a
+   payout row attributable: a statement line reading «Վճարում» with nothing under it has no
+   basis, while the seed's own payouts carried the deal, the rate and the share — the document
+   looked LESS complete the more the owner used the app. */
+function payableDealsOf(agentId){
+  return (S.deals||[])
+    .map(d => ({ deal:d, left: dealOutstanding(d.id, agentId) }))
+    .filter(x => x.left > 0 && gateOpen(x.deal))
+    .sort((a,b) => safeInt(b.deal.stageTs,0) - safeInt(a.deal.stageTs,0));
+}
 function openPayout(agentId){
   const a = agentById(agentId); if(!a) return;
   const m = agentMoney(agentId);
-  PO = { agent:agentId, amount:String(m.payable || ''), note:'' };
+  const ds = payableDealsOf(agentId);
+  PO = { agent:agentId, amount:String(m.payable || ''), note:'',
+         /* one open deal is the overwhelmingly common case and it prefills itself */
+         deal: ds.length === 1 ? ds[0].deal.id : '' };
+  drawPayout();
+}
+function poDeal(id){
+  if(!PO) return;
+  PO.deal = (PO.deal === id ? '' : id);
+  if(PO.deal){
+    const m = agentMoney(PO.agent);
+    PO.amount = String(Math.min(m.payable, dealOutstanding(PO.deal, PO.agent)));
+  }
   drawPayout();
 }
 function poInput(k, v){
@@ -7056,6 +7201,7 @@ function drawPayout(){
   MODAL_RE = drawPayout;
   const a = agentById(PO.agent); if(!a) return;
   const m = agentMoney(PO.agent);
+  const ds = payableDealsOf(PO.agent);
   const amt = safeAmd(PO.amount, 0);
   const ok = amt > 0 && amt <= m.payable;
   let h = '<h3>💳 ' + escH(a.em + ' ' + a.name) + '</h3>'
@@ -7077,6 +7223,16 @@ function drawPayout(){
       + '</div>'
       + '<div class="prov">' + escH(t('pay_partial')) + '</div>'
       + '<div id="poNote"></div>'
+      /* WHICH DEAL THIS PAYS FOR. Optional — an agency pays round sums against a running balance
+         and the ledger tolerates that — but offered, prefilled and printed when it is answered. */
+      + (ds.length ? '<div class="sec">🤝 ' + escH(t('pay_which')) + '</div>'
+          + ds.map(x => '<button class="pick' + (PO.deal === x.deal.id ? ' on' : '')
+              + '" onclick="poDeal(' + jsArg(x.deal.id) + ')">'
+              + escH(dealDocNo(x.deal) + ' · ' + propAddr(propById(x.deal.propertyId)))
+              + '<span class="pd">' + escH(t('pay_deal_open') + sepC() + amdTxt(x.left) + ' ֏')
+              + '</span></button>').join('')
+          + '<button class="pick' + (PO.deal ? '' : ' on') + '" onclick="poDeal(' + jsArg('') + ')">'
+          + escH(t('pay_nodeal')) + '</button>' : '')
       + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('pay_note')) + '</div>'
       + '<textarea rows="2" oninput="poInput(' + jsArg('note') + ',this.value)">' + escH(PO.note) + '</textarea>'
       + '<button class="btn primary full" id="poSave" style="margin-top:16px"' + (ok ? '' : ' disabled')
@@ -7094,7 +7250,10 @@ function savePayout(){
   if(amt <= 0 || amt > m.payable) return;
   /* NEGATIVE, because the fold is one `+` over one book: an earn adds, a payout subtracts, and
      `owed` is the sum. There is no second table and no counter to keep in step. */
-  postRow({ agent:PO.agent, type:'payout', amt:-amt, ts:S.today, actor:'owner', note:PO.note });
+  const d = PO.deal ? dealById(PO.deal) : null;
+  postRow({ agent:PO.agent, type:'payout', amt:-amt, ts:S.today, actor:'owner', note:PO.note,
+    deal: d ? d.id : '', prop: d ? d.propertyId : '',
+    trigger: d && d.terms ? d.terms.trigger : '' });
   const id = PO.agent; PO = null;
   saveState(); closeModal(); renderAll(); toast(t('pay_done'));
   openPayout(id);
@@ -7873,10 +8032,24 @@ function estateSelfTest(){
     ok('the filing clock skips weekends and shipped holidays',
        workingDaysLeft(D(2026,4,20), 30, D(2026,4,27)) === 26,
        String(workingDaysLeft(D(2026,4,20), 30, D(2026,4,27))));
-    ok('the filing clock never runs below zero',
-       workingDaysLeft(D(2026,1,1), 5, D(2026,6,1)) === 0);
+    /* AND IT IS ALLOWED TO GO PAST ZERO. A deal one day before the cadastre deadline and one
+       thirty days past it rendered identically — «0 աշխատանքային օր», no overdue state — on the
+       most urgent card the owner's Today screen can carry. */
+    ok('the filing clock runs past zero and says how far', (() => {
+      const over = workingDaysLeft(D(2026,1,1), 5, D(2026,6,1));
+      return over < 0 && filingLeftText(over) === fmt('d_filing_over', {n:-over})
+        && filingLeftText(3) === fmt('d_filing_left', {n:3});
+    })());
+    /* the provenance line has to be true of the WHOLE window, not only of its first day */
     ok('an unknown year degrades to weekdays AND SAYS SO',
-       !holidayTableKnown(D(2031,4,20)) && holidayTableKnown(D(2026,4,20)));
+       !holidayTableCovers(D(2031,4,20), 30) && holidayTableCovers(D(2026,4,20), 30)
+       && !holidayTableCovers(D(2026,12,10), 30) && holidayTableKnownStart(D(2026,12,10)));
+
+    /* ---- ten years is ten years ---- */
+    ok('the retention date is ten CALENDAR years, leap days included',
+       plusYears(D(2026,5,13), 10) === D(2036,5,13)
+       && plusYears(D(2024,2,29), 10) === D(2034,2,28)
+       && plusYears(0, 10) === 0);
 
     /* ---- migrate ---- */
     ok('migrate is idempotent', (() => {
@@ -7956,6 +8129,23 @@ function estateSelfTest(){
       const okk = !!u && S.rows.length === n + 1;
       S.rows = S.rows.filter(x => x.uuid !== u); S.owed = rebuildOwed();
       return okk;
+    })());
+
+    /* ---- THE STAGE THE LEDGER IS ALLOWED TO CONTRADICT ---- */
+    ok('a deal cannot claim «paid out» while an agent is still owed', (() => {
+      const d = dealById('d2');
+      const before = stageBlock(d);                 /* settled, next is paid, a1 owed 185,000 */
+      const blocked = !!before && before.left === 185000 && nextStage(d) === 'paid';
+      const u = postRow({ agent:'a1', type:'payout', amt:-185000, ts:S.today, deal:'d2',
+        actor:'owner', note:'probe' });
+      const clear = stageBlock(dealById('d2')) === null;
+      S.rows = S.rows.filter(r => r.uuid !== u); S.owed = rebuildOwed();
+      return blocked && clear;
+    })());
+    ok('a payout can name the deal it pays for', (() => {
+      const ds = payableDealsOf('a1');
+      return ds.length === 1 && ds[0].deal.id === 'd2' && ds[0].left === 185000
+        && dealOutstanding('d2','a1') === 185000;
     })());
 
     /* ---- THE AGENT'S SHARE, AT BOTH LEVELS ---- */
