@@ -11,7 +11,13 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armestate-shell-v4';   /* v4: amending commission terms on a deal that has ALREADY
+const CACHE = "armestate-shell-v5";   /* v5: a money field that cannot be read is null, not zero.
+      The terms form, the property price, the payer split, the agent share and the ՀՎՀՀ all refuse
+      what they cannot read instead of substituting a figure nobody typed; the preview no longer
+      renders a headline fee or a promise about the ledger over a state it cannot save; a printed
+      money row stays whole across a page break. A stale shell here strands an owner on a build
+      that certifies a fee of zero as reconciling.
+      v4: amending commission terms on a deal that has ALREADY
       EARNED — the product adjusts rather than refuses, showing every adjustment row before it
       posts one and never rewriting the earn rows; editing a property and a client in place, with
       the cadastral duplicate rule excluding the record itself, a moved ask price joining the
