@@ -1432,6 +1432,12 @@ tr.hlflash{animation:none;background:var(--acc-tint)}
   .cur{color:#111 !important;font-size:max(.72em,12px) !important;font-weight:600 !important}
   .doclbl,.mlbl{color:#333 !important;font-size:11px !important;letter-spacing:0 !important;
                 text-transform:none !important}
+  /* the կադաստրային ծածկագիր is what the contract, the վկայական and the future state platform
+     all key on — it is the identity of the thing being sold, not a caption, so it prints as ink
+     rather than in the quiet on-screen grey. */
+  .cad{color:#111 !important}
+  .prov{color:#444 !important}
+  .telbtn{color:#111 !important;min-height:0 !important;padding:0 !important}
   .tbl{page-break-inside:auto}
   .tbl tr{page-break-inside:avoid}
   .tbl th{color:#555 !important;border-color:#ccc !important}
@@ -2419,6 +2425,52 @@ T.hy = {
   cm_fee_total: "Միջնորդավճարն ամբողջությամբ",
   cm_due: "Ենթակա է վճարման այս կողմից",
   csv_noterms: "Պայմանները լրացված չեն — հաշիվ դուրս գրել հնարավոր չէ",
+  /* ---- the viewing capture flow: four taps, one hand, in a stairwell ---- */
+  vw_prop: "Ո՞ր գույքը",
+  vw_client: "Ո՞ւմ",
+  vw_agent: "Ո՞ր գործակալը",
+  vw_outcome: "Ի՞նչ եղավ",
+  vw_when: "Ե՞րբ",
+  vw_note: "Նշում (ըստ ցանկության)",
+  vw_search_p: "Փնտրել գույք",
+  vw_search_c: "Փնտրել հաճախորդ",
+  vw_newclient: "＋ Նոր հաճախորդ",
+  vw_nc_name: "Անուն, ազգանուն",
+  vw_nc_phone: "Հեռախոս",
+  vw_save: "Գրանցել ցուցադրությունը",
+  vw_saved: "Ցուցադրությունը գրանցվեց",
+  vw_dup: "Այս ցուցադրությունն արդեն գրանցված է",
+  vw_need: "Ընտրեք գույքը, հաճախորդին և գործակալին",
+  vw_more: "Եվս {n}",
+  vw_locked: "Ամսաթիվը, գույքը, հաճախորդը և արդյունքը գրանցումից հետո չեն փոխվում։",
+  vw_sign: "Նշել ստորագրվածը",
+  vw_sign_q: "Հաճախորդը ստորագրե՞լ է թերթիկը",
+  vw_signed_on: "Ստորագրված է",
+  vw_print: "Տպել թերթիկը",
+  vw_history: "Ցուցադրությունների պատմություն",
+  vw_shown: "Ցույց տրված գույքը",
+  vw_hist_none: "Այս գույքը դեռ ցույց չի տրվել։",
+  vw_shown_none: "Այս հաճախորդին դեռ գույք ցույց չի տրվել։",
+  vw_support: "Պահանջը հիմնավորող ցուցադրությունը",
+  vw_support_b: "Միջնորդավճարի իրավունքը հենվում է այն բանի վրա, որ գործակալությունը ցույց է տվել այս գույքն այս հաճախորդին։",
+  vw_support_none: "Այս գնորդին այս գույքը ցույց տված ցուցադրություն գրանցված չէ։ Պահանջը հիմնավորված չէ։",
+  vw_count: "ցուցադրություն",
+  /* ---- the viewing record, the single most valuable piece of paper this product makes ---- */
+  doc_view_title: "Ցուցադրության թերթիկ",
+  doc_view_stmt: "Ստորագրելով՝ հաճախորդը հաստատում է, որ ծանոթացել է սույն գույքին ընկերության գործակալի հետ։",
+  doc_view_note: "Թերթիկը կազմվում է երկու օրինակից՝ մեկական կողմերին։",
+  doc_agency: "Գործակալություն",
+  doc_client: "Հաճախորդ",
+  doc_agent: "Գործակալ",
+  doc_tin: "ՀՎՀՀ",
+  doc_no: "№",
+  doc_sign_client: "Հաճախորդի ստորագրություն",
+  doc_sign_agent: "Գործակալի ստորագրություն",
+  doc_prop: "Գույքը",
+  doc_when: "Ամսաթիվ",
+  print: "Տպել",
+  p_open: "Բացել",
+  vw_change: "Փոխել",
   d_mark: "Նշել՝ {s}",
 };
 
@@ -2752,6 +2804,52 @@ T.en = {
   cm_fee_total: "Commission in full",
   cm_due: "Due from this party",
   csv_noterms: "Terms not entered — no invoice can be raised",
+  /* ---- the viewing capture flow: four taps, one hand, in a stairwell ---- */
+  vw_prop: "Which property",
+  vw_client: "Shown to",
+  vw_agent: "Which agent",
+  vw_outcome: "What happened",
+  vw_when: "When",
+  vw_note: "Note (optional)",
+  vw_search_p: "Search properties",
+  vw_search_c: "Search clients",
+  vw_newclient: "＋ New client",
+  vw_nc_name: "Full name",
+  vw_nc_phone: "Phone",
+  vw_save: "Log the viewing",
+  vw_saved: "Viewing logged",
+  vw_dup: "This viewing is already logged",
+  vw_need: "Pick the property, the client and the agent",
+  vw_more: "{n} more",
+  vw_locked: "The date, the property, the client and the outcome cannot be changed after logging.",
+  vw_sign: "Mark as signed",
+  vw_sign_q: "Has the client signed the sheet?",
+  vw_signed_on: "Signed",
+  vw_print: "Print the sheet",
+  vw_history: "Viewing history",
+  vw_shown: "Properties shown",
+  vw_hist_none: "This property has not been shown yet.",
+  vw_shown_none: "This client has not been shown a property yet.",
+  vw_support: "The viewing that supports the claim",
+  vw_support_b: "The claim to a commission rests on the agency having shown this property to this client.",
+  vw_support_none: "No viewing records this buyer being shown this property. The claim is not supported.",
+  vw_count: "viewings",
+  /* ---- the viewing record, the single most valuable piece of paper this product makes ---- */
+  doc_view_title: "Ցուցադրության թերթիկ · Viewing record",
+  doc_view_stmt: "Ստորագրելով՝ հաճախորդը հաստատում է, որ ծանոթացել է սույն գույքին ընկերության գործակալի հետ։",
+  doc_view_note: "Two copies are made, one for each party.",
+  doc_agency: "Agency",
+  doc_client: "Client",
+  doc_agent: "Agent",
+  doc_tin: "ՀՎՀՀ",
+  doc_no: "No.",
+  doc_sign_client: "Client signature",
+  doc_sign_agent: "Agent signature",
+  doc_prop: "Property",
+  doc_when: "Date",
+  print: "Print",
+  p_open: "Open",
+  vw_change: "Change",
   d_mark: "Mark: {s}",
 };
 
@@ -3081,6 +3179,52 @@ T.ru = {
   cm_fee_total: "Комиссия целиком",
   cm_due: "К оплате с этой стороны",
   csv_noterms: "Условия не заполнены — счёт выставить нельзя",
+  /* ---- the viewing capture flow: four taps, one hand, in a stairwell ---- */
+  vw_prop: "Какой объект",
+  vw_client: "Кому показан",
+  vw_agent: "Какой агент",
+  vw_outcome: "Что произошло",
+  vw_when: "Когда",
+  vw_note: "Примечание (необязательно)",
+  vw_search_p: "Искать объект",
+  vw_search_c: "Искать клиента",
+  vw_newclient: "＋ Новый клиент",
+  vw_nc_name: "Имя и фамилия",
+  vw_nc_phone: "Телефон",
+  vw_save: "Записать показ",
+  vw_saved: "Показ записан",
+  vw_dup: "Этот показ уже записан",
+  vw_need: "Выберите объект, клиента и агента",
+  vw_more: "Ещё {n}",
+  vw_locked: "Дата, объект, клиент и результат после записи не меняются.",
+  vw_sign: "Отметить подписанным",
+  vw_sign_q: "Клиент подписал лист?",
+  vw_signed_on: "Подписан",
+  vw_print: "Печать листа",
+  vw_history: "История показов",
+  vw_shown: "Показанные объекты",
+  vw_hist_none: "Этот объект ещё не показывали.",
+  vw_shown_none: "Этому клиенту ещё не показывали объектов.",
+  vw_support: "Показ, обосновывающий требование",
+  vw_support_b: "Право на комиссию опирается на то, что агентство показало этот объект этому клиенту.",
+  vw_support_none: "Нет показа, где этому покупателю показывали этот объект. Требование не обосновано.",
+  vw_count: "показов",
+  /* ---- the viewing record, the single most valuable piece of paper this product makes ---- */
+  doc_view_title: "Ցուցադրության թերթիկ · Лист показа",
+  doc_view_stmt: "Ստորագրելով՝ հաճախորդը հաստատում է, որ ծանոթացել է սույն գույքին ընկերության գործակալի հետ։",
+  doc_view_note: "Составляется в двух экземплярах, по одному каждой стороне.",
+  doc_agency: "Агентство",
+  doc_client: "Клиент",
+  doc_agent: "Агент",
+  doc_tin: "ՀՎՀՀ",
+  doc_no: "№",
+  doc_sign_client: "Подпись клиента",
+  doc_sign_agent: "Подпись агента",
+  doc_prop: "Объект",
+  doc_when: "Дата",
+  print: "Печать",
+  p_open: "Открыть",
+  vw_change: "Изменить",
   d_mark: "Отметить: {s}",
 };
 
@@ -4440,7 +4584,11 @@ function propCard(p){
         + ' · ' + domSrcText(dom.src)) + '</div>' : '')
     + (left != null ? '<div class="prov' + (left <= 14 ? ' warn' : '') + '">'
         + escH('🔒 ' + t('p_excl_left') + ' ' + Math.max(0,left) + ' ' + t('p_dom_d')) + '</div>' : '')
-    + (!m ? '<div class="prov warn">' + escH('⚠ ' + t('p_nomandate')) + '</div>' : '')
+    + (!m ? '<div class="prov warn">' + escH('⚠️ ' + t('p_nomandate')) + '</div>' : '')
+    + '<div class="row" style="margin-top:12px"><button class="btn ghost small" onclick="openProp('
+      + jsArg(p.id) + ')">' + escH(t('p_open')) + '</button>'
+      + '<button class="btn ghost small" onclick="openNewViewing({prop:' + jsArg(p.id) + '})">🔑 '
+      + escH(t('vw_new')) + '</button></div>'
     + '</div>';
 }
 
@@ -4652,6 +4800,7 @@ function advanceDeal(id){
 function openDeal(id){
   const d = dealById(id);
   if(!d) return;
+  MODAL_RE = () => openDeal(id);
   const p = propById(d.propertyId);
   const al = allocation(d);
   const ps = al ? payerSplit(d.terms, al.fee) : null;
@@ -4725,6 +4874,25 @@ function openDeal(id){
       + '<div class="prov">' + escH((assertReconciles(al) ? '✓ ' : '⚠️ ') + t('cm_recon')) + '</div>')
       + '</div>';
   }
+
+  /* ---- WHICH VIEWING SUPPORTS THIS CLAIM ----
+     Invariant 5, made answerable. The agency's claim to a fee rests on having shown this
+     property to this client, so the deal names the viewing that did it, with its date, its agent
+     and whether the client signed the sheet. A deal with no supporting viewing is not a
+     data-entry gap, it is an unsupported claim, and the sheet says exactly that. */
+  h += '<div class="sec">🔑 ' + escH(t('vw_support')) + '</div>';
+  const sv = supportingViewings(d);
+  h += '<div class="card" style="margin:0 0 12px">'
+    + '<div class="prov">' + escH(t('vw_support_b')) + '</div>'
+    + (sv.length
+        ? sv.map(v => '<button class="pick" onclick="openViewingSheet(' + jsArg(v.id) + ')">'
+            + escH(fdate(v.ts) + ' · ' + clientName(v.clientId))
+            + '<span class="pd">' + escH(agentEm(v.agentId) + ' ' + agentName(v.agentId) + ' · '
+              + outcomeLabel(v.outcome) + ' · '
+              + (v.signedTs ? t('vw_signed') + ' ' + fdate(v.signedTs) : t('vw_unsigned')))
+            + '</span></button>').join('')
+        : '<div class="notice bad">' + escH('⚠️ ' + t('vw_support_none')) + '</div>')
+    + '</div>';
 
   /* ---- the two clocks and the checklist ---- */
   /* THE CLOSING CHECKLIST IS A SCREEN, NOT A DOCUMENT. It is a working aid — unified certificate
@@ -4876,18 +5044,27 @@ function viewingRow(v){
     + '<div class="row" style="margin-top:10px">'
       + '<div class="badgerow">' + badge(VO_CLASS[v.outcome]||'b-neutral', outcomeLabel(v.outcome))
       + (v.signedTs ? badge('b-green', '✓ ' + t('vw_signed')) : badge('b-gold', t('vw_unsigned'))) + '</div>'
-    + '</div></div>';
+    + '</div>'
+    /* the sheet is one tap away from every row, because the only thing that turns a viewing into
+       a defensible fee claim is a client's signature on a piece of paper. */
+    + '<div class="row" style="margin-top:12px"><button class="btn ghost small" onclick="openViewingSheet('
+      + jsArg(v.id) + ')">🖨 ' + escH(t('vw_print')) + '</button>'
+    + (v.signedTs ? '' : '<button class="btn small ghost" onclick="signViewing(' + jsArg(v.id) + ')">✍️ '
+        + escH(t('vw_sign')) + '</button>') + '</div>'
+    + '</div>';
 }
 function viewsView(){
   let h = secTitle('🔑', t('views_title'));
   /* the sentence that makes this screen worth having, said once at the top */
   h += '<div class="notice">' + escH('⚖️ ' + t('vw_evidence')) + '</div>';
+  /* THE ONE ACCENT BUTTON ON THIS SCREEN, at the top, always. An agent between viewings needs
+     this in four taps with no network, and everything below it is a ghost. */
+  h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewViewing()">🔑 '
+    + escH(t('vw_new')) + '</button>';
   const list = (S.viewings||[]).slice()
     /* unsigned sheets float to the top: an unsigned sheet is an unenforceable claim */
     .sort((a,b) => (!!a.signedTs - !!b.signedTs) || (b.ts - a.ts));
   h += list.length ? list.map(viewingRow).join('') : emptyCard(t('vw_none'), '');
-  h += '<div class="stub" style="margin-top:8px"><div class="se">🚧</div><h4>' + escH(t('stub_title'))
-    + '</h4><p>' + escH(t('stub_views')) + '</p></div>';
   return h;
 }
 
@@ -4906,14 +5083,16 @@ function clientCard(c){
     + '</div>'
     + '<div class="badgerow" style="margin-top:10px">' + roles
       + badge('b-neutral', agentEm(c.agentId) + ' ' + agentName(c.agentId)) + '</div>'
+    + '<div class="row" style="margin-top:12px"><button class="btn ghost small" onclick="openClient('
+      + jsArg(c.id) + ')">' + escH(t('p_open')) + '</button>'
+      + '<span class="muted" style="font-size:var(--fs-micro)">' + escH(t('vw_count')) + ' '
+      + viewingsOfClient(c.id).length + '</span></div>'
     + '</div>';
 }
 function clientsView(){
   let h = secTitle('👥', t('clients_title'));
   const list = (S.clients||[]).filter(c => !c.archivedTs);
   h += list.length ? list.map(clientCard).join('') : emptyCard(t('cl_none'), '');
-  h += '<div class="stub" style="margin-top:8px"><div class="se">🚧</div><h4>' + escH(t('stub_title'))
-    + '</h4><p>' + escH(t('stub_clients')) + '</p></div>';
   return h;
 }
 
@@ -5010,6 +5189,404 @@ function dataView(){
     + '<button class="btn danger full" style="margin-top:10px" onclick="startFresh()">' + escH(t('dt_reset')) + '</button></div>';
   return h;
 }
+
+/* =====================================================================================
+   THE AMOUNT IN WORDS, IN ARMENIAN
+   Written in Armenian on EVERY language of the UI, because that is the language the document
+   is signed in. Copied from the sibling products so the three make the same paper.
+   ===================================================================================== */
+const AM_U   = ['','մեկ','երկու','երեք','չորս','հինգ','վեց','յոթ','ութ','ինը'];
+const AM_TEEN= ['տասը','տասնմեկ','տասներկու','տասներեք','տասնչորս','տասնհինգ','տասնվեց','տասնյոթ','տասնութ','տասնինը'];
+const AM_TENS= ['','','քսան','երեսուն','քառասուն','հիսուն','վաթսուն','յոթանասուն','ութսուն','իննսուն'];
+function amWords3(x){
+  const out = [], h = Math.floor(x/100), r = x%100;
+  if(h) out.push((h>1 ? AM_U[h]+' ' : '') + 'հարյուր');
+  if(r < 10){ if(r) out.push(AM_U[r]); }
+  else if(r < 20) out.push(AM_TEEN[r-10]);
+  else out.push(AM_TENS[Math.floor(r/10)] + (r%10 ? AM_U[r%10] : ''));
+  return out.join(' ');
+}
+function amWords(n){
+  /* the argument is already an integer number of dram — nothing here rounds money, it only
+     names it. safeInt is the boundary and it ran long before this. */
+  let v = Math.abs(safeInt(n, 0));
+  const neg = safeInt(n,0) < 0;
+  if(v === 0) return 'զրո դրամ';
+  const parts = [];
+  const bil = Math.floor(v/1000000000); v %= 1000000000;
+  const mil = Math.floor(v/1000000);    v %= 1000000;
+  const th  = Math.floor(v/1000);       v %= 1000;
+  if(bil) parts.push((bil>1 ? amWords3(bil)+' ' : '') + 'միլիարդ');
+  if(mil) parts.push((mil>1 ? amWords3(mil)+' ' : '') + 'միլիոն');
+  if(th)  parts.push((th>1  ? amWords3(th)+' '  : '') + 'հազար');
+  if(v)   parts.push(amWords3(v));
+  return (neg ? 'մինուս ' : '') + parts.join(' ') + ' դրամ';
+}
+
+/* =====================================================================================
+   THE DOCUMENT FURNITURE
+   Two parties each with a ՀՎՀՀ, a stated date, the amount in words in Armenian, signature
+   rules and a footnote — the same shape the sibling products' ակտ and հաշվարկ carry, so an
+   accountant who has seen one of these has seen all three. The print stylesheet is the last
+   block in the sheet and every control in a document carries `noprint`.
+   ===================================================================================== */
+function docParty(title, name, sub){
+  return '<div style="min-width:150px;flex:1 1 150px"><div class="doclbl">' + escH(title) + '</div>'
+    + '<b>' + escH(name || '—') + '</b>'
+    + (sub ? '<div class="muted">' + escH(sub) + '</div>' : '') + '</div>';
+}
+const docTin = tin => t('doc_tin') + ' ' + (tin || '—');
+function docSign(label){
+  return '<div style="flex:1 1 150px;min-width:150px"><div class="doclbl">' + escH(label) + '</div>'
+    + '<div class="actsignline"></div></div>';
+}
+function docFoot(note){
+  return '<div class="muted" style="font-size:14px;margin-top:14px">' + escH(note) + '</div>';
+}
+/* every printable sheet closes the same way: one accent-filled print button, one ghost close,
+   both `noprint` so the paper carries the document and nothing else. */
+function docTail(){
+  return '<button class="btn primary full noprint" style="margin-top:16px" onclick="window.print()">🖨 '
+    + escH(t('print')) + '</button>'
+    + '<button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">'
+    + escH(t('close')) + '</button>';
+}
+
+/* =====================================================================================
+   THE VIEWING — capture, history, evidence
+   Invariant 5: the VIEWING, not the listing, is the fee-triggering event. Aparto's own
+   published terms say the client pays "only for the property that you have visited with us and
+   subsequently purchased", so this is the record a contested claim stands on. Capture is four
+   taps because the agent doing it is standing outside a building holding a phone; everything
+   after capture is append-only because a record that can be edited six weeks later proves
+   nothing.
+   ===================================================================================== */
+const viewingsOfProp   = pid => (S.viewings||[]).filter(v => v.propertyId === pid).sort((a,b) => b.ts - a.ts);
+const viewingsOfClient = cid => (S.viewings||[]).filter(v => v.clientId === cid).sort((a,b) => b.ts - a.ts);
+/* WHICH VIEWING SUPPORTS THE CLAIM. A deal's fee is defensible when the agency can show it
+   showed THIS property to THIS buyer before the deal existed. Earliest first: the first showing
+   is the one that made the introduction, and the introduction is what is being charged for. */
+function supportingViewings(deal){
+  if(!deal) return [];
+  return (S.viewings||[])
+    .filter(v => v.propertyId === deal.propertyId
+      && (v.clientId === deal.buyerClientId || v.clientId === deal.sellerClientId)
+      && v.ts <= safeInt(deal.dates && deal.dates.agreedTs, deal.stageTs) + DAY)
+    .sort((a,b) => a.ts - b.ts);
+}
+
+/* THE DOCUMENT NUMBER. The row uuid is content-addressed and therefore stable, which is what
+   the log needs and exactly what a person reading a signed sheet down a telephone does not:
+   «ՑԹ-2026-004» is quotable, «v1tqo0aj1ez7ucg» is not. Derived from the position of this
+   viewing in the year's own chronology, so it is a pure function of the data and two devices
+   holding the same viewings print the same number. */
+function viewDocNo(v){
+  if(!v) return '';
+  const y = new Date(safeInt(v.ts,0)).getUTCFullYear();
+  const yr = (S.viewings||[]).filter(x => new Date(safeInt(x.ts,0)).getUTCFullYear() === y)
+    .sort((a,b) => (a.ts - b.ts) || (a.id < b.id ? -1 : 1));
+  const i = yr.findIndex(x => x.id === v.id) + 1;
+  return 'ՑԹ-' + y + '-' + (i < 100 ? ('00' + i).slice(-3) : i);
+}
+
+let VW = null;   /* the capture draft. Nothing reaches the log until saveViewing(). */
+function openNewViewing(pref){
+  const ags = activeAgents();
+  VW = { prop:(pref && pref.prop) || '', client:(pref && pref.client) || '',
+         agent: ags.length === 1 ? ags[0].id : '', outcome:'held', ts:S.today,
+         note:'', pq:'', cq:'', nc:false, ncName:'', ncPhone:'' };
+  drawNewViewing();
+}
+function vwPick(k, v){ if(!VW) return; VW[k] = v; drawNewViewing(); }
+/* a text field writes STRAIGHT into the draft and does NOT redraw — a redraw on every keystroke
+   takes the caret away from a person typing a name with one thumb. */
+function vwField(k, v){ if(VW) VW[k] = String(v == null ? '' : v); }
+/* a search field redraws ONLY its own list, for the same reason */
+function vwSearch(k, v, listId){
+  if(!VW) return;
+  VW[k] = String(v || '');
+  const el = document.getElementById(listId);
+  if(el) el.innerHTML = (listId === 'vwPropList' ? vwPropRows() : vwClientRows());
+}
+function vwDate(v){
+  if(!VW) return;
+  const ms = Date.parse(String(v || '') + 'T00:00:00Z');
+  VW.ts = isFinite(ms) ? ms : S.today;
+}
+const isoDate = ts => new Date(safeInt(ts,0)).toISOString().slice(0,10);
+
+/* RECENT FIRST. The property an agent is standing in front of is almost always one they touched
+   recently, so the list is ordered by the last thing that happened to it and the search is there
+   for the exception rather than for the rule. */
+function vwPropRows(){
+  const q = (VW.pq || '').trim().toLowerCase();
+  const lastTouch = p => Math.max(safeInt(p.listedTs,0), safeInt(p.statusTs,0),
+    (viewingsOfProp(p.id)[0] || {ts:0}).ts);
+  let list = (S.props||[]).filter(p => !p.archivedTs);
+  if(q) list = list.filter(p => [propAddr(p), p.cadCode, kindLabel(p.kind)].join(' ').toLowerCase().indexOf(q) >= 0);
+  list = list.sort((a,b) => lastTouch(b) - lastTouch(a));
+  const show = list.slice(0, 6);
+  return show.map(p => '<button class="pick' + (VW.prop === p.id ? ' on' : '') + '" onclick="vwPick('
+      + jsArg('prop') + ',' + jsArg(p.id) + ')">' + (KIND_EM[p.kind] || '🏠') + ' ' + escH(propAddr(p))
+      + '<span class="pd">' + escH(kindLabel(p.kind) + ' · ' + dealKindLabel(p.deal)) + '</span></button>').join('')
+    + (list.length > show.length ? '<div class="prov">' + escH(fmt('vw_more', {n:list.length - show.length})) + '</div>' : '')
+    + (list.length ? '' : '<div class="prov">' + escH(t('p_none_b')) + '</div>');
+}
+function vwClientRows(){
+  const q = (VW.cq || '').trim().toLowerCase();
+  const lastTouch = c => (viewingsOfClient(c.id)[0] || {ts:0}).ts || safeInt(c.createdTs,0);
+  let list = (S.clients||[]).filter(c => !c.archivedTs);
+  if(q) list = list.filter(c => [c.name, c.phone].join(' ').toLowerCase().indexOf(q) >= 0);
+  list = list.sort((a,b) => lastTouch(b) - lastTouch(a));
+  const show = list.slice(0, 6);
+  return show.map(c => '<button class="pick' + (VW.client === c.id ? ' on' : '') + '" onclick="vwPick('
+      + jsArg('client') + ',' + jsArg(c.id) + ')">👤 ' + escH(c.name)
+      + '<span class="pd">' + escH(c.phone || '—') + '</span></button>').join('')
+    + (list.length > show.length ? '<div class="prov">' + escH(fmt('vw_more', {n:list.length - show.length})) + '</div>' : '');
+}
+
+function drawNewViewing(){
+  if(!VW) return;
+  MODAL_RE = drawNewViewing;
+  const ready = !!(VW.prop && (VW.client || (VW.nc && VW.ncName.trim())) && VW.agent);
+  let h = '<h3>🔑 ' + escH(t('vw_new')) + '</h3>';
+  h += '<div class="prov">' + escH(t('vw_locked')) + '</div>';
+
+  /* A PICKER THAT HAS BEEN ANSWERED COLLAPSES TO ITS ANSWER. Three open lists of six rows each
+     is 18 rows of scrolling between the agent and the button they came here to press; an answered
+     question is one row with a «change» beside it. This is the difference between four taps and
+     four screens. */
+  const chosen = (secEm, secLbl, txt, sub, clearKey) =>
+    '<div class="sec">' + secEm + ' ' + escH(secLbl) + '</div>'
+    + '<div class="row"><div style="min-width:0"><b>' + escH(txt) + '</b>'
+      + (sub ? '<div class="muted">' + escH(sub) + '</div>' : '') + '</div>'
+    + '<button class="btn ghost small" onclick="vwPick(' + jsArg(clearKey) + ',' + jsArg('') + ')">'
+      + escH(t('vw_change')) + '</button></div>';
+
+  const pp = VW.prop ? propById(VW.prop) : null;
+  h += pp
+    ? chosen('🏠', t('vw_prop'), (KIND_EM[pp.kind] || '🏠') + ' ' + propAddr(pp),
+        kindLabel(pp.kind) + ' · ' + dealKindLabel(pp.deal), 'prop')
+    : '<div class="sec">🏠 ' + escH(t('vw_prop')) + '</div>'
+      + '<input class="search" type="text" placeholder="' + escH(t('vw_search_p')) + '" value="'
+        + escH(VW.pq) + '" oninput="vwSearch(' + jsArg('pq') + ',this.value,' + jsArg('vwPropList') + ')">'
+      + '<div id="vwPropList">' + vwPropRows() + '</div>';
+
+  const cc = VW.client ? clientById(VW.client) : null;
+  if(cc){ h += chosen('👤', t('vw_client'), cc.name, cc.phone, 'client'); }
+  else {
+  h += '<div class="sec">👤 ' + escH(t('vw_client')) + '</div>';
+  if(VW.nc){
+    h += '<input type="text" placeholder="' + escH(t('vw_nc_name')) + '" value="' + escH(VW.ncName)
+      + '" oninput="vwField(' + jsArg('ncName') + ',this.value)">'
+      + '<input type="text" style="margin-top:8px" placeholder="' + escH(t('vw_nc_phone')) + '" value="'
+      + escH(VW.ncPhone) + '" oninput="vwField(' + jsArg('ncPhone') + ',this.value)">'
+      + '<button class="btn ghost small" style="margin-top:10px" onclick="vwPick(' + jsArg('nc') + ',false)">'
+      + escH(t('cancel')) + '</button>';
+  } else {
+    h += '<input class="search" type="text" placeholder="' + escH(t('vw_search_c')) + '" value="'
+      + escH(VW.cq) + '" oninput="vwSearch(' + jsArg('cq') + ',this.value,' + jsArg('vwClientList') + ')">'
+      + '<div id="vwClientList">' + vwClientRows() + '</div>'
+      /* «name and phone only» — everything else about a client can wait; the viewing cannot */
+      + '<button class="btn ghost full" style="margin-top:10px" onclick="vwPick(' + jsArg('nc') + ',true)">'
+      + escH(t('vw_newclient')) + '</button>';
+  }
+  }
+
+  const aa = VW.agent ? agentById(VW.agent) : null;
+  h += aa
+    ? chosen('🧑‍💼', t('vw_agent'), aa.em + ' ' + aa.name, aa.phone, 'agent')
+    : '<div class="sec">🧑‍💼 ' + escH(t('vw_agent')) + '</div>'
+      + activeAgents().map(a => '<button class="pick" onclick="vwPick('
+          + jsArg('agent') + ',' + jsArg(a.id) + ')">' + escH(a.em + ' ' + a.name) + '</button>').join('');
+
+  h += '<div class="sec">✅ ' + escH(t('vw_outcome')) + '</div>'
+    + '<div class="chips wrap">' + VIEW_OUTCOMES.map(o => '<button class="' + (VW.outcome === o ? 'active' : '')
+        + '" onclick="vwPick(' + jsArg('outcome') + ',' + jsArg(o) + ')">' + escH(outcomeLabel(o))
+        + '</button>').join('') + '</div>';
+
+  h += '<div class="sec">🗓️ ' + escH(t('vw_when')) + '</div>'
+    + '<input type="date" value="' + escH(isoDate(VW.ts)) + '" onchange="vwDate(this.value)">';
+
+  h += '<div class="sec">✍️ ' + escH(t('vw_note')) + '</div>'
+    + '<textarea rows="2" oninput="vwField(' + jsArg('note') + ',this.value)">' + escH(VW.note) + '</textarea>';
+
+  h += '<button class="btn primary full" style="margin-top:16px"' + (ready ? '' : ' disabled')
+    + ' onclick="saveViewing()">' + escH(t('vw_save')) + '</button>'
+    + (ready ? '' : '<div class="prov warn">' + escH(t('vw_need')) + '</div>')
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>';
+  openModal(h);
+}
+
+function saveViewing(){
+  if(!VW) return;
+  let cid = VW.client;
+  if(VW.nc && VW.ncName.trim()){
+    const p = propById(VW.prop);
+    /* the role follows from what is happening: a person being shown a property to buy is a
+       գնորդ, a person being shown one to rent is a վարձակալ. Nothing else is assumed. */
+    const role = (p && p.deal === 'lease') ? 'tenant' : 'buyer';
+    const nm = VW.ncName.trim(), ph = VW.ncPhone.trim();
+    const exist = (S.clients||[]).find(c => c.name === nm && c.phone === ph);
+    if(exist) cid = exist.id;
+    else {
+      cid = contentId('c', nm + KSEP + ph, (S.clients||[]).length);
+      S.clients.push({ id:cid, name:nm, phone:ph, email:'', kind:[role], tin:'',
+        passport:{series:'',no:''}, source:'', note:'', agentId:VW.agent,
+        createdTs:S.today, archivedTs:0 });
+    }
+  }
+  if(!VW.prop || !cid || !VW.agent) return;
+  const ts = Math.max(0, safeInt(VW.ts, S.today));
+  const note = String(VW.note || '');
+  /* THE EVIDENCE ROW IS WRITTEN FIRST and the viewing takes its identity from it, so two devices
+     that recorded the same viewing agree on the id and a replay is a no-op rather than a
+     duplicate. postRow() returns the EXISTING uuid on a replay, which is how the duplicate is
+     detected here rather than silently doubling the evidence. */
+  const uuid = postRow({ agent:VW.agent, type:'view', amt:0, ts:ts, prop:VW.prop, client:cid,
+    reason:VW.outcome, actor:VW.agent, note:note });
+  if(!uuid){ toast(t('vw_dup')); return; }
+  const id = 'v' + uuid.slice(1);
+  if((S.viewings||[]).some(v => v.id === id)){ toast(t('vw_dup')); return; }
+  S.viewings.push({ id:id, propertyId:VW.prop, clientId:cid, agentId:VW.agent, ts:ts,
+    outcome:VW.outcome, signedTs:0, signedBy:'', note:note, uuid:uuid });
+  VW = null;
+  saveState(); closeModal(); renderAll(); toast(t('vw_saved'));
+  /* straight to the sheet the client has to sign — an unsigned sheet is an unenforceable claim
+     and the moment to get a signature is while the client is still standing there. */
+  openViewingSheet(id);
+}
+
+/* SET-ONCE. A signature happened or it did not; `firstWrite` semantics, and the sheet says so. */
+function signViewing(id){
+  const v = (S.viewings||[]).find(x => x.id === id);
+  if(!v || v.signedTs) return;
+  v.signedTs = S.today;
+  v.signedBy = v.clientId;
+  postRow({ agent:v.agentId, type:'doc', amt:0, ts:S.today, prop:v.propertyId, client:v.clientId,
+    reason:'view_signed', actor:'owner', note:v.id });
+  saveState(); renderAll(); repaintSheet(); toast(t('vw_signed_on'));
+}
+
+/* ---------- DOCUMENT 1 · Ցուցադրության թերթիկ ----------
+   The evidence that supports the fee. Property with its կադաստրային ծածկագիր, client, agent,
+   date, and the sentence that makes the fee owed, printed in Armenian on every language of the
+   UI because that is the language it is signed in. One client signature line, one agent line. */
+function openViewingSheet(id){
+  const v = (S.viewings||[]).find(x => x.id === id);
+  if(!v) return;
+  MODAL_RE = () => openViewingSheet(id);
+  const p = propById(v.propertyId), c = clientById(v.clientId), a = agentById(v.agentId);
+  const ag = S.agency || {};
+  let h = '<h3>🔑 ' + escH(t('doc_view_title')) + '</h3>'
+    + '<div class="muted">' + escH(t('doc_no') + ' ' + viewDocNo(v) + ' · ' + fdate(v.ts)) + '</div>'
+    + '<hr class="actrule">'
+    + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
+      + docParty(t('doc_agency'), ag.name, docTin(ag.tin))
+      + docParty(t('doc_client'), c ? c.name : '—', c ? c.phone : '')
+    + '</div>'
+    + '<div class="sec">🏠 ' + escH(t('doc_prop')) + '</div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('props_title')) + '</span><span>'
+      + escH(p ? propAddr(p) : '—') + '</span></div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('p_cad')) + '</span><span class="cad">'
+      + escH(p ? p.cadCode : '—') + '</span></div>'
+    + (p ? '<div class="row"><span class="mlbl">' + escH(kindLabel(p.kind)) + '</span><span>'
+        + escH([p.area ? p.area + ' ' + t('p_area') : '', p.rooms ? p.rooms + ' ' + t('p_rooms') : '',
+                p.floor ? p.floor + '/' + (p.floors||'—') + ' ' + t('p_floor') : ''].filter(Boolean).join(' · '))
+        + '</span></div>' : '')
+    + '<div class="row"><span class="mlbl">' + escH(t('doc_agent')) + '</span><span>'
+      + escH(a ? (a.em + ' ' + a.name + (a.phone ? ' · ' + a.phone : '')) : '—') + '</span></div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('doc_when')) + '</span><span>'
+      + escH(fdate(v.ts)) + '</span></div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('vw_outcome')) + '</span><span>'
+      + escH(outcomeLabel(v.outcome)) + '</span></div>'
+    + (v.note ? '<div class="prov">' + escH(v.note) + '</div>' : '')
+    + '<hr class="actrule">'
+    /* THE SENTENCE THAT MAKES THE FEE OWED. It is the document, not a footnote to it. */
+    + '<div style="font-size:var(--fs-body-l);line-height:1.5;margin:12px 0">'
+      + escH(t('doc_view_stmt')) + '</div>'
+    + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
+      + docSign(t('doc_sign_client') + (c ? ' · ' + c.name : ''))
+      + docSign(t('doc_sign_agent') + (a ? ' · ' + a.name : '')) + '</div>'
+    + docFoot(t('doc_view_note'))
+    + (v.signedTs
+        ? '<div class="notice noprint">' + escH('✓ ' + t('vw_signed_on') + ' · ' + fdate(v.signedTs)) + '</div>'
+        : '<button class="btn ghost full noprint" style="margin-top:14px" onclick="signViewing('
+          + jsArg(v.id) + ')">✍️ ' + escH(t('vw_sign')) + '</button>'
+          + '<div class="prov noprint">' + escH(t('vw_sign_q')) + '</div>')
+    + docTail();
+  openModal(h);
+}
+
+/* ---------- the property sheet: what this flat is, and who has seen it ---------- */
+function openProp(id){
+  const p = propById(id); if(!p) return;
+  MODAL_RE = () => openProp(id);
+  const dom = daysOnMarket(p);
+  const m = mandateOfProp(p.id);
+  const vs = viewingsOfProp(p.id);
+  let h = '<h3>' + (KIND_EM[p.kind] || '🏠') + ' ' + escH(propAddr(p)) + '</h3>'
+    + '<div class="cad" style="margin-bottom:12px">' + escH(p.cadCode) + '</div>'
+    + '<div class="badgerow" style="margin-bottom:12px">'
+      + badge(PROP_ST_CLASS[p.status] || 'b-neutral', propStLabel(p.status))
+      + badge('b-neutral', kindLabel(p.kind)) + badge('b-neutral', dealKindLabel(p.deal)) + '</div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('p_ask')) + '</span>' + amd(propPrice(p))
+      + '</div>'
+    + (isLease(p) ? '<div class="prov">' + escH(t('p_permo')) + '</div>' : '')
+    + '<div class="row"><span class="mlbl">' + escH(t('p_owner')) + '</span><span>'
+      + escH(clientName(p.ownerClientId) || '—') + '</span></div>'
+    + '<div class="row"><span class="mlbl">' + escH(t('tab_agents')) + '</span><span>'
+      + escH(agentEm(p.agentId) + ' ' + agentName(p.agentId)) + '</span></div>'
+    + (dom ? '<div class="row"><span class="mlbl">' + escH(t('p_dom')) + '</span><span class="num">'
+        + dom.days + ' ' + escH(t('p_dom_d')) + '</span></div>'
+        /* the number never appears without the sentence that says where it came from */
+        + '<div class="prov">' + escH(domSrcText(dom.src)) + '</div>' : '')
+    + (m ? '' : '<div class="notice">' + escH('⚖️ ' + t('p_nomandate')) + '</div>');
+
+  h += '<div class="sec">🔑 ' + escH(t('vw_history')) + '</div>';
+  h += vs.length
+    ? vs.map(v => '<button class="pick" onclick="openViewingSheet(' + jsArg(v.id) + ')">'
+        + escH(fdate(v.ts) + ' · ' + clientName(v.clientId))
+        + '<span class="pd">' + escH(agentEm(v.agentId) + ' ' + agentName(v.agentId) + ' · '
+          + outcomeLabel(v.outcome) + ' · ' + (v.signedTs ? t('vw_signed') : t('vw_unsigned')))
+        + '</span></button>').join('')
+    : '<div class="prov">' + escH(t('vw_hist_none')) + '</div>';
+
+  h += '<button class="btn primary full" style="margin-top:16px" onclick="closeModal();openNewViewing({prop:'
+    + jsArg(p.id) + '})">🔑 ' + escH(t('vw_new')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('close')) + '</button>';
+  openModal(h);
+}
+
+/* ---------- the client sheet: every property this person was shown ---------- */
+function openClient(id){
+  const c = clientById(id); if(!c) return;
+  MODAL_RE = () => openClient(id);
+  const vs = viewingsOfClient(c.id);
+  let h = '<h3>👤 ' + escH(c.name) + '</h3>'
+    + '<div class="badgerow" style="margin-bottom:12px">'
+      + (c.kind||[]).map(r => badge('b-neutral', roleLabel(r))).join('')
+      + badge('b-neutral', agentEm(c.agentId) + ' ' + agentName(c.agentId)) + '</div>'
+    + (c.phone ? '<a class="telbtn" href="tel:' + escH(c.phone.replace(/[^\d+]/g,'')) + '">📞 '
+        + escH(c.phone) + '</a>' : '')
+    + (c.tin ? '<div class="row"><span class="mlbl">' + escH(t('doc_tin')) + '</span><span class="num">'
+        + escH(c.tin) + '</span></div>' : '');
+
+  h += '<div class="sec">🔑 ' + escH(t('vw_shown')) + '</div>';
+  h += vs.length
+    ? vs.map(v => { const p = propById(v.propertyId);
+        return '<button class="pick" onclick="openViewingSheet(' + jsArg(v.id) + ')">'
+          + (p ? (KIND_EM[p.kind] || '🏠') : '🏠') + ' ' + escH(p ? propAddr(p) : '—')
+          + '<span class="pd">' + escH(fdate(v.ts) + ' · ' + outcomeLabel(v.outcome) + ' · '
+            + (v.signedTs ? t('vw_signed') : t('vw_unsigned'))) + '</span></button>'; }).join('')
+    : '<div class="prov">' + escH(t('vw_shown_none')) + '</div>';
+
+  h += '<button class="btn primary full" style="margin-top:16px" onclick="closeModal();openNewViewing({client:'
+    + jsArg(c.id) + '})">🔑 ' + escH(t('vw_new')) + '</button>'
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('close')) + '</button>';
+  openModal(h);
+}
+
 /* =====================================================================================
    CSV
    Two non-obvious properties, both deliberate and both easy to lose in a rewrite:
