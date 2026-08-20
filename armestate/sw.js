@@ -11,10 +11,15 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armestate-shell-v2';   /* v2: the viewing log (four-tap capture, evidence rows, the signed
-      Ցուցադրության թերթիկ), the commission terms form, the նախավճար/կանխավճար chooser, payouts and
-      adjustments, and the three printable documents. A stale v1 shell would leave an agent holding
-      a product with no way to enter a fee, so the version moves with the build. */
+const CACHE = 'armestate-shell-v3';   /* v3: the deal that can be marked Տապալված (with its derived
+      reversal rows), the agent and per-deal share editors, the offer → deal path and the printable
+      Առաջարկի թերթիկ, the ways into the product (a property, a client, a service contract), a
+      commission export that no longer bills a collapsed deal, and the lease that bills the
+      տանտեր and the վարձակալ rather than «the seller» and «the buyer».
+      v2: the viewing log (four-tap capture, evidence rows, the signed Ցուցադրության թերթիկ), the
+      commission terms form, the նախավճար/կանխավճար chooser, payouts and adjustments, and the
+      three printable documents. A stale shell would leave an agent holding a product with no way
+      to enter a fee, so the version moves with the build. */
 
 /* THE DISPLAY FONTS ARE PART OF THE SHELL, not optional assets. An app that opens offline in
    fallback fonts is a different product from the one that was designed and reviewed: different
