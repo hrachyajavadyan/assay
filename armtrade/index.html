@@ -7588,9 +7588,25 @@ function navPlan(role, items, labels, W){
   }
   return [prio[0]];
 }
+/* R18 · A nav label may be shorter than the screen it opens. The precedent is ArmEstate's
+   «Ցուցադրում» in the bar against «Ցուցադրություններ» as the heading. Armenian «Ընդունում»
+   measures 75px at 600 14px; the fifth cell on a 360px phone affords 68, so navPlan surrendered
+   it and the shopkeeper got THREE destinations plus a menu — while ArmVoski, built later, shows
+   four plus a menu on the same phone. English «Receiving» (53) and Russian «Приёмка» (45) already
+   fit, so this map is Armenian-only, and the full word still titles the screen and names the row
+   inside «Ավելին». */
+const NAV_SHORT = { hy: { recv:'Ընդունել' } };
+function navLabels(role){
+  const base = role==='shop' ? T[lang].tabs_shop : T[lang].tabs_sup;
+  const sh = NAV_SHORT[lang];
+  if(!sh) return base;
+  const o = Object.assign({}, base);
+  for(const k in sh) if(o[k] != null) o[k] = sh[k];
+  return o;
+}
 function renderNav(role){
   const items = navItems(role);
-  const labels = role==='shop' ? T[lang].tabs_shop : T[lang].tabs_sup;
+  const labels = navLabels(role);
   const nv = document.getElementById('nav');
   const W = nv.clientWidth || window.innerWidth || 390;
   const keys = navPlan(role, items, labels, W);
