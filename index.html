@@ -445,7 +445,7 @@ ru:{
    browser. The gold research says it in as many words: do not reuse ARMGOLD's assay_* keys.
    So the site keeps its own three-language key and mirrors into `assay_lang` only the two
    values ARMGOLD can survive; a 'ru' left there by an earlier build is healed on load. */
-var LS_LANG='assay_site_lang', LS_THEME='assay_theme', LS_GOLD='assay_lang';
+var LS_LANG='assay_site_lang', LS_THEME='suite_theme', LS_GOLD='assay_lang';
 function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
 
