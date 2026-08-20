@@ -2446,6 +2446,7 @@ T.hy = {
   lt_doc: "Փաստաթուղթ",
   lt_consent: "Համաձայնություն",
   rsn_deal_void: "գործարքը տապալվեց",
+  rsn_terms_amended: "պայմանների ճշգրտում",
   /* data screen */
   data_title: "Տվյալներ",
   dt_ledger: "Մատյան",
@@ -2564,6 +2565,20 @@ T.hy = {
   cm_tpl_set: "Սովորական պայմանները սահմանել է {by} · {d}",
   cm_tpl_saved: "Պահվեց որպես սովորական պայմաններ",
   cm_no_default: "ԱրմԷստեյտը լռելյայն դրույք չի առաջարկում։ Այս թիվը մարդ է մուտքագրում։",
+  /* ---- amending terms that have already earned ---- */
+  cm_amend_hd: "Այս գործարքի միջնորդավճարն արդեն վաստակած է",
+  cm_amend_why: "Պայմանների փոփոխությունը չի ջնջում և չի վերաշարադրում մատյանը։ Յուրաքանչյուր կողմի համար կգրվի ճշգրտման առանձին տող՝ տարբերության չափով։",
+  cm_amend_tbl: "Ի՞նչ տողեր կգրվեն",
+  cm_amend_was: "Մատյանում այժմ",
+  cm_amend_now: "Նոր պայմաններով",
+  cm_amend_delta: "Ճշգրտում",
+  cm_amend_none: "Նոր պայմանները տալիս են նույն գումարները։ Ճշգրտման տող չի գրվի։",
+  cm_amend_btn: "Պահել և գրել ճշգրտումը",
+  cm_amend_bad: "Այս պայմաններով բաշխումը չի ստացվում։ Ստուգեք գործակալների բաժինները։",
+  cm_amend_done: "Պայմանները փոխվեցին · ճշգրտումը գրվեց",
+  cm_amend_note: "Պայմանների ճշգրտում՝ {a} → {b}",
+  cm_amended: "Փոփոխվել է {d}-ին · նախկինում՝ {a}",
+  cm_amend_void: "Չեղարկված գործարքի պայմանները չեն փոխվում։",
   /* ---- the deposit, chosen explicitly ---- */
   dep_title: "Նախավճար / կանխավճար",
   dep_kind_q: "Ո՞ր գործիքն է",
@@ -3013,6 +3028,7 @@ T.en = {
   lt_doc: "Document",
   lt_consent: "Consent",
   rsn_deal_void: "the deal fell through",
+  rsn_terms_amended: "terms amended",
   /* data screen */
   data_title: "Data",
   dt_ledger: "Ledger",
@@ -3131,6 +3147,20 @@ T.en = {
   cm_tpl_set: "Usual terms set by {by} · {d}",
   cm_tpl_saved: "Saved as the usual terms",
   cm_no_default: "ArmEstate suggests no rate. A person types this number.",
+  /* ---- amending terms that have already earned ---- */
+  cm_amend_hd: "This deal's commission is already earned",
+  cm_amend_why: "Changing the terms deletes nothing and rewrites nothing. One adjustment row is posted per party, for the difference.",
+  cm_amend_tbl: "The rows that will be posted",
+  cm_amend_was: "In the ledger now",
+  cm_amend_now: "Under the new terms",
+  cm_amend_delta: "Adjustment",
+  cm_amend_none: "The new terms give the same amounts. No adjustment row will be posted.",
+  cm_amend_btn: "Save and post the adjustment",
+  cm_amend_bad: "These terms cannot be allocated. Check the agents' shares.",
+  cm_amend_done: "Terms changed · adjustment posted",
+  cm_amend_note: "Terms amended: {a} → {b}",
+  cm_amended: "Amended {d} · previously {a}",
+  cm_amend_void: "A voided deal's terms do not change.",
   /* ---- the deposit, chosen explicitly ---- */
   dep_title: "Նախավճար / կանխավճար",
   dep_kind_q: "Which instrument",
@@ -3576,6 +3606,7 @@ T.ru = {
   lt_doc: "Документ",
   lt_consent: "Согласие",
   rsn_deal_void: "сделка сорвалась",
+  rsn_terms_amended: "корректировка условий",
   /* data screen */
   data_title: "Данные",
   dt_ledger: "Журнал",
@@ -3694,6 +3725,20 @@ T.ru = {
   cm_tpl_set: "Обычные условия задал {by} · {d}",
   cm_tpl_saved: "Сохранено как обычные условия",
   cm_no_default: "ArmEstate не предлагает ставку. Это число вводит человек.",
+  /* ---- amending terms that have already earned ---- */
+  cm_amend_hd: "Комиссия по этой сделке уже заработана",
+  cm_amend_why: "Изменение условий ничего не удаляет и не переписывает. По каждой стороне будет записана отдельная корректирующая строка на разницу.",
+  cm_amend_tbl: "Какие строки будут записаны",
+  cm_amend_was: "Сейчас в книге",
+  cm_amend_now: "По новым условиям",
+  cm_amend_delta: "Корректировка",
+  cm_amend_none: "Новые условия дают те же суммы. Корректирующая строка не потребуется.",
+  cm_amend_btn: "Сохранить и записать корректировку",
+  cm_amend_bad: "По этим условиям распределение не сходится. Проверьте доли агентов.",
+  cm_amend_done: "Условия изменены · корректировка записана",
+  cm_amend_note: "Корректировка условий: {a} → {b}",
+  cm_amended: "Изменено {d} · ранее {a}",
+  cm_amend_void: "Условия аннулированной сделки не меняются.",
   /* ---- the deposit, chosen explicitly ---- */
   dep_title: "Նախավճար / կանխավճար",
   dep_kind_q: "Какой инструмент",
@@ -4648,6 +4693,10 @@ function normTerms(x){
     vat: VAT_FLAGS.indexOf(x.vat) >= 0 ? x.vat : 'none',
     trigger: TRIGGERS.indexOf(x.trigger) >= 0 ? x.trigger : null,
     setBy: String(x.setBy || ''), setTs: Math.max(0, safeInt(x.setTs, 0)),
+    /* THE AMENDMENT TRAIL. When terms are re-agreed on a deal that has already earned, the rate
+       as it stood before is kept as the string a person would recognise, with the date. It is
+       display provenance only — the arithmetic lives in the adjustment rows, never here. */
+    amendedFrom: String(x.amendedFrom || ''), amendTs: Math.max(0, safeInt(x.amendTs, 0)),
     note: String(x.note || '')
   };
 }
@@ -5667,6 +5716,11 @@ function openDeal(id){
         + escH(vatLabel(tm.vat)) + '</span></div>'
       + '<div class="prov">' + escH(t('cm_vat_note')) + '</div>'
       + (tm.setTs ? '<div class="prov">' + escH(t('cm_setby') + sepC() + actorName(tm.setBy) + ' · ' + fdate(tm.setTs)) + '</div>' : '')
+      /* AN AMENDED DEAL SAYS SO WHEREVER ITS RATE APPEARS. The adjustment rows are in the
+         ledger, but the person looking at the deal card needs to know the number in front of
+         them is not the one that was first agreed. */
+      + (tm.amendTs ? '<div class="prov warn">' + escH(fmt('cm_amended',
+          {d: fdate(tm.amendTs), a: tm.amendedFrom || '—'})) + '</div>' : '')
       + '</div>';
 
     /* ---- THE SPLIT, WITH ITS RECONCILIATION LINE ---- */
@@ -5814,6 +5868,57 @@ function postVoidReversals(deal, ts, note){
   });
   return n;
 }
+/* =====================================================================================
+   AMENDING TERMS THAT HAVE ALREADY EARNED
+   THE CHOICE, STATED: the product does NOT refuse this edit — it posts an ADJUSTMENT ROW per
+   subject, visible in the ledger and on every statement, and it shows the owner exactly which
+   rows it is about to post BEFORE it posts them.
+   Why not refuse, when openDealAgents() does refuse? Because the two edits are different facts.
+   A per-deal SHARE is a redistribution between people with no new event behind it; refusing it
+   costs nothing, because the instrument for a redistribution is exactly an adjustment the owner
+   types with a reason. A change of TERMS is a renegotiation with the client — a real event, on a
+   real date, with a real new number — and refusing it would leave a mistyped 2% permanently on
+   the books with no remedy but voiding the whole deal and rebuilding it. That trade is what makes
+   owners keep the real numbers in a private spreadsheet.
+   Nothing is mutated and nothing is deleted: the original earn rows stay, the delta is a second
+   line, and the deal's terms carry `amendedFrom` so every document prints that it was amended.
+   ===================================================================================== */
+
+/* WHAT EACH SUBJECT NETS ON THIS DEAL, folded from the log. earn + adjust + reverse; NEVER
+   payouts — a payout is money moving, not money earned, and netting it here would make the app
+   re-earn a fee the moment somebody was paid. Amending twice therefore lands on the right
+   number both times, because the second amendment diffs against the first one's rows. */
+function dealNetBySubject(dealId){
+  const by = Object.create(null);   /* never {} — '__proto__' is a truthy id in a bare literal */
+  rowsOfDeal(dealId).forEach(r => {
+    if(r.type !== 'earn' && r.type !== 'adjust' && r.type !== 'reverse') return;
+    by[r.agent] = (by[r.agent] || 0) + safeInt(r.amt, 0);
+  });
+  return by;
+}
+/* THE DELTAS, per subject: what the new terms say this deal owes them, minus what the log
+   already says they netted. The two sides are folded over the SAME subject set, so
+   Σdeltas === newFee − oldNet by construction — asserted in the suite, not hoped for.
+   Returns null when the new terms cannot be allocated at all (over-promised shares, a split that
+   does not reconcile); the caller refuses rather than posting half an amendment. */
+function termsAmendDeltas(deal, newTerms){
+  if(!deal) return null;
+  const al = allocation({ agents: deal.agents, terms: newTerms });
+  if(!al || al.over || !assertReconciles(al)) return null;
+  const want = Object.create(null);
+  al.rows.forEach(r => { if(r.amount) want[r.agentId] = (want[r.agentId] || 0) + r.amount; });
+  if(al.agencyKeep) want[AGENCY] = (want[AGENCY] || 0) + al.agencyKeep;
+  const have = dealNetBySubject(deal.id);
+  const ids = Object.keys(want).concat(Object.keys(have).filter(k => want[k] === undefined));
+  return ids.map(id => ({ agent:id, was:(have[id] || 0), now:(want[id] || 0),
+                          delta:(want[id] || 0) - (have[id] || 0) }))
+            .filter(x => x.delta !== 0)
+            .sort((a,b) => a.agent < b.agent ? -1 : a.agent > b.agent ? 1 : 0);
+}
+/* the subject of a money row is an agent or the agency itself */
+const subjectName = id => id === AGENCY ? ((S.agency && S.agency.name) || t('doc_agency'))
+  : ((agentById(id) || {}).name || id);
+
 /* run at boot on the owner's device: any deal marked void whose earnings have not been reversed
    gets its reversal now. The money rows are DERIVED on this device, per §1.9 — an agent's device
    may contribute the collapse, never the row that unwinds the money. */
@@ -6202,7 +6307,8 @@ function openStatement(agentId){
       mine ? t('cm_share') + ' ' + bpTxt(mine.shareBp) : '',
       r.trigger ? triggerLabel(r.trigger) : '',
       r.reason === 'deal_void' ? t('rsn_deal_void') : '',
-      r.reason === 'negotiated' ? t('adj_open') : ''
+      r.reason === 'negotiated' ? t('adj_open') : '',
+      r.reason === 'terms_amended' ? t('rsn_terms_amended') : ''
     ].filter(Boolean).join(' · ');
     return '<tr><td>' + escH(fdate(r.ts)) + '<div class="muted">' + escH(rowTypeLabel(r.type))
         + (d ? ' · ' + escH(dealDocNo(d)) : '') + '</div>'
@@ -7643,6 +7749,34 @@ function tfPreviewHtml(){
       h += '<div class="notice bad">' + escH('⚠️ ' + t('cm_over')) + '</div>';
     }
   }
+  /* THE AMENDMENT, SHOWN BEFORE IT IS POSTED. If this deal has already earned, the owner sees
+     the exact adjustment rows the save will write — subject by subject, in dram, with the sign —
+     and the panel recomputes as they type. Nobody should discover a ledger row afterwards. */
+  h += tfAmendHtml(d, tm);
+  return h;
+}
+
+/* the amendment panel: empty string unless this is a deal whose fee has already been minted */
+function tfAmendHtml(d, tm){
+  if(!d || !dealEarnRows(d.id).length) return '';
+  if(d.void && d.void.ts) return '<div class="notice bad">' + escH('⚠️ ' + t('cm_amend_void')) + '</div>';
+  let h = '<hr class="actrule"><div class="notice">' + escH('⚖️ ' + t('cm_amend_hd')) + '</div>'
+    + '<div class="prov">' + escH(t('cm_amend_why')) + '</div>';
+  const dl = termsAmendDeltas(d, tm);
+  if(dl == null) return h + '<div class="notice bad">' + escH('⚠️ ' + t('cm_amend_bad')) + '</div>';
+  if(!dl.length) return h + '<div class="prov">' + escH('✓ ' + t('cm_amend_none')) + '</div>';
+  /* EVERY ROW REPRODUCES FROM ITS OWN PRINTED OPERANDS: now − was = delta, on the line. */
+  /* TWO COLUMNS, NOT FOUR. At 390 px an Armenian four-column header wraps into a wall; the
+     operands belong under the name, where «380,000 → 570,000» reads as one sentence and the
+     column that matters — what is about to be posted — keeps the whole right edge to itself. */
+  h += '<div class="sec">' + escH(t('cm_amend_tbl')) + '</div>'
+    + '<div class="spwrap"><table class="sp"><thead><tr><th>' + escH(t('doc_col'))
+      + '</th><th class="n">' + escH(t('cm_amend_delta')) + '</th></tr></thead><tbody>'
+    + dl.map(x => '<tr><td>' + escH(subjectName(x.agent))
+        + '<div class="muted">' + escH(t('cm_amend_was') + sepC() + amdTxt(x.was) + ' → '
+          + t('cm_amend_now') + sepC() + amdTxt(x.now)) + '</div></td>'
+        + '<td class="n">' + (x.delta < 0 ? '−' : '+') + amdTxt(Math.abs(x.delta)) + '</td></tr>').join('')
+    + '</tbody></table></div>';
   return h;
 }
 
@@ -7722,8 +7856,11 @@ function drawTerms(){
   h += '<div class="sec">👁 ' + escH(t('cm_preview')) + '</div>'
     + '<div class="card" style="margin:0 0 12px" id="tfPreview">' + tfPreviewHtml() + '</div>';
 
+  /* the button says what it is about to do — «save» and «save and post an adjustment» are not
+     the same promise, and the one that writes money rows must say so on its face */
+  const amending = !!(d && dealEarnRows(d.id).length && !(d.void && d.void.ts));
   h += '<button class="btn primary full" id="tfSave"' + (ok ? '' : ' disabled')
-      + ' onclick="saveTerms()">' + escH(t('cm_save')) + '</button>'
+      + ' onclick="saveTerms()">' + escH(amending ? t('cm_amend_btn') : t('cm_save')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px"' + (ok ? '' : ' disabled')
       + ' onclick="saveUsualTerms()">' + escH(t('cm_tpl_save')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('cancel')) + '</button>';
@@ -7764,18 +7901,43 @@ function saveTerms(){
     return;
   }
   const d = dealById(TF.deal); if(!d) return;
+  /* A VOIDED DEAL'S HISTORY IS CLOSED. Its earnings are already reversed; re-pricing it would
+     mint a fee against a deal that fell through. */
+  if(d.void && d.void.ts){ toast(t('cm_amend_void')); return; }
+  /* HAS THIS DEAL ALREADY EARNED? If so this is an AMENDMENT, not a first agreement — see the
+     block above postVoidReversals() for why the product adjusts rather than refuses. The deltas
+     are computed against the log BEFORE the terms object is replaced. */
+  const wasEarned = dealEarnRows(d.id).length > 0;
+  const deltas = wasEarned ? termsAmendDeltas(d, tm) : null;
+  if(wasEarned && deltas == null){ toast(t('cm_amend_bad')); return; }
+  const prevRate = d.terms ? rateAsTyped(d.terms) : '';
   tm.setBy = 'owner'; tm.setTs = Date.now();   /* it is a negotiated number and it carries a name */
+  if(wasEarned && deltas.length){ tm.amendedFrom = prevRate; tm.amendTs = tm.setTs; }
+  else if(d.terms){ tm.amendedFrom = d.terms.amendedFrom || ''; tm.amendTs = d.terms.amendTs || 0; }
   d.terms = normTerms(tm);
   /* an evidence row, so the terms are in the append-only log with the rest of the deal's history */
   postRow({ agent:AGENCY, type:'doc', amt:0, ts:S.today, deal:d.id, prop:d.propertyId,
-    reason:'terms_set', rank:DEAL_RANK[d.stage], actor:'owner',
+    reason: wasEarned ? 'terms_amended' : 'terms_set', rank:DEAL_RANK[d.stage], actor:'owner',
     note: rateAsTyped(d.terms) + ' · ' + payerLabel(d.terms.payer) + ' · ' + triggerLabel(d.terms.trigger) });
+  /* THE ADJUSTMENT ROWS. One per subject whose net moved, signed, carrying the deal so every
+     statement line has its basis, and a note naming the old rate and the new one. Nothing is
+     mutated: the original earn rows stay exactly where they were. */
+  let adj = 0;
+  if(wasEarned){
+    const note = fmt('cm_amend_note', {a: prevRate || '—', b: rateAsTyped(d.terms)});
+    deltas.forEach(x => {
+      if(postRow({ agent:x.agent, type:'adjust', amt:x.delta, ts:S.today, deal:d.id,
+        prop:d.propertyId, reason:'terms_amended', rank:DEAL_RANK[d.stage], actor:'owner',
+        note:note })) adj++;
+    });
+  }
   /* THE DEAL MAY ALREADY BE PAST ITS TRIGGER. Terms typed onto a deal that has already reached
-     the stage they name make the fee earned at that instant, and mintEarnings() is idempotent. */
+     the stage they name make the fee earned at that instant, and mintEarnings() is idempotent —
+     it finds the existing earn rows on an amended deal and mints nothing. */
   const minted = mintEarnings(d);
   TF = null;
   saveState(); closeModal(); renderAll();
-  toast(t('cm_saved') + (minted ? ' · ' + t('st_earned') : ''));
+  toast(adj ? t('cm_amend_done') : t('cm_saved') + (minted ? ' · ' + t('st_earned') : ''));
   openDeal(d.id);
 }
 
@@ -8756,6 +8918,88 @@ function estateSelfTest(){
       const back = agentMoney('a1').owed;
       return after === before - 50000 && back === before;
     })());
+
+    /* ---- AMENDING TERMS THAT HAVE ALREADY EARNED ----
+       The product adjusts rather than refuses (see the block above postVoidReversals), so the
+       arithmetic of the adjustment is the thing that must hold: the ledger's net must equal the
+       new fee to the dram, the ORIGINAL EARN ROWS MUST STILL BE THERE, and doing it twice must
+       land on the right number the second time too.
+       The block restores the seed's rows and terms when it is done, because every test after it
+       reads the seed and a suite whose cases depend on each other's leftovers is not a suite. */
+    (() => {
+      const rowsWere = S.rows.slice(), termsWere = dealById('d1').terms;
+      const restore = () => { S.rows = rowsWere.slice(); dealById('d1').terms = termsWere;
+                              S.owed = rebuildOwed(); };
+      const amend = (bp) => {
+        const d = dealById('d1');
+        const tm = normTerms(Object.assign({}, d.terms, { bp: bp }));
+        const dl = termsAmendDeltas(d, tm);
+        if(!dl) return null;
+        dl.forEach(x => postRow({ agent:x.agent, type:'adjust', amt:x.delta, ts:S.today,
+          deal:'d1', prop:d.propertyId, reason:'terms_amended', actor:'owner', note:'t' }));
+        d.terms = tm;
+        return dl;
+      };
+      const netSum = id => { const n = dealNetBySubject(id);
+        return Object.keys(n).reduce((a,k) => a + n[k], 0); };
+
+      const earnBefore = dealEarnRows('d1').map(r => r.uuid + ':' + r.amt).sort().join('|');
+      const dl1 = amend(300);
+      ok('an amendment posts adjustments and never touches the earn rows',
+         !!(dl1 && dl1.length)
+         && dealEarnRows('d1').map(r => r.uuid + ':' + r.amt).sort().join('|') === earnBefore
+         && netSum('d1') === feeOf(dealById('d1').terms)
+         && verifyLedger().length === 0);
+      const dl2 = amend(150);
+      ok('amending a second time diffs against the first amendment',
+         !!(dl2 && dl2.length) && netSum('d1') === feeOf(dealById('d1').terms)
+         && dealEarnRows('d1').length === 3);
+      ok('mintEarnings mints nothing on a deal that already earned',
+         mintEarnings(dealById('d1')) === 0);
+      restore();
+
+      /* every rate, not one: the delta must close the gap between the old net and the new fee
+         exactly, or somebody is paid a dram they did not earn */
+      ok('an amendment reconciles to the dram on every rate', (() => {
+        const d = dealById('d1');
+        const oldNet = netSum('d1');
+        for(let bp = 17; bp <= 977; bp += 23){
+          const tm = normTerms(Object.assign({}, d.terms, { bp: bp }));
+          const dl = termsAmendDeltas(d, tm);
+          if(!dl) return false;
+          const moved = dl.reduce((a,x) => a + x.delta, 0);
+          if(oldNet + moved !== feeOf(tm)) return false;
+        }
+        return true;
+      })());
+      /* A PAYOUT IS MONEY MOVING, NOT MONEY EARNED. Netting it here would re-earn the fee the
+         moment somebody was paid — the amendment would hand them the same money twice. */
+      ok('the payouts a subject received are not netted into what they earned', (() => {
+        const before = dealNetBySubject('d2').a1;
+        postRow({ agent:'a1', type:'payout', amt:-1000, ts:S.today, deal:'d2', actor:'owner' });
+        const after = dealNetBySubject('d2').a1;
+        S.rows = S.rows.filter(r => !(r.type === 'payout' && r.amt === -1000 && r.deal === 'd2'));
+        S.owed = rebuildOwed();
+        return after === before;
+      })());
+      /* over-promised shares: refused whole, never posted in part — computed on a PROBE so the
+         seed's own deal is never mutated */
+      ok('an over-promised amendment is refused, not half-posted',
+         termsAmendDeltas({ id:'d1', agents:[{agentId:'a1',shareBp:9000},{agentId:'a2',shareBp:9000}],
+                            terms: dealById('d1').terms }, dealById('d1').terms) === null);
+      /* WHY saveTerms() REFUSES A VOIDED DEAL OUTRIGHT. Its earnings are already reversed, so its
+         net is zero, so an amendment would compute a delta equal to the WHOLE new fee and mint a
+         commission against a deal that fell through. The guard is the only thing between the two. */
+      ok('amending a voided deal would re-mint the whole fee, which is why it is refused', (() => {
+        const d = (S.deals||[]).find(x => x && x.void && x.void.ts && dealEarnRows(x.id).length);
+        if(!d) return true;
+        const net = dealNetBySubject(d.id);
+        const sum = Object.keys(net).reduce((a,k) => a + net[k], 0);
+        const dl = termsAmendDeltas(d, d.terms) || [];
+        return sum === 0 && dl.reduce((a,x) => a + x.delta, 0) === feeOf(d.terms);
+      })());
+      restore();
+    })();
 
     /* the whole fee lands somewhere: agents plus the agency, per deal */
     ok('every dram of every earned fee is attributed', (() => {
