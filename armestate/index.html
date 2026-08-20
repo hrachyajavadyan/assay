@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#F4F6F8">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23A85A07'/%3E%3Ctext x='256' y='352' font-size='280' text-anchor='middle' fill='%23FFFFFF' font-family='Arial,sans-serif' font-weight='bold'%3E%D4%B7%3C/text%3E%3C/svg%3E">
 <title>ԱրմԷստեյտ — անշարժ գույքի գործակալության գրասենյակ</title>
 <!-- SELF-HOSTED FONTS, shared with ArmTrade and ArmVoski across /armtrade/vendor/fonts/ rather
      than copied: three products, one typeface, one entry in a browser cache that already holds
@@ -1744,6 +1745,21 @@ input:disabled{
 .pofour .v{font-size:var(--fs-body-l);font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums lining-nums}
 .pofour .v.big2{font-size:var(--fs-display-s)}
 
+/* A CHOICE WITH ITS CONSEQUENCE UNDER IT. The payout gate is two whole sentences, not two
+   words, so it cannot be a chip row: a chip is white-space:nowrap by design and one of these
+   sentences is 44 characters of Armenian, which overflowed the viewport at 320px. Two full-width
+   rows instead, each carrying the consequence of choosing it in the line beneath. */
+.pick{display:block;width:100%;text-align:left;background:var(--surface-2);
+  border:var(--bw) solid var(--stroke2);border-radius:var(--r-sm);
+  padding:var(--s3);margin-top:var(--s2);color:var(--ink);font-family:inherit;
+  font-size:var(--fs-body-l);font-weight:600;line-height:1.35;min-height:44px;cursor:pointer}
+.pick:active{background:var(--surface-3)}
+.pick:focus-visible{outline:none;box-shadow:var(--focus)}
+.pick.on{border-color:var(--acc);background:var(--acc-tint);color:var(--acc-text);border-width:var(--bw-strong)}
+.pick .pd{display:block;font-size:var(--fs-micro);font-weight:400;color:var(--muted);
+  margin-top:3px;line-height:var(--lh-micro)}
+.pick.on .pd{color:var(--acc-text)}
+
 /* the property tile is 44px like every other avatar in the suite */
 .pmeta{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s3);margin-top:var(--s1)}
 .pmeta span{font-size:var(--fs-micro);color:var(--muted);white-space:nowrap}
@@ -2202,6 +2218,8 @@ T.hy = {
   pay_gate: "Երբ վաստակածը դառնում է վճարման ենթակա",
   pay_gate_received: "Երբ գործակալությունը ստացել է միջնորդավճարը",
   pay_gate_earned: "Հենց վաստակելուն պես",
+  pay_gate_received_b: "Վաստակածը դառնում է վճարման ենթակա միայն այն ժամանակ, երբ գործարքը հասնում է «Ստացված» փուլին։",
+  pay_gate_earned_b: "Վաստակածը միանգամից դառնում է վճարման ենթակա՝ նույնիսկ եթե գործակալությունը դեռ գումարը չի ստացել։",
   pay_gate_note: "Վճարման ժամկետը Հայաստանում ստանդարտ չէ — սա գործակալության ընտրությունն է։",
   pay_owed: "Պարտք",
   pay_advance: "կանխավճարված",
@@ -2513,6 +2531,8 @@ T.en = {
   pay_gate: "When earned becomes payable",
   pay_gate_received: "When the agency has received the commission",
   pay_gate_earned: "As soon as it is earned",
+  pay_gate_received_b: "Earned becomes payable only once the deal reaches the Received stage.",
+  pay_gate_earned_b: "Earned is payable at once, even if the agency has not been paid yet.",
   pay_gate_note: "Payout timing is not standard in Armenia — this is the agency's choice.",
   pay_owed: "Owed",
   pay_advance: "advanced",
@@ -2824,6 +2844,8 @@ T.ru = {
   pay_gate: "Когда заработанное становится к выплате",
   pay_gate_received: "Когда агентство получило комиссию",
   pay_gate_earned: "Сразу после того, как заработано",
+  pay_gate_received_b: "Заработанное становится к выплате только когда сделка доходит до этапа «Получено».",
+  pay_gate_earned_b: "Заработанное сразу к выплате, даже если агентство ещё не получило деньги.",
   pay_gate_note: "Сроки выплат в Армении не стандартизированы — это выбор агентства.",
   pay_owed: "Долг",
   pay_advance: "авансировано",
@@ -3800,7 +3822,7 @@ function seedState(){
     { id:'d2', propertyId:'p3', sellerClientId:'c5', buyerClientId:'c2', mandateId:'m2', kind:'sale',
       price:38500000,
       agents:[ {agentId:'a1', side:'listing', shareBp:4000, joinedTs:ago(178)} ],
-      terms: terms('price', 38500000, 'pct', 250, null, null, 'excl', 'registered', 'owner', ago(50)),
+      terms: terms('price', 38500000, 'pct', 250, 'seller', null, 'excl', 'registered', 'owner', ago(50)),
       stage:'settled', stageTs:ago(6),
       dates:{ agreedTs:ago(50), depositTs:ago(49), notaryTs:ago(33), filedTs:ago(31), registeredTs:ago(20), invoicedTs:ago(19), settledTs:ago(6) },
       deposit:{ kind:'nakh', amount:1500000, ts:ago(49) },
@@ -4604,10 +4626,10 @@ function payoutsView(){
 
   /* the gate, in plain language, with the consequence written under it */
   h += '<div class="card"><div class="mlbl">' + escH(t('pay_gate')) + '</div>'
-    + '<div class="chips wrap" style="margin-top:8px">'
-    + ['received','earned'].map(g => '<button class="' + (S.cfg.payWhen === g ? 'active' : '')
-        + '" onclick="setGate(' + jsArg(g) + ')">' + escH(t('pay_gate_'+g)) + '</button>').join('')
-    + '</div><div class="prov">' + escH(t('pay_gate_note')) + '</div></div>';
+    + ['received','earned'].map(g => '<button class="pick' + (S.cfg.payWhen === g ? ' on' : '')
+        + '" onclick="setGate(' + jsArg(g) + ')">' + escH(t('pay_gate_'+g))
+        + '<span class="pd">' + escH(t('pay_gate_'+g+'_b')) + '</span></button>').join('')
+    + '<div class="prov">' + escH(t('pay_gate_note')) + '</div></div>';
 
   h += rows.length ? rows.map(x => payoutRow(x.a, x.m)).join('') : emptyCard(t('pay_none'), '');
   return h;
@@ -4617,8 +4639,11 @@ function payoutRow(a, m){
     + '<div class="poh"><div class="pav">' + escH(a.em) + '</div>'
       + '<div class="pon"><div class="addr">' + escH(a.name) + '</div>'
         + '<div class="muted">' + escH(a.defaultShareBp == null ? t('ag_share_none')
-          : t('ag_share') + ' ' + bpTxt(a.defaultShareBp)) + '</div></div>'
-      + '<div>' + amdBig(m.payable) + '</div></div>'
+          : t('ag_share') + ' ' + bpTxt(a.defaultShareBp)) + '</div></div></div>'
+    /* the payable figure takes its own line rather than sharing one with a name: a nine-digit
+       dram amount is nowrap by design and would push the card past a 320px viewport. */
+    + '<div style="margin-top:10px"><div class="mlbl">' + escH(t('st_payable')) + '</div>'
+      + amdBig(m.payable) + '</div>'
     + '<div class="prov">' + escH(t('st_payable_b')) + '</div>'
     + '<div class="pofour">'
       + '<div><div class="l">' + escH(t('st_expected')) + '</div><div class="v">' + amdTxt(m.expected) + '<span class="cur">֏</span></div></div>'
@@ -4938,21 +4963,38 @@ function estateSelfTest(){
     /* THE FOLD IS COMMUTATIVE. Shuffle the log and the answer must not move — this is the
        property that lets two devices merge by uuid and agree without a sort. */
     ok('the fold is commutative', (() => {
-      const before = JSON.stringify(rebuildOwed());
+      /* compared as a SORTED list of pairs, not as a stringified object: shuffling the log
+         changes the key insertion order of the result, and an object's key order is not part of
+         what the fold means. */
+      const flat = o => Object.keys(o).sort().map(k => k + '=' + o[k]).join('|');
+      const before = flat(rebuildOwed());
       const rows = S.rows.slice();
       for(let i = rows.length-1; i > 0; i--){ const j = (i*7919+13) % (i+1); const x = rows[i]; rows[i] = rows[j]; rows[j] = x; }
       S.rows = rows;
-      const after = JSON.stringify(rebuildOwed());
-      return before === after;
+      return flat(rebuildOwed()) === before;
     })());
 
-    /* a replay of an identical row is a no-op, and a different row is kept */
+    /* A REPLAY OF THE SAME ROW IS A NO-OP. This is what a merge does: it carries the uuid, and
+       a uuid already in the log is dropped. R17 — same content, same id. */
     ok('a replayed row dedupes', (() => {
       const n = S.rows.length;
       const r = S.rows.find(x => x.type === 'earn');
-      postRow({ agent:r.agent, type:'earn', amt:r.amt, ts:r.ts, deal:r.deal, prop:r.prop,
-                trigger:r.trigger, rank:r.rank, actor:r.actor });
+      postRow({ uuid:r.uuid, agent:r.agent, type:'earn', amt:r.amt, ts:r.ts, deal:r.deal,
+                prop:r.prop, trigger:r.trigger, rank:r.rank, actor:r.actor });
       return S.rows.length === n;
+    })());
+    /* ...and two GENUINELY DISTINCT rows that happen to look identical stay two rows. The
+       ordinal is the count of rows already carrying the same identity, derived from the log
+       itself, so there is no device-local counter to desynchronise. */
+    ok('two identical-looking rows stay two rows', (() => {
+      const n = S.rows.length;
+      const mk = () => postRow({ agent:'a1', type:'adjust', amt:1000, ts:S.today, deal:'d2',
+        actor:'owner', note:'x' });
+      const u1 = mk(), u2 = mk();
+      const grew = S.rows.length === n + 2 && u1 !== u2;
+      S.rows = S.rows.filter(x => x.uuid !== u1 && x.uuid !== u2);
+      S.owed = rebuildOwed();
+      return grew;
     })());
 
     /* an evidence row may not carry money, and it is refused rather than silently zeroed */
