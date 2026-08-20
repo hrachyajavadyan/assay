@@ -127,6 +127,10 @@ figcaption{font-size:14px;color:var(--muted);margin-top:var(--s2);max-width:46ch
 .foot .links{display:flex;flex-wrap:wrap;gap:var(--s4);margin-bottom:var(--s3)}
 .foot .links a{min-height:44px;display:inline-flex;align-items:center}
 a{color:var(--acc-text)}
+
+/* an inline link inside prose keeps its type size but is given a real hit area:
+   44px of height without 44px of leading, so the paragraph still reads as a paragraph. */
+.card p a,.lede a{padding:10px 2px;margin:-10px -2px;display:inline-block;line-height:1.2}
 </style>
 </head>
 <body class="light">
