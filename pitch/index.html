@@ -34,7 +34,19 @@ body::before{content:"";position:fixed;inset:0;z-index:-2;background:
   radial-gradient(55vw 45vh at 95% 2%, rgba(167,139,250,.2), transparent 60%),
   radial-gradient(70vw 55vh at 50% 116%, rgba(34,211,238,.16), transparent 60%), #080C18;}
 body::after{content:"";position:fixed;inset:0;z-index:-1;background-image:radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);background-size:26px 26px;opacity:.5}
-.wrap{max-width:860px;margin:0 auto;padding:9vh 22px 60px}
+/* This page is deliberately dark-only — no theme button, no light palette. The language
+   switcher below is the guide's control re-skinned to sit in that palette. */
+.top{display:flex;justify-content:flex-end;max-width:860px;margin:0 auto;padding:16px 22px 0}
+.seg{display:flex;background:var(--glass);backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);border:1px solid var(--stroke);border-radius:12px;padding:3px;box-shadow:0 6px 20px rgba(0,0,0,.28)}
+.seg button{position:relative;min-height:38px;min-width:48px;padding:0 12px;background:none;
+  border:none;border-radius:9px;cursor:pointer;font-family:inherit;font-size:14px;
+  font-weight:700;letter-spacing:.3px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1205}
+/* the 44px tap floor is met by an invisible extension, so the control stays visually compact */
+.seg button::before{content:"";position:absolute;left:0;right:0;top:50%;height:44px;
+  transform:translateY(-50%)}
+.seg button:focus-visible,a:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
+.wrap{max-width:860px;margin:0 auto;padding:5vh 22px 60px}
 .logo{display:flex;align-items:center;gap:12px;margin-bottom:34px}
 .logomark{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--gold2),var(--gold));display:flex;align-items:center;justify-content:center;color:#1a1205;font-size:21px;font-weight:800;box-shadow:0 6px 22px rgba(227,154,59,.45)}
 .logo b{font-family:'Space Grotesk',sans-serif;font-size:22px;letter-spacing:.4px}
@@ -57,53 +69,134 @@ img.shot{width:100%;border-radius:16px;border:1px solid var(--stroke2);display:b
 .pill{display:inline-block;background:rgba(34,211,238,.14);border:1px solid rgba(34,211,238,.3);color:#7DE9F7;font-size:14px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;padding:5px 13px;border-radius:99px;margin-bottom:18px}
 .foot{margin-top:54px;color:var(--dim);font-size:14px;border-top:1px solid var(--stroke);padding-top:22px}
 .foot a{color:var(--gold2);text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
-@media print{.foot a{min-height:0;display:inline}}
+@media print{.foot a{min-height:0;display:inline}.top{display:none}}
 .prob{color:var(--muted);font-size:14.5px}
 .prob b{color:var(--ink)}
 </style>
 </head>
 <body>
+<div class="top">
+  <div class="seg" id="langseg" role="group" aria-label="Language">
+    <button type="button" data-lang="hy" aria-pressed="true">ՀԱՅ</button>
+    <button type="button" data-lang="en" aria-pressed="false">ENG</button>
+    <button type="button" data-lang="ru" aria-pressed="false">РУС</button>
+  </div>
+</div>
+
 <div class="wrap">
   <div class="logo"><div class="logomark">⇄</div><b>ArmTrade</b></div>
-  <div class="pill">Աշխատող դեմո · Live demo</div>
-  <h1>Պատվերներ <em>առանց զանգերի</em></h1>
-  <p class="lead">Խանութ–մատակարար կապի թվային հարթակ։ Համակարգն ինքն է հիշեցնում, թե երբ և ինչ պատվիրել — խանութը հաստատում է մեկ հպումով, մատակարարը տեսնում է ակնթարթորեն։</p>
-  <a class="cta" href="/armtrade/">▶ Փորձել դեմոն</a>
+  <div class="pill" data-i18n="pill">Աշխատող դեմո · Live demo</div>
+  <h1 data-i18n-html="h1">Պատվերներ <em>առանց զանգերի</em></h1>
+  <p class="lead" data-i18n="lead">Խանութ–մատակարար կապի թվային հարթակ։ Համակարգն ինքն է հիշեցնում, թե երբ և ինչ պատվիրել — խանութը հաստատում է մեկ հպումով, մատակարարը տեսնում է ակնթարթորեն։</p>
+  <a class="cta" href="/armtrade/" data-i18n="cta1">▶ Փորձել դեմոն</a>
 
-  <div class="sec">Խնդիրը</div>
-  <div class="card prob">
+  <div class="sec" data-i18n="s_prob">Խնդիրը</div>
+  <div class="card prob" data-i18n-html="prob">
     Այսօր մատակարարման պատվերները Հայաստանում հավաքվում են <b>զանգերով և գործակալների այցերով</b>․ ապրանքը վերջանում է աննկատ, պատվերները մոռացվում են, պարտքերը հաշվվում են թղթի վրա։ Խանութը կորցնում է վաճառք, մատակարարը՝ հաճախորդ։
   </div>
 
-  <div class="sec">Լուծումը</div>
+  <div class="sec" data-i18n="s_sol">Լուծումը</div>
   <div class="grid">
-    <div class="card f"><div class="ic">🔮</div><div><b>Ավտոմատ համալրում</b><p>Համակարգը սովորում է յուրաքանչյուր ապրանքի պատվերի ցիկլը և ինքն է առաջարկում՝ ինչ և երբ պատվիրել։</p></div></div>
-    <div class="card f"><div class="ic">📨</div><div><b>Մեկ հպումով պատվեր</b><p>Մատակարարի հիշեցումը խանութի մոտ դառնում է պատրաստի պատվեր՝ հաստատվում է մեկ կոճակով։</p></div></div>
-    <div class="card f"><div class="ic">⚡</div><div><b>Իրական ժամանակ</b><p>Պատվերը, հաստատումը, առաքումը երևում են երկու կողմում ակնթարթորեն՝ առանց զանգի։</p></div></div>
-    <div class="card f"><div class="ic">💳</div><div><b>Պարտքեր և հաշիվներ</b><p>Կրեդիտ լիմիտներ, վճարված/չվճարված հաշիվներ, տպվող հաշիվ-ապրանքագրեր։</p></div></div>
-    <div class="card f"><div class="ic">📊</div><div><b>Կանխատեսում</b><p>Մատակարարը նախապես տեսնում է առաջիկա 7 օրվա սպասվող պատվերները՝ ըստ խանութների։</p></div></div>
-    <div class="card f"><div class="ic">🚨</div><div><b>Կորուստների ազդանշան</b><p>Երբ խանութը դադարում է պատվիրել, մատակարարը ստանում է ազդանշան՝ նախքան հաճախորդին կորցնելը։</p></div></div>
+    <div class="card f"><div class="ic">🔮</div><div><b data-i18n="f1t">Ավտոմատ համալրում</b><p data-i18n="f1p">Համակարգը սովորում է յուրաքանչյուր ապրանքի պատվերի ցիկլը և ինքն է առաջարկում՝ ինչ և երբ պատվիրել։</p></div></div>
+    <div class="card f"><div class="ic">📨</div><div><b data-i18n="f2t">Մեկ հպումով պատվեր</b><p data-i18n="f2p">Մատակարարի հիշեցումը խանութի մոտ դառնում է պատրաստի պատվեր՝ հաստատվում է մեկ կոճակով։</p></div></div>
+    <div class="card f"><div class="ic">⚡</div><div><b data-i18n="f3t">Իրական ժամանակ</b><p data-i18n="f3p">Պատվերը, հաստատումը, առաքումը երևում են երկու կողմում ակնթարթորեն՝ առանց զանգի։</p></div></div>
+    <div class="card f"><div class="ic">💳</div><div><b data-i18n="f4t">Պարտքեր և հաշիվներ</b><p data-i18n="f4p">Կրեդիտ լիմիտներ, վճարված/չվճարված հաշիվներ, տպվող հաշիվ-ապրանքագրեր։</p></div></div>
+    <div class="card f"><div class="ic">📊</div><div><b data-i18n="f5t">Կանխատեսում</b><p data-i18n="f5p">Մատակարարը նախապես տեսնում է առաջիկա 7 օրվա սպասվող պատվերները՝ ըստ խանութների։</p></div></div>
+    <div class="card f"><div class="ic">🚨</div><div><b data-i18n="f6t">Կորուստների ազդանշան</b><p data-i18n="f6p">Երբ խանութը դադարում է պատվիրել, մատակարարը ստանում է ազդանշան՝ նախքան հաճախորդին կորցնելը։</p></div></div>
   </div>
 
-  <div class="sec">Ինչպես է աշխատում</div>
+  <div class="sec" data-i18n="s_how">Ինչպես է աշխատում</div>
   <div class="shots">
-    <img class="shot" src="pitch_desktop.jpg" alt="ArmTrade — մատակարարի վահանակ">
-    <img class="shot" src="pitch_mobile.jpg" alt="ArmTrade — բջջային տարբերակ">
+    <img class="shot" src="pitch_desktop.jpg" data-i18n-alt="alt_desk" alt="ArmTrade — մատակարարի վահանակ">
+    <img class="shot" src="pitch_mobile.jpg" data-i18n-alt="alt_mob" alt="ArmTrade — բջջային տարբերակ">
   </div>
 
-  <div class="sec">Ում համար է</div>
-  <div class="card prob">
+  <div class="sec" data-i18n="s_who">Ում համար է</div>
+  <div class="card prob" data-i18n-html="who">
     <b>Դիստրիբյուտորների համար</b> — ավելի շատ պատվեր՝ առանց ավելացնելու գործակալներ, հաճախորդների կորստի կանխարգելում, դեբիտորական պարտքի հսկողություն։<br><br>
     <b>Խանութների համար</b> — ապրանքը երբեք չի վերջանում, բոլոր մատակարարները՝ մեկ հավելվածում, պարտքերը՝ թափանցիկ։
   </div>
 
-  <a class="cta" href="/armtrade/">▶ Փորձել դեմոն հիմա</a>
-  <a class="cta2" href="mailto:hrachya.javadyan@gmail.com">✉ Կապ հեղինակի հետ</a>
+  <a class="cta" href="/armtrade/" data-i18n="cta2">▶ Փորձել դեմոն հիմա</a>
+  <a class="cta2" href="mailto:hrachya.javadyan@gmail.com" data-i18n="ctamail">✉ Կապ հեղինակի հետ</a>
 
   <div class="foot">
-    ArmTrade · նախատիպ / prototype · Դեմոն աշխատում է պայմանական տվյալներով, գրանցում չի պահանջվում։<br>
-    <a href="/armtrade/">assay-9e6.pages.dev/armtrade</a> · <a href="/">Բոլոր ծրագրերը</a> · <a href="mailto:hrachya.javadyan@gmail.com">hrachya.javadyan@gmail.com</a>
+    <span data-i18n="foot">ArmTrade · նախատիպ / prototype · Դեմոն աշխատում է պայմանական տվյալներով, գրանցում չի պահանջվում։</span><br>
+    <a href="/armtrade/">assay-9e6.pages.dev/armtrade</a> · <a href="/" data-i18n="foot_all">Բոլոր ծրագրերը</a> · <a href="mailto:hrachya.javadyan@gmail.com">hrachya.javadyan@gmail.com</a>
   </div>
 </div>
+
+<script>
+/* Armenian lives in the HTML above and is the page as served; with JavaScript off this one-pager
+   still reads end to end. English and Russian live only in T. */
+var T = {
+"c_title":{"hy":"ArmTrade — Պատվերներ առանց զանգերի","en":"ArmTrade — Orders without phone calls","ru":"ArmTrade — Заказы без звонков"},
+"pill":{"hy":"Աշխատող դեմո · Live demo","en":"Working demo","ru":"Рабочее демо"},
+"h1":{"hy":"Պատվերներ <em>առանց զանգերի</em>","en":"Orders <em>without phone calls</em>","ru":"Заказы <em>без звонков</em>"},
+"lead":{"hy":"Խանութ–մատակարար կապի թվային հարթակ։ Համակարգն ինքն է հիշեցնում, թե երբ և ինչ պատվիրել — խանութը հաստատում է մեկ հպումով, մատակարարը տեսնում է ակնթարթորեն։","en":"A digital link between shop and supplier. The system itself reminds you what to order and when — the shop confirms in one tap, the supplier sees it instantly.","ru":"Цифровая связь между магазином и поставщиком. Система сама напоминает, что и когда заказать — магазин подтверждает одним касанием, поставщик видит сразу."},
+"cta1":{"hy":"▶ Փորձել դեմոն","en":"▶ Try the demo","ru":"▶ Попробовать демо"},
+"s_prob":{"hy":"Խնդիրը","en":"The problem","ru":"Проблема"},
+"prob":{"hy":"Այսօր մատակարարման պատվերները Հայաստանում հավաքվում են <b>զանգերով և գործակալների այցերով</b>․ ապրանքը վերջանում է աննկատ, պատվերները մոռացվում են, պարտքերը հաշվվում են թղթի վրա։ Խանութը կորցնում է վաճառք, մատակարարը՝ հաճախորդ։","en":"In Armenia today, supply orders are collected <b>by phone calls and agents' visits</b>. Stock runs out unnoticed, orders are forgotten, debts are counted on paper. The shop loses sales, the supplier loses the customer.","ru":"Сегодня в Армении заказы на поставку собираются <b>звонками и визитами агентов</b>. Товар заканчивается незаметно, заказы забываются, долги считаются на бумаге. Магазин теряет продажи, поставщик — клиента."},
+"s_sol":{"hy":"Լուծումը","en":"The solution","ru":"Решение"},
+"f1t":{"hy":"Ավտոմատ համալրում","en":"Automatic replenishment","ru":"Автоматическое пополнение"},
+"f1p":{"hy":"Համակարգը սովորում է յուրաքանչյուր ապրանքի պատվերի ցիկլը և ինքն է առաջարկում՝ ինչ և երբ պատվիրել։","en":"The system learns each product's ordering cycle and suggests what to order and when.","ru":"Система изучает цикл заказа каждого товара и сама предлагает, что и когда заказать."},
+"f2t":{"hy":"Մեկ հպումով պատվեր","en":"One-tap order","ru":"Заказ одним касанием"},
+"f2p":{"hy":"Մատակարարի հիշեցումը խանութի մոտ դառնում է պատրաստի պատվեր՝ հաստատվում է մեկ կոճակով։","en":"The supplier's reminder reaches the shop as a ready order, confirmed with one button.","ru":"Напоминание поставщика приходит в магазин готовым заказом — подтверждается одной кнопкой."},
+"f3t":{"hy":"Իրական ժամանակ","en":"Real time","ru":"Реальное время"},
+"f3p":{"hy":"Պատվերը, հաստատումը, առաքումը երևում են երկու կողմում ակնթարթորեն՝ առանց զանգի։","en":"Order, confirmation and delivery show on both sides instantly, with no phone call.","ru":"Заказ, подтверждение и доставка видны с обеих сторон сразу, без звонка."},
+"f4t":{"hy":"Պարտքեր և հաշիվներ","en":"Debts and invoices","ru":"Долги и счета"},
+"f4p":{"hy":"Կրեդիտ լիմիտներ, վճարված/չվճարված հաշիվներ, տպվող հաշիվ-ապրանքագրեր։","en":"Credit limits, paid and unpaid accounts, printable invoices (հաշիվ-ապրանքագիր).","ru":"Кредитные лимиты, оплаченные и неоплаченные счета, печатные счета-фактуры (հաշիվ-ապրանքագիր)."},
+"f5t":{"hy":"Կանխատեսում","en":"Forecast","ru":"Прогноз"},
+"f5p":{"hy":"Մատակարարը նախապես տեսնում է առաջիկա 7 օրվա սպասվող պատվերները՝ ըստ խանութների։","en":"The supplier sees the orders expected over the next 7 days in advance, shop by shop.","ru":"Поставщик заранее видит ожидаемые заказы на ближайшие 7 дней — по магазинам."},
+"f6t":{"hy":"Կորուստների ազդանշան","en":"Loss alert","ru":"Сигнал о потере"},
+"f6p":{"hy":"Երբ խանութը դադարում է պատվիրել, մատակարարը ստանում է ազդանշան՝ նախքան հաճախորդին կորցնելը։","en":"When a shop stops ordering, the supplier gets an alert — before the customer is lost.","ru":"Когда магазин перестаёт заказывать, поставщик получает сигнал — до того, как клиент потерян."},
+"s_how":{"hy":"Ինչպես է աշխատում","en":"How it works","ru":"Как это работает"},
+"alt_desk":{"hy":"ArmTrade — մատակարարի վահանակ","en":"ArmTrade — the supplier's dashboard","ru":"ArmTrade — панель поставщика"},
+"alt_mob":{"hy":"ArmTrade — բջջային տարբերակ","en":"ArmTrade — the mobile version","ru":"ArmTrade — мобильная версия"},
+"s_who":{"hy":"Ում համար է","en":"Who it is for","ru":"Для кого"},
+"who":{"hy":"<b>Դիստրիբյուտորների համար</b> — ավելի շատ պատվեր՝ առանց ավելացնելու գործակալներ, հաճախորդների կորստի կանխարգելում, դեբիտորական պարտքի հսկողություն։<br><br><b>Խանութների համար</b> — ապրանքը երբեք չի վերջանում, բոլոր մատակարարները՝ մեկ հավելվածում, պարտքերը՝ թափանցիկ։","en":"<b>For distributors</b> — more orders without adding agents, customer loss headed off, receivables under control.<br><br><b>For shops</b> — stock never runs out, every supplier in one app, debts transparent.","ru":"<b>Для дистрибьюторов</b> — больше заказов без увеличения числа агентов, предотвращение потери клиентов, контроль дебиторской задолженности.<br><br><b>Для магазинов</b> — товар никогда не заканчивается, все поставщики в одном приложении, долги прозрачны."},
+"cta2":{"hy":"▶ Փորձել դեմոն հիմա","en":"▶ Try the demo now","ru":"▶ Попробовать демо сейчас"},
+"ctamail":{"hy":"✉ Կապ հեղինակի հետ","en":"✉ Contact the author","ru":"✉ Связаться с автором"},
+"foot":{"hy":"ArmTrade · նախատիպ / prototype · Դեմոն աշխատում է պայմանական տվյալներով, գրանցում չի պահանջվում։","en":"ArmTrade · prototype · The demo runs on sample data; no sign-up is required.","ru":"ArmTrade · прототип · Демо работает на условных данных, регистрация не требуется."},
+"foot_all":{"hy":"Բոլոր ծրագրերը","en":"All the programs","ru":"Все программы"}
+};
+
+/* LANGUAGE STORAGE — read this before renaming a key.
+   ARMGOLD is live at /armgold/ on this same origin, it reads `assay_lang`, and its dictionary
+   holds ONLY hy and en. Its lookup is `const t = k => (STR[lang][k] ?? k)`, so a stored 'ru'
+   throws on the first call and ARMGOLD renders a completely blank screen — verified in a
+   browser. This page therefore keeps its own three-language key and mirrors into `assay_lang`
+   only the two values ARMGOLD can survive; a 'ru' left there by an earlier build is healed. */
+var LS_LANG='assay_site_lang', LS_THEME='suite_theme', LS_GOLD='assay_lang';
+function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+
+var lang = get(LS_LANG) || get(LS_GOLD);
+if(lang!=='hy' && lang!=='en' && lang!=='ru') lang='hy';
+
+function setL(l){
+  if(l!=='hy' && l!=='en' && l!=='ru') return;
+  lang=l; set(LS_LANG,l);
+  if(l==='hy' || l==='en') set(LS_GOLD,l);
+  else if(get(LS_GOLD)!=='hy' && get(LS_GOLD)!=='en') set(LS_GOLD,'hy');
+  document.documentElement.lang=l;
+  var n,i,k,v;
+  n=document.querySelectorAll('[data-i18n]');
+  for(i=0;i<n.length;i++){ k=n[i].getAttribute('data-i18n'); v=T[k]&&T[k][l]; if(v!=null) n[i].textContent=v; }
+  n=document.querySelectorAll('[data-i18n-html]');
+  for(i=0;i<n.length;i++){ k=n[i].getAttribute('data-i18n-html'); v=T[k]&&T[k][l]; if(v!=null) n[i].innerHTML=v; }
+  n=document.querySelectorAll('[data-i18n-alt]');
+  for(i=0;i<n.length;i++){ k=n[i].getAttribute('data-i18n-alt'); v=T[k]&&T[k][l]; if(v!=null) n[i].setAttribute('alt',v); }
+  var b=document.querySelectorAll('#langseg button');
+  for(i=0;i<b.length;i++) b[i].setAttribute('aria-pressed', b[i].getAttribute('data-lang')===l ? 'true':'false');
+  document.title = (T.c_title&&T.c_title[l]) || document.title;
+}
+
+document.addEventListener('click', function(e){
+  var b=e.target.closest('button[data-lang]');
+  if(b) setL(b.getAttribute('data-lang'));
+});
+setL(lang);
+</script>
 </body>
 </html>
