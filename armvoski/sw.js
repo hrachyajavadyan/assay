@@ -10,7 +10,7 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armvoski-shell-v6';   /* v5: the count no longer posts a movement against a book figure read AFTER the weighing (a
+const CACHE = 'armvoski-shell-v7';   /* v5: the count no longer posts a movement against a book figure read AFTER the weighing (a
       mid-session buy-in read as a shortage and the correction destroyed the metal), unvisited
       subjects no longer print as counted on the act, a zero metal rate is refused instead of
       being sold on, and five signed documents keep their sub-line data on paper. A cached v4
@@ -115,8 +115,13 @@ self.addEventListener('fetch', e => {
 
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
+    /* The app shell is the fallback for the APP, and only for the app. req.mode==='navigate'
+       above catches every navigation in scope, which now includes /armvoski/about/ and its guide
+       and one-pager — and handing an offline reader who asked for the explainer the application
+       instead is worse than telling him the truth, which is that we do not have it. */
+    const isAppRoot = url.pathname === '/armvoski/' || url.pathname.endsWith('/armvoski/index.html');
     const cached = await cache.match(req, { ignoreSearch: true }) ||
-                   await cache.match('./index.html', { ignoreSearch: true });
+                   (isAppRoot ? await cache.match('./index.html', { ignoreSearch: true }) : null);
     const net = fetch(req).then(r => {
       if (r && r.ok) cache.put(req, r.clone()).catch(() => {});
       return r;
