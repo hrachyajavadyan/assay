@@ -11,7 +11,7 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = "armestate-shell-v6";   /* v6: every worded filter chip gets its own width back.
+const CACHE = 'armestate-shell-v7';   /* v6: every worded filter chip gets its own width back.
       `min-width:44px` on `.chips button` REPLACED the flex default `min-width:auto`, which is the
       only thing stopping a flex item shrinking below its own text — so in the nowrap chip
       scroller «Նախնական պայմանագիր», «Թերթիկը ստորագրված չէ» and «Վարձակալություն» all collapsed
@@ -141,8 +141,13 @@ self.addEventListener('fetch', e => {
 
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
+    /* The app shell is the fallback for the APP, and only for the app. req.mode==='navigate'
+       above catches every navigation in scope, which now includes /armestate/about/ and its guide
+       and one-pager — and handing an offline reader who asked for the explainer the application
+       instead is worse than telling him the truth, which is that we do not have it. */
+    const isAppRoot = url.pathname === '/armestate/' || url.pathname.endsWith('/armestate/index.html');
     const cached = await cache.match(req, { ignoreSearch: true }) ||
-                   await cache.match('./index.html', { ignoreSearch: true });
+                   (isAppRoot ? await cache.match('./index.html', { ignoreSearch: true }) : null);
     const net = fetch(req).then(r => {
       if (r && r.ok) cache.put(req, r.clone()).catch(() => {});
       return r;
