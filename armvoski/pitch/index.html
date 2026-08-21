@@ -46,13 +46,22 @@ h1,h2,h3,p,ul{margin:0}
 img{max-width:100%;height:auto;display:block}
 a{color:var(--acc-text)}
 
-.top{display:flex;justify-content:flex-end;gap:var(--s2);max-width:840px;margin:0 auto;
-  padding:var(--s3) var(--s4) 0}
+.top{display:flex;align-items:center;justify-content:flex-end;gap:var(--s2);max-width:840px;
+  margin:0 auto;padding:var(--s3) var(--s4) 0}
+.seg{display:flex;background:var(--surface);border:1px solid var(--stroke);border-radius:12px;
+  padding:3px;box-shadow:var(--sh-1)}
+.seg button{position:relative;min-height:38px;min-width:48px;padding:0 var(--s3);background:none;
+  border:none;border-radius:9px;cursor:pointer;font-family:var(--font);font-size:14px;
+  font-weight:700;letter-spacing:.3px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--acc);color:var(--acc-ink)}
+/* the 44px tap floor is met by an invisible extension, so the control stays visually compact */
+.seg button::before,.tbtn::before{content:"";position:absolute;left:0;right:0;top:50%;height:44px;
+  transform:translateY(-50%)}
 .tbtn{position:relative;width:44px;height:44px;display:flex;align-items:center;
   justify-content:center;background:var(--surface);border:1px solid var(--stroke);
   border-radius:12px;cursor:pointer;font-size:18px;font-family:var(--emoji);line-height:1;
   box-shadow:var(--sh-1)}
-.tbtn:focus-visible,a:focus-visible{outline:none;box-shadow:var(--focus)}
+.seg button:focus-visible,.tbtn:focus-visible,a:focus-visible{outline:none;box-shadow:var(--focus)}
 
 .sheet{max-width:840px;margin:0 auto;padding:var(--s5) var(--s4) var(--s10)}
 .head{display:flex;align-items:flex-start;gap:var(--s3);margin-bottom:var(--s4)}
@@ -147,6 +156,11 @@ figcaption{font-size:14px;color:var(--muted);margin-top:var(--s2);max-width:42ch
 <body class="light">
 
 <div class="top">
+  <div class="seg" id="langseg" role="group" aria-label="Language">
+    <button type="button" data-lang="hy" aria-pressed="true">ՀԱՅ</button>
+    <button type="button" data-lang="en" aria-pressed="false">ENG</button>
+    <button type="button" data-lang="ru" aria-pressed="false">РУС</button>
+  </div>
   <button class="tbtn" id="themebtn" type="button" aria-label="Թեմա">🌙</button>
 </div>
 
@@ -155,93 +169,93 @@ figcaption{font-size:14px;color:var(--muted);margin-top:var(--s2);max-width:42ch
   <div class="head">
     <div class="mark">Ո</div>
     <div>
-      <h1>ԱրմՈսկի</h1>
-      <p class="tag">Ոսկերչական խանութի հաշվառում՝ քաշով և հարգով</p>
+      <h1 data-i18n="brand">ԱրմՈսկի</h1>
+      <p class="tag" data-i18n="tag">Ոսկերչական խանութի հաշվառում՝ քաշով և հարգով</p>
     </div>
   </div>
 
-  <h2>Խնդիրը</h2>
-  <p class="big">Ոսկերիչը ջարդոն է գնում վաճառասեղանի մոտ եկած մարդուց և վաճառում պատրաստի իր։
+  <h2 data-i18n="h_problem">Խնդիրը</h2>
+  <p class="big" data-i18n="p_prob1">Ոսկերիչը ջարդոն է գնում վաճառասեղանի մոտ եկած մարդուց և վաճառում պատրաստի իր։
   2026 թ. հուլիսի 1-ից ոսկու ԱԱՀ-ն հաշվվում է մարժայից՝ վաճառքի գնի և փաստաթղթավորված
   ինքնարժեքի տարբերությունից։ ԱԱՀ վճարող խանութի համար այդ փաստաթուղթը դառնում է հարկի հիմքը։</p>
-  <p>Այդ գրառումը մինչ օրս պահվում է տետրում կամ ընդհանրապես չի պահվում։ Իսկ սովորական պահեստի
+  <p data-i18n="p_prob2">Այդ գրառումը մինչ օրս պահվում է տետրում կամ ընդհանրապես չի պահվում։ Իսկ սովորական պահեստի
   ծրագիրը հարցնում է «քանի՞ հատ» — հարց, որին ոսկերչական խանութը պատասխան չունի։</p>
 
-  <h2>Ի՞նչ է անում ԱրմՈսկին</h2>
+  <h2 data-i18n="h_what">Ի՞նչ է անում ԱրմՈսկին</h2>
   <div class="cols">
     <ul class="plain">
-      <li><b>Օրվա գինը</b> — մեկ թիվ 999-ի համար, մնացած հարգերն ածանցվում են։
+      <li data-i18n-html="k_price"><b>Օրվա գինը</b> — մեկ թիվ 999-ի համար, մնացած հարգերն ածանցվում են։
         Վաճառքի գին = գին + հավելագին. գնման գին = գին − զեղչ։</li>
-      <li><b>Ամեն հաշվարկ բացվում է մեկ տողով</b> — քաշը, հարգը, գինը, արդյունքը։
+      <li data-i18n-html="k_line"><b>Ամեն հաշվարկ բացվում է մեկ տողով</b> — քաշը, հարգը, գինը, արդյունքը։
         Ոսկերիչն ու հաճախորդը երկուսն էլ ստուգում են։</li>
-      <li><b>Գնում բնակչությունից</b> — կշռում, հաշվարկ հաճախորդի աչքի առաջ, և տեղում տպվող
+      <li data-i18n-html="k_buy"><b>Գնում բնակչությունից</b> — կշռում, հաշվարկ հաճախորդի աչքի առաջ, և տեղում տպվող
         <b>գնման ակտ</b>։ Վճարած գումարը դառնում է այդ մետաղի ինքնարժեքը՝ ակտի համարով կապված։</li>
-      <li><b>Մնացորդ քաշով և հարգով</b> — համախառն, քարեր, զուտ. արժեքը՝ մաքուր մետաղով։</li>
+      <li data-i18n-html="k_stock"><b>Մնացորդ քաշով և հարգով</b> — համախառն, քարեր, զուտ. արժեքը՝ մաքուր մետաղով։</li>
     </ul>
     <ul class="plain">
-      <li><b>Հարգադրոշմ</b> — հանձնման շրջափուլ, օրերի հաշվիչ, ազատված իրերի ինքնաշխատ առանձնացում։</li>
-      <li><b>Գույքագրում</b> — կույր հաշվարկ, որը դառնում է <b>գույքագրման ակտ</b>՝
+      <li data-i18n-html="k_mark"><b>Հարգադրոշմ</b> — հանձնման շրջափուլ, օրերի հաշվիչ, ազատված իրերի ինքնաշխատ առանձնացում։</li>
+      <li data-i18n-html="k_count"><b>Գույքագրում</b> — կույր հաշվարկ, որը դառնում է <b>գույքագրման ակտ</b>՝
         տարբերությունը գրամով, հատով և դրամով։</li>
-      <li><b>Վերանորոգում</b> — հաճախորդի մետաղը որպես պահպանություն, երբեք ոչ որպես պաշար։</li>
-      <li><b>Պարտքեր</b> — մատակարարի մնացորդը հաշվարկվում է հաշիվներից ու վճարումներից,
+      <li data-i18n-html="k_repair"><b>Վերանորոգում</b> — հաճախորդի մետաղը որպես պահպանություն, երբեք ոչ որպես պաշար։</li>
+      <li data-i18n-html="k_debt"><b>Պարտքեր</b> — մատակարարի մնացորդը հաշվարկվում է հաշիվներից ու վճարումներից,
         երբեք չի պահվում որպես առանձին թիվ։</li>
     </ul>
   </div>
 
-  <h2>Թվեր՝ վերցված հենց ծրագրի վարքից</h2>
+  <h2 data-i18n="h_num">Թվեր՝ վերցված հենց ծրագրի վարքից</h2>
   <div class="facts">
-    <div class="fact"><b>9 + 6</b><span>ոսկու և արծաթի օրինական հարգեր, 583-ը՝ 585-ից առանձին</span></div>
-    <div class="fact"><b>0.001 գ</b><span>քաշի պահպանման ճշտությունը</span></div>
-    <div class="fact"><b>5</b><span>տպվող փաստաթուղթ՝ երկու ակտ, հանձնման ցուցակ, անդորրագիր, քաղվածք</span></div>
-    <div class="fact"><b>0</b><span>տվյալ, որ ուղարկվում է որևէ պետական մարմին</span></div>
+    <div class="fact"><b>9 + 6</b><span data-i18n="f1">ոսկու և արծաթի օրինական հարգեր, 583-ը՝ 585-ից առանձին</span></div>
+    <div class="fact"><b data-i18n="f2v">0.001 գ</b><span data-i18n="f2">քաշի պահպանման ճշտությունը</span></div>
+    <div class="fact"><b>5</b><span data-i18n="f3">տպվող փաստաթուղթ՝ երկու ակտ, հանձնման ցուցակ, անդորրագիր, քաղվածք</span></div>
+    <div class="fact"><b>0</b><span data-i18n="f4">տվյալ, որ ուղարկվում է որևէ պետական մարմին</span></div>
   </div>
-  <p class="small">Այս էջում այլ թիվ չկա։ Շուկայի ծավալ, օգտագործողների քանակ և խնայողության
+  <p class="small" data-i18n="p_nonum">Այս էջում այլ թիվ չկա։ Շուկայի ծավալ, օգտագործողների քանակ և խնայողության
   տոկոս չենք գրում, որովհետև չունենք։</p>
 
   <div class="cols">
     <div>
-      <h2>Ինչո՞վ է տարբերվում տետրից</h2>
-      <p>Տետրը չի ասում, թե ինչ է մնացել, չի հիշեցնում, որ մատանին 9 օր տեսչությունում է,
+      <h2 data-i18n="h_vs_note">Ինչո՞վ է տարբերվում տետրից</h2>
+      <p data-i18n-html="p_vs_note">Տետրը չի ասում, թե ինչ է մնացել, չի հիշեցնում, որ մատանին 9 օր տեսչությունում է,
       և ակտ չի տպում։ ԱրմՈսկին ամեն շարժ գրում է <b>մեկ մատյանում, որից ոչինչ չի ջնջվում</b>.
       մնացորդը միշտ այդ մատյանի գումարն է, ուստի էկրանն ինքն իրեն չի հակասում։</p>
 
-      <h2>Ինչո՞վ է տարբերվում ARMGOLD-ից</h2>
-      <p>ARMGOLD-ը գնի հաշվիչ է և վաճառքի գրանցամատյան, և լավն է հենց դրանում։
+      <h2 data-i18n="h_vs_gold">Ինչո՞վ է տարբերվում ARMGOLD-ից</h2>
+      <p data-i18n-html="p_vs_gold">ARMGOLD-ը գնի հաշվիչ է և վաճառքի գրանցամատյան, և լավն է հենց դրանում։
       <b>Բայց պահեստ չի վարում</b> — մնացորդ, ինքնարժեք, գնման ակտ, գույքագրում և հարգադրոշմ
       այնտեղ չկան։ ԱրմՈսկին վերցնում է ARMGOLD-ի գնի բանաձևը անփոփոխ և դրա շուրջ կառուցում
       ամբողջ խանութը։ Երկուսը առանձին ծրագրեր են՝ առանձին տվյալներով։</p>
 
-      <h2>Որտեղ է ծրագիրն այսօր</h2>
-      <p>Աշխատում է՝ օրվա գին, վաճառք, գնում ակտով, դարակ, գույքագրում ակտով, հարգադրոշմ,
+      <h2 data-i18n="h_today">Որտեղ է ծրագիրն այսօր</h2>
+      <p data-i18n-html="p_today">Աշխատում է՝ օրվա գին, վաճառք, գնում ակտով, դարակ, գույքագրում ակտով, հարգադրոշմ,
       վերանորոգում, պարտքեր։ Բացվում է առանց ինտերնետի։ <b>Դեռ չկա.</b> մատակարարից ընդունումը,
       համաժամացումը, լուսանկարները, CSV-ն։ Ծրագիրը հարկ չի հաշվարկում — այն վարում է
       այն գրառումը, որի վրա հարկը հենվում է։</p>
     </div>
 
     <div>
-      <h2>Մեկ բան, որ ուրիշ տեղ չկա</h2>
-      <div class="note">
+      <h2 data-i18n="h_one">Մեկ բան, որ ուրիշ տեղ չկա</h2>
+      <div class="note" data-i18n-html="p_note">
         Երբ ոսկերիչը ձեռքով գին է գրում, որը <b>հաշվարկվածի 80%-ից ցածր է</b>, ծրագիրը զգուշացնում է
         և ցույց տալիս երկու թիվն էլ։ <b>Չի արգելում</b> — վաճառքը շարունակվում է, բայց երկու թիվն էլ
         մնում է վաճառքի գրառման մեջ։ Ոսկերիչն այդ մասին իմանում է վաճառելուց առաջ, ոչ թե տարվա վերջում։
       </div>
 
       <figure>
-        <span class="shot"><img src="img/buyact.png" alt="Գնման ակտ № ԳԱ-2026-0042՝ կողմերով, աղյուսակով և գումարը բառերով" width="585" height="770"></span>
-        <figcaption>Գնման ակտի վերին մասը՝ այնպես, ինչպես տպվում է հեռախոսից։ Գումարը բառերով՝ հայերեն։</figcaption>
+        <span class="shot"><img src="img/buyact.png" data-i18n-alt="alt_buyact" alt="Գնման ակտ № ԳԱ-2026-0042՝ կողմերով, աղյուսակով և գումարը բառերով" width="585" height="770"></span>
+        <figcaption data-i18n="cap_buyact">Գնման ակտի վերին մասը՝ այնպես, ինչպես տպվում է հեռախոսից։ Գումարը բառերով՝ հայերեն։</figcaption>
       </figure>
     </div>
   </div>
 
   <div class="contact">
-    <h2>Կապ</h2>
+    <h2 data-i18n="h_contact">Կապ</h2>
     <div class="row">
-      <a href="/armvoski/">Բացել ծրագիրը՝ assay-9e6.pages.dev/armvoski/</a>
-      <a href="/armvoski/about/">Ի՞նչ է սա</a>
-      <a href="/armvoski/guide/">Ուղեցույց (ՀԱՅ · ENG · РУС)</a>
-      <a href="/">Բոլոր ծրագրերը</a>
+      <a href="/armvoski/" data-i18n="l_open">Բացել ծրագիրը՝ assay-9e6.pages.dev/armvoski/</a>
+      <a href="/armvoski/about/" data-i18n="l_about">Ի՞նչ է սա</a>
+      <a href="/armvoski/guide/" data-i18n="l_guide">Ուղեցույց (ՀԱՅ · ENG · РУС)</a>
+      <a href="/" data-i18n="l_hub">Բոլոր ծրագրերը</a>
     </div>
-    <div class="write">Ներկայացնողի կոնտակտը՝
+    <div class="write"><span data-i18n="w_contact">Ներկայացնողի կոնտակտը՝</span>
       <span class="line"></span>
     </div>
   </div>
@@ -249,23 +263,58 @@ figcaption{font-size:14px;color:var(--muted);margin-top:var(--s2);max-width:42ch
 </div>
 
 <script>
-(function(){
-  var LS='suite_theme';
-  function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
-  function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
-  var theme = get(LS)==='dark' ? 'dark' : 'light';
-  var btn = document.getElementById('themebtn');
-  function apply(t){
-    theme=t; set(LS,t);
-    document.body.classList.toggle('dark', t==='dark');
-    document.body.classList.toggle('light', t!=='dark');
-    btn.textContent = t==='dark' ? '☀️' : '🌙';
-    var m=document.querySelector('meta[name="theme-color"]');
-    if(m) m.setAttribute('content', t==='dark' ? '#0B0F17' : '#F4F6F8');
-  }
-  btn.addEventListener('click', function(){ apply(theme==='dark'?'light':'dark'); });
-  apply(theme);
-})();
+/* LANGUAGE STORAGE — read this before renaming a key.
+   ARMGOLD is live at /armgold/ on this same origin, it reads `assay_lang`, and its dictionary
+   holds ONLY hy and en. Its lookup is `const t = k => (STR[lang][k] ?? k)`, so a stored 'ru'
+   throws on the first call and ARMGOLD renders a completely blank screen — verified in a
+   browser. This page therefore keeps its own three-language key and mirrors into `assay_lang`
+   only the two values ARMGOLD can survive; a 'ru' left there by an earlier build is healed. */
+var LS_LANG='assay_site_lang', LS_THEME='suite_theme', LS_GOLD='assay_lang';
+function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+
+var T = {"c_title": {"hy": "ԱրմՈսկի — մեկ էջով", "en": "ArmVoski — one page", "ru": "ArmVoski — на одной странице"}, "brand": {"hy": "ԱրմՈսկի", "en": "ArmVoski", "ru": "ArmVoski"}, "tag": {"hy": "Ոսկերչական խանութի հաշվառում՝ քաշով և հարգով", "en": "Record-keeping for a jewellery shop, by weight and fineness (հարգ)", "ru": "Учёт ювелирного магазина по весу и пробе (հարգ)"}, "h_problem": {"hy": "Խնդիրը", "en": "The problem", "ru": "Задача"}, "p_prob1": {"hy": "Ոսկերիչը ջարդոն է գնում վաճառասեղանի մոտ եկած մարդուց և վաճառում պատրաստի իր։ 2026 թ. հուլիսի 1-ից ոսկու ԱԱՀ-ն հաշվվում է մարժայից՝ վաճառքի գնի և փաստաթղթավորված ինքնարժեքի տարբերությունից։ ԱԱՀ վճարող խանութի համար այդ փաստաթուղթը դառնում է հարկի հիմքը։", "en": "A jeweller buys scrap from whoever walks up to the counter and sells finished pieces. From 1 July 2026, VAT on gold is worked out on the margin — the difference between the selling price and the documented acquisition cost. For a shop that pays VAT, that document becomes what the tax rests on.", "ru": "Ювелир покупает лом у человека, подошедшего к прилавку, и продаёт готовые изделия. С 1 июля 2026 года НДС по золоту считается с маржи — разницы между ценой продажи и документально подтверждённой себестоимостью. Для магазина, платящего НДС, этот документ становится основанием налога."}, "p_prob2": {"hy": "Այդ գրառումը մինչ օրս պահվում է տետրում կամ ընդհանրապես չի պահվում։ Իսկ սովորական պահեստի ծրագիրը հարցնում է «քանի՞ հատ» — հարց, որին ոսկերչական խանութը պատասխան չունի։", "en": "That record is still kept in a notebook, or not kept at all. And an ordinary stock program asks “how many pieces?” — a question a jewellery shop has no answer to.", "ru": "Эта запись до сих пор ведётся в тетради или не ведётся вовсе. А обычная складская программа спрашивает «сколько штук?» — вопрос, на который у ювелирного магазина ответа нет."}, "h_what": {"hy": "Ի՞նչ է անում ԱրմՈսկին", "en": "What ArmVoski does", "ru": "Что делает ArmVoski"}, "k_price": {"hy": "<b>Օրվա գինը</b> — մեկ թիվ 999-ի համար, մնացած հարգերն ածանցվում են։\n        Վաճառքի գին = գին + հավելագին. գնման գին = գին − զեղչ։", "en": "<b>The day's rate</b> — one number for 999, every other fineness derived from it. Sell price = rate + margin; buy price = rate − discount.", "ru": "<b>Курс дня</b> — одно число для 999, остальные пробы выводятся из него. Цена продажи = курс + наценка; цена закупки = курс − дисконт."}, "k_line": {"hy": "<b>Ամեն հաշվարկ բացվում է մեկ տողով</b> — քաշը, հարգը, գինը, արդյունքը։\n        Ոսկերիչն ու հաճախորդը երկուսն էլ ստուգում են։", "en": "<b>Every calculation opens as one line</b> — weight, fineness, price, result. Jeweller and customer both check it.", "ru": "<b>Каждый расчёт раскрывается одной строкой</b> — вес, проба, цена, результат. Ювелир и клиент проверяют оба."}, "k_buy": {"hy": "<b>Գնում բնակչությունից</b> — կշռում, հաշվարկ հաճախորդի աչքի առաջ, և տեղում տպվող\n        <b>գնման ակտ</b>։ Վճարած գումարը դառնում է այդ մետաղի ինքնարժեքը՝ ակտի համարով կապված։", "en": "<b>Buying from the public</b> — weighing, the arithmetic in front of the customer, and a <b>purchase act</b> printed on the spot. What you paid becomes that metal's acquisition cost, tied to the act's number.", "ru": "<b>Закупка у населения</b> — взвешивание, расчёт на глазах у клиента и <b>акт закупки</b>, печатаемый тут же. Уплаченная сумма становится себестоимостью этого металла и привязывается к номеру акта."}, "k_stock": {"hy": "<b>Մնացորդ քաշով և հարգով</b> — համախառն, քարեր, զուտ. արժեքը՝ մաքուր մետաղով։", "en": "<b>A balance by weight and fineness</b> — gross, stones, net; the value in pure metal.", "ru": "<b>Остаток по весу и пробе</b> — брутто, камни, нетто; стоимость в чистом металле."}, "k_mark": {"hy": "<b>Հարգադրոշմ</b> — հանձնման շրջափուլ, օրերի հաշվիչ, ազատված իրերի ինքնաշխատ առանձնացում։", "en": "<b>Hallmarking (հարգադրոշմավորում)</b> — the send-out cycle, a day counter, exempt pieces separated automatically.", "ru": "<b>Клеймение (հարգադրոշմավորում)</b> — цикл передачи, счётчик дней, освобождённые изделия отделяются автоматически."}, "k_count": {"hy": "<b>Գույքագրում</b> — կույր հաշվարկ, որը դառնում է <b>գույքագրման ակտ</b>՝\n        տարբերությունը գրամով, հատով և դրամով։", "en": "<b>Stock count</b> — a blind count that becomes a <b>stock count act</b>: the difference in grams, in pieces and in dram.", "ru": "<b>Инвентаризация</b> — слепой пересчёт, который становится <b>актом инвентаризации</b>: разница в граммах, штуках и драмах."}, "k_repair": {"hy": "<b>Վերանորոգում</b> — հաճախորդի մետաղը որպես պահպանություն, երբեք ոչ որպես պաշար։", "en": "<b>Repairs</b> — the customer's metal held in custody, never as stock.", "ru": "<b>Ремонт</b> — металл клиента на ответственном хранении, никогда не как запас."}, "k_debt": {"hy": "<b>Պարտքեր</b> — մատակարարի մնացորդը հաշվարկվում է հաշիվներից ու վճարումներից,\n        երբեք չի պահվում որպես առանձին թիվ։", "en": "<b>Debts</b> — a supplier's balance is computed from bills and payments, never stored as a separate number.", "ru": "<b>Долги</b> — баланс поставщика считается из счетов и платежей, никогда не хранится отдельным числом."}, "h_num": {"hy": "Թվեր՝ վերցված հենց ծրագրի վարքից", "en": "Numbers taken from the app's own behaviour", "ru": "Числа, взятые из поведения самой программы"}, "f1": {"hy": "ոսկու և արծաթի օրինական հարգեր, 583-ը՝ 585-ից առանձին", "en": "legal finenesses for gold and silver, 583 kept apart from 585", "ru": "законных проб золота и серебра, 583 отдельно от 585"}, "f2v": {"hy": "0.001 գ", "en": "0.001 g", "ru": "0.001 г"}, "f2": {"hy": "քաշի պահպանման ճշտությունը", "en": "the precision weights are stored to", "ru": "точность хранения веса"}, "f3": {"hy": "տպվող փաստաթուղթ՝ երկու ակտ, հանձնման ցուցակ, անդորրագիր, քաղվածք", "en": "printable documents: two acts, a hand-over list, a slip, a statement", "ru": "печатных документа: два акта, список передачи, квитанция, выписка"}, "f4": {"hy": "տվյալ, որ ուղարկվում է որևէ պետական մարմին", "en": "items of data sent to any state body", "ru": "данных отправляется в государственные органы"}, "p_nonum": {"hy": "Այս էջում այլ թիվ չկա։ Շուկայի ծավալ, օգտագործողների քանակ և խնայողության\n  տոկոս չենք գրում, որովհետև չունենք։", "en": "There is no other number on this page. We give no market size, no user count and no savings percentage, because we do not have them.", "ru": "Других чисел на этой странице нет. Объём рынка, число пользователей и процент экономии мы не пишем, потому что их у нас нет."}, "h_vs_note": {"hy": "Ինչո՞վ է տարբերվում տետրից", "en": "How is it different from a notebook?", "ru": "Чем отличается от тетради?"}, "p_vs_note": {"hy": "Տետրը չի ասում, թե ինչ է մնացել, չի հիշեցնում, որ մատանին 9 օր տեսչությունում է,\n      և ակտ չի տպում։ ԱրմՈսկին ամեն շարժ գրում է <b>մեկ մատյանում, որից ոչինչ չի ջնջվում</b>.\n      մնացորդը միշտ այդ մատյանի գումարն է, ուստի էկրանն ինքն իրեն չի հակասում։", "en": "A notebook does not say what is left, does not remind you the ring has been at the assay office for 9 days, and prints no act. ArmVoski writes every movement into <b>one book that nothing is deleted from</b>: the balance is always the sum of that book, so the screen cannot contradict itself.", "ru": "Тетрадь не говорит, что осталось, не напоминает, что кольцо 9 дней в инспекции, и акта не печатает. ArmVoski пишет каждое движение в <b>одну книгу, из которой ничего не удаляется</b>: остаток всегда равен сумме этой книги, поэтому экран сам себе не противоречит."}, "h_vs_gold": {"hy": "Ինչո՞վ է տարբերվում ARMGOLD-ից", "en": "How is it different from ARMGOLD?", "ru": "Чем отличается от ARMGOLD?"}, "p_vs_gold": {"hy": "ARMGOLD-ը գնի հաշվիչ է և վաճառքի գրանցամատյան, և լավն է հենց դրանում։\n      <b>Բայց պահեստ չի վարում</b> — մնացորդ, ինքնարժեք, գնման ակտ, գույքագրում և հարգադրոշմ\n      այնտեղ չկան։ ԱրմՈսկին վերցնում է ARMGOLD-ի գնի բանաձևը անփոփոխ և դրա շուրջ կառուցում\n      ամբողջ խանութը։ Երկուսը առանձին ծրագրեր են՝ առանձին տվյալներով։", "en": "ARMGOLD is a price calculator and a sales register, and it is good at that. <b>But it keeps no stock</b> — no balance, no acquisition cost, no purchase act, no stock count, no hallmarking. ArmVoski takes ARMGOLD's price formula unchanged and builds the whole shop around it. They are two separate programs with separate data.", "ru": "ARMGOLD — калькулятор цены и журнал продаж, и в этом он хорош. <b>Но склад он не ведёт</b>: остатка, себестоимости, акта закупки, инвентаризации и клеймения там нет. ArmVoski берёт формулу цены ARMGOLD без изменений и строит вокруг неё весь магазин. Это две отдельные программы с отдельными данными."}, "h_today": {"hy": "Որտեղ է ծրագիրն այսօր", "en": "Where the app stands today", "ru": "Где программа сегодня"}, "p_today": {"hy": "Աշխատում է՝ օրվա գին, վաճառք, գնում ակտով, դարակ, գույքագրում ակտով, հարգադրոշմ,\n      վերանորոգում, պարտքեր։ Բացվում է առանց ինտերնետի։ <b>Դեռ չկա.</b> մատակարարից ընդունումը,\n      համաժամացումը, լուսանկարները, CSV-ն։ Ծրագիրը հարկ չի հաշվարկում — այն վարում է\n      այն գրառումը, որի վրա հարկը հենվում է։", "en": "Working: the day's rate, sales, buying with an act, the tray, a stock count with an act, hallmarking, repairs, debts. It opens without an internet connection. <b>Not there yet:</b> goods receipt from a supplier, sync between devices, photos, CSV. The app computes no tax — it keeps the record the tax rests on.", "ru": "Работает: курс дня, продажа, закупка с актом, витрина, инвентаризация с актом, клеймение, ремонт, долги. Открывается без интернета. <b>Ещё нет:</b> приёмки от поставщика, синхронизации между устройствами, фотографий, CSV. Программа не считает налог — она ведёт запись, на которую налог опирается."}, "h_one": {"hy": "Մեկ բան, որ ուրիշ տեղ չկա", "en": "One thing that exists nowhere else", "ru": "Одно, чего нет больше нигде"}, "p_note": {"hy": "Երբ ոսկերիչը ձեռքով գին է գրում, որը <b>հաշվարկվածի 80%-ից ցածր է</b>, ծրագիրը զգուշացնում է\n        և ցույց տալիս երկու թիվն էլ։ <b>Չի արգելում</b> — վաճառքը շարունակվում է, բայց երկու թիվն էլ\n        մնում է վաճառքի գրառման մեջ։ Ոսկերիչն այդ մասին իմանում է վաճառելուց առաջ, ոչ թե տարվա վերջում։", "en": "When a jeweller types a price by hand that is <b>below 80% of the computed one</b>, the app warns and shows both numbers. <b>It does not block</b> — the sale goes through, but both numbers stay in the sale record. The jeweller finds out before selling, not at the end of the year.", "ru": "Когда ювелир вписывает вручную цену <b>ниже 80% от расчётной</b>, программа предупреждает и показывает оба числа. <b>Не запрещает</b> — продажа продолжается, но оба числа остаются в записи продажи. Ювелир узнаёт об этом до продажи, а не в конце года."}, "alt_buyact": {"hy": "Գնման ակտ № ԳԱ-2026-0042՝ կողմերով, աղյուսակով և գումարը բառերով", "en": "Purchase act № ԳԱ-2026-0042: both parties, a table and the amount in words", "ru": "Акт закупки № ԳԱ-2026-0042: обе стороны, таблица и сумма прописью"}, "cap_buyact": {"hy": "Գնման ակտի վերին մասը՝ այնպես, ինչպես տպվում է հեռախոսից։ Գումարը բառերով՝ հայերեն։", "en": "The top of the purchase act as it prints from the phone. The amount in words is Armenian.", "ru": "Верх акта закупки в том виде, в каком он печатается с телефона. Сумма прописью — по-армянски."}, "h_contact": {"hy": "Կապ", "en": "Contact", "ru": "Контакты"}, "l_open": {"hy": "Բացել ծրագիրը՝ assay-9e6.pages.dev/armvoski/", "en": "Open the app: assay-9e6.pages.dev/armvoski/", "ru": "Открыть программу: assay-9e6.pages.dev/armvoski/"}, "l_about": {"hy": "Ի՞նչ է սա", "en": "What is this?", "ru": "Что это?"}, "l_guide": {"hy": "Ուղեցույց (ՀԱՅ · ENG · РУС)", "en": "User guide (ՀԱՅ · ENG · РУС)", "ru": "Руководство (ՀԱՅ · ENG · РУС)"}, "l_hub": {"hy": "Բոլոր ծրագրերը", "en": "All the programs", "ru": "Все программы"}, "w_contact": {"hy": "Ներկայացնողի կոնտակտը՝", "en": "Presenter's contact:", "ru": "Контакт представляющего:"}};
+
+var lang = get(LS_LANG) || get(LS_GOLD);
+if(lang!=='hy' && lang!=='en' && lang!=='ru') lang='hy';
+
+function setL(l){
+  if(l!=='hy' && l!=='en' && l!=='ru') return;
+  lang=l; set(LS_LANG,l);
+  if(l==='hy' || l==='en') set(LS_GOLD,l);
+  else if(get(LS_GOLD)!=='hy' && get(LS_GOLD)!=='en') set(LS_GOLD,'hy');
+  document.documentElement.lang=l;
+  var n,i,k,v;
+  n=document.querySelectorAll('[data-i18n]');
+  for(i=0;i<n.length;i++){ k=n[i].getAttribute('data-i18n'); v=T[k]&&T[k][l]; if(v!=null) n[i].textContent=v; }
+  n=document.querySelectorAll('[data-i18n-html]');
+  for(i=0;i<n.length;i++){ k=n[i].getAttribute('data-i18n-html'); v=T[k]&&T[k][l]; if(v!=null) n[i].innerHTML=v; }
+  n=document.querySelectorAll('[data-i18n-alt]');
+  for(i=0;i<n.length;i++){ k=n[i].getAttribute('data-i18n-alt'); v=T[k]&&T[k][l]; if(v!=null) n[i].setAttribute('alt',v); }
+  var b=document.querySelectorAll('#langseg button');
+  for(i=0;i<b.length;i++) b[i].setAttribute('aria-pressed', b[i].getAttribute('data-lang')===l ? 'true':'false');
+  document.title = (T.c_title&&T.c_title[l]) || document.title;
+}
+
+var theme = get(LS_THEME)==='dark' ? 'dark' : 'light';
+function setT(t){
+  theme=t; set(LS_THEME,t);
+  document.body.classList.toggle('dark', t==='dark');
+  document.body.classList.toggle('light', t!=='dark');
+  document.getElementById('themebtn').textContent = t==='dark' ? '☀️' : '🌙';
+  var m=document.querySelector('meta[name="theme-color"]');
+  if(m) m.setAttribute('content', t==='dark' ? '#0B0F17' : '#F4F6F8');
+}
+
+document.getElementById('langseg').addEventListener('click', function(e){
+  var b=e.target.closest('button[data-lang]');
+  if(b) setL(b.getAttribute('data-lang'));
+});
+document.getElementById('themebtn').addEventListener('click', function(){
+  setT(theme==='dark' ? 'light' : 'dark');
+});
+setT(theme);
+setL(lang);
 </script>
 </body>
 </html>
