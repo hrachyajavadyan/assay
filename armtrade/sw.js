@@ -8,7 +8,7 @@
    - /api/room/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armtrade-shell-v21';   /* round H: the demo's deterministic ids are content-addressed, so two paired demo phones can no longer hand one uuid to two different ledger rows, and a merge that rewrites a surviving row now throws; the Cyrillic face is no longer precached for an Armenian-only user; an incomplete shell no longer counts as installed; round G: the display fonts are self-hosted and precached, so the offline app is the same product as the online one; the count act's CSV names its scope in the shopkeeper's language; the demo simulator mints deterministic ids, so a demo bug report replays; round F: the migration question no longer publishes before the other device agrees, a distributor can no longer evict the shop's own messages or wedge the room with an oversized half, batches and swap requests merge by id, the pre-split snapshot expires; round E: the sync rooms are split — one room per distributor plus the shop's own `self` room, a whitelisted supplier contribution channel that the shop audits and rolls back, the twelve private keys merged at last, key rotation and revocation, and a sync sheet that is a list of named connections */
+const CACHE = 'armtrade-shell-v22';   /* round H: the demo's deterministic ids are content-addressed, so two paired demo phones can no longer hand one uuid to two different ledger rows, and a merge that rewrites a surviving row now throws; the Cyrillic face is no longer precached for an Armenian-only user; an incomplete shell no longer counts as installed; round G: the display fonts are self-hosted and precached, so the offline app is the same product as the online one; the count act's CSV names its scope in the shopkeeper's language; the demo simulator mints deterministic ids, so a demo bug report replays; round F: the migration question no longer publishes before the other device agrees, a distributor can no longer evict the shop's own messages or wedge the room with an oversized half, batches and swap requests merge by id, the pre-split snapshot expires; round E: the sync rooms are split — one room per distributor plus the shop's own `self` room, a whitelisted supplier contribution channel that the shop audits and rolls back, the twelve private keys merged at last, key rotation and revocation, and a sync sheet that is a list of named connections */
 /* R16 · the display-font subsets are part of the SHELL, not of /vendor/'s fetch-on-first-use
    policy. The ZXing reader is genuinely optional (most Androids have a native barcode detector)
    and 824 KB; there is no such thing as an optional typeface — an app that opens offline in
@@ -108,8 +108,13 @@ self.addEventListener('fetch', e => {
 
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
+    /* The app shell is the fallback for the APP, and only for the app. req.mode==='navigate'
+       above catches every navigation in scope, which now includes /armtrade/about/ and its guide
+       and one-pager — and handing an offline reader who asked for the explainer the application
+       instead is worse than telling him the truth, which is that we do not have it. */
+    const isAppRoot = url.pathname === '/armtrade/' || url.pathname.endsWith('/armtrade/index.html');
     const cached = await cache.match(req, { ignoreSearch: true }) ||
-                   await cache.match('./index.html', { ignoreSearch: true });
+                   (isAppRoot ? await cache.match('./index.html', { ignoreSearch: true }) : null);
     const net = fetch(req).then(r => {
       if (r && r.ok) cache.put(req, r.clone()).catch(() => {});
       return r;
