@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#F5F6F8">
-<title>ArmTrade — Ուղեցույց / Guide / Руководство</title>
+<title>ArmTrade — Ուղեցույց</title>
 <link rel="preload" href="/armtrade/vendor/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/armtrade/vendor/fonts/noto-sans-armenian-armenian-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -30,9 +30,13 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'
 .top{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
 .logomark{width:40px;height:40px;border-radius:11px;background:var(--gold);display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px;font-weight:800}
 .top b{font-size:20px}
-.langs{margin-left:auto;display:flex;gap:6px}
-.langs button{border:1px solid var(--stroke);background:#fff;border-radius:9px;padding:8px 14px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;color:var(--muted)}
-.langs button.active{background:#FDF3E3;color:#A8690F;border-color:#E8C58A}
+/* The segmented language switcher, same markup and same geometry as the other six documents. */
+.seg{margin-left:auto;display:flex;background:#fff;border:1px solid var(--stroke);border-radius:12px;
+  padding:3px;box-shadow:0 1px 2px rgba(14,23,38,.06)}
+.seg button{position:relative;min-height:38px;min-width:48px;padding:0 12px;background:none;
+  border:none;border-radius:9px;cursor:pointer;font-family:inherit;font-size:14px;
+  font-weight:700;letter-spacing:.3px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--gold-ink);color:#fff}
 h1{font-size:26px;margin:18px 0 6px;line-height:1.3}
 .sub{color:var(--muted);margin:0 0 26px}
 h2{font-size:18px;margin:36px 0 10px;padding-top:22px;border-top:1px solid var(--sep)}
@@ -43,15 +47,17 @@ p{margin:8px 0}
 .tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
 table{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
 .tblwrap table{margin:0;min-width:300px}
-/* 44px floor. The language buttons were 60x37 and the footer links 17px tall — every other
+/* 44px floor. The language buttons are 48x38 and the footer links were 17px tall — every other
    document in this family already carries the floor, and these were the last three pages
-   that did not. An inline link inside flowing prose cannot BE 44px without breaking the
-   line box, so it gets the hit area instead: an absolutely positioned ::before that reaches
-   past the line box in both directions and takes the tap. */
-.langs button{min-height:44px}
+   that did not. Neither a compact segmented button nor an inline link inside flowing prose
+   can BE 44px without wrecking its line box, so each gets the hit area instead: an absolutely
+   positioned ::before that reaches past the box in both directions and takes the tap. */
+.seg button::before{content:"";position:absolute;left:0;right:0;top:50%;height:44px;
+  transform:translateY(-50%)}
 .foot a{display:inline-flex;align-items:center;min-height:44px}
 .wrap p a:not(.btn), .wrap li a:not(.btn){position:relative}
 .wrap p a:not(.btn)::before, .wrap li a:not(.btn)::before{content:"";position:absolute;inset:-13px 0;z-index:0}
+.seg button:focus-visible,a:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(168,90,7,.30)}
 th{text-align:left;color:var(--dim);font-size:14px;text-transform:uppercase;letter-spacing:.4px;padding:8px 8px;border-bottom:1px solid var(--stroke)}
 td{padding:9px 8px;border-bottom:1px solid var(--sep);vertical-align:top}
 code,.mono{font-family:'IBM Plex Mono',monospace;font-size:14px;background:#F1F3F6;border-radius:6px;padding:1px 7px;overflow-wrap:anywhere}
@@ -62,209 +68,123 @@ a{color:#1D4ED8}
 ul{margin:8px 0;padding-left:22px}
 li{margin:5px 0}
 .foot{margin-top:48px;padding-top:20px;border-top:1px solid var(--stroke);color:var(--dim);font-size:14px}
-@media print{.langs,.btn{display:none}body{background:#fff}.foot a{min-height:0;display:inline}}
+@media print{.seg,.btn{display:none}body{background:#fff}.foot a{min-height:0;display:inline}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <div class="logomark">⇄</div><b>ArmTrade</b>
-    <div class="langs">
-      <button id="b_hy" class="active" onclick="setL('hy')">ՀԱՅ</button>
-      <button id="b_en" onclick="setL('en')">ENG</button>
-      <button id="b_ru" onclick="setL('ru')">РУС</button>
+    <div class="seg" id="langseg" role="group" aria-label="Language">
+      <button type="button" data-lang="hy" aria-pressed="true">ՀԱՅ</button>
+      <button type="button" data-lang="en" aria-pressed="false">ENG</button>
+      <button type="button" data-lang="ru" aria-pressed="false">РУС</button>
     </div>
   </div>
 
-<!-- ================= ARMENIAN ================= -->
-<div id="l_hy">
-  <h1>Ուղեցույց</h1>
-  <p class="sub">Խանութ–մատակարար կապի հարթակ · տարբերակ 5 (նախատիպ)</p>
+<!-- Armenian is the copy that lives in the page. English and Russian are in the T table at the
+     bottom and are painted in by setL(); with JavaScript off the page still reads in Armenian. -->
+  <h1 data-i18n="c_h1">Ուղեցույց</h1>
+  <p class="sub" data-i18n="c_sub">Խանութ–մատակարար կապի հարթակ · տարբերակ 5 (նախատիպ)</p>
 
   <div class="card">
-    <b>Ի՞նչ է ArmTrade-ը։</b>
-    <p>Հարթակ, որտեղ խանութն ու մատակարարը աշխատում են առանց զանգերի։ Համակարգը հետևում է խանութի պահեստին ու վաճառքներին, ինքն է հուշում՝ երբ և ինչ պատվիրել, իսկ պատվերները, հաշիվներն ու պարտքերը երկու կողմում երևում են իրական ժամանակում։</p>
-    <a class="btn" href="/armtrade/">▶ Բացել ծրագիրը</a>
+    <b data-i18n="c_what">Ի՞նչ է ArmTrade-ը։</b>
+    <p data-i18n="c_whatp">Հարթակ, որտեղ խանութն ու մատակարարը աշխատում են առանց զանգերի։ Համակարգը հետևում է խանութի պահեստին ու վաճառքներին, ինքն է հուշում՝ երբ և ինչ պատվիրել, իսկ պատվերները, հաշիվներն ու պարտքերը երկու կողմում երևում են իրական ժամանակում։</p>
+    <a class="btn" href="/armtrade/" data-i18n="c_open">▶ Բացել ծրագիրը</a>
   </div>
 
-  <h2>Արագ մեկնարկ</h2>
+  <h2 data-i18n="h_quick">Արագ մեկնարկ</h2>
   <div class="tblwrap"><table>
-    <tr><th>Դեր</th><th>Գաղտնաբառ</th><th>Ինչ է տեսնում</th></tr>
-    <tr><td>🏪 Խանութ</td><td><code>nran2026</code></td><td>Պատվերներ, վաճառք, պարտքեր</td></tr>
-    <tr><td>🚚 Մատակարար</td><td><code>aqua2026</code></td><td>Պատվերներ, պահեստներ, հաշվառում</td></tr>
+    <tr><th data-i18n="q_role">Դեր</th><th data-i18n="q_pass">Գաղտնաբառ</th><th data-i18n="q_sees">Ինչ է տեսնում</th></tr>
+    <tr><td data-i18n="q_shop">🏪 Խանութ</td><td><code>nran2026</code></td><td data-i18n="q_shopsees">Պատվերներ, վաճառք, պարտքեր</td></tr>
+    <tr><td data-i18n="q_sup">🚚 Մատակարար</td><td><code>aqua2026</code></td><td data-i18n="q_supsees">Պատվերներ, պահեստներ, հաշվառում</td></tr>
   </table></div>
-  <p>Բացեք <a href="/armtrade/">ծրագիրը</a> երկու տարբեր սարքի վրա, մուտք գործեք տարբեր դերերով — և նրանք ավտոմատ կմիանան իրար․ պատվերը մի սարքից երևում է մյուսի վրա մի քանի վայրկյանում։ «Դեմո ռեժիմ» կոճակը բացում է երկու կողմը մեկ էկրանին՝ ներկայացումների համար։</p>
-  <p>Վերևի կոճակներ՝ <span class="tag">🌙/☀️ թեմա</span> <span class="tag">🔗 կապ</span> <span class="tag">🔔 ծանուցումներ</span> <span class="tag">EN/РУ/ՀԱՅ լեզու</span> <span class="tag">⏭ հաջորդ օր (դեմո)</span></p>
+  <p data-i18n-html="q_two">Բացեք <a href="/armtrade/">ծրագիրը</a> երկու տարբեր սարքի վրա, մուտք գործեք տարբեր դերերով — և նրանք ավտոմատ կմիանան իրար․ պատվերը մի սարքից երևում է մյուսի վրա մի քանի վայրկյանում։ «Դեմո ռեժիմ» կոճակը բացում է երկու կողմը մեկ էկրանին՝ ներկայացումների համար։</p>
+  <p data-i18n-html="q_top">Վերևի կոճակներ՝ <span class="tag">🌙/☀️ թեմա</span> <span class="tag">🔗 կապ</span> <span class="tag">🔔 ծանուցումներ</span> <span class="tag">EN/РУ/ՀԱՅ լեզու</span> <span class="tag">⏭ հաջորդ օր (դեմո)</span></p>
 
-  <h2>Խանութի կողմը</h2>
+  <h2 data-i18n="h_shop">Խանութի կողմը</h2>
   <ul>
-    <li><b>📋 Այսօր</b> — ինչ է պետք պատվիրել այսօր․ համակարգը հաշվում է ամեն ապրանքի ցիկլը։ Այստեղ են գալիս նաև մատակարարի 📨 առաջարկները՝ հաստատվում են մեկ հպումով։</li>
-    <li><b>🛒 Ապրանքներ</b> — ամբողջ տեսականին՝ գներով ու ակցիաներով, որոնում և ֆիլտր։</li>
-    <li><b>💵 Վաճառք</b> — գրանցեք օրվա վաճառքները․ պահեստը նվազում է, մատակարարը դա տեսնում է ուղիղ եթերում։</li>
-    <li><b>🧺 Զամբյուղ</b> — պատվերը ուղարկվում է ըստ մատակարարների, ընտրում եք առաքման օրը։ Կրեդիտ լիմիտը գերազանցելիս՝ նախազգուշացում։</li>
-    <li><b>📦 Պատվերներ</b> — կարգավիճակի գիծ (Նոր → Հաստատված → Առաքված), 💬 չատ, ↩ վերադարձ։</li>
-    <li><b>💳 Պարտքեր</b> — պարտք ամեն մատակարարին, կրեդիտ լիմիտի սանդղակ, վճարում։</li>
-    <li><b>📈 Տվյալներ</b> — ծախսերն ըստ ամիսների, հաշիվներ (սեղմեք՝ տպելու), վճարումներ, պատմություն, CSV։</li>
+    <li data-i18n-html="s1"><b>📋 Այսօր</b> — ինչ է պետք պատվիրել այսօր․ համակարգը հաշվում է ամեն ապրանքի ցիկլը։ Այստեղ են գալիս նաև մատակարարի 📨 առաջարկները՝ հաստատվում են մեկ հպումով։</li>
+    <li data-i18n-html="s2"><b>🛒 Ապրանքներ</b> — ամբողջ տեսականին՝ գներով ու ակցիաներով, որոնում և ֆիլտր։</li>
+    <li data-i18n-html="s3"><b>💵 Վաճառք</b> — գրանցեք օրվա վաճառքները․ պահեստը նվազում է, մատակարարը դա տեսնում է ուղիղ եթերում։</li>
+    <li data-i18n-html="s4"><b>🧺 Զամբյուղ</b> — պատվերը ուղարկվում է ըստ մատակարարների, ընտրում եք առաքման օրը։ Կրեդիտ լիմիտը գերազանցելիս՝ նախազգուշացում։</li>
+    <li data-i18n-html="s5"><b>📦 Պատվերներ</b> — կարգավիճակի գիծ (Նոր → Հաստատված → Առաքված), 💬 չատ, ↩ վերադարձ։</li>
+    <li data-i18n-html="s6"><b>💳 Պարտքեր</b> — պարտք ամեն մատակարարին, կրեդիտ լիմիտի սանդղակ, վճարում։</li>
+    <li data-i18n-html="s7"><b>📈 Տվյալներ</b> — ծախսերն ըստ ամիսների, հաշիվներ (սեղմեք՝ տպելու), վճարումներ, պատմություն, CSV։</li>
   </ul>
 
-  <h2>Մատակարարի կողմը</h2>
+  <h2 data-i18n="h_sup">Մատակարարի կողմը</h2>
   <ul>
-    <li><b>📊 Վահանակ</b> — օրվա պատկերը, 🔮 առաջիկա 7 օրվա կանխատեսում, սպասվող պատվերներ։</li>
-    <li><b>📉 Պահեստ</b> — խանութի պահեստն ու վաճառքի արագությունը ուղիղ եթերում․ քանի օրից կվերջանա ամեն ապրանք, 7 օրվա գրաֆիկ, «📨 Առաջարկել» կոճակ։</li>
-    <li><b>📥 Պատվերներ</b> — 🗺 առաքումների պլան ըստ օրերի, հաստատում, ✂ մասնակի առաքում, չատ։</li>
-    <li><b>🏪 Խանութներ</b> — բոլոր խանութների պահեստի քարտեզը․ կանաչ/դեղին/կարմիր չիպեր ամեն ապրանքի համար, 🚨 կրիտիկական հաշվիչ։</li>
-    <li><b>🔔 Ազդանշաններ</b> — երբ խանութը դադարում է պատվիրել կամ ցիկլն անցել է․ «Հիշեցնել»-ը խանութին ուղարկում է պատրաստի առաջարկ։</li>
-    <li><b>🏷 Գնացուցակ</b> — ակցիա −10% միացնել/անջատել․ խանութները տեսնում են անմիջապես։</li>
-    <li><b>📈 Տվյալներ</b> — հասույթ, ստացվելիք գումարներ (💰 վճարման ընդունում, 📄 համեմատման ակտ), հաշիվներ՝ ժամկետանց օրերով, CSV։</li>
+    <li data-i18n-html="p1"><b>📊 Վահանակ</b> — օրվա պատկերը, 🔮 առաջիկա 7 օրվա կանխատեսում, սպասվող պատվերներ։</li>
+    <li data-i18n-html="p2"><b>📉 Պահեստ</b> — խանութի պահեստն ու վաճառքի արագությունը ուղիղ եթերում․ քանի օրից կվերջանա ամեն ապրանք, 7 օրվա գրաֆիկ, «📨 Առաջարկել» կոճակ։</li>
+    <li data-i18n-html="p3"><b>📥 Պատվերներ</b> — 🗺 առաքումների պլան ըստ օրերի, հաստատում, ✂ մասնակի առաքում, չատ։</li>
+    <li data-i18n-html="p4"><b>🏪 Խանութներ</b> — բոլոր խանութների պահեստի քարտեզը․ կանաչ/դեղին/կարմիր չիպեր ամեն ապրանքի համար, 🚨 կրիտիկական հաշվիչ։</li>
+    <li data-i18n-html="p5"><b>🔔 Ազդանշաններ</b> — երբ խանութը դադարում է պատվիրել կամ ցիկլն անցել է․ «Հիշեցնել»-ը խանութին ուղարկում է պատրաստի առաջարկ։</li>
+    <li data-i18n-html="p6"><b>🏷 Գնացուցակ</b> — ակցիա −10% միացնել/անջատել․ խանութները տեսնում են անմիջապես։</li>
+    <li data-i18n-html="p7"><b>📈 Տվյալներ</b> — հասույթ, ստացվելիք գումարներ (💰 վճարման ընդունում, 📄 համեմատման ակտ), հաշիվներ՝ ժամկետանց օրերով, CSV։</li>
   </ul>
 
-  <h2>Ընդհանուր</h2>
+  <h2 data-i18n="h_common">Ընդհանուր</h2>
   <ul>
-    <li><b>Ծանուցումներ</b> — սեղմեք «Միացնել» բաններին և թույլատրեք բրաուզերում։ Ստուգում՝ 🔔 → «Փորձնական ծանուցում»։ iPhone-ում համակարգային ծանուցումների համար ավելացրեք ծրագիրը Home Screen (Share → Add to Home Screen)։</li>
-    <li><b>Կապ սարքերի միջև</b> — մուտքով ավտոմատ է։ Առանց մուտքի՝ 🔗 կոճակով ստեղծեք սենյակի կոդ և մուտքագրեք նույնը երկու սարքի վրա։</li>
-    <li><b>⏭ Օրվա սիմուլյատոր</b> — դեմոյի համար․ անցնում է հաջորդ օրը, խանութները «վաճառում» են, գալիս են նոր պատվերներ։</li>
-    <li><b>Վերսկսում</b> — Վահանակ → «↺ Վերսկսել»՝ դեմոյի տվյալները զրոյացնելու համար։</li>
+    <li data-i18n-html="g1"><b>Ծանուցումներ</b> — սեղմեք «Միացնել» բաններին և թույլատրեք բրաուզերում։ Ստուգում՝ 🔔 → «Փորձնական ծանուցում»։ iPhone-ում համակարգային ծանուցումների համար ավելացրեք ծրագիրը Home Screen (Share → Add to Home Screen)։</li>
+    <li data-i18n-html="g2"><b>Կապ սարքերի միջև</b> — մուտքով ավտոմատ է։ Առանց մուտքի՝ 🔗 կոճակով ստեղծեք սենյակի կոդ և մուտքագրեք նույնը երկու սարքի վրա։</li>
+    <li data-i18n-html="g3"><b>⏭ Օրվա սիմուլյատոր</b> — դեմոյի համար․ անցնում է հաջորդ օրը, խանութները «վաճառում» են, գալիս են նոր պատվերներ։</li>
+    <li data-i18n-html="g4"><b>Վերսկսում</b> — Վահանակ → «↺ Վերսկսել»՝ դեմոյի տվյալները զրոյացնելու համար։</li>
   </ul>
 
-  <h2>Տեխնիկական տեղեկանք (ծրագրավորողի համար)</h2>
+  <h2 data-i18n="h_tech">Տեխնիկական տեղեկանք (ծրագրավորողի համար)</h2>
   <div class="card">
-    <p><b>Կառուցվածք՝</b> մեկ ֆայլ <code>armtrade/index.html</code> (HTML+CSS+JS, առանց framework-ների)։ Հոսթինգ՝ Cloudflare Pages, ավտոմատ deploy GitHub-ից՝ <code>github.com/hrachyajavadyan/assay</code>։</p>
-    <p><b>Համաժամացում՝</b> Cloudflare Pages Function <code>functions/api/room/[code].js</code> + D1 բազա (binding՝ <code>DB</code>)։ Ամբողջ վիճակը մեկ JSON՝ սենյակի կոդով, տարբերակի հաշվիչով (optimistic concurrency, 409 կոնֆլիկտի դեպքում)։ Հաճախորդը հարցում է անում 4 վրկ-ը մեկ։</p>
-    <p><b>Մուտք՝</b> դեմո մակարդակի (գաղտնաբառի SHA-256 հեշը կոդի մեջ է)։ Իրական արտադրանքի համար անհրաժեշտ է սերվերային authentication։</p>
-    <p><b>Հաջորդ քայլեր (v6)՝</b> սերվերային հաշիվներ, իրական push ծանուցումներ (փակ ծրագրի դեպքում), տվյալների մասնակի (ոչ ամբողջական) համաժամացում, բազմախանութ իրական հաշիվներ։</p>
+    <p data-i18n-html="t1"><b>Կառուցվածք՝</b> մեկ ֆայլ <code>armtrade/index.html</code> (HTML+CSS+JS, առանց framework-ների)։ Հոսթինգ՝ Cloudflare Pages, ավտոմատ deploy GitHub-ից՝ <code>github.com/hrachyajavadyan/assay</code>։</p>
+    <p data-i18n-html="t2"><b>Համաժամացում՝</b> Cloudflare Pages Function <code>functions/api/room/[code].js</code> + D1 բազա (binding՝ <code>DB</code>)։ Ամբողջ վիճակը մեկ JSON՝ սենյակի կոդով, տարբերակի հաշվիչով (optimistic concurrency, 409 կոնֆլիկտի դեպքում)։ Հաճախորդը հարցում է անում 4 վրկ-ը մեկ։</p>
+    <p data-i18n-html="t3"><b>Մուտք՝</b> դեմո մակարդակի (գաղտնաբառի SHA-256 հեշը կոդի մեջ է)։ Իրական արտադրանքի համար անհրաժեշտ է սերվերային authentication։</p>
+    <p data-i18n-html="t4"><b>Հաջորդ քայլեր (v6)՝</b> սերվերային հաշիվներ, իրական push ծանուցումներ (փակ ծրագրի դեպքում), տվյալների մասնակի (ոչ ամբողջական) համաժամացում, բազմախանութ իրական հաշիվներ։</p>
   </div>
-</div>
-
-<!-- ================= ENGLISH ================= -->
-<div id="l_en" style="display:none">
-  <h1>User Guide</h1>
-  <p class="sub">Shop–supplier collaboration platform · version 5 (prototype)</p>
-
-  <div class="card">
-    <b>What is ArmTrade?</b>
-    <p>A platform where a shop and its supplier work without phone calls. The system tracks the store's stock and sales, suggests what to order and when, and keeps orders, invoices and debts visible to both sides in real time.</p>
-    <a class="btn" href="/armtrade/">▶ Open the app</a>
-  </div>
-
-  <h2>Quick start</h2>
-  <div class="tblwrap"><table>
-    <tr><th>Role</th><th>Password</th><th>Sees</th></tr>
-    <tr><td>🏪 Shop</td><td><code>nran2026</code></td><td>Orders, sales, debts</td></tr>
-    <tr><td>🚚 Supplier</td><td><code>aqua2026</code></td><td>Orders, store stock, accounting</td></tr>
-  </table></div>
-  <p>Open the <a href="/armtrade/">app</a> on two different devices and sign in with different roles — they connect automatically: an order placed on one device appears on the other within seconds. The "Demo mode" link shows both sides on one screen for presentations.</p>
-  <p>Top bar: <span class="tag">🌙/☀️ theme</span> <span class="tag">🔗 connection</span> <span class="tag">🔔 notifications</span> <span class="tag">EN/РУ/ՀԱՅ language</span> <span class="tag">⏭ next day (demo)</span></p>
-
-  <h2>Shop side</h2>
-  <ul>
-    <li><b>📋 Today</b> — what needs reordering today; the system learns each product's cycle. Supplier 📨 offers land here and are confirmed with one tap.</li>
-    <li><b>🛒 Products</b> — full catalog with prices and promos, search and filters.</li>
-    <li><b>💵 Sales</b> — record daily retail sales; stock decreases and the supplier sees it live.</li>
-    <li><b>🧺 Basket</b> — orders are split by supplier; pick a delivery day. A warning appears if an order would exceed the credit limit.</li>
-    <li><b>📦 Orders</b> — status tracker (New → Confirmed → Delivered), 💬 chat, ↩ returns.</li>
-    <li><b>💳 Debts</b> — debt per supplier, credit-limit gauge, payment.</li>
-    <li><b>📈 Data</b> — monthly spend, invoices (tap to print), payments, history, CSV export.</li>
-  </ul>
-
-  <h2>Supplier side</h2>
-  <ul>
-    <li><b>📊 Dashboard</b> — today at a glance, 🔮 7-day demand forecast, pending orders.</li>
-    <li><b>📉 Stock</b> — the store's live stock and sales velocity: days until each product runs out, 7-day sales chart, "📨 Suggest order" button.</li>
-    <li><b>📥 Orders</b> — 🗺 delivery plan grouped by day, confirm, ✂ partial delivery, chat.</li>
-    <li><b>🏪 Shops</b> — stock map of every store: green/yellow/red chips per product, 🚨 critical counters.</li>
-    <li><b>🔔 Alerts</b> — fires when a shop stops ordering or a cycle is overdue; "Remind" sends the shop a ready-made offer.</li>
-    <li><b>🏷 Price list</b> — start/stop −10% promos; shops see the new price instantly.</li>
-    <li><b>📈 Data</b> — revenue, receivables (💰 receive payment, 📄 reconciliation statement), invoices with days-overdue, CSV.</li>
-  </ul>
-
-  <h2>Shared features</h2>
-  <ul>
-    <li><b>Notifications</b> — tap "Enable" on the banner and allow in the browser. Test via 🔔 → "Test notification". On iPhone, add the app to the Home Screen (Share → Add to Home Screen) for system notifications.</li>
-    <li><b>Device connection</b> — automatic when signed in. Without login, use 🔗 to generate a room code and enter the same code on both devices.</li>
-    <li><b>⏭ Day simulator</b> — for demos: advances one day, stores "sell", new orders arrive.</li>
-    <li><b>Reset</b> — Dashboard → "↺ Reset" clears the demo data.</li>
-  </ul>
-
-  <h2>Technical handoff (for developers)</h2>
-  <div class="card">
-    <p><b>Architecture:</b> a single file <code>armtrade/index.html</code> (HTML+CSS+JS, no frameworks). Hosted on Cloudflare Pages with auto-deploy from GitHub: <code>github.com/hrachyajavadyan/assay</code>.</p>
-    <p><b>Sync:</b> Cloudflare Pages Function <code>functions/api/room/[code].js</code> + a D1 database (binding <code>DB</code>). The whole state is one JSON blob per room code with a version counter (optimistic concurrency, 409 on conflict). Clients poll every 4 s.</p>
-    <p><b>Auth:</b> demo-grade (SHA-256 password hashes embedded in the client). A production build needs server-side authentication.</p>
-    <p><b>Roadmap (v6):</b> server-side accounts, real push notifications (app closed), granular (non-blob) sync, real multi-shop accounts.</p>
-  </div>
-</div>
-
-<!-- ================= RUSSIAN ================= -->
-<div id="l_ru" style="display:none">
-  <h1>Руководство</h1>
-  <p class="sub">Платформа «магазин–поставщик» · версия 5 (прототип)</p>
-
-  <div class="card">
-    <b>Что такое ArmTrade?</b>
-    <p>Платформа, где магазин и поставщик работают без звонков. Система следит за остатками и продажами магазина, сама подсказывает, что и когда заказать, а заказы, счета и долги видны обеим сторонам в реальном времени.</p>
-    <a class="btn" href="/armtrade/">▶ Открыть программу</a>
-  </div>
-
-  <h2>Быстрый старт</h2>
-  <div class="tblwrap"><table>
-    <tr><th>Роль</th><th>Пароль</th><th>Видит</th></tr>
-    <tr><td>🏪 Магазин</td><td><code>nran2026</code></td><td>Заказы, продажи, долги</td></tr>
-    <tr><td>🚚 Поставщик</td><td><code>aqua2026</code></td><td>Заказы, склады, учёт</td></tr>
-  </table></div>
-  <p>Откройте <a href="/armtrade/">программу</a> на двух устройствах и войдите под разными ролями — они соединятся автоматически: заказ с одного устройства появится на другом за несколько секунд. «Демо-режим» показывает обе стороны на одном экране — удобно для презентаций.</p>
-  <p>Верхняя панель: <span class="tag">🌙/☀️ тема</span> <span class="tag">🔗 связь</span> <span class="tag">🔔 уведомления</span> <span class="tag">EN/РУ/ՀԱՅ язык</span> <span class="tag">⏭ следующий день (демо)</span></p>
-
-  <h2>Сторона магазина</h2>
-  <ul>
-    <li><b>📋 Сегодня</b> — что пора заказать; система выучивает цикл каждого товара. Сюда же приходят 📨 предложения поставщика — подтверждаются одним нажатием.</li>
-    <li><b>🛒 Товары</b> — весь ассортимент с ценами и акциями, поиск и фильтры.</li>
-    <li><b>💵 Продажи</b> — записывайте дневные продажи; остаток уменьшается, поставщик видит это в прямом эфире.</li>
-    <li><b>🧺 Корзина</b> — заказ делится по поставщикам; выбирается день доставки. При превышении кредитного лимита — предупреждение.</li>
-    <li><b>📦 Заказы</b> — статус (Новый → Подтверждён → Доставлен), 💬 чат, ↩ возврат.</li>
-    <li><b>💳 Долги</b> — долг каждому поставщику, шкала лимита, оплата.</li>
-    <li><b>📈 Данные</b> — расходы по месяцам, счета (нажмите — печать), платежи, история, CSV.</li>
-  </ul>
-
-  <h2>Сторона поставщика</h2>
-  <ul>
-    <li><b>📊 Панель</b> — картина дня, 🔮 прогноз на 7 дней, ожидающие заказы.</li>
-    <li><b>📉 Склад</b> — остатки и скорость продаж магазина в прямом эфире: через сколько дней закончится каждый товар, график за 7 дней, кнопка «📨 Предложить заказ».</li>
-    <li><b>📥 Заказы</b> — 🗺 план доставок по дням, подтверждение, ✂ частичная доставка, чат.</li>
-    <li><b>🏪 Магазины</b> — карта остатков по всем магазинам: зелёные/жёлтые/красные чипы по каждому товару, 🚨 счётчик критичных.</li>
-    <li><b>🔔 Сигналы</b> — когда магазин перестал заказывать или цикл просрочен; «Напомнить» отправляет магазину готовое предложение.</li>
-    <li><b>🏷 Прайс</b> — включение/выключение акции −10%; магазины видят цену сразу.</li>
-    <li><b>📈 Данные</b> — выручка, дебиторка (💰 приём платежа, 📄 акт сверки), счета с днями просрочки, CSV.</li>
-  </ul>
-
-  <h2>Общее</h2>
-  <ul>
-    <li><b>Уведомления</b> — нажмите «Включить» на баннере и разрешите в браузере. Проверка: 🔔 → «Тестовое уведомление». На iPhone для системных уведомлений добавьте программу на экран «Домой» (Поделиться → На экран «Домой»).</li>
-    <li><b>Связь устройств</b> — автоматическая при входе. Без входа: кнопкой 🔗 создайте код комнаты и введите одинаковый код на двух устройствах.</li>
-    <li><b>⏭ Симулятор дня</b> — для демо: наступает следующий день, магазины «продают», приходят новые заказы.</li>
-    <li><b>Сброс</b> — Панель → «↺ Сброс» очищает демо-данные.</li>
-  </ul>
-
-  <h2>Техническая справка (для разработчика)</h2>
-  <div class="card">
-    <p><b>Архитектура:</b> один файл <code>armtrade/index.html</code> (HTML+CSS+JS, без фреймворков). Хостинг — Cloudflare Pages, автодеплой из GitHub: <code>github.com/hrachyajavadyan/assay</code>.</p>
-    <p><b>Синхронизация:</b> Cloudflare Pages Function <code>functions/api/room/[code].js</code> + база D1 (binding <code>DB</code>). Всё состояние — один JSON на код комнаты со счётчиком версий (оптимистическая блокировка, 409 при конфликте). Клиенты опрашивают сервер каждые 4 с.</p>
-    <p><b>Авторизация:</b> демо-уровня (SHA-256-хеши паролей в клиенте). Для продакшена нужна серверная аутентификация.</p>
-    <p><b>Дальше (v6):</b> серверные аккаунты, настоящие push-уведомления (при закрытой программе), частичная (не цельным блоком) синхронизация, реальные аккаунты для многих магазинов.</p>
-  </div>
-</div>
 
   <div class="foot">
-    ArmTrade · <a href="/armtrade/">assay-9e6.pages.dev/armtrade</a> · <a href="/pitch/">Ներկայացում · One-pager · Презентация</a> · <a href="/">Բոլոր ծրագրերը · All programs · Все программы</a> · <a href="mailto:hrachya.javadyan@gmail.com">hrachya.javadyan@gmail.com</a>
+    ArmTrade · <a href="/armtrade/">assay-9e6.pages.dev/armtrade</a> · <a href="/pitch/" data-i18n="f_pitch">Ներկայացում</a> · <a href="/" data-i18n="f_hub">Բոլոր ծրագրերը</a> · <a href="mailto:hrachya.javadyan@gmail.com">hrachya.javadyan@gmail.com</a>
   </div>
 </div>
 <script>
+var T = {"c_title":{"hy":"ArmTrade — Ուղեցույց","en":"ArmTrade — Guide","ru":"ArmTrade — Руководство"},"c_h1":{"hy":"Ուղեցույց","en":"User Guide","ru":"Руководство"},"c_sub":{"hy":"Խանութ–մատակարար կապի հարթակ · տարբերակ 5 (նախատիպ)","en":"Shop–supplier collaboration platform · version 5 (prototype)","ru":"Платформа «магазин–поставщик» · версия 5 (прототип)"},"c_what":{"hy":"Ի՞նչ է ArmTrade-ը։","en":"What is ArmTrade?","ru":"Что такое ArmTrade?"},"c_whatp":{"hy":"Հարթակ, որտեղ խանութն ու մատակարարը աշխատում են առանց զանգերի։ Համակարգը հետևում է խանութի պահեստին ու վաճառքներին, ինքն է հուշում՝ երբ և ինչ պատվիրել, իսկ պատվերները, հաշիվներն ու պարտքերը երկու կողմում երևում են իրական ժամանակում։","en":"A platform where a shop and its supplier work without phone calls. The system tracks the store's stock and sales, suggests what to order and when, and keeps orders, invoices and debts visible to both sides in real time.","ru":"Платформа, где магазин и поставщик работают без звонков. Система следит за остатками и продажами магазина, сама подсказывает, что и когда заказать, а заказы, счета и долги видны обеим сторонам в реальном времени."},"c_open":{"hy":"▶ Բացել ծրագիրը","en":"▶ Open the app","ru":"▶ Открыть программу"},"h_quick":{"hy":"Արագ մեկնարկ","en":"Quick start","ru":"Быстрый старт"},"q_role":{"hy":"Դեր","en":"Role","ru":"Роль"},"q_pass":{"hy":"Գաղտնաբառ","en":"Password","ru":"Пароль"},"q_sees":{"hy":"Ինչ է տեսնում","en":"Sees","ru":"Видит"},"q_shop":{"hy":"🏪 Խանութ","en":"🏪 Shop","ru":"🏪 Магазин"},"q_shopsees":{"hy":"Պատվերներ, վաճառք, պարտքեր","en":"Orders, sales, debts","ru":"Заказы, продажи, долги"},"q_sup":{"hy":"🚚 Մատակարար","en":"🚚 Supplier","ru":"🚚 Поставщик"},"q_supsees":{"hy":"Պատվերներ, պահեստներ, հաշվառում","en":"Orders, store stock, accounting","ru":"Заказы, склады, учёт"},"q_two":{"hy":"Բացեք <a href=\"/armtrade/\">ծրագիրը</a> երկու տարբեր սարքի վրա, մուտք գործեք տարբեր դերերով — և նրանք ավտոմատ կմիանան իրար․ պատվերը մի սարքից երևում է մյուսի վրա մի քանի վայրկյանում։ «Դեմո ռեժիմ» կոճակը բացում է երկու կողմը մեկ էկրանին՝ ներկայացումների համար։","en":"Open the <a href=\"/armtrade/\">app</a> on two different devices and sign in with different roles — they connect automatically: an order placed on one device appears on the other within seconds. The “Demo mode” button shows both sides on one screen for presentations.","ru":"Откройте <a href=\"/armtrade/\">программу</a> на двух устройствах и войдите под разными ролями — они соединятся автоматически: заказ с одного устройства появится на другом за несколько секунд. «Демо-режим» показывает обе стороны на одном экране — удобно для презентаций."},"q_top":{"hy":"Վերևի կոճակներ՝ <span class=\"tag\">🌙/☀️ թեմա</span> <span class=\"tag\">🔗 կապ</span> <span class=\"tag\">🔔 ծանուցումներ</span> <span class=\"tag\">EN/РУ/ՀԱՅ լեզու</span> <span class=\"tag\">⏭ հաջորդ օր (դեմո)</span>","en":"Top bar: <span class=\"tag\">🌙/☀️ theme</span> <span class=\"tag\">🔗 connection</span> <span class=\"tag\">🔔 notifications</span> <span class=\"tag\">EN/РУ/ՀԱՅ language</span> <span class=\"tag\">⏭ next day (demo)</span>","ru":"Верхняя панель: <span class=\"tag\">🌙/☀️ тема</span> <span class=\"tag\">🔗 связь</span> <span class=\"tag\">🔔 уведомления</span> <span class=\"tag\">EN/РУ/ՀԱՅ язык</span> <span class=\"tag\">⏭ следующий день (демо)</span>"},"h_shop":{"hy":"Խանութի կողմը","en":"Shop side","ru":"Сторона магазина"},"s1":{"hy":"<b>📋 Այսօր</b> — ինչ է պետք պատվիրել այսօր․ համակարգը հաշվում է ամեն ապրանքի ցիկլը։ Այստեղ են գալիս նաև մատակարարի 📨 առաջարկները՝ հաստատվում են մեկ հպումով։","en":"<b>📋 Today</b> — what needs reordering today; the system learns each product's cycle. Supplier 📨 offers land here and are confirmed with one tap.","ru":"<b>📋 Сегодня</b> — что пора заказать; система выучивает цикл каждого товара. Сюда же приходят 📨 предложения поставщика — подтверждаются одним нажатием."},"s2":{"hy":"<b>🛒 Ապրանքներ</b> — ամբողջ տեսականին՝ գներով ու ակցիաներով, որոնում և ֆիլտր։","en":"<b>🛒 Products</b> — full catalog with prices and promos, search and filters.","ru":"<b>🛒 Товары</b> — весь ассортимент с ценами и акциями, поиск и фильтры."},"s3":{"hy":"<b>💵 Վաճառք</b> — գրանցեք օրվա վաճառքները․ պահեստը նվազում է, մատակարարը դա տեսնում է ուղիղ եթերում։","en":"<b>💵 Sales</b> — record daily retail sales; stock decreases and the supplier sees it live.","ru":"<b>💵 Продажи</b> — записывайте дневные продажи; остаток уменьшается, поставщик видит это в прямом эфире."},"s4":{"hy":"<b>🧺 Զամբյուղ</b> — պատվերը ուղարկվում է ըստ մատակարարների, ընտրում եք առաքման օրը։ Կրեդիտ լիմիտը գերազանցելիս՝ նախազգուշացում։","en":"<b>🧺 Basket</b> — orders are split by supplier; pick a delivery day. A warning appears if an order would exceed the credit limit.","ru":"<b>🧺 Корзина</b> — заказ делится по поставщикам; выбирается день доставки. При превышении кредитного лимита — предупреждение."},"s5":{"hy":"<b>📦 Պատվերներ</b> — կարգավիճակի գիծ (Նոր → Հաստատված → Առաքված), 💬 չատ, ↩ վերադարձ։","en":"<b>📦 Orders</b> — status tracker (New → Confirmed → Delivered), 💬 chat, ↩ returns.","ru":"<b>📦 Заказы</b> — статус (Новый → Подтверждён → Доставлен), 💬 чат, ↩ возврат."},"s6":{"hy":"<b>💳 Պարտքեր</b> — պարտք ամեն մատակարարին, կրեդիտ լիմիտի սանդղակ, վճարում։","en":"<b>💳 Debts</b> — debt per supplier, credit-limit gauge, payment.","ru":"<b>💳 Долги</b> — долг каждому поставщику, шкала лимита, оплата."},"s7":{"hy":"<b>📈 Տվյալներ</b> — ծախսերն ըստ ամիսների, հաշիվներ (սեղմեք՝ տպելու), վճարումներ, պատմություն, CSV։","en":"<b>📈 Data</b> — monthly spend, invoices (tap to print), payments, history, CSV export.","ru":"<b>📈 Данные</b> — расходы по месяцам, счета (нажмите — печать), платежи, история, CSV."},"h_sup":{"hy":"Մատակարարի կողմը","en":"Supplier side","ru":"Сторона поставщика"},"p1":{"hy":"<b>📊 Վահանակ</b> — օրվա պատկերը, 🔮 առաջիկա 7 օրվա կանխատեսում, սպասվող պատվերներ։","en":"<b>📊 Dashboard</b> — today at a glance, 🔮 7-day demand forecast, pending orders.","ru":"<b>📊 Панель</b> — картина дня, 🔮 прогноз на 7 дней, ожидающие заказы."},"p2":{"hy":"<b>📉 Պահեստ</b> — խանութի պահեստն ու վաճառքի արագությունը ուղիղ եթերում․ քանի օրից կվերջանա ամեն ապրանք, 7 օրվա գրաֆիկ, «📨 Առաջարկել» կոճակ։","en":"<b>📉 Stock</b> — the store's live stock and sales velocity: days until each product runs out, 7-day sales chart, “📨 Suggest order” button.","ru":"<b>📉 Склад</b> — остатки и скорость продаж магазина в прямом эфире: через сколько дней закончится каждый товар, график за 7 дней, кнопка «📨 Предложить заказ»."},"p3":{"hy":"<b>📥 Պատվերներ</b> — 🗺 առաքումների պլան ըստ օրերի, հաստատում, ✂ մասնակի առաքում, չատ։","en":"<b>📥 Orders</b> — 🗺 delivery plan grouped by day, confirm, ✂ partial delivery, chat.","ru":"<b>📥 Заказы</b> — 🗺 план доставок по дням, подтверждение, ✂ частичная доставка, чат."},"p4":{"hy":"<b>🏪 Խանութներ</b> — բոլոր խանութների պահեստի քարտեզը․ կանաչ/դեղին/կարմիր չիպեր ամեն ապրանքի համար, 🚨 կրիտիկական հաշվիչ։","en":"<b>🏪 Shops</b> — stock map of every store: green/yellow/red chips per product, 🚨 critical counters.","ru":"<b>🏪 Магазины</b> — карта остатков по всем магазинам: зелёные/жёлтые/красные чипы по каждому товару, 🚨 счётчик критичных."},"p5":{"hy":"<b>🔔 Ազդանշաններ</b> — երբ խանութը դադարում է պատվիրել կամ ցիկլն անցել է․ «Հիշեցնել»-ը խանութին ուղարկում է պատրաստի առաջարկ։","en":"<b>🔔 Alerts</b> — fires when a shop stops ordering or a cycle is overdue; “Remind” sends the shop a ready-made offer.","ru":"<b>🔔 Сигналы</b> — когда магазин перестал заказывать или цикл просрочен; «Напомнить» отправляет магазину готовое предложение."},"p6":{"hy":"<b>🏷 Գնացուցակ</b> — ակցիա −10% միացնել/անջատել․ խանութները տեսնում են անմիջապես։","en":"<b>🏷 Price list</b> — start/stop −10% promos; shops see the new price instantly.","ru":"<b>🏷 Прайс</b> — включение/выключение акции −10%; магазины видят цену сразу."},"p7":{"hy":"<b>📈 Տվյալներ</b> — հասույթ, ստացվելիք գումարներ (💰 վճարման ընդունում, 📄 համեմատման ակտ), հաշիվներ՝ ժամկետանց օրերով, CSV։","en":"<b>📈 Data</b> — revenue, receivables (💰 receive payment, 📄 reconciliation statement), invoices with days-overdue, CSV.","ru":"<b>📈 Данные</b> — выручка, дебиторка (💰 приём платежа, 📄 акт сверки), счета с днями просрочки, CSV."},"h_common":{"hy":"Ընդհանուր","en":"Shared features","ru":"Общее"},"g1":{"hy":"<b>Ծանուցումներ</b> — սեղմեք «Միացնել» բաններին և թույլատրեք բրաուզերում։ Ստուգում՝ 🔔 → «Փորձնական ծանուցում»։ iPhone-ում համակարգային ծանուցումների համար ավելացրեք ծրագիրը Home Screen (Share → Add to Home Screen)։","en":"<b>Notifications</b> — tap “Enable” on the banner and allow in the browser. Test via 🔔 → “Test notification”. On iPhone, add the app to the Home Screen (Share → Add to Home Screen) for system notifications.","ru":"<b>Уведомления</b> — нажмите «Включить» на баннере и разрешите в браузере. Проверка: 🔔 → «Тестовое уведомление». На iPhone для системных уведомлений добавьте программу на экран «Домой» (Поделиться → На экран «Домой»)."},"g2":{"hy":"<b>Կապ սարքերի միջև</b> — մուտքով ավտոմատ է։ Առանց մուտքի՝ 🔗 կոճակով ստեղծեք սենյակի կոդ և մուտքագրեք նույնը երկու սարքի վրա։","en":"<b>Device connection</b> — automatic when signed in. Without login, use 🔗 to generate a room code and enter the same code on both devices.","ru":"<b>Связь устройств</b> — автоматическая при входе. Без входа: кнопкой 🔗 создайте код комнаты и введите одинаковый код на двух устройствах."},"g3":{"hy":"<b>⏭ Օրվա սիմուլյատոր</b> — դեմոյի համար․ անցնում է հաջորդ օրը, խանութները «վաճառում» են, գալիս են նոր պատվերներ։","en":"<b>⏭ Day simulator</b> — for demos: advances one day, stores “sell”, new orders arrive.","ru":"<b>⏭ Симулятор дня</b> — для демо: наступает следующий день, магазины «продают», приходят новые заказы."},"g4":{"hy":"<b>Վերսկսում</b> — Վահանակ → «↺ Վերսկսել»՝ դեմոյի տվյալները զրոյացնելու համար։","en":"<b>Reset</b> — Dashboard → “↺ Reset” clears the demo data.","ru":"<b>Сброс</b> — Панель → «↺ Сброс» очищает демо-данные."},"h_tech":{"hy":"Տեխնիկական տեղեկանք (ծրագրավորողի համար)","en":"Technical handoff (for developers)","ru":"Техническая справка (для разработчика)"},"t1":{"hy":"<b>Կառուցվածք՝</b> մեկ ֆայլ <code>armtrade/index.html</code> (HTML+CSS+JS, առանց framework-ների)։ Հոսթինգ՝ Cloudflare Pages, ավտոմատ deploy GitHub-ից՝ <code>github.com/hrachyajavadyan/assay</code>։","en":"<b>Architecture:</b> a single file <code>armtrade/index.html</code> (HTML+CSS+JS, no frameworks). Hosted on Cloudflare Pages with auto-deploy from GitHub: <code>github.com/hrachyajavadyan/assay</code>.","ru":"<b>Архитектура:</b> один файл <code>armtrade/index.html</code> (HTML+CSS+JS, без фреймворков). Хостинг — Cloudflare Pages, автодеплой из GitHub: <code>github.com/hrachyajavadyan/assay</code>."},"t2":{"hy":"<b>Համաժամացում՝</b> Cloudflare Pages Function <code>functions/api/room/[code].js</code> + D1 բազա (binding՝ <code>DB</code>)։ Ամբողջ վիճակը մեկ JSON՝ սենյակի կոդով, տարբերակի հաշվիչով (optimistic concurrency, 409 կոնֆլիկտի դեպքում)։ Հաճախորդը հարցում է անում 4 վրկ-ը մեկ։","en":"<b>Sync:</b> Cloudflare Pages Function <code>functions/api/room/[code].js</code> + a D1 database (binding <code>DB</code>). The whole state is one JSON blob per room code with a version counter (optimistic concurrency, 409 on conflict). Clients poll every 4 s.","ru":"<b>Синхронизация:</b> Cloudflare Pages Function <code>functions/api/room/[code].js</code> + база D1 (binding <code>DB</code>). Всё состояние — один JSON на код комнаты со счётчиком версий (оптимистическая блокировка, 409 при конфликте). Клиенты опрашивают сервер каждые 4 с."},"t3":{"hy":"<b>Մուտք՝</b> դեմո մակարդակի (գաղտնաբառի SHA-256 հեշը կոդի մեջ է)։ Իրական արտադրանքի համար անհրաժեշտ է սերվերային authentication։","en":"<b>Auth:</b> demo-grade (SHA-256 password hashes embedded in the client). A production build needs server-side authentication.","ru":"<b>Авторизация:</b> демо-уровня (SHA-256-хеши паролей в клиенте). Для продакшена нужна серверная аутентификация."},"t4":{"hy":"<b>Հաջորդ քայլեր (v6)՝</b> սերվերային հաշիվներ, իրական push ծանուցումներ (փակ ծրագրի դեպքում), տվյալների մասնակի (ոչ ամբողջական) համաժամացում, բազմախանութ իրական հաշիվներ։","en":"<b>Roadmap (v6):</b> server-side accounts, real push notifications (app closed), granular (non-blob) sync, real multi-shop accounts.","ru":"<b>Дальше (v6):</b> серверные аккаунты, настоящие push-уведомления (при закрытой программе), частичная (не цельным блоком) синхронизация, реальные аккаунты для многих магазинов."},"f_pitch":{"hy":"Ներկայացում","en":"One-pager","ru":"Презентация"},"f_hub":{"hy":"Բոլոր ծրագրերը","en":"All programs","ru":"Все программы"}};
+
+/* LANGUAGE STORAGE — read this before renaming a key.
+   ARMGOLD is live at /armgold/ on this same origin, it reads `assay_lang`, and its dictionary
+   holds ONLY hy and en. Its lookup is `const t = k => (STR[lang][k] ?? k)`, so a stored 'ru'
+   throws on the first call and ARMGOLD renders a completely blank screen. This page therefore
+   keeps its own three-language key and mirrors into `assay_lang` only the two values ARMGOLD
+   can survive; a 'ru' left there by an earlier build is healed. LS_THEME is named here for the
+   family's sake — this guide is light-only and has no theme control, so it neither reads nor
+   writes it. */
+var LS_LANG='assay_site_lang', LS_THEME='suite_theme', LS_GOLD='assay_lang';
+function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+
+var lang = get(LS_LANG) || get(LS_GOLD);
+if(lang!=='hy' && lang!=='en' && lang!=='ru') lang='hy';
+
 function setL(l){
-  ['hy','en','ru'].forEach(x=>{
-    document.getElementById('l_'+x).style.display = x===l?'':'none';
-    document.getElementById('b_'+x).className = x===l?'active':'';
-  });
-  document.documentElement.lang = l;
+  if(l!=='hy' && l!=='en' && l!=='ru') return;
+  lang=l; set(LS_LANG,l);
+  if(l==='hy' || l==='en') set(LS_GOLD,l);
+  else if(get(LS_GOLD)!=='hy' && get(LS_GOLD)!=='en') set(LS_GOLD,'hy');
+  document.documentElement.lang=l;
+  var n,i,k,v;
+  n=document.querySelectorAll('[data-i18n]');
+  for(i=0;i<n.length;i++){ k=n[i].getAttribute('data-i18n'); v=T[k]&&T[k][l]; if(v!=null) n[i].textContent=v; }
+  n=document.querySelectorAll('[data-i18n-html]');
+  for(i=0;i<n.length;i++){ k=n[i].getAttribute('data-i18n-html'); v=T[k]&&T[k][l]; if(v!=null) n[i].innerHTML=v; }
+  n=document.querySelectorAll('[data-i18n-alt]');
+  for(i=0;i<n.length;i++){ k=n[i].getAttribute('data-i18n-alt'); v=T[k]&&T[k][l]; if(v!=null) n[i].setAttribute('alt',v); }
+  var b=document.querySelectorAll('#langseg button');
+  for(i=0;i<b.length;i++) b[i].setAttribute('aria-pressed', b[i].getAttribute('data-lang')===l ? 'true':'false');
+  document.title = (T.c_title&&T.c_title[l]) || document.title;
 }
+
+document.addEventListener('click', function(e){
+  var b=e.target.closest('button[data-lang]');
+  if(b) setL(b.getAttribute('data-lang'));
+});
+setL(lang);
 </script>
 </body>
 </html>
