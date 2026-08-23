@@ -1823,6 +1823,7 @@ body{font-variant-numeric:tabular-nums lining-nums}
   background:var(--ink); color:var(--bg); border-color:var(--ink);
   font-weight:600; letter-spacing:0;
 }
+.btn.ghost.full{display:flex; width:100%}
 .btn.ghost,.btn.ghost.full{
   background:none; border:0; border-radius:0;
   color:var(--acc-text); font-weight:600;
@@ -1831,8 +1832,10 @@ body{font-variant-numeric:tabular-nums lining-nums}
   box-shadow:none;
 }
 .btn.ghost>*{text-align:left}
-.btn.ghost::after{content:""; position:absolute; left:0; right:0; bottom:10px;
-  border-bottom:var(--bw-strong) solid var(--acc); display:block}
+/* the underline follows the text, not the box: pinned to the bottom of a wrapped
+   two-line label it struck through the second line instead of underlining both. */
+.btn.ghost{text-decoration:underline; text-decoration-thickness:1.5px; text-underline-offset:5px}
+.btn.ghost::after{display:none}
 .btn.ghost:active{background:none; transform:none; opacity:.6}
 .btn.small{border-radius:0}
 
@@ -1869,11 +1872,15 @@ body{font-variant-numeric:tabular-nums lining-nums}
 #nav button.active::before,nav button.active::before{background:var(--ink); height:2px}
 #nav .icw,nav .icw{display:none}             /* the label is the destination */
 #nav button>span:last-child,nav button>span:last-child{font-size:var(--fs-nav)}
+/* the count reads as a superscript ON the word, not as a number floating above the
+   cell next door — which is what right-aligning it over a column flex produced. */
+#nav button,nav button{flex-direction:row; align-items:baseline; justify-content:center; gap:0}
 .navbadge{
-  position:absolute; top:2px; left:auto; right:6px;
-  background:none; color:var(--danger); border:0; box-shadow:none;
-  border-radius:0; padding:0; min-width:0; width:auto; height:auto;
+  position:static; background:none; color:var(--danger); border:0; box-shadow:none;
+  border-radius:0; padding:0 0 0 2px; min-width:0; width:auto; height:auto;
   font-size:var(--fs-label); font-weight:700; line-height:1;
+  align-self:flex-start; margin-top:2px;
+  order:2;             /* ArmTrade prints the badge before the label, ArmEstate after */
 }
 body:not(.light) .navbadge{color:var(--danger)}
 
