@@ -10,7 +10,10 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armvoski-shell-v7';   /* v5: the count no longer posts a movement against a book figure read AFTER the weighing (a
+const CACHE = 'armvoski-shell-v8';   /* v8: the ledger skin — ruled blocks instead of cards, ink
+      instead of a palette, square corners, and no pictographs left in the product. A cached v7
+      shell would keep painting the old skin beside the new one on the hub and the other two
+      apps, which is the one thing a shared house style cannot survive. v5: the count no longer posts a movement against a book figure read AFTER the weighing (a
       mid-session buy-in read as a shortage and the correction destroyed the metal), unvisited
       subjects no longer print as counted on the act, a zero metal rate is refused instead of
       being sold on, and five signed documents keep their sub-line data on paper. A cached v4
