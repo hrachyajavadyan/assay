@@ -1541,6 +1541,7 @@ body{font-variant-numeric:tabular-nums lining-nums}
   background:var(--ink); color:var(--bg); border-color:var(--ink);
   font-weight:600; letter-spacing:0;
 }
+.btn.ghost.full{display:flex; width:100%}
 .btn.ghost,.btn.ghost.full{
   background:none; border:0; border-radius:0;
   color:var(--acc-text); font-weight:600;
@@ -1552,8 +1553,10 @@ body{font-variant-numeric:tabular-nums lining-nums}
   box-shadow:none;
 }
 .btn.ghost>*{text-align:left}
-.btn.ghost::after{content:""; position:absolute; left:0; right:0; bottom:10px;
-  border-bottom:var(--bw-strong) solid var(--acc); display:block}
+/* the underline follows the text, not the box: pinned to the bottom of a wrapped
+   two-line label it struck through the second line instead of underlining both. */
+.btn.ghost{text-decoration:underline; text-decoration-thickness:1.5px; text-underline-offset:5px}
+.btn.ghost::after{display:none}
 .btn.ghost:active{background:none; transform:none; opacity:.6}
 .btn.small{border-radius:0}
 
@@ -1590,11 +1593,15 @@ body{font-variant-numeric:tabular-nums lining-nums}
 #nav button.active::before,nav button.active::before{background:var(--ink); height:2px}
 #nav .icw,nav .icw{display:none}             /* the label is the destination */
 #nav button>span:last-child,nav button>span:last-child{font-size:var(--fs-nav)}
+/* the count reads as a superscript ON the word, not as a number floating above the
+   cell next door — which is what right-aligning it over a column flex produced. */
+#nav button,nav button{flex-direction:row; align-items:baseline; justify-content:center; gap:0}
 .navbadge{
-  position:absolute; top:2px; left:auto; right:6px;
-  background:none; color:var(--danger); border:0; box-shadow:none;
-  border-radius:0; padding:0; min-width:0; width:auto; height:auto;
+  position:static; background:none; color:var(--danger); border:0; box-shadow:none;
+  border-radius:0; padding:0 0 0 2px; min-width:0; width:auto; height:auto;
   font-size:var(--fs-label); font-weight:700; line-height:1;
+  align-self:flex-start; margin-top:2px;
+  order:2;             /* ArmTrade prints the badge before the label, ArmEstate after */
 }
 body:not(.light) .navbadge{color:var(--danger)}
 
@@ -7321,7 +7328,7 @@ function openExpiredSale(pid, qty){
   MODAL_RE = ()=>openExpiredSale(pid, qty); armPushOverlay();
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()">
     <div class="mbody"><div class="grabber"></div><h3>${t('sell_exp_title')}</h3>
-    <div class="muted">${p.em||''} ${goodNameOf(pid)} · ${t('exp_batch')} ${escH(b.id)} · ${b.exp!=null?(b.est?'~':'')+fdateY(b.exp):t('exp_unknown')}</div>
+    <div class="muted">${emOf(p)} ${goodNameOf(pid)} · ${t('exp_batch')} ${escH(b.id)} · ${b.exp!=null?(b.est?'~':'')+fdateY(b.exp):t('exp_unknown')}</div>
     ${/* R12 · the Ժամկետներ tab has cited art. 9 only against an observed date since R9; this
           sheet cited it against every date, including the ones the app itself computed from
           «receipt day + catalogue shelf life». Telling a shopkeeper he is about to break the
@@ -8119,9 +8126,9 @@ function orderCard(o, side){
     ${o.receipt && o.receipt.diff ? `<div class="oitems" style="color:var(--rose)">${diffLineTxt(o)}</div>`:''}
     <div class="osum">${amd(sum)}</div>
     ${side==='shop' ? orderTracker(o.status) : ''}
-    ${side==='sup' && o.status==='new' ? `<div class="obtns"><button class="btn cyan" onclick="confirmOrder('${escH(o.id)}')">✓ ${t('confirm')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openChat('${escH(o.id)}','${side}')">${o.messages&&o.messages.length?' '+o.messages.length:''}</button></div>`:''}
-    ${side==='sup' && o.status==='confirmed' ? `<div class="obtns"><button class="btn green" onclick="deliverOrder('${escH(o.id)}')">${t('deliver')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openPartial('${escH(o.id)}')">${t('deliver_partial')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openChat('${escH(o.id)}','${side}')">${o.messages&&o.messages.length?' '+o.messages.length:''}</button></div>`:''}
-    ${side==='sup' && o.status==='delivered' ? `<div class="obtns"><button class="btn ghost" style="flex:0 0 auto" onclick="openChat('${escH(o.id)}','${side}')">${o.messages&&o.messages.length?' '+o.messages.length:''}</button></div>`:''}
+    ${side==='sup' && o.status==='new' ? `<div class="obtns"><button class="btn cyan" onclick="confirmOrder('${escH(o.id)}')">✓ ${t('confirm')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openChat('${escH(o.id)}','${side}')">${t('chat')}${o.messages&&o.messages.length?' '+o.messages.length:''}</button></div>`:''}
+    ${side==='sup' && o.status==='confirmed' ? `<div class="obtns"><button class="btn green" onclick="deliverOrder('${escH(o.id)}')">${t('deliver')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openPartial('${escH(o.id)}')">${t('deliver_partial')}</button><button class="btn ghost" style="flex:0 0 auto" onclick="openChat('${escH(o.id)}','${side}')">${t('chat')}${o.messages&&o.messages.length?' '+o.messages.length:''}</button></div>`:''}
+    ${side==='sup' && o.status==='delivered' ? `<div class="obtns"><button class="btn ghost" style="flex:0 0 auto" onclick="openChat('${escH(o.id)}','${side}')">${t('chat')}${o.messages&&o.messages.length?' '+o.messages.length:''}</button></div>`:''}
     ${side==='shop' ? `<div class="obtns">${o.status==='delivered'&&mine&&!o.receipt?`<button class="btn green" onclick="openReceipt('${escH(o.id)}')">${t('recv_open')}</button>`:''}<button class="btn ghost" style="flex:1" onclick="openChat('${escH(o.id)}','${side}')">${t('chat')}${o.messages&&o.messages.length?' ('+o.messages.length+')':''}</button>${o.status==='delivered'&&!o.returns&&mine&&o.receipt?`<button class="btn danger" style="flex:0 0 auto" onclick="openReturn('${escH(o.id)}')">↩ ${t('ret_btn')}</button>`:''}</div>`:''}
 </div>`;
 }
@@ -9462,7 +9469,7 @@ function renderExpSheet(){ MODAL_RE=()=>renderExpSheet(); armPushOverlay();
   const pid = b.pid, p = P(pid) || {}, md = mdOf(pid);
   document.getElementById('modalRoot').innerHTML = `<div class="modal" onclick="if(event.target===this){EXPUI.batch=null;closeModal()}">
     <div class="mbody"><div class="grabber"></div>
-    <h3>${p.em||''} ${goodNameOf(pid)}</h3>
+    <h3>${emOf(p)} ${goodNameOf(pid)}</h3>
     <div class="muted">${t('exp_batch')} ${escH(b.id)} · ${b.exp!=null?fdateY(b.exp):t('exp_unknown')} · <b class="num">${b.left}</b> ${unitOf(pid)}</div>
     <div style="margin-top:10px">${expBadge(b)} <span class="badge b-neutral">${Math.round(expAmd(b)).toLocaleString('en-US')}<span class="cur">֏</span> ${lcFirst(t('exp_at_risk'))}</span></div>
     <button class="btn danger full" style="margin-top:16px" onclick="EXPUI.batch=null;openWriteoff('${pid}',{qty:${b.left},reason:'expired',batch:'${escH(b.id)}'})">${t('wo_open_exp')}</button>
@@ -9489,7 +9496,7 @@ function expRowHtml(b, showReq){
   if(req && req.status==='open' && (req.reply==='swap' || req.reply==='back'))
     acts.push(`<button class="btn small cyan" onclick="shopReturnToSup('${req.id}')">${t('ret_to_sup')}</button>`);
   return `<div class="sug stack expcard pcw"${hlAttr('batch', pid)}>
-    <button class="pav" title="${t('item_card')}" onclick="openExpSheet('${escH(b.id)}')">${p.em||''}<span class="pavdots">⋯</span></button>
+    <button class="pav" title="${t('item_card')}" onclick="openExpSheet('${escH(b.id)}')">${emOf(p)}<span class="pavdots">⋯</span></button>
     <div class="info">
       <div class="nm">${goodNameOf(pid)}</div>
       <div class="sub">${expBadge(b)} <b class="num">${b.left}</b> ${unitOf(pid)} · <b class="num">${Math.round(expAmd(b)).toLocaleString('en-US')}<span class="cur">֏</span></b> ${lcFirst(t('exp_at_risk'))}${mdActive(pid)?` <span class="badge b-violet">−${mdOf(pid).pct}%</span>`:''}${reqBadge(pid)}</div>
@@ -9675,7 +9682,7 @@ function supExpCard(){
     ${rows.map(b=>{
       const p = P(b.pid) || {}, d = expDaysLeft(b);
       return `<div class="row" style="padding:7px 0;border-bottom:1px solid var(--sep)">
-        <span style="min-width:0">${p.em||''} ${nm(p)}</span>
+        <span style="min-width:0">${emOf(p)} ${nm(p)}</span>
         <span style="flex-shrink:0"><b class="num">${b.left}</b> · ${fmt('exp_left',{n:d})}</span>
 </div>`;}).join('')}
     <div class="muted" style="margin-top:9px">${t('sup_exp_hint')}</div></div>`;
@@ -9909,7 +9916,7 @@ function repRow(r){
     : `<span class="badge b-neutral">${t('rep_cap_exp')}</span>`);
   if(r.cap==='cover') badges.push(`<span class="badge b-neutral">${fmt('rep_cap_cover',{n:MAX_COVER})}</span>`);
   return `<div class="sug posrow">
-    <button class="pav" title="${t('item_card')}" onclick="openItemSheet('${r.pid}')">${p.em||''}<span class="pavdots">⋯</span></button>
+    <button class="pav" title="${t('item_card')}" onclick="openItemSheet('${r.pid}')">${emOf(p)}<span class="pavdots">⋯</span></button>
     <div class="info">
       <div class="nm">${goodNameOf(r.pid)}</div>
       <div class="sub">${badges.join(' ')}</div>
@@ -10075,7 +10082,7 @@ function goCountScope(kind, key){
 }
 function rptDeadRow(r){
   return `<div class="sug stack rptrow">
-    <button class="pav" title="${t('item_card')}" onclick="openItemSheet('${r.pid}')">${(P(r.pid)||{}).em||''}<span class="pavdots">⋯</span></button>
+    <button class="pav" title="${t('item_card')}" onclick="openItemSheet('${r.pid}')">${emOf(P(r.pid))}<span class="pavdots">⋯</span></button>
     <div class="info">
       <div class="nm">${goodNameOf(r.pid)}</div>
       <div class="sub"><b class="num">${onHand(r.pid)}</b> ${unitOf(r.pid)} · <b class="num">${Math.round(r.amd).toLocaleString('en-US')}<span class="cur">֏</span></b> ${t('rpt_capital')}</div>
@@ -10125,7 +10132,7 @@ function rptLow(){
       : mdActive(r.pid) ? `<button class="btn small ghost" onclick="clearMarkdown('${r.pid}')">${t('md_stop')}</button>`
       : `<span class="badge b-neutral">${t('rep_min_short')}${VJ()} ${r.min}</span>`;
     return `<div class="sug stack rptrow">
-      <button class="pav" title="${t('item_card')}" onclick="openItemSheet('${r.pid}')">${(P(r.pid)||{}).em||''}<span class="pavdots">⋯</span></button>
+      <button class="pav" title="${t('item_card')}" onclick="openItemSheet('${r.pid}')">${emOf(P(r.pid))}<span class="pavdots">⋯</span></button>
       <div class="info"><div class="nm">${goodNameOf(r.pid)}</div>
         <div class="sub">${badge} <b class="num">${r.oh}</b> ${unitOf(r.pid)} · ${t('rep_min_short')}${VJ()} ${r.min} · ${fmt('rpt_risk_day',{n:Math.round(r.risk).toLocaleString('en-US')})}${mdActive(r.pid)?` <span class="badge b-violet">${t('rep_md_skip')}</span>`:''}</div>
         ${rr?`<div class="sub muted">${repReason(rr)}</div>`:''}</div>
@@ -10148,7 +10155,7 @@ function rptShrinkCat(){
         <button class="btn small ghost" onclick="goCountScope('cat','${k}')">${t('rpt_count_cat')}</button></div></div>
 </div>`).join('')
     + (topPids.length?`<div class="sec">${t('rpt_top_wo')}</div>` + topPids.map(pid=>`<div class="sug">
-        <button class="pav" title="${t('item_card')}" onclick="openItemSheet('${pid}')">${(P(pid)||{}).em||''}<span class="pavdots">⋯</span></button>
+        <button class="pav" title="${t('item_card')}" onclick="openItemSheet('${pid}')">${emOf(P(pid))}<span class="pavdots">⋯</span></button>
         <div class="info"><div class="nm">${goodNameOf(pid)}</div>
           <div class="sub"><b class="num">${top[pid]}</b> ${t('shrink_units')} · ${catLabel(catOf(pid))}</div></div>
         <button class="btn small ghost rowact" onclick="openItemSheet('${pid}')">${t('item_card')}</button></div>`).join('') : '');
@@ -12253,7 +12260,7 @@ function openShop(id){ MODAL_RE=()=>openShop(id); armPushOverlay();
       <div class="muted" style="font-size:14px;margin:-4px 0 6px">${t('sup_exp_asked')}</div>
       <div class="tblwrap"><table class="tbl"><tr><th>${t('product')}</th><th>${t('qty')}</th><th>${dayW()}</th></tr>` +
         eb.slice(0,10).map(b=>{ const p=P(b.pid)||{}, d=expDaysLeft(b);
-          return `<tr><td>${p.em||''} ${nm(p)}</td><td class="num">${b.left}</td><td><span class="num">${d}</span></td></tr>`;}).join('') + '</table></div>';
+          return `<tr><td>${emOf(p)} ${nm(p)}</td><td class="num">${b.left}</td><td><span class="num">${d}</span></td></tr>`;}).join('') + '</table></div>';
     }
   } else {
     body = `<div class="muted">${t('last_order')}${VJ()} ${fdate(S.otherLast[id])} (${daysAgo(S.otherLast[id])} ${lang==='hy'?'օր առաջ':(lang==='ru'?'дн. назад':'days ago')})</div>`;
