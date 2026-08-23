@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F4F6F8">
+<meta name="theme-color" content="#FFFEFC">
 <meta name="description" content="Ի՞նչ եք հաշվառում — չորս ծրագիր հայկական խանութների և գրասենյակների համար։">
 <title>Ի՞նչ եք հաշվառում</title>
 
@@ -24,57 +24,55 @@
   src:url(/armtrade/vendor/fonts/noto-sans-armenian-armenian-wght-normal.woff2) format('woff2');
   unicode-range:U+0308,U+0530-058F,U+2010,U+2024,U+25CC,U+FB13-FB17}
 
-/* ============ tokens: the products' design system, light theme default ============
-   ArmTrade, ArmVoski and ArmEstate all boot in `body.light`. The hub used to be the one
-   dark, blurred surface in the family — a stranger met a look he then never saw again,
-   and a 55-year-old shopkeeper met it outdoors. Same tokens as the apps, same 4px grid,
-   same 44px tap floor, same accent. */
+/* ============ tokens: the LEDGER skin, the same one the products now wear ============
+   Decided 20 Aug 2026: the products replace a paper notebook, so they are built like one.
+   Ruled blocks instead of cards, ink instead of a palette, figures that align. Two colours
+   carry meaning and nothing else does — the accent for anything a finger can act on, and
+   correction red for anything wrong, late or not there yet. Green is gone.
+   This page is read, not operated, so `layer.css` is not pasted in: the values below are the
+   document column of /root/work/ledger/SPEC-DOCS.md, applied by hand to this page's own
+   stylesheet. They are the app tokens to the digit — a shopkeeper who taps a card must not
+   notice that he changed buildings. Light is the default here as it is in every product. */
 :root{
-  --bg:#F4F6F8;
-  --surface:#FFFFFF;
-  --surface-2:#F1F4F8;
-  --surface-3:#E6EBF2;
-  --ink:#0E1726;              /* 16.6:1 on --bg */
-  --muted:#54607A;            /* 5.8:1 on --bg, 6.3:1 on white */
-  --dim:#5D6880;              /* 5.2:1 on --bg — never lighter than this */
-  --sep:#E6EAF0;
-  --stroke:#E1E6EE;
-  --stroke2:#C9D2E0;
-  --acc:#A85A07;              /* white-on-accent 5.08:1 */
-  --acc-ink:#FFFFFF;
-  --acc-tint:#FFF4E3;
-  --acc-line:#EBCFA4;
-  --acc-text:#8A4B00;         /* 6.8:1 on white, 6.25:1 on --acc-tint */
-  --ok:#0B6B3A; --ok-tint:#EEF9F2; --ok-line:#B7E3C9;
-  --new:#5B21B6; --new-tint:#F5F2FF; --new-line:#DDD5F8;
-  --sh-1:0 1px 2px rgba(14,23,38,.06);
-  --sh-2:0 4px 16px rgba(14,23,38,.08);
-  --focus:0 0 0 3px rgba(168,90,7,.30);
+  --bg:#FFFEFC;
+  --surface:#FFFEFC;          /* no card fill: a block sits on the page */
+  --surface-2:#F5F3EE;        /* the one quiet fill: the switcher's trough */
+  --surface-3:#EBE8E1;
+  --ink:#161A1F;              /* 17.3:1 on --bg */
+  --muted:#5E646E;            /* 5.9:1 on --bg, 5.4:1 on --surface-2 */
+  --dim:#666C76;              /* 5.3:1 — never lighter than this */
+  --sep:#DFDBD2;              /* the hairline between two lines of the ledger */
+  --stroke:#DFDBD2;
+  --stroke2:#C6C1B6;
+  --acc:#1E3A5F;              /* ballpoint blue · 11.4:1 on --bg */
+  --acc-ink:#FFFEFC;
+  --acc-tint:#EFF2F6;
+  --acc-line:#C3CDDA;
+  --acc-text:#1E3A5F;
+  --danger:#9B2C1E;           /* correction red · 7.5:1 — the ONLY alert colour */
+  --focus:0 0 0 2px var(--bg),0 0 0 4px var(--acc);
   --font:'Inter','Noto Sans Armenian',-apple-system,'Segoe UI',Roboto,sans-serif;
-  --emoji:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",var(--font);
+  --bw:1px;
+  --ls-caps:1.3px;
   --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px;
 }
 body.dark{
-  --bg:#0B0F17;
-  --surface:#161C2A;
-  --surface-2:#1E2637;
-  --surface-3:#28324A;
-  --ink:#E8EDF7;
-  --muted:#A3B0C7;
-  --dim:#8B97AE;
-  --sep:#242D40;
-  --stroke:#242D40;
-  --stroke2:#313C55;
-  --acc:#F0A93B;
-  --acc-ink:#1A1205;
-  --acc-tint:#2A1F0C;
-  --acc-line:#5A431A;
-  --acc-text:#F5C06A;
-  --ok:#5AD79A; --ok-tint:#0E2A1E; --ok-line:#1E5540;
-  --new:#C4B5FD; --new-tint:#1E1A33; --new-line:#3B3161;
-  --sh-1:0 1px 2px rgba(0,0,0,.30);
-  --sh-2:0 6px 20px rgba(0,0,0,.35);
-  --focus:0 0 0 3px rgba(240,169,59,.35);
+  --bg:#14161A;
+  --surface:#14161A;
+  --surface-2:#1C1F25;
+  --surface-3:#252931;
+  --ink:#E9E7E2;              /* 14.7:1 */
+  --muted:#9BA1AB;            /* 7.0:1 */
+  --dim:#8A9099;              /* 5.6:1 */
+  --sep:#2A2E35;
+  --stroke:#2A2E35;
+  --stroke2:#3A3F48;
+  --acc:#9FC0E8;
+  --acc-ink:#10141A;
+  --acc-tint:#1A2130;
+  --acc-line:#31405A;
+  --acc-text:#AECBEE;         /* 10.9:1 */
+  --danger:#E4897C;           /* 7.0:1 */
 }
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -82,77 +80,105 @@ html{-webkit-text-size-adjust:100%}
 body{
   margin:0;background:var(--bg);color:var(--ink);
   font-family:var(--font);font-size:15px;line-height:1.5;
+  font-variant-numeric:tabular-nums lining-nums;   /* a ledger's figures align */
   -webkit-font-smoothing:antialiased;
   min-height:100vh;
 }
 h1,h2,h3,p{margin:0}
 
+/* the one mark left on this page: the theme control, which cannot be labelled in a 44px
+   square. Drawn at the same hairline weight as the fifteen marks inside the products, in
+   currentColor, so it sits in the text rather than on top of it. */
+.ic{
+  width:22px;height:22px;flex:0 0 auto;display:inline-block;
+  fill:none;stroke:currentColor;stroke-width:1.4;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+
 /* ---------- top bar: switchers only. The page opens with the question, not a brand. ---------- */
 .top{
   display:flex;justify-content:flex-end;align-items:center;gap:var(--s2);
-  max-width:1080px;margin:0 auto;padding:var(--s3) var(--s4) 0;
+  max-width:1080px;margin:0 auto;padding:var(--s3) var(--s4);
+  border-bottom:var(--bw) solid var(--ink);
 }
-.seg{display:flex;background:var(--surface);border:1px solid var(--stroke);border-radius:12px;padding:3px;box-shadow:var(--sh-1)}
+.seg{display:flex;background:var(--surface-2);border:var(--bw) solid var(--stroke);border-radius:0;padding:2px}
 .seg button{
   min-height:38px;min-width:46px;padding:0 var(--s3);
-  background:none;border:none;border-radius:9px;cursor:pointer;
-  font-family:var(--font);font-size:14px;font-weight:700;letter-spacing:.3px;
+  background:none;border:none;border-radius:0;cursor:pointer;
+  font-family:var(--font);font-size:14px;font-weight:600;letter-spacing:var(--ls-caps);
   color:var(--muted);
 }
-.seg button[aria-pressed="true"]{background:var(--acc);color:var(--acc-ink)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--acc-text);font-weight:700}
 .seg button:focus-visible,.tbtn:focus-visible{outline:none;box-shadow:var(--focus)}
 /* the 44px tap floor is met by an invisible extension, so the control stays visually compact */
 .seg button::before,.tbtn::before{content:"";position:absolute;left:0;right:0;top:50%;height:44px;transform:translateY(-50%)}
 .seg button,.tbtn{position:relative}
 .tbtn{
   width:44px;height:44px;display:flex;align-items:center;justify-content:center;
-  background:var(--surface);border:1px solid var(--stroke);border-radius:12px;
-  cursor:pointer;font-size:18px;font-family:var(--emoji);line-height:1;box-shadow:var(--sh-1);
+  background:none;border:0;border-radius:0;color:var(--ink);
+  padding:0;cursor:pointer;line-height:1;
 }
 
 /* ---------- the question ---------- */
-.wrap{max-width:1080px;margin:0 auto;padding:var(--s5) var(--s4) var(--s8)}
+.wrap{max-width:1080px;margin:0 auto;padding:var(--s6) var(--s4) var(--s8)}
 h1{
-  font-size:clamp(26px,7.4vw,34px);line-height:1.1;letter-spacing:-.6px;font-weight:700;
+  font-size:clamp(26px,7.4vw,34px);line-height:1.15;letter-spacing:-.4px;font-weight:600;
   margin:0 0 var(--s3);
 }
 .lede{color:var(--muted);font-size:16px;line-height:1.45;max-width:44ch}
 
-/* ---------- section headings ---------- */
-.sec{margin:var(--s8) 0 var(--s4)}
-.sec h2{font-size:16px;font-weight:700;letter-spacing:-.1px;color:var(--ink)}
-.sec p{font-size:14px;color:var(--muted);margin-top:var(--s1)}
+/* ---------- the two tiers ----------
+   The split between «a system that holds your stock» and «a tool that does one sum» is the
+   thing that stops a jeweller opening the wrong gold product, so it is drawn with the ledger's
+   heaviest rule — ink, full width — while the blocks inside a tier are only separated by a
+   hairline. The heading itself is a column heading: quiet, uppercase, tracked. */
+.sec{margin:var(--s8) 0 var(--s4);padding-top:var(--s5);border-top:var(--bw) solid var(--ink)}
+.sec h2{
+  font-size:14px;font-weight:600;line-height:1.25;
+  letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--muted);
+}
+.sec p{font-size:15px;line-height:1.45;color:var(--ink);margin-top:var(--s2);max-width:52ch}
 
-/* ---------- product cards ---------- */
-.tier{display:grid;gap:var(--s3)}
+/* ---------- a product is a ruled block, not a card ---------- */
+.tier{display:grid;gap:0}
 .card{
   position:relative;display:flex;flex-direction:column;
-  background:var(--surface);border:1px solid var(--stroke);border-radius:16px;
-  padding:var(--s4);box-shadow:var(--sh-1);
-  transition:box-shadow .16s,border-color .16s,transform .16s;
+  background:none;border:0;border-radius:0;box-shadow:none;
+  padding:var(--s5) 0;
+  border-bottom:var(--bw) solid var(--sep);
 }
-.card:hover{border-color:var(--stroke2);box-shadow:var(--sh-2)}
-.card:active{transform:scale(.995)}
+.tier .card:last-child{border-bottom:0}
 .hd{display:flex;align-items:flex-start;gap:var(--s3)}
-.ic{
-  width:48px;height:48px;flex:0 0 48px;border-radius:13px;
-  background:var(--acc-tint);border:1px solid var(--acc-line);
+/* THE PRODUCT MARK. It used to be a colour pictograph in a rounded tinted medallion. Under the
+   ledger it is the product's own initial in a ruled square — the same treatment the apps give
+   every line they have to identify. The letter is NOT the first letter of the name: all four
+   names share the stem Arm/Արմ/ARM, so a first letter would put the same character in all four
+   squares and the mark would carry nothing. It is the initial of the part that IS the product —
+   T, Ո, Է, G in Armenian; T, V, E, G in English and Russian — and its script follows the script
+   of the name printed beside it, which is what makes a Latin T and an Armenian Ո siblings
+   rather than an accident. It is set per language with the rest of the copy. */
+.mk{
+  width:44px;height:44px;flex:0 0 44px;border-radius:0;
+  background:none;border:var(--bw) solid var(--stroke);
   display:flex;align-items:center;justify-content:center;
-  font-size:24px;line-height:1;font-family:var(--emoji);font-style:normal;
+  font-size:16px;font-weight:600;line-height:1;color:var(--muted);font-style:normal;
 }
 .hdt{flex:1;min-width:0}
-.nm{font-size:19px;font-weight:700;letter-spacing:-.2px;line-height:1.2}
-.nm a{color:inherit;text-decoration:none}
-.nm a::after{content:"";position:absolute;inset:0;border-radius:16px;z-index:1}
+.nm{font-size:19px;font-weight:600;letter-spacing:-.2px;line-height:1.2}
+.nm a{color:var(--ink);text-decoration:none}
+.nm a::after{content:"";position:absolute;inset:0;border-radius:0;z-index:1}
 .nm a:focus-visible{outline:none}
-.nm a:focus-visible::after{outline:3px solid var(--acc);outline-offset:2px}
+.nm a:focus-visible::after{outline:2px solid var(--acc);outline-offset:2px}
+/* a badge is a written note, not a pill. Status earns a colour exactly once on this page:
+   a system that works is written in plain ink, and one that is not finished yet is written
+   in correction red — the same red the apps use for a short balance or a late order. */
 .badge{
-  display:inline-block;margin-top:6px;
-  font-size:14px;font-weight:700;line-height:1.2;padding:3px 9px;border-radius:8px;
-  background:var(--ok-tint);color:var(--ok);border:1px solid var(--ok-line);
+  display:inline-block;margin-top:4px;
+  background:none;border:0;border-radius:0;padding:0;
+  font-size:14px;font-weight:600;line-height:1.25;color:var(--ink);
 }
-.badge.b-new{background:var(--new-tint);color:var(--new);border-color:var(--new-line)}
-.badge.b-tool{background:var(--surface-2);color:var(--muted);border-color:var(--stroke2)}
+.badge.b-new{color:var(--danger)}
+.badge.b-tool{color:var(--muted)}
 .what{margin-top:var(--s3);font-size:15px;line-height:1.5;color:var(--ink)}
 .feats{margin-top:var(--s2);font-size:14px;line-height:1.5;color:var(--muted)}
 .who{margin-top:var(--s2);font-size:14px;line-height:1.45;color:var(--muted)}
@@ -160,59 +186,59 @@ h1{
 /* the one line that stops the site's most likely mistake — a jeweller opening the wrong
    gold product — is not allowed to look like a caption. */
 .choose{margin-top:var(--s3);font-size:15px;line-height:1.5;color:var(--ink)}
+/* a caveat is an indented remark against a rule. This one is a warning, so the rule is red. */
 .note{
-  margin-top:var(--s3);font-size:14px;line-height:1.45;color:var(--acc-text);
-  background:var(--acc-tint);border:1px solid var(--acc-line);border-radius:10px;
-  padding:10px 12px;
+  margin-top:var(--s3);font-size:14px;line-height:1.45;color:var(--ink);
+  background:none;border:0;border-radius:0;padding:2px 0 2px var(--s3);
+  border-left:2px solid var(--danger);
 }
-.note b{font-weight:700;display:block;margin-bottom:2px}
+.note b{font-weight:600;display:block;margin-bottom:2px;color:var(--danger)}
+/* written links: accent, underlined, left-aligned, no box */
 .foot{
-  display:flex;align-items:center;justify-content:space-between;gap:var(--s2);flex-wrap:wrap;
-  margin-top:var(--s4);padding-top:var(--s2);border-top:1px solid var(--sep);
+  display:flex;align-items:center;justify-content:flex-start;gap:0 var(--s5);flex-wrap:wrap;
+  margin-top:var(--s3);
 }
 .cta{
   display:inline-flex;align-items:center;min-height:44px;
-  font-size:15px;font-weight:700;color:var(--acc-text);
+  font-size:15px;font-weight:600;color:var(--acc-text);
+  text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;
 }
 .cta i{font-style:normal;margin-left:6px}
 .doc{
   position:relative;z-index:2;
-  display:inline-flex;align-items:center;min-height:44px;padding:0 var(--s3);margin-right:calc(var(--s3) * -1);
-  font-size:14px;font-weight:600;color:var(--muted);text-decoration:none;
-  border-radius:10px;
+  display:inline-flex;align-items:center;min-height:44px;min-width:44px;padding:0;
+  font-size:14px;font-weight:600;color:var(--acc-text);text-decoration:none;
+  border-radius:0;
 }
-.doc:hover{color:var(--acc-text);background:var(--surface-2)}
-.doc:focus-visible{outline:none;box-shadow:var(--focus);color:var(--acc-text)}
+.doc:focus-visible{outline:none;box-shadow:var(--focus)}
 .doc u{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 .demo{
   width:100%;order:3;margin-top:var(--s1);
-  font-size:14px;color:var(--dim);line-height:1.4;
+  font-size:14px;color:var(--dim);line-height:1.45;
 }
 
-/* ---------- tier 2: the tool ---------- */
-.card.tool{background:var(--surface-2)}
-.card.tool .ic{width:40px;height:40px;flex-basis:40px;border-radius:11px;font-size:20px;
-  background:var(--surface);border-color:var(--stroke2)}
+/* ---------- tier 2: the tool. It is subordinate by size and by the rule above it,
+             never by a fill — nothing on this page is a box. ---------- */
+.card.tool{background:none}
 .card.tool .nm{font-size:17px}
 
 /* ---------- footer ---------- */
 .pagefoot{
-  margin-top:var(--s8);padding-top:var(--s5);border-top:1px solid var(--sep);
+  margin-top:var(--s8);padding-top:var(--s5);border-top:var(--bw) solid var(--ink);
   display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);align-items:center;
 }
 .pagefoot a{
   display:inline-flex;align-items:center;min-height:44px;
-  color:var(--muted);text-decoration:none;font-size:14px;font-weight:600;
-  border-bottom:1px solid transparent;
+  color:var(--acc-text);font-size:14px;font-weight:600;
+  text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;
 }
-.pagefoot a:hover{color:var(--acc-text)}
-.pagefoot a:focus-visible{outline:none;box-shadow:var(--focus);border-radius:8px}
+.pagefoot a:focus-visible{outline:none;box-shadow:var(--focus);border-radius:0}
 .pagefoot span{font-size:14px;color:var(--dim);margin-left:auto}
 
 @media (min-width:900px){
-  .tier1{grid-template-columns:repeat(3,1fr)}
+  .tier1{grid-template-columns:repeat(3,1fr);gap:0 var(--s8)}
   .tier1 .foot{margin-top:auto}
-  .tier1 .card{padding:var(--s5)}
+  .tier1 .card,.tier1 .card:last-child{border-bottom:var(--bw) solid var(--sep)}
   .card.tool{max-width:640px}
   h1{font-size:38px}
 }
@@ -227,7 +253,7 @@ h1{
     <button type="button" data-lang="en" aria-pressed="false" lang="en">ENG</button>
     <button type="button" data-lang="ru" aria-pressed="false" lang="ru">РУС</button>
   </div>
-  <button type="button" class="tbtn" id="themebtn" aria-label="Թեմա">🌙</button>
+  <button type="button" class="tbtn" id="themebtn" aria-label="Թեմա"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8 8 0 0 1 9.8 4 8.2 8.2 0 1 0 20 14.2z"/></svg></button>
 </header>
 
 <main class="wrap">
@@ -243,7 +269,7 @@ h1{
 
     <article class="card">
       <div class="hd">
-        <div class="ic" aria-hidden="true">🏪</div>
+        <div class="mk" aria-hidden="true" data-i18n="m_trade">T</div>
         <div class="hdt">
           <h3 class="nm"><a href="/armtrade/" data-i18n="n_trade">ArmTrade</a></h3>
           <span class="badge" data-i18n="b_work">Աշխատող համակարգ</span>
@@ -261,7 +287,7 @@ h1{
 
     <article class="card">
       <div class="hd">
-        <div class="ic" aria-hidden="true">💍</div>
+        <div class="mk" aria-hidden="true" data-i18n="m_voski">Ո</div>
         <div class="hdt">
           <h3 class="nm"><a href="/armvoski/" data-i18n="n_voski">ԱրմՈսկի</a></h3>
           <span class="badge" data-i18n="b_work">Աշխատող համակարգ</span>
@@ -280,7 +306,7 @@ h1{
 
     <article class="card">
       <div class="hd">
-        <div class="ic" aria-hidden="true">🔑</div>
+        <div class="mk" aria-hidden="true" data-i18n="m_estate">Է</div>
         <div class="hdt">
           <h3 class="nm"><a href="/armestate/" data-i18n="n_estate">ԱրմԷստեյտ</a></h3>
           <span class="badge b-new" data-i18n="b_new">Երիտասարդ · կառուցվում է</span>
@@ -307,7 +333,7 @@ h1{
   <div class="tier">
     <article class="card tool">
       <div class="hd">
-        <div class="ic" aria-hidden="true">🧮</div>
+        <div class="mk" aria-hidden="true" data-i18n="m_gold">G</div>
         <div class="hdt">
           <h3 class="nm"><a href="/armgold/" target="_blank" rel="noopener" data-i18n="n_gold">ARMGOLD</a></h3>
           <span class="badge b-tool" data-i18n="b_tool">Գործիք</span>
@@ -343,6 +369,9 @@ hy:{
   t2:"Գործիք",
   t2s:"Փոքր ծրագիր՝ մեկ գործի համար։ Հաշվառման համակարգ չէ։",
   n_trade:"ArmTrade", n_voski:"ԱրմՈսկի", n_estate:"ԱրմԷստեյտ", n_gold:"ARMGOLD",
+  /* the mark is the initial of the part that IS the product: all four names share the stem
+     Arm/Արմ/ARM, so a first letter would put the same character in all four squares. */
+  m_trade:"T", m_voski:"Ո", m_estate:"Է", m_gold:"G",
   b_work:"Աշխատող համակարգ", b_new:"Երիտասարդ · կառուցվում է", b_tool:"Գործիք",
   w_trade:"Խանութի ապրանքի հաշվառում և պատվերներ մատակարարից։",
   f_trade:"Ընդունում մատակարարի փաստաթղթով · մնացորդ · ժամկետներ և խմբաքանակներ · գույքագրում · հաշիվներ և ճշտում",
@@ -377,6 +406,7 @@ en:{
   t2:"Tool",
   t2s:"A small program for one job — not a record-keeping system.",
   n_trade:"ArmTrade", n_voski:"ArmVoski", n_estate:"ArmEstate", n_gold:"ARMGOLD",
+  m_trade:"T", m_voski:"V", m_estate:"E", m_gold:"G",
   b_work:"Working system", b_new:"Young · being built", b_tool:"Tool",
   w_trade:"Stock records for a shop, and its orders to the distributor.",
   f_trade:"Goods receipt against the supplier's own document · balances · expiry dates and batches · stock counts · bills and reconciliation",
@@ -411,6 +441,7 @@ ru:{
   t2:"Инструмент",
   t2s:"Небольшая программа для одной задачи — не система учёта.",
   n_trade:"ArmTrade", n_voski:"ArmVoski", n_estate:"ArmEstate", n_gold:"ARMGOLD",
+  m_trade:"T", m_voski:"V", m_estate:"E", m_gold:"G",
   b_work:"Рабочая система", b_new:"Молодая · в разработке", b_tool:"Инструмент",
   w_trade:"Учёт товара в магазине и заказы у дистрибьютора.",
   f_trade:"Приёмка по документу поставщика · остатки · сроки годности и партии · инвентаризация · счета и сверка",
@@ -476,9 +507,8 @@ function applyTheme(t){
   theme=t; set(LS_THEME,t);
   document.body.classList.toggle('dark', t==='dark');
   document.body.classList.toggle('light', t!=='dark');
-  document.getElementById('themebtn').textContent = t==='dark' ? '☀️' : '🌙';
   var m=document.querySelector('meta[name="theme-color"]');
-  if(m) m.setAttribute('content', t==='dark' ? '#0B0F17' : '#F4F6F8');
+  if(m) m.setAttribute('content', t==='dark' ? '#14161A' : '#FFFEFC');
 }
 
 document.getElementById('langseg').addEventListener('click', function(e){
