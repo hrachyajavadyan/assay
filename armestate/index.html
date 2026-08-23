@@ -2088,6 +2088,22 @@ button,.btn,.chip,input,select,textarea,.seg,.seg button,.roleswitch,
    tiles hold a LETTER now — Ա, А, K — so the stack is the product's own typeface, or an
    initial in one language renders in a different face from the same initial in another. */
 .pav,.empty .em,.logomark,nav .icw{font-family:var(--font)}
+
+/* ── two things the token sweep could not reach ──────────────────────────── */
+/* .btn.small.primary is (0,3,0) and outranks .btn.primary above, so a row
+   action kept rendering as an accent-tinted box instead of a written link. */
+.btn.small.primary,.btn.small.cyan,.btn.small.green,.btn.small.violet{
+  background:var(--ink); color:var(--bg); border-color:var(--ink); border-radius:0;
+}
+/* «a dot stays a dot» was written for a status dot. In this suite .dot is a
+   COUNT — a number in a pill — and a number is not a dot. */
+.dot{
+  border-radius:0; background:none; color:var(--danger);
+  border:0; box-shadow:none; padding:0 0 0 3px;
+  min-width:0; width:auto; height:auto; font-weight:700;
+}
+.okdot,.onode,.tbtn .okdot,.spark i{border-radius:var(--r-pill)}
+
 </style>
 </head>
 <body class="light">
