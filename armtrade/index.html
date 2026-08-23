@@ -1544,7 +1544,10 @@ body{font-variant-numeric:tabular-nums lining-nums}
 .btn.ghost,.btn.ghost.full{
   background:none; border:0; border-radius:0;
   color:var(--acc-text); font-weight:600;
-  min-height:44px; padding:0; width:auto; max-width:100%;
+  /* a written link is only as wide as its word, and «Close» is 39px in English
+     while «Փակել» is 55 — the sheet's only exit fell under the tap floor in one
+     language and not the other. The floor is on the control, not on the word. */
+  min-height:44px; min-width:44px; padding:0; width:auto; max-width:100%;
   display:inline-flex; justify-content:flex-start; text-align:left;
   box-shadow:none;
 }
