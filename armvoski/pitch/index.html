@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F4F6F8">
+<meta name="theme-color" content="#FFFEFC">
 <meta name="description" content="ԱրմՈսկի — ոսկերչական խանութի հաշվառում քաշով և հարգով։ Մեկ էջ՝ խնդիրը, լուծումը, տարբերությունը։">
 <title>ԱրմՈսկի — մեկ էջով</title>
 <link rel="icon" href="data:,">
@@ -21,139 +21,187 @@
   src:url(/armtrade/vendor/fonts/noto-sans-armenian-armenian-wght-normal.woff2) format('woff2');
   unicode-range:U+0308,U+0530-058F,U+2010,U+2024,U+25CC,U+FB13-FB17}
 
+/* ============ tokens: the LEDGER skin, the same one the products now wear ============
+   Decided 20 Aug 2026: the products replace a paper notebook, so they are built like one.
+   Ruled blocks instead of cards, ink instead of a palette, figures that align. Two colours
+   carry meaning and nothing else does. The one-pager is the sheet a shopkeeper is handed
+   across a counter, so it is literally a ledger page: rules, not boxes.
+   A document is READ, not operated, so `layer.css` is not pasted in: these are the document
+   column of /root/work/ledger/SPEC-DOCS.md, applied by hand, to the digit. */
 :root{
-  --bg:#F4F6F8; --surface:#FFFFFF; --surface-2:#F1F4F8;
-  --ink:#0E1726; --muted:#54607A; --dim:#5D6880;
-  --sep:#E6EAF0; --stroke:#E1E6EE; --stroke2:#C9D2E0;
-  --acc:#A85A07; --acc-ink:#FFFFFF; --acc-tint:#FFF4E3; --acc-line:#EBCFA4; --acc-text:#8A4B00;
-  --sh-1:0 1px 2px rgba(14,23,38,.06); --sh-2:0 4px 16px rgba(14,23,38,.08);
-  --focus:0 0 0 3px rgba(168,90,7,.30);
+  --bg:#FFFEFC;
+  --surface:#FFFEFC;          /* no card fill: a block sits on the page */
+  --surface-2:#F5F3EE;        /* the one quiet fill: the switcher's trough */
+  --ink:#161A1F;              /* 17.3:1 on --bg */
+  --muted:#5E646E;            /* 5.9:1 */
+  --dim:#666C76;              /* 5.3:1 — never lighter than this */
+  --sep:#DFDBD2;
+  --stroke:#DFDBD2;
+  --stroke2:#C6C1B6;
+  --acc:#1E3A5F;              /* ballpoint blue · 11.4:1 on --bg */
+  --acc-ink:#FFFEFC;
+  --acc-tint:#EFF2F6;
+  --acc-line:#C3CDDA;
+  --acc-text:#1E3A5F;
+  --danger:#9B2C1E;           /* correction red · the ONLY alert colour */
+  --focus:0 0 0 2px var(--bg),0 0 0 4px var(--acc);
   --font:'Inter','Noto Sans Armenian',-apple-system,'Segoe UI',Roboto,sans-serif;
-  --emoji:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",var(--font);
+  --bw:1px;
+  --ls-caps:1.3px;
   --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s10:40px;
 }
 body.dark{
-  --bg:#0B0F17; --surface:#161C2A; --surface-2:#1E2637;
-  --ink:#E8EDF7; --muted:#A3B0C7; --dim:#8B97AE;
-  --sep:#242D40; --stroke:#242D40; --stroke2:#313C55;
-  --acc:#F0A93B; --acc-ink:#1A1205; --acc-tint:#2A1F0C; --acc-line:#5A431A; --acc-text:#F5C06A;
-  --sh-1:0 1px 2px rgba(0,0,0,.30); --sh-2:0 6px 20px rgba(0,0,0,.35);
-  --focus:0 0 0 3px rgba(240,169,59,.35);
+  --bg:#14161A;
+  --surface:#14161A;
+  --surface-2:#1C1F25;
+  --ink:#E9E7E2;              /* 14.7:1 */
+  --muted:#9BA1AB;            /* 7.0:1 */
+  --dim:#8A9099;              /* 5.6:1 */
+  --sep:#2A2E35;
+  --stroke:#2A2E35;
+  --stroke2:#3A3F48;
+  --acc:#9FC0E8;
+  --acc-ink:#10141A;
+  --acc-tint:#1A2130;
+  --acc-line:#31405A;
+  --acc-text:#AECBEE;         /* 10.9:1 */
+  --danger:#E4897C;
 }
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);
-  font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  font-size:16px;line-height:1.55;
+  font-variant-numeric:tabular-nums lining-nums;   /* a ledger's figures align */
+  -webkit-font-smoothing:antialiased}
 h1,h2,h3,p,ul{margin:0}
 img{max-width:100%;height:auto;display:block}
-a{color:var(--acc-text)}
+a{color:var(--acc-text);text-decoration:underline;text-underline-offset:3px;
+  text-decoration-thickness:1px}
+
+/* the one mark on this page: the theme control, which cannot be labelled in a 44px square */
+.ic{width:22px;height:22px;flex:0 0 auto;display:inline-block;
+  fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
 
 .top{display:flex;align-items:center;justify-content:flex-end;gap:var(--s2);max-width:840px;
-  margin:0 auto;padding:var(--s3) var(--s4) 0}
-.seg{display:flex;background:var(--surface);border:1px solid var(--stroke);border-radius:12px;
-  padding:3px;box-shadow:var(--sh-1)}
-.seg button{position:relative;min-height:38px;min-width:48px;padding:0 var(--s3);background:none;
-  border:none;border-radius:9px;cursor:pointer;font-family:var(--font);font-size:14px;
-  font-weight:700;letter-spacing:.3px;color:var(--muted)}
-.seg button[aria-pressed="true"]{background:var(--acc);color:var(--acc-ink)}
+  margin:0 auto;padding:var(--s3) var(--s4);border-bottom:var(--bw) solid var(--ink)}
+.seg{display:flex;flex:none;background:var(--surface-2);border:var(--bw) solid var(--stroke);
+  border-radius:0;padding:2px;box-shadow:none}
+.seg button{position:relative;min-height:38px;min-width:46px;padding:0 var(--s3);background:none;
+  border:none;border-radius:0;cursor:pointer;font-family:var(--font);font-size:14px;
+  font-weight:600;letter-spacing:var(--ls-caps);color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--acc-text);font-weight:700}
 /* the 44px tap floor is met by an invisible extension, so the control stays visually compact */
 .seg button::before,.tbtn::before{content:"";position:absolute;left:0;right:0;top:50%;height:44px;
   transform:translateY(-50%)}
-.tbtn{position:relative;width:44px;height:44px;display:flex;align-items:center;
-  justify-content:center;background:var(--surface);border:1px solid var(--stroke);
-  border-radius:12px;cursor:pointer;font-size:18px;font-family:var(--emoji);line-height:1;
-  box-shadow:var(--sh-1)}
+.tbtn{position:relative;flex:none;width:44px;height:44px;display:flex;align-items:center;
+  justify-content:center;background:none;border:0;border-radius:0;color:var(--ink);
+  padding:0;cursor:pointer;line-height:1}
 .seg button:focus-visible,.tbtn:focus-visible,a:focus-visible{outline:none;box-shadow:var(--focus)}
 
 .sheet{max-width:840px;margin:0 auto;padding:var(--s5) var(--s4) var(--s10)}
-.head{display:flex;align-items:flex-start;gap:var(--s3);margin-bottom:var(--s4)}
-.mark{width:52px;height:52px;flex:0 0 52px;border-radius:14px;background:var(--acc);
-  color:var(--acc-ink);display:flex;align-items:center;justify-content:center;
-  font-size:26px;font-weight:800;line-height:1}
-h1{font-size:clamp(26px,7.4vw,34px);line-height:1.1;letter-spacing:-.6px;font-weight:700}
+.head{display:flex;align-items:flex-start;gap:var(--s3);margin-bottom:var(--s4);
+  padding-bottom:var(--s3);border-bottom:var(--bw) solid var(--ink)}
+/* the product mark is the initial of the part that IS the product, in a ruled square —
+   the same treatment the hub gives all four names and the app gives every line it has to
+   identify. No fill, no radius, no colour. */
+.mark{width:48px;height:48px;flex:0 0 48px;border-radius:0;background:none;
+  border:var(--bw) solid var(--stroke2);color:var(--muted);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:600;line-height:1}
+h1{font-size:clamp(26px,7.4vw,34px);line-height:1.15;letter-spacing:-.4px;font-weight:600}
 .tag{font-size:15px;color:var(--muted);margin-top:2px}
 
-h2{font-size:17px;font-weight:700;letter-spacing:-.1px;margin:var(--s6) 0 var(--s2);
-  color:var(--acc-text)}
+/* a section label is a ledger column heading: quiet, uppercase, tracked, above a rule */
+h2{font-size:14px;font-weight:600;line-height:1.25;letter-spacing:var(--ls-caps);
+  text-transform:uppercase;color:var(--muted);
+  margin:var(--s5) 0 var(--s2);padding-top:var(--s3);border-top:var(--bw) solid var(--sep)}
 p{margin:var(--s2) 0;max-width:64ch}
-.big{font-size:18px;line-height:1.45;max-width:48ch}
+.big{font-size:17px;line-height:1.45;max-width:48ch}
 
 .cols{display:grid;gap:var(--s5)}
 @media(min-width:760px){ .cols{grid-template-columns:1fr 1fr;align-items:start} }
 
 ul.plain{list-style:none;padding:0;margin:var(--s2) 0}
 ul.plain li{position:relative;padding-left:24px;margin:var(--s2) 0;max-width:60ch}
+ul.plain li b{font-weight:600}
 ul.plain li::before{content:"·";position:absolute;left:7px;top:-4px;font-size:22px;
-  color:var(--acc-text)}
+  color:var(--muted)}
 
-.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s2);margin:var(--s3) 0}
+/* four figures in a row, ruled like a ledger's columns: a hairline above each, no box */
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s3) var(--s4);margin:var(--s3) 0}
 @media(min-width:520px){ .facts{grid-template-columns:repeat(4,1fr)} }
-.fact{background:var(--surface);border:1px solid var(--stroke);border-radius:14px;
-  padding:var(--s3);box-shadow:var(--sh-1)}
-.fact b{display:block;font-size:24px;line-height:1.1;letter-spacing:-.5px;
-  font-variant-numeric:tabular-nums}
+.fact{background:none;border:0;border-top:var(--bw) solid var(--ink);border-radius:0;
+  padding:var(--s2) 0 0;box-shadow:none}
+.fact b{display:block;font-size:24px;line-height:1.1;letter-spacing:-.5px;font-weight:600;
+  font-variant-numeric:tabular-nums lining-nums}
 .fact span{display:block;font-size:14px;color:var(--muted);margin-top:var(--s1);line-height:1.35}
 
-.note{border-left:3px solid var(--acc-line);background:var(--acc-tint);
-  border-radius:0 12px 12px 0;padding:var(--s3) var(--s4);margin:var(--s3) 0;
-  font-size:15px;max-width:64ch}
-.card{background:var(--surface);border:1px solid var(--stroke);border-radius:16px;
-  padding:var(--s4) var(--s5);box-shadow:var(--sh-1);margin:var(--s3) 0}
-.card h3{font-size:16px;font-weight:700;margin-bottom:var(--s1)}
-.card p{font-size:15px}
+/* a quoted block keeps a 2px left rule and nothing else */
+.note{border-left:2px solid var(--stroke2);background:none;border-radius:0;
+  padding:2px 0 2px var(--s3);margin:var(--s3) 0;font-size:15px;color:var(--ink);max-width:64ch}
+.note b{color:var(--ink);font-weight:600}
 
+/* a screenshot is a plate: one hairline, no radius, no shadow, no fill behind it */
 figure{margin:var(--s4) 0 0}
-.shot{display:inline-block;max-width:250px;width:100%;border:1px solid var(--stroke2);
-  border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:var(--sh-2)}
+.shot{display:inline-block;max-width:250px;width:100%;border:var(--bw) solid var(--stroke2);
+  border-radius:0;overflow:hidden;background:none;box-shadow:none}
 figcaption{font-size:14px;color:var(--muted);margin-top:var(--s2);max-width:42ch;line-height:1.45}
 
-.contact{margin-top:var(--s6);padding-top:var(--s4);border-top:2px solid var(--acc-line)}
-.contact .row{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);margin-top:var(--s2)}
-.contact a{min-height:44px;display:inline-flex;align-items:center;font-weight:600;font-size:15px}
+.contact{margin-top:var(--s6);padding-top:var(--s4);border-top:var(--bw) solid var(--ink)}
+.contact h2{margin-top:0;padding-top:0;border-top:0}
+.contact .row{display:flex;flex-wrap:wrap;gap:0 var(--s5);margin-top:var(--s2)}
+/* an English label is far shorter than the Armenian one, so the floor is put on the control
+   and not left to the width of the word. */
+.contact a{min-height:44px;min-width:44px;display:inline-flex;align-items:center;
+  font-weight:600;font-size:15px}
 .write{margin-top:var(--s4);font-size:15px;color:var(--muted)}
-.write .line{display:block;border-bottom:1px dashed var(--stroke2);height:30px;
+.write .line{display:block;border-bottom:var(--bw) solid var(--stroke2);height:30px;
   max-width:420px;margin-top:var(--s1)}
 
 .small{font-size:14px;color:var(--dim);margin-top:var(--s5);max-width:64ch}
 
-/* ---- one A4 page. The spacing SCALE is redefined for print rather than each rule
-   being overridden one at a time, so the whole sheet contracts evenly. ---- */
+/* ---- one A4 page, in all three languages. The spacing SCALE is redefined for print rather
+   than each rule being overridden one at a time, so the whole sheet contracts evenly. The
+   ledger contracts further than the old skin did, because a ruled block spends no padding
+   on a fill it no longer has. ---- */
 @media print{
   :root{--s1:2px;--s2:4px;--s3:6px;--s4:8px;--s5:10px;--s6:11px;--s8:12px;--s10:14px}
   @page{size:A4;margin:11mm}
   .top{display:none}
   body{background:#fff;color:#000;font-size:9pt;line-height:1.27}
   .sheet{max-width:none;padding:0}
-  .head{margin-bottom:3mm}
-  .mark{width:38px;height:38px;flex:0 0 38px;font-size:19px;border-radius:9px;
-        background:#fff;color:#000;border:1.2pt solid #000}
+  .head{margin-bottom:2.4mm;padding-bottom:1.6mm;border-bottom:1.2pt solid #000}
+  .mark{width:38px;height:38px;flex:0 0 38px;font-size:18px;border-radius:0;
+        background:#fff;color:#000;border:1pt solid #000}
   h1{font-size:19pt}
-  .tag{font-size:9pt}
-  h2{font-size:9.5pt;margin:2.4mm 0 .6mm;color:#000;
-     border-bottom:.6pt solid #999;padding-bottom:.5mm}
+  .tag{font-size:9pt;color:#333}
+  h2{font-size:8.4pt;letter-spacing:1.1px;text-transform:uppercase;color:#000;
+     margin:2.4mm 0 .8mm;padding-top:.9mm;border-top:.6pt solid #999;border-bottom:0}
   p{margin:.9mm 0;max-width:none}
   .big{font-size:9.8pt;line-height:1.3;max-width:none}
   ul.plain li{margin:1mm 0;padding-left:4mm;max-width:none}
-  ul.plain li::before{left:1mm;font-size:12pt;top:-1mm}
+  ul.plain li::before{left:1mm;font-size:12pt;top:-1mm;color:#000}
   .cols{grid-template-columns:1fr 1fr;gap:5mm}
   .facts{grid-template-columns:repeat(4,1fr);gap:2mm;margin:1.6mm 0}
-  .fact{padding:1.8mm;border-radius:2mm;box-shadow:none;border-color:#bbb;background:#fff}
+  .fact{padding:1mm 0 0;border-radius:0;box-shadow:none;background:#fff;
+        border:0;border-top:.8pt solid #000}
   .fact b{font-size:12.5pt}
-  .fact span{font-size:7.6pt;line-height:1.25;margin-top:.6mm}
+  .fact span{font-size:7.6pt;line-height:1.25;margin-top:.6mm;color:#333}
   .note{box-shadow:none;background:#fff;border-left:1.4pt solid #000;border-radius:0;
-        padding:1.6mm 3mm;margin:1.6mm 0;font-size:9pt;max-width:none}
-  .small{font-size:7.8pt;margin-top:1.6mm;max-width:none}
+        padding:0 0 0 3mm;margin:1.6mm 0;font-size:9pt;max-width:none}
+  .small{font-size:7.8pt;margin-top:1.6mm;max-width:none;color:#333}
   figure{margin:2.5mm 0 0}
-  .shot{max-width:40mm;box-shadow:none}
-  figcaption{font-size:7.6pt;margin-top:1mm;line-height:1.3}
+  .shot{max-width:40mm;box-shadow:none;border:.6pt solid #999;border-radius:0}
+  figcaption{font-size:7.6pt;margin-top:1mm;line-height:1.3;color:#333}
   a{color:#000;text-decoration:none}
   .contact{border-top:1.2pt solid #000;margin-top:2.6mm;padding-top:1.6mm}
-  .contact a{min-height:0;font-size:8.6pt}
+  .contact a{min-height:0;min-width:0;font-size:8.6pt}
   .contact .row{gap:1mm 6mm;margin-top:1mm}
-  .write{margin-top:2mm;font-size:8.6pt}
-  .write .line{height:5mm;max-width:70mm}
+  .write{margin-top:2mm;font-size:8.6pt;color:#000}
+  .write .line{height:5mm;max-width:70mm;border-bottom:.6pt solid #666}
 }
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body class="light">
@@ -164,7 +212,7 @@ figcaption{font-size:14px;color:var(--muted);margin-top:var(--s2);max-width:42ch
     <button type="button" data-lang="en" aria-pressed="false">ENG</button>
     <button type="button" data-lang="ru" aria-pressed="false">РУС</button>
   </div>
-  <button class="tbtn" id="themebtn" type="button" aria-label="Թեմա">🌙</button>
+  <button class="tbtn" id="themebtn" type="button" aria-label="Թեմա"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8 8 0 0 1 9.8 4 8.2 8.2 0 1 0 20 14.2z"/></svg></button>
 </div>
 
 <div class="sheet">
@@ -244,7 +292,7 @@ figcaption{font-size:14px;color:var(--muted);margin-top:var(--s2);max-width:42ch
       </div>
 
       <figure>
-        <span class="shot"><img src="img/buyact.png" data-i18n-alt="alt_buyact" alt="Գնման ակտ № ԳԱ-2026-0042՝ կողմերով, աղյուսակով և գումարը բառերով" width="585" height="770"></span>
+        <span class="shot"><img src="img/buyact.png" data-i18n-alt="alt_buyact" alt="Գնման ակտ № ԳԱ-2026-0042՝ կողմերով, աղյուսակով և գումարը բառերով" width="585" height="771"></span>
         <figcaption data-i18n="cap_buyact">Գնման ակտի վերին մասը՝ այնպես, ինչպես տպվում է հեռախոսից։ Գումարը բառերով՝ հայերեն։</figcaption>
       </figure>
     </div>
@@ -276,7 +324,7 @@ var LS_LANG='assay_site_lang', LS_THEME='suite_theme', LS_GOLD='assay_lang';
 function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
 
-var T = {"c_title": {"hy": "ԱրմՈսկի — մեկ էջով", "en": "ArmVoski — one page", "ru": "ArmVoski — на одной странице"}, "brand": {"hy": "ԱրմՈսկի", "en": "ArmVoski", "ru": "ArmVoski"}, "tag": {"hy": "Ոսկերչական խանութի հաշվառում՝ քաշով և հարգով", "en": "Record-keeping for a jewellery shop, by weight and fineness (հարգ)", "ru": "Учёт ювелирного магазина по весу и пробе (հարգ)"}, "h_problem": {"hy": "Խնդիրը", "en": "The problem", "ru": "Задача"}, "p_prob1": {"hy": "Ոսկերիչը ջարդոն է գնում վաճառասեղանի մոտ եկած մարդուց և վաճառում պատրաստի իր։ 2026 թ. հուլիսի 1-ից ոսկու ԱԱՀ-ն հաշվվում է մարժայից՝ վաճառքի գնի և փաստաթղթավորված ինքնարժեքի տարբերությունից։ ԱԱՀ վճարող խանութի համար այդ փաստաթուղթը դառնում է հարկի հիմքը։", "en": "A jeweller buys scrap from whoever walks up to the counter and sells finished pieces. From 1 July 2026, VAT on gold is worked out on the margin — the difference between the selling price and the documented acquisition cost. For a shop that pays VAT, that document becomes what the tax rests on.", "ru": "Ювелир покупает лом у подошедшего к прилавку человека и продаёт готовые изделия. С 1 июля 2026 года НДС по золоту считается с маржи — разницы между ценой продажи и документально подтверждённой себестоимостью. Для магазина, платящего НДС, этот документ становится основанием налога."}, "p_prob2": {"hy": "Այդ գրառումը մինչ օրս պահվում է տետրում կամ ընդհանրապես չի պահվում։ Իսկ սովորական պահեստի ծրագիրը հարցնում է «քանի՞ հատ» — հարց, որին ոսկերչական խանութը պատասխան չունի։", "en": "That record is still kept in a notebook, or not kept at all. And an ordinary stock program asks “how many pieces?” — a question a jewellery shop has no answer to.", "ru": "Эта запись до сих пор ведётся в тетради или не ведётся вовсе. А обычная складская программа спрашивает «сколько штук?» — вопрос, на который у ювелирного магазина ответа нет."}, "h_what": {"hy": "Ի՞նչ է անում ԱրմՈսկին", "en": "What ArmVoski does", "ru": "Что делает ArmVoski"}, "k_price": {"hy": "<b>Օրվա գինը</b> — մեկ թիվ 999-ի համար, մնացած հարգերն ածանցվում են։\n        Վաճառքի գին = գին + հավելագին. գնման գին = գին − զեղչ։", "en": "<b>The day's rate</b> — one number for 999, every other fineness derived from it. Sell price = rate + margin; buy price = rate − discount.", "ru": "<b>Курс дня</b> — одно число для 999, остальные пробы выводятся из него. Цена продажи = курс + наценка; цена закупки = курс − дисконт."}, "k_line": {"hy": "<b>Ամեն հաշվարկ բացվում է մեկ տողով</b> — քաշը, հարգը, գինը, արդյունքը։\n        Ոսկերիչն ու հաճախորդը երկուսն էլ ստուգում են։", "en": "<b>Every calculation opens as one line</b> — weight, fineness, price, result. Jeweller and customer both check it.", "ru": "<b>Каждый расчёт раскрывается одной строкой</b> — вес, проба, цена, результат. Ювелир и клиент проверяют оба."}, "k_buy": {"hy": "<b>Գնում բնակչությունից</b> — կշռում, հաշվարկ հաճախորդի աչքի առաջ, և տեղում տպվող\n        <b>գնման ակտ</b>։ Վճարած գումարը դառնում է այդ մետաղի ինքնարժեքը՝ ակտի համարով կապված։", "en": "<b>Buying from the public</b> — weighing, the arithmetic in front of the customer, and a <b>purchase act</b> printed on the spot. What you paid becomes that metal's acquisition cost, tied to the act's number.", "ru": "<b>Закупка у населения</b> — взвешивание, расчёт на глазах у клиента и <b>акт закупки</b>, печатаемый тут же. Уплаченная сумма становится себестоимостью этого металла и привязывается к номеру акта."}, "k_stock": {"hy": "<b>Մնացորդ քաշով և հարգով</b> — համախառն, քարեր, զուտ. արժեքը՝ մաքուր մետաղով։", "en": "<b>A balance by weight and fineness</b> — gross, stones, net; the value in pure metal.", "ru": "<b>Остаток по весу и пробе</b> — брутто, камни, нетто; стоимость в чистом металле."}, "k_mark": {"hy": "<b>Հարգադրոշմ</b> — հանձնման շրջափուլ, օրերի հաշվիչ, ազատված իրերի ինքնաշխատ առանձնացում։", "en": "<b>Hallmarking (հարգադրոշմավորում)</b> — the send-out cycle, a day counter, exempt pieces separated automatically.", "ru": "<b>Клеймение (հարգադրոշմավորում)</b> — цикл передачи, счётчик дней, освобождённые изделия отделяются автоматически."}, "k_count": {"hy": "<b>Գույքագրում</b> — կույր հաշվարկ, որը դառնում է <b>գույքագրման ակտ</b>՝\n        տարբերությունը գրամով, հատով և դրամով։", "en": "<b>Stock count</b> — a blind count that becomes a <b>stock count act</b>: the difference in grams, in pieces and in dram.", "ru": "<b>Инвентаризация</b> — слепой пересчёт, который становится <b>актом инвентаризации</b>: разница в граммах, штуках и драмах."}, "k_repair": {"hy": "<b>Վերանորոգում</b> — հաճախորդի մետաղը որպես պահպանություն, երբեք ոչ որպես պաշար։", "en": "<b>Repairs</b> — the customer's metal held in custody, never as stock.", "ru": "<b>Ремонт</b> — металл клиента на ответственном хранении, никогда не как запас."}, "k_debt": {"hy": "<b>Պարտքեր</b> — մատակարարի մնացորդը հաշվարկվում է հաշիվներից ու վճարումներից,\n        երբեք չի պահվում որպես առանձին թիվ։", "en": "<b>Debts</b> — a supplier's balance is computed from bills and payments, never stored as a separate number.", "ru": "<b>Долги</b> — баланс поставщика считается из счетов и платежей, никогда не хранится отдельным числом."}, "h_num": {"hy": "Թվեր՝ վերցված հենց ծրագրի վարքից", "en": "Numbers taken from the app's own behaviour", "ru": "Числа из поведения самой программы"}, "f1": {"hy": "ոսկու և արծաթի օրինական հարգեր, 583-ը՝ 585-ից առանձին", "en": "legal finenesses for gold and silver, 583 kept apart from 585", "ru": "законных проб золота и серебра, 583 отдельно от 585"}, "f2v": {"hy": "0.001 գ", "en": "0.001 g", "ru": "0.001 г"}, "f2": {"hy": "քաշի պահպանման ճշտությունը", "en": "the precision weights are stored to", "ru": "точность хранения веса"}, "f3": {"hy": "տպվող փաստաթուղթ՝ երկու ակտ, հանձնման ցուցակ, անդորրագիր, քաղվածք", "en": "printable documents: two acts, a hand-over list, a slip, a statement", "ru": "печатных документа: два акта, список передачи, квитанция, выписка"}, "f4": {"hy": "տվյալ, որ ուղարկվում է որևէ պետական մարմին", "en": "items of data sent to any state body", "ru": "данных отправляется в государственные органы"}, "p_nonum": {"hy": "Այս էջում այլ թիվ չկա։ Շուկայի ծավալ, օգտագործողների քանակ և խնայողության\n  տոկոս չենք գրում, որովհետև չունենք։", "en": "There is no other number on this page. We give no market size, no user count and no savings percentage, because we do not have them.", "ru": "Других чисел на этой странице нет. Объём рынка, число пользователей и процент экономии мы не пишем, потому что их у нас нет."}, "h_vs_note": {"hy": "Ինչո՞վ է տարբերվում տետրից", "en": "How is it different from a notebook?", "ru": "Чем отличается от тетради?"}, "p_vs_note": {"hy": "Տետրը չի ասում, թե ինչ է մնացել, չի հիշեցնում, որ մատանին 9 օր տեսչությունում է,\n      և ակտ չի տպում։ ԱրմՈսկին ամեն շարժ գրում է <b>մեկ մատյանում, որից ոչինչ չի ջնջվում</b>.\n      մնացորդը միշտ այդ մատյանի գումարն է, ուստի էկրանն ինքն իրեն չի հակասում։", "en": "A notebook does not say what is left, does not remind you the ring has been at the assay office for 9 days, and prints no act. ArmVoski writes every movement into <b>one book that nothing is deleted from</b>: the balance is always the sum of that book, so the screen cannot contradict itself.", "ru": "Тетрадь не говорит, что осталось, не напоминает, что кольцо 9 дней в инспекции, и акта не печатает. ArmVoski пишет каждое движение в <b>одну книгу, из которой ничего не удаляется</b>: остаток всегда равен сумме этой книги, поэтому экран сам себе не противоречит."}, "h_vs_gold": {"hy": "Ինչո՞վ է տարբերվում ARMGOLD-ից", "en": "How is it different from ARMGOLD?", "ru": "Чем отличается от ARMGOLD?"}, "p_vs_gold": {"hy": "ARMGOLD-ը գնի հաշվիչ է և վաճառքի գրանցամատյան, և լավն է հենց դրանում։\n      <b>Բայց պահեստ չի վարում</b> — մնացորդ, ինքնարժեք, գնման ակտ, գույքագրում և հարգադրոշմ\n      այնտեղ չկան։ ԱրմՈսկին վերցնում է ARMGOLD-ի գնի բանաձևը անփոփոխ և դրա շուրջ կառուցում\n      ամբողջ խանութը։ Երկուսը առանձին ծրագրեր են՝ առանձին տվյալներով։", "en": "ARMGOLD is a price calculator and a sales register, and it is good at that. <b>But it keeps no stock</b> — no balance, no acquisition cost, no purchase act, no stock count, no hallmarking. ArmVoski takes ARMGOLD's price formula unchanged and builds the whole shop around it. They are two separate programs with separate data.", "ru": "ARMGOLD — калькулятор цены и журнал продаж, и в этом он хорош. <b>Но склад он не ведёт</b>: остатка, себестоимости, акта закупки, инвентаризации и клеймения там нет. ArmVoski берёт формулу цены ARMGOLD без изменений и строит вокруг неё весь магазин. Это две отдельные программы с отдельными данными."}, "h_today": {"hy": "Որտեղ է ծրագիրն այսօր", "en": "Where the app stands today", "ru": "Где программа сегодня"}, "p_today": {"hy": "Աշխատում է՝ օրվա գին, վաճառք, գնում ակտով, դարակ, գույքագրում ակտով, հարգադրոշմ,\n      վերանորոգում, պարտքեր։ Բացվում է առանց ինտերնետի։ <b>Դեռ չկա.</b> մատակարարից ընդունումը,\n      համաժամացումը, լուսանկարները, CSV-ն։ Ծրագիրը հարկ չի հաշվարկում — այն վարում է\n      այն գրառումը, որի վրա հարկը հենվում է։", "en": "Working: the day's rate, sales, buying with an act, the tray, a stock count with an act, hallmarking, repairs, debts. It opens without an internet connection. <b>Not there yet:</b> goods receipt from a supplier, sync between devices, photos, CSV. The app computes no tax — it keeps the record the tax rests on.", "ru": "Работает: курс дня, продажа, закупка с актом, витрина, инвентаризация с актом, клеймение, ремонт, долги. Открывается без интернета. <b>Ещё нет:</b> приёмки от поставщика, синхронизации, фотографий, CSV. Программа не считает налог — она ведёт запись, на которую налог опирается."}, "h_one": {"hy": "Մեկ բան, որ ուրիշ տեղ չկա", "en": "One thing that exists nowhere else", "ru": "Одно, чего нет больше нигде"}, "p_note": {"hy": "Երբ ոսկերիչը ձեռքով գին է գրում, որը <b>հաշվարկվածի 80%-ից ցածր է</b>, ծրագիրը զգուշացնում է\n        և ցույց տալիս երկու թիվն էլ։ <b>Չի արգելում</b> — վաճառքը շարունակվում է, բայց երկու թիվն էլ\n        մնում է վաճառքի գրառման մեջ։ Ոսկերիչն այդ մասին իմանում է վաճառելուց առաջ, ոչ թե տարվա վերջում։", "en": "When a jeweller types a price by hand that is <b>below 80% of the computed one</b>, the app warns and shows both numbers. <b>It does not block</b> — the sale goes through, but both numbers stay in the sale record. The jeweller finds out before selling, not at the end of the year.", "ru": "Когда ювелир вписывает вручную цену <b>ниже 80% от расчётной</b>, программа предупреждает и показывает оба числа. <b>Не запрещает</b> — продажа продолжается, но оба числа остаются в записи продажи. Ювелир узнаёт об этом до продажи, а не в конце года."}, "alt_buyact": {"hy": "Գնման ակտ № ԳԱ-2026-0042՝ կողմերով, աղյուսակով և գումարը բառերով", "en": "Purchase act № ԳԱ-2026-0042: both parties, a table and the amount in words", "ru": "Акт закупки № ԳԱ-2026-0042: обе стороны, таблица и сумма прописью"}, "cap_buyact": {"hy": "Գնման ակտի վերին մասը՝ այնպես, ինչպես տպվում է հեռախոսից։ Գումարը բառերով՝ հայերեն։", "en": "The top of the purchase act as it prints from the phone. The amount in words is Armenian.", "ru": "Верх акта закупки так, как он печатается с телефона. Сумма прописью — по-армянски."}, "h_contact": {"hy": "Կապ", "en": "Contact", "ru": "Контакты"}, "l_open": {"hy": "Բացել ծրագիրը՝ assay-9e6.pages.dev/armvoski/", "en": "Open the app: assay-9e6.pages.dev/armvoski/", "ru": "Открыть программу: assay-9e6.pages.dev/armvoski/"}, "l_about": {"hy": "Ի՞նչ է սա", "en": "What is this?", "ru": "Что это?"}, "l_guide": {"hy": "Ուղեցույց (ՀԱՅ · ENG · РУС)", "en": "User guide (ՀԱՅ · ENG · РУС)", "ru": "Руководство (ՀԱՅ · ENG · РУС)"}, "l_hub": {"hy": "Բոլոր ծրագրերը", "en": "All the programs", "ru": "Все программы"}, "w_contact": {"hy": "Ներկայացնողի կոնտակտը՝", "en": "Presenter's contact:", "ru": "Контакт представляющего:"}};
+var T = {"c_title": {"hy": "ԱրմՈսկի — մեկ էջով", "en": "ArmVoski — one page", "ru": "ArmVoski — на одной странице"}, "brand": {"hy": "ԱրմՈսկի", "en": "ArmVoski", "ru": "ArmVoski"}, "tag": {"hy": "Ոսկերչական խանութի հաշվառում՝ քաշով և հարգով", "en": "Record-keeping for a jewellery shop, by weight and fineness (հարգ)", "ru": "Учёт ювелирного магазина по весу и пробе (հարգ)"}, "h_problem": {"hy": "Խնդիրը", "en": "The problem", "ru": "Задача"}, "p_prob1": {"hy": "Ոսկերիչը ջարդոն է գնում վաճառասեղանի մոտ եկած մարդուց և վաճառում պատրաստի իր։ 2026 թ. հուլիսի 1-ից ոսկու ԱԱՀ-ն հաշվվում է մարժայից՝ վաճառքի գնի և փաստաթղթավորված ինքնարժեքի տարբերությունից։ ԱԱՀ վճարող խանութի համար այդ փաստաթուղթը դառնում է հարկի հիմքը։", "en": "A jeweller buys scrap from whoever walks up to the counter and sells finished pieces. From 1 July 2026, VAT on gold is worked out on the margin — the difference between the selling price and the documented acquisition cost. For a shop that pays VAT, that document becomes what the tax rests on.", "ru": "Ювелир покупает лом у подошедшего к прилавку человека и продаёт готовые изделия. С 1 июля 2026 года НДС по золоту считается с маржи — разницы между ценой продажи и документально подтверждённой себестоимостью. Для магазина, платящего НДС, этот документ становится основанием налога."}, "p_prob2": {"hy": "Այդ գրառումը մինչ օրս պահվում է տետրում կամ ընդհանրապես չի պահվում։ Իսկ սովորական պահեստի ծրագիրը հարցնում է «քանի՞ հատ» — հարց, որին ոսկերչական խանութը պատասխան չունի։", "en": "That record is still kept in a notebook, or not kept at all. And an ordinary stock program asks “how many pieces?” — a question a jewellery shop has no answer to.", "ru": "Эта запись до сих пор ведётся в тетради или не ведётся вовсе. А обычная складская программа спрашивает «сколько штук?» — вопрос, на который у ювелирного магазина ответа нет."}, "h_what": {"hy": "Ի՞նչ է անում ԱրմՈսկին", "en": "What ArmVoski does", "ru": "Что делает ArmVoski"}, "k_price": {"hy": "<b>Օրվա գինը</b> — մեկ թիվ 999-ի համար, մնացած հարգերն ածանցվում են։\n        Վաճառքի գին = գին + հավելագին. գնման գին = գին − զեղչ։", "en": "<b>The day's rate</b> — one number for 999, every other fineness derived from it. Sell price = rate + margin; buy price = rate − discount.", "ru": "<b>Курс дня</b> — одно число для 999, остальные пробы выводятся из него. Цена продажи = курс + наценка; цена закупки = курс − дисконт."}, "k_line": {"hy": "<b>Ամեն հաշվարկ բացվում է մեկ տողով</b> — քաշը, հարգը, գինը, արդյունքը։\n        Ոսկերիչն ու հաճախորդը երկուսն էլ ստուգում են։", "en": "<b>Every calculation opens as one line</b> — weight, fineness, price, result. Jeweller and customer both check it.", "ru": "<b>Каждый расчёт раскрывается одной строкой</b> — вес, проба, цена, результат. Ювелир и клиент проверяют оба."}, "k_buy": {"hy": "<b>Գնում բնակչությունից</b> — կշռում, հաշվարկ հաճախորդի աչքի առաջ, և տեղում տպվող\n        <b>գնման ակտ</b>։ Վճարած գումարը դառնում է այդ մետաղի ինքնարժեքը՝ ակտի համարով կապված։", "en": "<b>Buying from the public</b> — weighing, the arithmetic in front of the customer, and a <b>purchase act</b> printed on the spot. What you paid becomes that metal's acquisition cost, tied to the act's number.", "ru": "<b>Закупка у населения</b> — взвешивание, расчёт на глазах у клиента и <b>акт закупки</b>, печатаемый тут же. Уплаченная сумма становится себестоимостью этого металла и привязывается к номеру акта."}, "k_stock": {"hy": "<b>Մնացորդ քաշով և հարգով</b> — համախառն, քարեր, զուտ. արժեքը՝ մաքուր մետաղով։", "en": "<b>A balance by weight and fineness</b> — gross, stones, net; the value in pure metal.", "ru": "<b>Остаток по весу и пробе</b> — брутто, камни, нетто; стоимость в чистом металле."}, "k_mark": {"hy": "<b>Հարգադրոշմ</b> — հանձնման շրջափուլ, օրերի հաշվիչ, ազատված իրերի ինքնաշխատ առանձնացում։", "en": "<b>Hallmarking (հարգադրոշմավորում)</b> — the send-out cycle, a day counter, exempt pieces separated automatically.", "ru": "<b>Клеймение (հարգադրոշմավորում)</b> — цикл передачи, счётчик дней, освобождённые изделия отделяются автоматически."}, "k_count": {"hy": "<b>Գույքագրում</b> — կույր հաշվարկ, որը դառնում է <b>գույքագրման ակտ</b>՝\n        տարբերությունը գրամով, հատով և դրամով։", "en": "<b>Stock count</b> — a blind count that becomes a <b>stock count act</b>: the difference in grams, in pieces and in dram.", "ru": "<b>Инвентаризация</b> — слепой пересчёт, который становится <b>актом инвентаризации</b>: разница в граммах, штуках и драмах."}, "k_repair": {"hy": "<b>Վերանորոգում</b> — հաճախորդի մետաղը որպես պահպանություն, երբեք ոչ որպես պաշար։", "en": "<b>Repairs</b> — the customer's metal held in custody, never as stock.", "ru": "<b>Ремонт</b> — металл клиента на ответственном хранении, никогда не как запас."}, "k_debt": {"hy": "<b>Պարտքեր</b> — մատակարարի մնացորդը հաշվարկվում է հաշիվներից ու վճարումներից,\n        երբեք չի պահվում որպես առանձին թիվ։", "en": "<b>Debts</b> — a supplier's balance is computed from bills and payments, never stored as a separate number.", "ru": "<b>Долги</b> — баланс поставщика считается из счетов и платежей, никогда не хранится отдельным числом."}, "h_num": {"hy": "Թվեր՝ վերցված հենց ծրագրի վարքից", "en": "Numbers taken from the app's own behaviour", "ru": "Числа из поведения самой программы"}, "f1": {"hy": "ոսկու և արծաթի օրինական հարգեր, 583-ը՝ 585-ից առանձին", "en": "legal finenesses for gold and silver, 583 kept apart from 585", "ru": "законных проб золота и серебра, 583 отдельно от 585"}, "f2v": {"hy": "0.001 գ", "en": "0.001 g", "ru": "0.001 г"}, "f2": {"hy": "քաշի պահպանման ճշտությունը", "en": "the precision weights are stored to", "ru": "точность хранения веса"}, "f3": {"hy": "տպվող փաստաթուղթ՝ երկու ակտ, հանձնման ցուցակ, անդորրագիր, քաղվածք", "en": "printable documents: two acts, a hand-over list, a slip, a statement", "ru": "печатных документа: два акта, список передачи, квитанция, выписка"}, "f4": {"hy": "տվյալ, որ ուղարկվում է որևէ պետական մարմին", "en": "items of data sent to any state body", "ru": "данных отправляется в государственные органы"}, "p_nonum": {"hy": "Այս էջում այլ թիվ չկա։ Շուկայի ծավալ, օգտագործողների քանակ և խնայողության\n  տոկոս չենք գրում, որովհետև չունենք։", "en": "There is no other number on this page. We give no market size, no user count and no savings percentage, because we do not have them.", "ru": "Других чисел на этой странице нет. Объём рынка, число пользователей и процент экономии мы не пишем, потому что их у нас нет."}, "h_vs_note": {"hy": "Ինչո՞վ է տարբերվում տետրից", "en": "How is it different from a notebook?", "ru": "Чем отличается от тетради?"}, "p_vs_note": {"hy": "Տետրը չի ասում, թե ինչ է մնացել, չի հիշեցնում, որ մատանին 9 օր տեսչությունում է,\n      և ակտ չի տպում։ ԱրմՈսկին ամեն շարժ գրում է <b>մեկ մատյանում, որից ոչինչ չի ջնջվում</b>.\n      մնացորդը միշտ այդ մատյանի գումարն է, ուստի էկրանն ինքն իրեն չի հակասում։", "en": "A notebook does not say what is left, does not remind you the ring has been at the assay office for 9 days, and prints no act. ArmVoski writes every movement into <b>one book that nothing is deleted from</b>: the balance is always the sum of that book, so the screen cannot contradict itself.", "ru": "Тетрадь не говорит, что осталось, не напоминает, что кольцо 9 дней в инспекции, и акта не печатает. ArmVoski пишет каждое движение в <b>одну книгу, из которой ничего не удаляется</b>: остаток всегда равен сумме этой книги, поэтому экран сам себе не противоречит."}, "h_vs_gold": {"hy": "Ինչո՞վ է տարբերվում ARMGOLD-ից", "en": "How is it different from ARMGOLD?", "ru": "Чем отличается от ARMGOLD?"}, "p_vs_gold": {"hy": "ARMGOLD-ը գնի հաշվիչ է և վաճառքի գրանցամատյան, և լավն է հենց դրանում։\n      <b>Բայց պահեստ չի վարում</b> — մնացորդ, ինքնարժեք, գնման ակտ, գույքագրում և հարգադրոշմ\n      այնտեղ չկան։ ԱրմՈսկին վերցնում է ARMGOLD-ի գնի բանաձևը անփոփոխ և դրա շուրջ կառուցում\n      ամբողջ խանութը։ Երկուսը առանձին ծրագրեր են՝ առանձին տվյալներով։", "en": "ARMGOLD is a price calculator and a sales register, and it is good at that. <b>But it keeps no stock</b> — no balance, no acquisition cost, no purchase act, no stock count, no hallmarking. ArmVoski takes ARMGOLD's price formula unchanged and builds the whole shop around it. They are two separate programs with separate data.", "ru": "ARMGOLD — калькулятор цены и журнал продаж, и в этом он хорош. <b>Но склад он не ведёт</b>: остатка, себестоимости, акта закупки, инвентаризации и клеймения там нет. ArmVoski берёт формулу цены ARMGOLD без изменений и строит вокруг неё весь магазин. Это две отдельные программы с отдельными данными."}, "h_today": {"hy": "Որտեղ է ծրագիրն այսօր", "en": "Where the app stands today", "ru": "Где программа сегодня"}, "p_today": {"hy": "Աշխատում է՝ օրվա գին, վաճառք, գնում ակտով, դարակ, գույքագրում ակտով, հարգադրոշմ,\n      վերանորոգում, պարտքեր։ Բացվում է առանց ինտերնետի։ <b>Դեռ չկա.</b> մատակարարից ընդունումը,\n      համաժամացումը, լուսանկարները, CSV-ն։ Ծրագիրը հարկ չի հաշվարկում — այն վարում է\n      այն գրառումը, որի վրա հարկը հենվում է։", "en": "Working: the day's rate, sales, buying with an act, the tray, a stock count with an act, hallmarking, repairs, debts. It opens without an internet connection. <b>Not there yet:</b> goods receipt from a supplier, sync between devices, photos, CSV. The app computes no tax — it keeps the record the tax rests on.", "ru": "Работает: курс дня, продажа, закупка с актом, витрина, инвентаризация с актом, клеймение, ремонт, долги. Открывается без интернета. <b>Ещё нет:</b> приёмки от поставщика, синхронизации, фотографий, CSV. Программа не считает налог — она ведёт запись, на которую налог опирается."}, "h_one": {"hy": "Մեկ բան, որ ուրիշ տեղ չկա", "en": "One thing that exists nowhere else", "ru": "Одно, чего нет больше нигде"}, "p_note": {"hy": "Երբ ոսկերիչը ձեռքով գին է գրում, որը <b>հաշվարկվածի 80%-ից ցածր է</b>, ծրագիրը զգուշացնում է\n        և ցույց տալիս երկու թիվն էլ։ <b>Չի արգելում</b> — վաճառքը շարունակվում է, բայց երկու թիվն էլ\n        մնում է վաճառքի գրառման մեջ։ Ոսկերիչն այդ մասին իմանում է վաճառելուց առաջ, ոչ թե տարվա վերջում։", "en": "When a jeweller types a price by hand that is <b>below 80% of the computed one</b>, the app warns and shows both numbers. <b>It does not block</b> — the sale goes through, but both numbers stay in the sale record. The jeweller finds out before selling, not at the end of the year.", "ru": "Когда ювелир вписывает вручную цену <b>ниже 80% от расчётной</b>, программа предупреждает и показывает оба числа. <b>Не запрещает</b> — продажа продолжается, но оба числа остаются в записи продажи. Ювелир узнаёт об этом до продажи, а не в конце года."}, "alt_buyact": {"hy": "Գնման ակտ № ԳԱ-2026-0042՝ կողմերով, աղյուսակով և գումարը բառերով", "en": "Purchase act № ԳԱ-2026-0042: both parties, a table and the amount in words", "ru": "Акт закупки № ԳԱ-2026-0042: обе стороны, таблица и сумма прописью"}, "cap_buyact": {"hy": "Գնման ակտի վերին մասը՝ այնպես, ինչպես տպվում է հեռախոսից։ Գումարը բառերով՝ հայերեն։", "en": "The top of the purchase act as it prints from the phone. The amount in words is Armenian.", "ru": "Верх акта закупки так, как он печатается с телефона. Сумма прописью — по-армянски."}, "h_contact": {"hy": "Կապ", "en": "Contact", "ru": "Контакты"}, "l_open": {"hy": "Բացել ծրագիրը՝ assay-9e6.pages.dev/armvoski/", "en": "Open the app: assay-9e6.pages.dev/armvoski/", "ru": "Открыть программу: assay-9e6.pages.dev/armvoski/"}, "l_about": {"hy": "Ի՞նչ է սա", "en": "What is this?", "ru": "Что это?"}, "l_guide": {"hy": "Ուղեցույց (ՀԱՅ · ENG · РУС)", "en": "User guide (ՀԱՅ · ENG · РУС)", "ru": "Руководство (ՀԱՅ · ENG · РУС)"}, "l_hub": {"hy": "Բոլոր ծրագրերը", "en": "All the programs", "ru": "Все программы"}, "w_contact": {"hy": "Ներկայացնողի կոնտակտը՝", "en": "Presenter's contact:", "ru": "Контакт представляющего:"}, "c_theme": {"hy": "Թեմա", "en": "Theme", "ru": "Тема"}};
 
 var lang = get(LS_LANG) || get(LS_GOLD);
 if(lang!=='hy' && lang!=='en' && lang!=='ru') lang='hy';
@@ -297,6 +345,8 @@ function setL(l){
   var b=document.querySelectorAll('#langseg button');
   for(i=0;i<b.length;i++) b[i].setAttribute('aria-pressed', b[i].getAttribute('data-lang')===l ? 'true':'false');
   document.title = (T.c_title&&T.c_title[l]) || document.title;
+  var tb=document.getElementById('themebtn');
+  if(tb && T.c_theme && T.c_theme[l]) tb.setAttribute('aria-label', T.c_theme[l]);
 }
 
 var theme = get(LS_THEME)==='dark' ? 'dark' : 'light';
@@ -304,9 +354,8 @@ function setT(t){
   theme=t; set(LS_THEME,t);
   document.body.classList.toggle('dark', t==='dark');
   document.body.classList.toggle('light', t!=='dark');
-  document.getElementById('themebtn').textContent = t==='dark' ? '☀️' : '🌙';
   var m=document.querySelector('meta[name="theme-color"]');
-  if(m) m.setAttribute('content', t==='dark' ? '#0B0F17' : '#F4F6F8');
+  if(m) m.setAttribute('content', t==='dark' ? '#14161A' : '#FFFEFC');
 }
 
 document.getElementById('langseg').addEventListener('click', function(e){
