@@ -11,7 +11,13 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armestate-shell-v7';   /* v6: every worded filter chip gets its own width back.
+const CACHE = 'armestate-shell-v8';   /* v8: the ledger skin. Ruled blocks instead of cards, ink
+      instead of a palette, every radius at zero, one filled button per screen and a written link
+      for everything else — and 257 pictographs gone, including the avatar an owner used to pick
+      from a list of ten. The five printable documents are the product and they changed shape, so
+      a stale shell here hands an agent a viewing sheet that does not match the one the office
+      printed yesterday.
+      v6: every worded filter chip gets its own width back.
       `min-width:44px` on `.chips button` REPLACED the flex default `min-width:auto`, which is the
       only thing stopping a flex item shrinking below its own text — so in the nowrap chip
       scroller «Նախնական պայմանագիր», «Թերթիկը ստորագրված չէ» and «Վարձակալություն» all collapsed

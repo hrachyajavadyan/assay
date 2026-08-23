@@ -301,12 +301,12 @@ button{font-family:var(--font)}
    without the fill. */
 .btn.cyan.wide,.btn.green.wide,.btn.violet.wide{width:100%;min-height:52px;font-size:16px;font-weight:700}
 /* R17 · min-WIDTH, not just min-height. `.btn` sets overflow:hidden, which makes a flex item's
-   automatic minimum size 0 — so inside an h3 with justify-content:space-between the «⬇ CSV»
+   automatic minimum size 0 — so inside an h3 with justify-content:space-between the «CSV»
    button was squeezed to 40.4×44 at 320px in Armenian: the only tap target under 44×44 left in
    the build. min-width is a floor flexbox may not shrink past. */
 .btn.small{padding:0 var(--s3);min-height:44px;min-width:44px;font-size:var(--fs-label);border-radius:var(--r-xs)}
-/* the export buttons sit beside a heading that CAN wrap, and they cannot: a two-line «⬇ / CSV»
-   is not what «⬇ CSV» means. They keep their content width and the heading gives instead. */
+/* the export buttons sit beside a heading that CAN wrap, and they cannot: a two-line «download / CSV»
+   is not what «CSV» means. They keep their content width and the heading gives instead. */
 .btn.small.noprint{flex:0 0 auto;white-space:nowrap}
 
 /* PRIMARY — the one thing to do next. 52px, full-width, accent fill. */
@@ -516,7 +516,7 @@ button.pav .pavdots{position:absolute;right:2px;bottom:0;font-size:14px;line-hei
   .posrow .posact{flex:1 1 100% !important;min-width:0 !important;text-align:left !important;margin-top:9px;display:flex;gap:10px;align-items:center}
   .posrow .posact .addbtn{margin-top:0 !important;flex:1}
 }
-/* R4: the supplier «📨 Առաջարկել պատվեր» button pushed the Խանութի մնացորդ tab 17px wide at
+/* R4: the supplier «Առաջարկել պատվեր» button pushed the Խանութի մնացորդ tab 17px wide at
    320px in Russian. Let it take its own line instead of forcing a horizontal page scroll. */
 @media (max-width:460px){
   .selloutfoot{flex-wrap:wrap}
@@ -899,7 +899,7 @@ input.err,textarea.err{border-color:var(--danger)}
 /* R7 fix — the cause, not the shrink order. R6's predecessor let the split toggle lose letters
    («Մեկ կ»); R6 inverted the priority and the date was squeezed to 0px instead (390/ru). Both are
    symptoms of ONE fact: seven controls plus a date want ~420px and the phone has 390. So below
-   461px the header carries FIVE controls, not seven — theme, sync and language fold into one ⚙
+   461px the header carries FIVE controls, not seven — theme, sync and language fold into one
    that opens them as a sheet. That buys ~90px: at 390/ru, the worst of the nine width×language
    cases, the row now measures ~341px with the date rendered in full. Nothing shrinks any more,
    so nothing can truncate. The chip drops the YEAR (kept in title=, and every printed document
@@ -911,7 +911,7 @@ input.err,textarea.err{border-color:var(--danger)}
 }
 /* every global control is one 38px square; a control that carries words widens, nothing else does */
 /* R9 · 38×38 was under the 44px tap floor on the three controls he uses most, including the
-   daily 🔔. The header row grows to fit — legibility and reach beat a 52px chrome budget. */
+   daily notification count. The header row grows to fit — legibility and reach beat a 52px chrome budget. */
 .tbtn{
   width:44px;height:44px;min-width:44px;min-height:44px;padding:0;flex:0 0 auto;position:relative;
   border:var(--bw) solid var(--stroke2);border-radius:var(--r-xs);
@@ -921,7 +921,7 @@ input.err,textarea.err{border-color:var(--danger)}
   backdrop-filter:none;
   transition:transform var(--dur-1) var(--ease),background var(--dur-1) var(--ease);
 }
-/* R7: an inline count made «🔔 5» 5px wider than its own 38px button at 320px. A badge is a
+/* R7: an inline count made a bell beside «5» 5px wider than its own 38px button at 320px. A badge is a
    corner mark, not a second word — it leaves the glyph centred and costs the row no width. */
 .tbtn .dot,.tbtn .okdot{
   position:absolute;top:-6px;right:-6px;z-index:1;
@@ -937,7 +937,7 @@ input.err,textarea.err{border-color:var(--danger)}
 .tbtn .okdot.idle{background:var(--muted)}
 /* amber = written down here, not yet acknowledged by the other device */
 .tbtn .okdot.pend{background:var(--acc)}
-/* the phone header: one ⚙ stands in for theme + sync + language */
+/* the phone header: one gear button stands in for theme + sync + language */
 .tbtn.hdr-sm{display:none}
 @media (max-width:460px){
   .tbtn.hdr-lg{display:none}
@@ -968,11 +968,11 @@ input.err,textarea.err{border-color:var(--danger)}
 @media (max-width:340px){
   #top{gap:3px;padding-left:5px;padding-right:5px}
   .tbtn.wide{padding:0 4px}
-  /* R16 · the DEMO header carries two controls the real one does not — the split toggle and ⏭ —
+  /* R16 · the DEMO header carries two controls the real one does not — the split toggle and the day-advance —
      and at 320px the split toggle's Russian label «Две стороны» is 119px of the 320. The row
      measured 327 and the page scrolled sideways: 5px of it arrived with the self-hosted fonts,
      the rest was there before and unmeasured, because the a11y sweep signs in. Same remedy the
-     row already uses below 461px, where theme + sync + language fold into one ⚙: at this width
+     row already uses below 461px, where theme + sync + language fold into one control: at this width
      the toggle keeps its 44px target and its ▚/▙, and its words move to title=/aria-label. The
      three shipped labels are untouched — this hides one, it does not rewrite it. */
   .tbtn.wide.splitbtn .lbl{display:none}
@@ -1846,6 +1846,248 @@ input:disabled{
 .addr{font-size:var(--fs-body-l);font-weight:var(--fw-body-l);line-height:var(--lh-body-l);color:var(--ink);
   overflow-wrap:break-word}
 .cad{font-family:var(--mono);font-size:var(--fs-micro);color:var(--dim);letter-spacing:.2px}
+
+/* the marks sit in the text: one weight, currentColor, never filled */
+.ic{
+  width:21px; height:21px; flex:0 0 auto; display:inline-block; vertical-align:-4px;
+  fill:none; stroke:currentColor; stroke-width:1.4;
+  stroke-linecap:round; stroke-linejoin:round;
+}
+.tbtn .ic{width:22px; height:22px; vertical-align:0}
+.btn .ic{width:19px; height:19px}
+
+/* ===== LEDGER SKIN ===== */
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEDGER — the skin, appended last so it wins on equal specificity.
+
+   The product replaces a paper notebook, so it is built like one: ruled blocks
+   instead of cards, ink instead of a palette, and figures that align because a
+   ledger's figures align. Two colours carry meaning and nothing else does —
+   ink for what is normal and correction red for what is not. Everything here
+   is token-level or a single component rule; deleting this block restores the
+   previous skin exactly.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── tokens · dark (ink paper) ───────────────────────────────────────────── */
+:root{
+  --bg:#14161A;
+  --surface:#14161A;          /* no card fill: a block sits on the page */
+  --surface-2:#1C1F25;        /* inputs, steppers, quiet fills */
+  --surface-3:#252931;
+  --ink:#E9E7E2;
+  --muted:#9BA1AB;
+  --dim:#8A9099;
+  --sep:#2A2E35;
+  --stroke:#2A2E35;
+  --stroke2:#3A3F48;
+
+  --acc:#9FC0E8;              /* ballpoint blue */
+  --acc-ink:#10141A;
+  --acc-tint:#1A2130;
+  --acc-line:#31405A;
+  --acc-text:#AECBEE;
+  --gold:var(--acc); --gold2:var(--acc-text);
+
+  /* correction red is the ONLY alert colour. Everything else is ink. */
+  --danger:#E4897C;  --danger-tint:#241716; --danger-line:#4A2A26;
+  --success:#E9E7E2; --success-tint:#1C1F25; --success-line:#2A2E35;
+  --info:#9FC0E8;    --info-tint:#1A2130;   --info-line:#31405A;
+  --note:#9BA1AB;    --note-tint:#1C1F25;   --note-line:#2A2E35;
+  --rose:var(--danger); --green:var(--success); --cyan:var(--info);
+  --violet:var(--note); --blue:var(--info);
+  --glass:var(--surface); --glass2:var(--surface-2);
+
+  --r-xs:0; --r-sm:0; --r:0; --r-lg:0;   /* --r-pill stays: a dot is round */
+
+  --sh-0:none; --sh-1:none; --sh-2:none;
+  --sh-3:0 -1px 0 var(--stroke);
+  --focus:0 0 0 2px var(--bg), 0 0 0 4px var(--acc);
+
+  /* a ledger is written, not shouted: the display weights come down */
+  --fw-display-l:600; --fw-display-m:600; --fw-display-s:600;
+  --fw-title:600; --fw-body-l:500; --fw-caps:600;
+  --ls-caps:1.3px;
+}
+
+/* ── tokens · light (paper) ──────────────────────────────────────────────── */
+body.light{
+  --bg:#FFFEFC;
+  --surface:#FFFEFC;
+  --surface-2:#F5F3EE;
+  --surface-3:#EBE8E1;
+  --ink:#161A1F;              /* 16.9:1 on --bg */
+  --muted:#5E646E;            /* 6.4:1 */
+  --dim:#666C76;              /* 5.9:1 */
+  --sep:#DFDBD2;
+  --stroke:#DFDBD2;
+  --stroke2:#C6C1B6;
+
+  --acc:#1E3A5F;              /* white on it: 10.4:1 */
+  --acc-ink:#FFFEFC;
+  --acc-tint:#EFF2F6;
+  --acc-line:#C3CDDA;
+  --acc-text:#1E3A5F;
+  --gold:var(--acc); --gold2:var(--acc-text);
+
+  --danger:#9B2C1E;  --danger-tint:#FAF0EE; --danger-line:#E4C6C0;
+  --success:#161A1F; --success-tint:#F5F3EE; --success-line:#DFDBD2;
+  --info:#1E3A5F;    --info-tint:#EFF2F6;   --info-line:#C3CDDA;
+  --note:#5E646E;    --note-tint:#F5F3EE;   --note-line:#DFDBD2;
+  --rose:var(--danger); --green:var(--success); --cyan:var(--info);
+  --violet:var(--note); --blue:var(--info);
+  --glass:var(--surface); --glass2:var(--surface-2);
+
+  --sh-0:none; --sh-1:none; --sh-2:none;
+  --sh-3:0 -1px 0 var(--stroke);
+  --focus:0 0 0 2px var(--bg), 0 0 0 4px var(--acc);
+  background:var(--bg);
+}
+
+/* ── the figures line up ─────────────────────────────────────────────────── */
+body{font-variant-numeric:tabular-nums lining-nums}
+
+/* ── a card is a ruled block, not a box ──────────────────────────────────── */
+.card{
+  background:none; border:0; border-radius:0; box-shadow:none;
+  border-bottom:var(--bw) solid var(--sep);
+  padding:var(--s5) 0;
+}
+.card:last-child{border-bottom:0}
+/* inside a sheet the page already has its own rules; a nested card would draw twice */
+.mbody .card{border-bottom:var(--bw) solid var(--sep); padding:var(--s4) 0}
+
+/* ── one filled button per screen; everything else is a written link ─────── */
+.btn{border-radius:0}
+.btn.primary,.btn.full.cyan,.btn.full.green,.btn.full.violet{
+  background:var(--ink); color:var(--bg); border-color:var(--ink);
+  font-weight:600; letter-spacing:0;
+}
+.btn.ghost,.btn.ghost.full{
+  background:none; border:0; border-radius:0;
+  color:var(--acc-text); font-weight:600;
+  /* a written link is only as wide as its word, and «Close» is 39px in English
+     while «Փակել» is 55 — the sheet's only exit fell under the tap floor in one
+     language and not the other. The floor is on the control, not on the word. */
+  min-height:44px; min-width:44px; padding:0; width:auto; max-width:100%;
+  display:inline-flex; justify-content:flex-start; text-align:left;
+  box-shadow:none;
+}
+.btn.ghost>*{text-align:left}
+.btn.ghost::after{content:""; position:absolute; left:0; right:0; bottom:10px;
+  border-bottom:var(--bw-strong) solid var(--acc); display:block}
+.btn.ghost:active{background:none; transform:none; opacity:.6}
+.btn.small{border-radius:0}
+
+/* ── a badge is a written note, not a pill ──────────────────────────────── */
+.badge{
+  background:none !important; border:0 !important; border-radius:0 !important;
+  padding:0 !important; font-weight:600; color:var(--muted);
+}
+.badge.b-rose,.badge.b-danger{color:var(--danger)}
+.badge.b-gold,.badge.b-acc{color:var(--acc-text)}
+.badge.b-green,.badge.b-cyan,.badge.b-violet,.badge.b-neutral{color:var(--muted)}
+
+/* ── section labels are ledger column headings ──────────────────────────── */
+.sec{
+  font-size:var(--fs-label); font-weight:600; letter-spacing:var(--ls-caps);
+  text-transform:uppercase; color:var(--muted);
+  margin:var(--s6) 0 var(--s2);
+}
+
+/* ── a notice is an indented remark ─────────────────────────────────────── */
+.notice{border-left-width:2px; border-left-color:var(--stroke2)}
+.notice.bad{border-left-color:var(--danger)}
+
+/* ── chrome ──────────────────────────────────────────────────────────────── */
+#top{background:var(--bg); border-bottom:var(--bw) solid var(--ink); box-shadow:none}
+.tbtn{border-radius:0; background:none; border:0; color:var(--ink)}
+.tbtn.on{color:var(--acc-text)}
+#nav,nav{background:var(--bg); border-top:var(--bw) solid var(--ink); box-shadow:none}
+#nav button,nav button{border-radius:0; font-weight:500; color:var(--muted)}
+#nav button.active,nav button.active{
+  color:var(--ink); font-weight:600;
+  background:none; border-radius:0; box-shadow:none;
+}
+#nav button.active::before,nav button.active::before{background:var(--ink); height:2px}
+#nav .icw,nav .icw{display:none}             /* the label is the destination */
+#nav button>span:last-child,nav button>span:last-child{font-size:var(--fs-nav)}
+.navbadge{
+  position:absolute; top:2px; left:auto; right:6px;
+  background:none; color:var(--danger); border:0; box-shadow:none;
+  border-radius:0; padding:0; min-width:0; width:auto; height:auto;
+  font-size:var(--fs-label); font-weight:700; line-height:1;
+}
+body:not(.light) .navbadge{color:var(--danger)}
+
+/* ── an alert is an indented remark with a rule, not a boxed card ───────── */
+.alert{
+  background:none; border:0; border-radius:0; box-shadow:none;
+  border-left:2px solid var(--stroke2);
+  padding:var(--s2) 0 var(--s2) var(--s3);
+}
+.alert.bad{border-left-color:var(--danger)}
+
+/* ── sheets ──────────────────────────────────────────────────────────────── */
+.mbody{border-radius:0; border-top:var(--bw-strong) solid var(--ink)}
+.grabber{background:var(--stroke2); border-radius:0; height:2px}
+
+/* ── the item mark is its initial, in a ruled square ────────────────────── */
+.pav,.mrico{
+  border-radius:0; background:none;
+  border:var(--bw) solid var(--stroke);
+  font-size:var(--fs-body-l); font-weight:600; color:var(--muted);
+}
+
+/* ── controls ────────────────────────────────────────────────────────────── */
+.search,input,select,textarea{border-radius:0}
+.qtyctl,.stepper{border-radius:0}
+.qtyctl button{border-radius:0}
+.chip,.chips button{border-radius:0}
+.roleswitch,.roleswitch button,.seg,.seg button{border-radius:0}
+.morerow{border-radius:0}
+.bar,.track,.meter,.hbar .track{border-radius:0}
+.fill,.bar i,.track .fill{border-radius:0}
+
+/* ── the rails go ────────────────────────────────────────────────────────── */
+.card[style*="border-left"],.rail,.railcard{border-left:0 !important}
+
+/* ── the last round shapes ───────────────────────────────────────────────── */
+.chips button,.tblwrap::-webkit-scrollbar-thumb,.hbar .track,.hbar .fill,
+.oline,.fab,.grabber{border-radius:0}
+.onode,.tbtn .okdot,.dot{border-radius:var(--r-pill)}   /* a dot stays a dot */
+button.pav{position:relative}
+button.pav .pavdots{display:none}                        /* the box is the affordance */
+.chips button.active,.chips button[aria-pressed="true"]{
+  background:none; color:var(--ink); border-color:var(--ink);
+}
+
+/* ── nothing in a ledger is round ────────────────────────────────────────── */
+button,.btn,.chip,input,select,textarea,.seg,.seg button,.roleswitch,
+.roleswitch button,.morerow,.pav,.mrico,.card,.notice,.alert,.tbl,.tblwrap,
+.qtyctl,.qtyctl button,.stepper,.bar,.track,.fill,.meter,.badge,.tag{
+  border-radius:0;
+}
+/* …except the three things that are genuinely a dot */
+.dot,.okdot,.onode,.tbtn .okdot,.spark i{border-radius:var(--r-pill)}
+/* an icon box emptied by the emoji strip must not hold a 44px hole open */
+.mrico:empty,.icw:empty,.em:empty,.pav:empty{display:none}
+.morerow .mrico:empty{display:none}
+.pcchip{border-radius:0; border-color:var(--stroke2)}
+
+/* ── what this file exposed ──────────────────────────────────────────────────
+   Three shapes set a radius on themselves rather than through a token, so the
+   token sweep above never reached them. */
+/* the seven-stage pipeline is drawn as a rank of pips, and a 3px pip was the last round shape
+   left on the deals screen — the one screen where a reader is comparing a rank to a figure. */
+.stg i{border-radius:0}
+/* and two that are unreachable in THIS file but came with the shared sheet: the toast's «go»
+   button, which armestate's toast() never builds, and ArmVoski's counting progress bar. Named
+   rather than left to wake up round. */
+#toast .tgo,.cnprog .bar,.cnprog .bar i{border-radius:0}
+/* the shared centring rule for the emoji tiles listed a colour-emoji font stack first. The
+   tiles hold a LETTER now — Ա, А, K — so the stack is the product's own typeface, or an
+   initial in one language renders in a different face from the same initial in another. */
+.pav,.empty .em,.logomark,nav .icw{font-family:var(--font)}
 </style>
 </head>
 <body class="light">
@@ -1856,6 +2098,35 @@ input:disabled{
 <div id="modalRoot"></div>
 
 <script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEDGER MARKS — the only glyphs left in the product.
+
+   Every emoji in the content is gone; the words carry the meaning. What is
+   left is a handful of controls that genuinely cannot be labelled in a 44px
+   square. They are drawn at one hairline weight in currentColor, so they sit
+   in the text rather than on top of it, and they inherit the theme.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const IC = (()=>{
+  const w = d => '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">'+d+'</svg>';
+  return {
+    theme:  w('<path d="M20 14.2A8 8 0 0 1 9.8 4 8.2 8.2 0 1 0 20 14.2z"/>'),
+    sync:   w('<path d="M10 13a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.2 1.2"/><path d="M14 11a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7L12 18.5"/>'),
+    bell:   w('<path d="M18 15V10a6 6 0 1 0-12 0v5l-1.6 2.5h15.2z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>'),
+    gear:   w('<circle cx="12" cy="12" r="3"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/>'),
+    print:  w('<path d="M7 9V3.5h10V9"/><rect x="3.5" y="9" width="17" height="7.5" rx="1"/><path d="M7 14h10v6.5H7z"/>'),
+    down:   w('<path d="M12 3.5v12M7.5 11l4.5 4.5 4.5-4.5"/><path d="M4 17.5v3h16v-3"/>'),
+    camera: w('<path d="M3.5 8h3.2l1.4-2h7.8l1.4 2h3.2v11h-17z"/><circle cx="12" cy="13" r="3.4"/>'),
+    trash:  w('<path d="M4.5 6.5h15M9.5 6.5V4h5v2.5"/><path d="M6.5 6.5 7.6 20.5h8.8L17.5 6.5"/>'),
+    pen:    w('<path d="M4 20.2 4.9 16 16.4 4.5a2 2 0 0 1 2.8 2.8L7.7 18.8z"/><path d="M14.4 6.5 17.5 9.6"/>'),
+    person: w('<circle cx="12" cy="8" r="3.6"/><path d="M4.6 20.5a7.4 7.4 0 0 1 14.8 0"/>'),
+    day:    w('<rect x="3.5" y="5.5" width="17" height="15" rx="1"/><path d="M3.5 10h17M8 3.5v4M16 3.5v4"/>'),
+    next:   w('<path d="M5 5.5 14 12l-9 6.5z"/><path d="M18.5 5v14"/>'),
+    plus:   w('<path d="M12 5.5v13M5.5 12h13"/>'),
+    search: w('<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l4.5 4.5"/>'),
+    back:   w('<path d="M19 12H5"/><path d="M10.5 6.5 5 12l5.5 5.5"/>')
+  };
+})();
+
 /* =====================================================================================
    ԱրմԷստեյտ / ArmEstate — an Armenian real-estate agency's BACK OFFICE.
    Not a portal. list.am and myrealty.am own distribution and that fight was never ours.
@@ -2463,8 +2734,9 @@ T.hy = {
   vw_none: "Ցուցադրություն չկա",
   /* [!] ATTRIBUTED, NOT ASSERTED. This is one Yerevan agency's published contractual terms
      (Aparto), not Armenian statute — the right to a commission arises from the brokerage
-     contract, which is why the product models the mandate as the spine. The ⚖️ glyph is reserved
-     for the նախավճար/կանխավճար consequences and «Օրենքն ուժի մեջ չէ» and does not belong here. */
+     contract, which is why the product models the mandate as the spine. The scales mark that
+     once flagged the նախավճար/կանխավճար consequences and «Օրենքն ուժի մեջ չէ» is gone with every
+     other pictograph; the distinction it drew is now carried by those sentences themselves. */
   vw_evidence: "Ցուցադրությունը՝ ոչ հայտարարությունը, հիմնավորում է միջնորդավճարի պահանջը — ըստ երևանյան գործակալությունների հրապարակած պայմանների։ Օրենքով սահմանված չէ։",
   vw_signed: "Ստորագրված",
   vw_unsigned: "Թերթիկը ստորագրված չէ",
@@ -2761,7 +3033,6 @@ T.hy = {
   ag_edit: "Խմբագրել գործակալին",
   ag_name: "Անուն, ազգանուն",
   ag_phone: "Հեռախոս",
-  ag_em: "Նշան",
   ag_share_lbl: "Միջնորդավճարի բաժինը, %",
   ag_share_ph: "օր. 40",
   ag_share_future: "Փոփոխությունը գործում է հաջորդ գործարքից։ Ընթացիկ գործարքների բաժինները սառեցված են։",
@@ -3391,7 +3662,6 @@ T.en = {
   ag_edit: "Edit agent",
   ag_name: "Name",
   ag_phone: "Phone",
-  ag_em: "Badge",
   ag_share_lbl: "Share of the commission, %",
   ag_share_ph: "e.g. 40",
   ag_share_future: "A change applies from the next deal on. The shares on existing deals stay frozen.",
@@ -4017,7 +4287,6 @@ T.ru = {
   ag_edit: "Изменить агента",
   ag_name: "Имя и фамилия",
   ag_phone: "Телефон",
-  ag_em: "Значок",
   ag_share_lbl: "Доля от комиссии, %",
   ag_share_ph: "напр. 40",
   ag_share_future: "Изменение действует со следующей сделки. Доли в текущих сделках заморожены.",
@@ -4147,7 +4416,6 @@ const actorName = x => x === 'owner'
 const vatLabel      = v => T[lang]['cm_vat_'+v] ? t('cm_vat_'+v) : String(v||'');
 const basisLabel    = b => b === 'rent_month' ? t('cm_basis_rent') : t('cm_basis_price');
 
-const KIND_EM = { flat:'🏢', house:'🏡', land:'🌳', commercial:'🏬' };
 
 /* =====================================================================================
    STATE
@@ -4330,7 +4598,19 @@ const dealById   = id => (S.deals   ||[]).find(x => x && x.id === id) || null;
 const mandateById= id => (S.mandates||[]).find(x => x && x.id === id) || null;
 const clientName = id => { const c = clientById(id); return c ? c.name : ''; };
 const agentName  = id => { const a = agentById(id); return a ? a.name : (id === AGENCY ? t('cm_keep') : ''); };
-const agentEm    = id => { const a = agentById(id); return a && a.em ? a.em : '🧑'; };
+/* THE MARK IN THE RULED SQUARE IS THE THING'S OWN FIRST LETTER. The pictograph avatars are
+   gone: the briefcase on an agent and the tower block on a flat said nothing the line beside
+   them did not already say, the agent's had to be PICKED from a list of ten, and neither
+   existed for a record the owner typed in this morning. An initial is language-native — Ա for
+   Անի, А for Абовяна, K for Komitas — and it is derived, so there is nothing left to pick.
+   Where the full name follows the mark immediately, the letter is dropped altogether rather
+   than printed twice beside itself. */
+function emOf(nameLike){
+  try{
+    const n = String(nameLike == null ? '' : nameLike).trim();
+    return n ? escH(Array.from(n)[0].toUpperCase()) : '·';
+  }catch(e){ return '·'; }
+}
 const activeAgents = () => (S.agents||[]).filter(a => a && !a.leftTs);
 
 const propAddr = p => {
@@ -4681,11 +4961,6 @@ function migrate(st){
     id: String(a.id),
     name: String(a.name || ''),
     phone: String(a.phone || ''),
-    /* CODE POINTS, NOT UTF-16 UNITS. «👩‍💼» is five UTF-16 units — two surrogate pairs joined by
-       a zero-width joiner — so a .slice(0,4) cut it mid-pair and every agent avatar in the
-       product rendered as a woman followed by a replacement diamond. Array.from() iterates code
-       points, which is what "one emoji" actually means. */
-    em: Array.from(String(a.em || '🧑')).slice(0, 5).join(''),
     /* NO DEFAULT SHARE. null means "the owner has not set it yet" and the agent card shows an
        amber «Բաժինը նշված չէ» rather than a number nobody agreed to. AN UNPARSEABLE VALUE IS
        ALSO AN ABSENCE: safeBp('abc', 0) would have turned a corrupted adopted payload into a
@@ -4974,13 +5249,13 @@ function seedState(){
   st.agency = { name:'«Աստղիկ Ռիելթի» ՍՊԸ', tin:'02812345', addr:'Երևան, Կոմիտաս 45', phone:'+374 10 55 44 33' };
 
   st.agents = [
-    { id:'a1', name:'Անի Հարությունյան', phone:'+374 91 22 44 66', em:'👩‍💼',
+    { id:'a1', name:'Անի Հարությունյան', phone:'+374 91 22 44 66',
       defaultShareBp:4000, joinedTs:ago(760), leftTs:0,
       qual:{ regNo:'', examTs:0, insurerName:'Ինգո Արմենիա', insuranceTo:ago(-140) }, rid:'' },
-    { id:'a2', name:'Գոռ Սարգսյան', phone:'+374 93 18 07 55', em:'👨‍💼',
+    { id:'a2', name:'Գոռ Սարգսյան', phone:'+374 93 18 07 55',
       defaultShareBp:3000, joinedTs:ago(420), leftTs:0,
       qual:{ regNo:'', examTs:0, insurerName:'', insuranceTo:0 }, rid:'' },
-    { id:'a3', name:'Նարեկ Ավետիսյան', phone:'+374 55 71 30 12', em:'🧑‍💼',
+    { id:'a3', name:'Նարեկ Ավետիսյան', phone:'+374 55 71 30 12',
       defaultShareBp:2500, joinedTs:ago(95), leftTs:0,
       qual:{ regNo:'', examTs:0, insurerName:'', insuranceTo:0 }, rid:'' }
   ];
@@ -5217,8 +5492,6 @@ function stageTsOf(deal, stage){
 const NAV_KEYS = ['home','deals','payouts','props','agents','clients','views','docs','data'];
 /* the order of surrender. The daily loop is the last to leave the bar; Տվյալներ is the first. */
 const NAV_PRIO = ['home','deals','payouts','props','agents','views','clients','docs','data'];
-const NAV_ICON = { home:'📋', deals:'🤝', payouts:'💳', props:'🏠', agents:'🧑‍💼',
-                   clients:'👥', views:'🔑', docs:'📄', data:'📈' };
 
 /* the badge on each destination is a COUNT OF THINGS THAT NEED A PERSON, never a count of rows.
    A badge that only says "there are records here" trains the user to ignore badges. */
@@ -5299,30 +5572,30 @@ function renderNav(){
     const b = navBadge(k);
     return '<button class="' + (U.tab===k ? 'active' : '') + '" aria-label="' + escH(t('tab_'+k)) + '"'
       + ' onclick="setTab(' + jsArg(k) + ')">'
-      + '<span class="icw">' + NAV_ICON[k] + '</span><span>' + escH(navLabel(k)) + '</span>'
+      + '<span>' + escH(navLabel(k)) + '</span>'
       + (b ? '<span class="navbadge">' + b + '</span>' : '') + '</button>';
   };
   /* the spill carries its badges with it: a hidden destination that needs a person still says so */
   const hiddenB = NAV_HIDDEN.reduce((n,k) => n + navBadge(k), 0);
   nv.innerHTML = keys.map(cell).join('')
     + (NAV_HIDDEN.length ? '<button aria-label="' + escH(t('menu_title')) + '" onclick="openMoreNav()">'
-        + '<span class="icw">☰</span><span>' + escH(t('more_tab')) + '</span>'
+        + '<span>' + escH(t('more_tab')) + '</span>'
         + (hiddenB ? '<span class="navbadge">' + hiddenB + '</span>' : '') + '</button>' : '');
 }
 function openMoreNav(){
   const rows = NAV_HIDDEN.map(k => {
     const b = navBadge(k);
     return '<button class="morerow' + (U.tab===k ? ' active' : '') + '" onclick="closeModal();setTab(' + jsArg(k) + ')">'
-      + '<span class="mrico">' + NAV_ICON[k] + '</span><span class="mrnm">' + escH(t('tab_'+k)) + '</span>'
+      + '<span class="mrnm">' + escH(t('tab_'+k)) + '</span>'
       + (b ? '<span class="dot">' + b + '</span>' : '') + '</button>';
   }).join('');
   /* Once inside the app there was no way back to the explainer or to the other programs — a
      director being shown three products had to retype the address. These are links, not tabs:
      they leave the app, so they sit under a rule, below the destinations. */
   const away = '<div style="border-top:var(--bw) solid var(--sep);margin:14px 0 4px"></div>'
-    + '<a class="morerow" href="/armestate/about/"><span class="mrico">❓</span><span class="mrnm">' + escH(t('what_is_this')) + '</span></a>'
-    + '<a class="morerow" href="/"><span class="mrico">🏠</span><span class="mrnm">' + escH(t('all_products')) + '</span></a>';
-  openModal('<h3>☰ ' + escH(t('menu_title')) + '</h3>' + rows + away
+    + '<a class="morerow" href="/armestate/about/"><span class="mrnm">' + escH(t('what_is_this')) + '</span></a>'
+    + '<a class="morerow" href="/"><span class="mrnm">' + escH(t('all_products')) + '</span></a>';
+  openModal('<h3>' + escH(t('menu_title')) + '</h3>' + rows + away
     + '<button class="btn ghost full" style="margin-top:16px" onclick="closeModal()">' + escH(t('close')) + '</button>');
 }
 function setTab(k){
@@ -5375,21 +5648,23 @@ function toast(msg){
 function topBar(){
   return '<div class="logo"><div class="logomark">Է</div><div>' + escH(t('app_name'))
     + '<small>' + escH(t('app_sub')) + '</small></div></div>'
-    /* 🗓️, not 📅: the tear-off calendar renders in Noto Color Emoji as a sheet reading JULY 17,
-       so the top bar showed a second, contradictory date beside the real one at any zoom. */
-    + '<span class="datechip" title="' + escH(fdate(S.today)) + '">🗓️ ' + escH(fdate(S.today)) + '</span>'
+    /* the date chip carried a calendar pictograph and no longer does. It was a spiral pad
+       rather than a tear-off sheet, because the tear-off renders in Noto Color Emoji as a page
+       reading JULY 17 — a second, contradictory date beside the real one at any zoom. The word
+       the chip already carries is the date itself, so nothing was lost with the picture. */
+    + '<span class="datechip" title="' + escH(fdate(S.today)) + '">' + escH(fdate(S.today)) + '</span>'
     + '<div class="spacer"></div>'
     + '<button class="tbtn" onclick="toggleTheme()" title="' + escH(t('theme_lbl')) + '" aria-label="'
-      + escH(t('theme_lbl')) + '">' + (U.theme==='light' ? '🌙' : '☀️') + '</button>'
+      + escH(t('theme_lbl')) + '">' + IC.theme + '</button>'
     + '<button class="tbtn wide" onclick="toggleLang()" aria-label="' + escH(t('lang_lbl')) + '">'
       + ({hy:'EN', en:'РУ', ru:'ՀԱՅ'})[lang] + '</button>';
 }
 
 /* ---------- small shared pieces ---------- */
 const badge = (cls, txt) => '<span class="badge ' + cls + '">' + escH(txt) + '</span>';
-const secTitle = (em, txt) => '<div class="sec">' + em + ' ' + escH(txt) + '</div>';
+const secTitle = txt => '<div class="sec">' + escH(txt) + '</div>';
 function emptyCard(title, body){
-  return '<div class="card"><div class="empty"><div class="em">🗂</div><div><b>' + escH(title)
+  return '<div class="card"><div class="empty"><div><b>' + escH(title)
     + '</b><div class="muted" style="margin-top:6px">' + escH(body||'') + '</div></div></div></div>';
 }
 const PROP_ST_CLASS = { draft:'b-neutral', active:'b-green', reserved:'b-gold', sold:'b-cyan',
@@ -5435,7 +5710,7 @@ function homeCards(){
     /* `html` rather than `body`: money on the highest-traffic screen in the product goes
        through amd() like money everywhere else, so the figure keeps its tabular figures and the
        dram mark rides INSIDE the number instead of breaking onto its own line at 320px. */
-    out.push({ k:'payout', tone:'', icon:'💳', title:t('c_payout'), btn:t('c_btn_pay'),
+    out.push({ k:'payout', tone:'', title:t('c_payout'), btn:t('c_btn_pay'),
       html: escH(fmt('c_payout_b', {n:owing.length})) + ' · ' + amd(total), tab:'payouts' });
   }
 
@@ -5443,7 +5718,7 @@ function homeCards(){
   const uninvoiced = (S.deals||[]).filter(d => !d.void && isEarned(d) && DEAL_RANK[d.stage] < DEAL_RANK.invoiced);
   if(uninvoiced.length){
     let sum = 0; uninvoiced.forEach(d => { const al = allocation(d); if(al) sum += al.fee; });
-    out.push({ k:'invoice', tone:'', icon:'🧾', title:t('c_invoice'), btn:t('c_btn_deals'),
+    out.push({ k:'invoice', tone:'', title:t('c_invoice'), btn:t('c_btn_deals'),
       html: escH(fmt('c_invoice_b', {n:uninvoiced.length})) + ' · ' + amd(sum), tab:'deals' });
   }
 
@@ -5454,7 +5729,7 @@ function homeCards(){
     const left = workingDaysLeft(d.dates.notaryTs, S.cfg.filingDays, S.today);
     if(left > 7) return;
     /* A MISSED DEADLINE IS NOT THE SAME CARD AS A DEADLINE APPROACHING, and it goes to the top. */
-    out.push({ k:'filing:'+d.id, tone:'bad', icon:'⏳', prio: left < 0 ? -1 : 0,
+    out.push({ k:'filing:'+d.id, tone:'bad', prio: left < 0 ? -1 : 0,
       title: left < 0 ? t('c_clock_over') : t('c_clock'),
       body: cardBody([propAddr(propById(d.propertyId)), filingLeftText(left)]),
       tab:'deals', btn:t('c_btn_deal'), act:'openDeal(' + jsArg(d.id) + ')' });
@@ -5462,7 +5737,7 @@ function homeCards(){
   (S.mandates||[]).forEach(m => {
     const left = exclLeft(m);
     if(left == null || left > 14) return;
-    out.push({ k:'excl:'+m.id, tone:'', icon:'📄', title:t('c_excl'), btn:t('c_btn_contract'),
+    out.push({ k:'excl:'+m.id, tone:'', title:t('c_excl'), btn:t('c_btn_contract'),
       body: clientName(m.clientId) + ' · ' + fmt('c_excl_b', {n:Math.max(0,left)}), tab:'docs' });
   });
   activeAgents().forEach(a => {
@@ -5474,8 +5749,8 @@ function homeCards(){
        not an enacted one, and this card sits in the same stack as the 30-working-day cadastre
        deadline — a clock that is genuinely legal. The disclaimer at the foot of the agents screen
        is two screens away from a card that reads like an obligation. */
-    out.push({ k:'ins:'+a.id, tone:'', icon:'🛡️', title:t('c_ins'), btn:t('c_btn_agent'),
-      body: a.name + ' · ' + fmt('c_ins_b', {n:Math.max(0,left)}) + ' · ⚖️ ' + t('ag_law_note'),
+    out.push({ k:'ins:'+a.id, tone:'', title:t('c_ins'), btn:t('c_btn_agent'),
+      body: a.name + ' · ' + fmt('c_ins_b', {n:Math.max(0,left)}) + ' · ' + t('ag_law_note'),
       tab:'agents', act:'openAgent(' + jsArg(a.id) + ')' });
   });
 
@@ -5487,7 +5762,7 @@ function homeCards(){
     if(!d.stageTs) return;
     const idle = daysBetween(d.stageTs, S.today);
     if(idle < S.cfg.stuckDays) return;
-    out.push({ k:'stuck:'+d.id, tone:'', icon:'🐌', title:t('c_stuck'), btn:t('c_btn_deal'),
+    out.push({ k:'stuck:'+d.id, tone:'', title:t('c_stuck'), btn:t('c_btn_deal'),
       body: cardBody([propAddr(propById(d.propertyId)), stageLabel(d.stage), fmt('c_stuck_b',{n:idle})]),
       tab:'deals', act:'openDeal(' + jsArg(d.id) + ')' });
   });
@@ -5495,7 +5770,7 @@ function homeCards(){
   /* 5 — TERMS MISSING. A deal at stage 0 with no commission terms cannot advance, and a human
      has to type a number. There is no default to fall back on and that is deliberate. */
   (S.deals||[]).filter(d => !d.void && !termsComplete(d.terms)).forEach(d => {
-    out.push({ k:'terms:'+d.id, tone:'bad', icon:'✍️', title:t('c_terms'), btn:t('cm_fill'),
+    out.push({ k:'terms:'+d.id, tone:'bad', title:t('c_terms'), btn:t('cm_fill'),
       body: cardBody([propAddr(propById(d.propertyId)), t('c_terms_b')]), tab:'deals',
       act:'openTerms(' + jsArg(d.id) + ')' });
   });
@@ -5504,7 +5779,7 @@ function homeCards(){
      one piece of paper this product exists to make sure gets signed. */
   const unsigned = (S.viewings||[]).filter(v => !v.signedTs);
   if(unsigned.length){
-    out.push({ k:'unsigned', tone:'', icon:'🔑', title:t('c_unsigned'), btn:t('c_btn_sheets'),
+    out.push({ k:'unsigned', tone:'', title:t('c_unsigned'), btn:t('c_btn_sheets'),
       body: fmt('c_unsigned_b', {n:unsigned.length}), tab:'views' });
   }
   /* an overdue legal deadline outranks everything, including money out: it is the one item on
@@ -5530,16 +5805,16 @@ function monthKPIs(){
 
 function homeView(){
   const cards = homeCards().slice(0, 6);
-  let h = secTitle('📋', t('home_q'));
+  let h = secTitle(t('home_q'));
   if(!cards.length){
-    h += '<div class="card"><div class="empty"><div class="em">✅</div><div><b>' + escH(t('home_clear'))
+    h += '<div class="card"><div class="empty"><div><b>' + escH(t('home_clear'))
       + '</b><div class="muted" style="margin-top:6px">' + escH(t('home_clear_b')) + '</div></div></div></div>';
   } else {
     /* ONE accent-filled button per screen, and it belongs to the first card — the one the
        priority order says matters most today. Everything below it is a ghost. */
     h += cards.map((c,i) =>
       '<div class="alert' + (c.tone === 'bad' ? ' bad' : '') + '">'
-      + '<div class="t">' + c.icon + ' ' + escH(c.title) + '</div>'
+      + '<div class="t">' + escH(c.title) + '</div>'
       + '<div class="d">' + (c.html || escH(c.body)) + '</div>'
       /* a card that names ONE deal opens that deal; a card that names a class of thing opens the
          tab. Sending the owner to a list to find the row the card just named is a tax. */
@@ -5551,7 +5826,7 @@ function homeView(){
         + '</button></div></div>').join('');
   }
   const k = monthKPIs();
-  h += secTitle('📈', t('kpi_month'));
+  h += secTitle(t('kpi_month'));
   h += '<div class="kpis">'
     + '<div class="kpi"><div class="l">' + escH(t('kpi_closed')) + '</div><div class="v">' + k.closed + '</div></div>'
     + '<div class="kpi"><div class="l">' + escH(t('kpi_earned')) + '</div><div class="v">' + amdTxt(k.earned) + '<span class="cur">֏</span></div></div>'
@@ -5588,7 +5863,7 @@ function propCard(p){
     : amd(propPrice(p));
   return '<div class="card">'
     + '<div class="sug" style="border-bottom:none;padding:0">'
-      + '<div class="pav">' + (KIND_EM[p.kind] || '🏠') + '</div>'
+      + '<div class="pav">' + emOf(propAddr(p)) + '</div>'
       + '<div class="info">'
         + '<div class="addr">' + escH(propAddr(p)) + '</div>'
         + '<div class="cad">' + escH(p.cadCode || '—') + '</div>'
@@ -5603,18 +5878,18 @@ function propCard(p){
       + (p.rooms ? '<span>' + p.rooms + ' ' + escH(t('p_rooms')) + '</span>' : '')
       + (p.floors ? '<span>' + p.floor + '/' + p.floors + ' ' + escH(t('p_floor')) + '</span>' : '')
       + (p.built ? '<span>' + escH(t('p_built')) + ' ' + p.built + '</span>' : '')
-      + '<span>' + escH(agentEm(p.agentId) + ' ' + agentName(p.agentId)) + '</span>'
+      + '<span>' + escH(agentName(p.agentId)) + '</span>'
     + '</div>'
     /* DAYS ON MARKET SAYS WHERE IT CAME FROM. listedTs → the mandate's signature date → the
        record's creation date, and the label names whichever answered. */
     + (dom ? '<div class="prov">' + escH(t('p_dom') + ' ' + dom.days + ' ' + t('p_dom_d')
         + ' · ' + domSrcText(dom.src)) + '</div>' : '')
     + (left != null ? '<div class="prov' + (left <= 14 ? ' warn' : '') + '">'
-        + escH('🔒 ' + t('p_excl_left') + ' ' + Math.max(0,left) + ' ' + t('p_dom_d')) + '</div>' : '')
-    + (!m ? '<div class="prov warn">' + escH('⚠️ ' + t('p_nomandate')) + '</div>' : '')
+        + escH('' + t('p_excl_left') + ' ' + Math.max(0,left) + ' ' + t('p_dom_d')) + '</div>' : '')
+    + (!m ? '<div class="prov warn">' + escH('' + t('p_nomandate')) + '</div>' : '')
     + '<div class="row" style="margin-top:12px"><button class="btn ghost small" onclick="openProp('
       + jsArg(p.id) + ')">' + escH(t('p_open')) + '</button>'
-      + '<button class="btn ghost small" onclick="openNewViewing({prop:' + jsArg(p.id) + '})">🔑 '
+      + '<button class="btn ghost small" onclick="openNewViewing({prop:' + jsArg(p.id) + '})">'
       + escH(t('vw_new')) + '</button></div>'
     + '</div>';
 }
@@ -5631,8 +5906,8 @@ function renderPropList(){
 function propsView(){
   const chip = (k, v, label) => '<button class="' + (PROP_F[k] === v ? 'active' : '') + '" onclick="setPropF('
     + jsArg(k) + ',' + jsArg(v) + ')">' + escH(label) + '</button>';
-  let h = secTitle('🏠', t('props_title'));
-  h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewProp()">➕ '
+  let h = secTitle(t('props_title'));
+  h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewProp()">+ '
     + escH(t('p_new')) + '</button>';
   h += '<input class="search" type="text" inputmode="search" value="' + escH(PROP_F.q)
     + '" placeholder="' + escH(t('p_search')) + '" oninput="setPropQ(this.value)">';
@@ -5674,7 +5949,7 @@ function agentCard(a){
   const insLeft = a.qual.insuranceTo ? daysBetween(S.today, a.qual.insuranceTo) : null;
   return '<div class="card">'
     + '<div class="poh">'
-      + '<div class="pav">' + escH(a.em) + '</div>'
+      + '<div class="pav">' + emOf(a.name) + '</div>'
       + '<div class="pon"><div class="addr">' + escH(a.name) + '</div>'
         + '<div class="muted">' + escH(a.phone) + '</div></div>'
     + '</div>'
@@ -5682,7 +5957,7 @@ function agentCard(a){
        and the ambiguity is where arguments start. The badge sits on its own line so the agent's
        NAME keeps the full column width; a name squeezed beside a badge wraps mid-syllable. */
     + '<div class="badgerow" style="margin-top:10px">' + (a.defaultShareBp == null
-        ? badge('b-gold', '⚠ ' + t('ag_share_none'))
+        ? badge('b-gold', '' + t('ag_share_none'))
         : badge('b-neutral', t('ag_share') + ' ' + bpTxt(a.defaultShareBp))) + '</div>'
     + '<div class="prov">' + escH(t('ag_share_help')) + '</div>'
     + '<div class="pofour">'
@@ -5704,28 +5979,28 @@ function agentCard(a){
     + '</div>'
     + (a.qual.insurerName || a.qual.regNo
         ? '<div class="prov' + (insLeft != null && insLeft <= 30 ? ' warn' : '') + '">'
-          + escH('🛡️ ' + t('ag_ins') + sepC() + (a.qual.insurerName || '—')
+          + escH('' + t('ag_ins') + sepC() + (a.qual.insurerName || '—')
             + (a.qual.insuranceTo ? ' · ' + t('ag_ins_to') + ' ' + fdate(a.qual.insuranceTo) : '')) + '</div>'
         : '')
     /* THE BADGE THE NAV COUNTS NOW HAS SOMEWHERE TO GO. A dead-end badge — «one agent has no
        share» on a screen with no way to set one — trains the owner to ignore badges. */
     + '<div class="row" style="margin-top:12px"><button class="btn ghost small" onclick="openAgent('
-      + jsArg(a.id) + ')">✍️ ' + escH(t('ag_edit')) + '</button>'
-      + '<button class="btn ghost small" onclick="openStatement(' + jsArg(a.id) + ')">📄 '
+      + jsArg(a.id) + ')">' + escH(t('ag_edit')) + '</button>'
+      + '<button class="btn ghost small" onclick="openStatement(' + jsArg(a.id) + ')">'
       + escH(t('stmt_title')) + '</button></div>'
     + '</div>';
 }
 
 function agentsView(){
-  let h = secTitle('🧑‍💼', t('agents_title'));
+  let h = secTitle(t('agents_title'));
   /* the one accent-filled button on this screen */
   h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openAgent('
-    + jsArg('') + ')">➕ ' + escH(t('ag_new')) + '</button>';
+    + jsArg('') + ')">+ ' + escH(t('ag_new')) + '</button>';
   const list = activeAgents();
   h += list.length ? list.map(agentCard).join('') : emptyCard(t('ag_none'), '');
   /* the draft law's registration / exam / insurance fields are RECORDED, not required, and the
      screen says why rather than implying a duty that does not exist yet. */
-  h += '<div class="notice">' + escH('⚖️ ' + t('ag_law_note')) + '</div>';
+  h += '<div class="notice">' + escH('' + t('ag_law_note')) + '</div>';
   return h;
 }
 
@@ -5791,7 +6066,7 @@ function dealCard(d){
   const ns = nextStage(d);
   return '<div class="card' + (st === 'noterms' ? ' rail rail-bad' : '') + '">'
     + '<div class="sug" style="border-bottom:none;padding:0">'
-      + '<div class="pav">' + (p ? (KIND_EM[p.kind]||'🏠') : '🏠') + '</div>'
+      + '<div class="pav">' + emOf(p ? propAddr(p) : '') + '</div>'
       + '<div class="info"><div class="addr">' + escH(p ? propAddr(p) : '—') + '</div>'
         + '<div class="muted">' + escH((d.kind === 'lease' ? t('d_landlord') : t('d_seller')) + sepC()
           + clientName(d.sellerClientId) + ' · ' + (d.kind === 'lease' ? t('d_tenant') : t('d_buyer')) + sepC()
@@ -5809,8 +6084,8 @@ function dealCard(d){
       + '<div class="prov' + (why ? '' : ' warn') + '">' + escH(why || t('cm_none_b')) + '</div>'
     + '</div>'
     + (al ? '<div class="badgerow" style="margin-top:10px">' + al.rows.map(r =>
-        badge('b-neutral', agentEm(r.agentId) + ' ' + agentName(r.agentId) + ' · ' + bpTxt(r.shareBp))).join('') + '</div>' : '')
-    + (d.void ? '<div class="notice bad">' + escH('✖️ ' + t('d_void') + sepC() + d.void.reason
+        badge('b-neutral', agentName(r.agentId) + ' · ' + bpTxt(r.shareBp))).join('') + '</div>' : '')
+    + (d.void ? '<div class="notice bad">' + escH('✕ ' + t('d_void') + sepC() + d.void.reason
         + ' · ' + fdate(d.void.ts)) + '</div>' : '')
     + '<div class="row" style="margin-top:14px">'
       + '<button class="btn ghost small" onclick="openDeal(' + jsArg(d.id) + ')">' + escH(t('c_open')) + '</button>'
@@ -5824,7 +6099,7 @@ function dealCard(d){
           ? '<button class="btn small primary" onclick="advanceDeal(' + jsArg(d.id) + ')">'
             + escH(fmt('d_mark', {s:stageLabel(ns)})) + '</button>'
         : (stageBlock(d) && !d.void)
-          ? '<button class="btn small ghost" onclick="setTab(' + jsArg('payouts') + ')">💳 '
+          ? '<button class="btn small ghost" onclick="setTab(' + jsArg('payouts') + ')">'
             + escH(t('c_btn_pay')) + '</button>' : '')
     + '</div>'
     /* and it says WHY, on the card, rather than refusing the tap with a toast */
@@ -5834,17 +6109,17 @@ function dealCard(d){
 }
 
 function dealsView(){
-  let h = secTitle('🤝', t('deals_title'));
+  let h = secTitle(t('deals_title'));
   /* THE OFFER IS WHERE A DEAL COMES FROM. §2.7: a deal exists when an offer is accepted and not
      one moment before — so the offers sit above the deals on this screen, the open ones first,
      and accepting one is the tap that creates the deal. */
-  h += '<button class="btn ghost full" style="margin-bottom:12px" onclick="openNewOffer()">📝 '
+  h += '<button class="btn ghost full" style="margin-bottom:12px" onclick="openNewOffer()">'
     + escH(t('of_new')) + '</button>';
   const open = (S.offers||[]).filter(o => o.status === 'sent')
     .sort((a,b) => safeInt(b.ts,0) - safeInt(a.ts,0));
   if(open.length){
-    h += secTitle('📝', t('of_title')) + open.map(offerRow).join('');
-    h += secTitle('🤝', t('deals_title'));
+    h += secTitle(t('of_title')) + open.map(offerRow).join('');
+    h += secTitle(t('deals_title'));
   }
   h += '<div class="chips"><button class="' + (!DEAL_F ? 'active' : '') + '" onclick="setDealF('
     + jsArg('') + ')">' + escH(t('p_all')) + '</button>'
@@ -5889,7 +6164,7 @@ function openDeal(id){
   const al = allocation(d);
   const ps = al ? payerSplit(d.terms, al.fee) : null;
 
-  let h = '<h3>' + (p ? (KIND_EM[p.kind]||'🏠') : '🏠') + ' ' + escH(p ? propAddr(p) : '—') + '</h3>';
+  let h = '<h3>' + escH(p ? propAddr(p) : '—') + '</h3>';
   h += '<div class="muted">' + escH(t('csv_deal') + ' ' + dealDocNo(d)) + '</div>';
   h += '<div class="cad" style="margin-bottom:12px">' + escH(p ? p.cadCode : '') + '</div>';
   h += stageBar(d);
@@ -5901,7 +6176,7 @@ function openDeal(id){
   h += '<div class="row"><span class="mlbl">' + escH(t('d_price')) + '</span>' + amd(d.price) + '</div>';
 
   if(d.void && d.void.ts){
-    h += '<div class="notice bad" style="margin-top:10px">' + escH('✖️ ' + t('d_void') + sepC()
+    h += '<div class="notice bad" style="margin-top:10px">' + escH('✕ ' + t('d_void') + sepC()
       + d.void.reason + ' · ' + fdate(d.void.ts)) + '</div>';
   }
 
@@ -5909,11 +6184,10 @@ function openDeal(id){
      §1.5. The per-deal number is seeded from the agent's standing share and thereafter frozen on
      the deal; it is editable here until the fee is earned, and after that the product refuses and
      names the instrument that exists for it rather than rewriting history. */
-  h += '<div class="sec">🧑‍💼 ' + escH(t('d_agents')) + '</div>';
+  h += '<div class="sec">' + escH(t('d_agents')) + '</div>';
   h += '<div class="card" style="margin:0 0 12px">'
     + ((d.agents||[]).length
-        ? (d.agents||[]).map(a => '<div class="row"><span>' + escH(agentEm(a.agentId) + ' '
-            + agentName(a.agentId)) + '<div class="muted">' + escH(a.side ? t('ag_side_'+a.side) : '')
+        ? (d.agents||[]).map(a => '<div class="row"><span>' + escH(agentName(a.agentId)) + '<div class="muted">' + escH(a.side ? t('ag_side_'+a.side) : '')
             + '</div></span><span class="num">' + escH(bpTxt(safeBp(a.shareBp,0))) + '</span></div>').join('')
         : '<div class="notice">' + escH(t('d_agents_none')) + '</div>')
     + '<div class="prov">' + escH(t('ag_share_help')) + '</div>'
@@ -5924,7 +6198,7 @@ function openDeal(id){
     + '</div>';
 
   /* ---- THE TERMS ---- */
-  h += '<div class="sec">💼 ' + escH(t('cm_terms')) + '</div>';
+  h += '<div class="sec">' + escH(t('cm_terms')) + '</div>';
   if(!termsComplete(d.terms)){
     /* THE DEAL THAT CANNOT MOVE, AND THE BUTTON THAT MOVES IT. Stating the problem honestly and
        then offering only «Close» was a product that could not do the thing it is for. */
@@ -5965,7 +6239,7 @@ function openDeal(id){
       + '</div>';
 
     /* ---- THE SPLIT, WITH ITS RECONCILIATION LINE ---- */
-    h += '<div class="sec">💰 ' + escH(t('cm_fee')) + '</div>';
+    h += '<div class="sec">' + escH(t('cm_fee')) + '</div>';
     h += '<div class="card" style="margin:0 0 12px">' + amdBig(al.fee)
       + '<div class="prov">' + escH(feeWhy(d)) + '</div>'
       /* AN OVER-ALLOCATED DEAL GETS THE WARNING AND NOTHING ELSE. When Σ shareBp exceeds 10000
@@ -5974,11 +6248,11 @@ function openDeal(id){
          total, with the ✓ reconciliation line under it because the assertion is true by
          construction. A table that reconciles arithmetically while describing an impossible
          agreement is worse than no table. */
-      + (al.over ? '<div class="notice bad">' + escH('⚠️ ' + t('cm_over')) + '</div>'
+      + (al.over ? '<div class="notice bad">' + escH('' + t('cm_over')) + '</div>'
           + '<div class="prov warn">' + escH(fmt('cm_over_b', {n:bpTxt(al.sumBp)})) + '</div>'
         : '<div class="spwrap"><table class="sp"><thead><tr><th>' + escH(t('tab_agents')) + '</th>'
         + '<th class="n">' + escH(t('cm_share')) + '</th><th class="n">' + escH(t('cm_amount')) + '</th></tr></thead><tbody>'
-      + al.rows.map(r => '<tr><td>' + escH(agentEm(r.agentId) + ' ' + agentName(r.agentId))
+      + al.rows.map(r => '<tr><td>' + escH(agentName(r.agentId))
           + '<div class="muted">' + escH(r.side ? t('ag_side_'+r.side) : '') + '</div></td>'
           + '<td class="n">' + escH(bpTxt(r.shareBp)) + '</td>'
           + '<td class="n">' + amdTxt(r.amount) + '</td></tr>').join('')
@@ -5988,7 +6262,7 @@ function openDeal(id){
         + escH(bpTxt(al.sumBp + Math.max(0, 10000 - al.sumBp))) + '</td><td class="n">'
         + amdTxt(al.rows.reduce((x,r) => x + r.amount, 0) + al.agencyKeep) + '</td></tr>'
       + '</tbody></table></div>'
-      + '<div class="prov">' + escH((assertReconciles(al) ? '✓ ' : '⚠️ ') + t('cm_recon')) + '</div>')
+      + '<div class="prov">' + escH((assertReconciles(al) ? '✓ ' : '') + t('cm_recon')) + '</div>')
       + '<button class="btn ghost full" style="margin-top:12px" onclick="openTerms(' + jsArg(d.id) + ')">'
         + escH(t('cm_edit')) + '</button>'
       + '</div>';
@@ -5999,18 +6273,18 @@ function openDeal(id){
      property to this client, so the deal names the viewing that did it, with its date, its agent
      and whether the client signed the sheet. A deal with no supporting viewing is not a
      data-entry gap, it is an unsupported claim, and the sheet says exactly that. */
-  h += '<div class="sec">🔑 ' + escH(t('vw_support')) + '</div>';
+  h += '<div class="sec">' + escH(t('vw_support')) + '</div>';
   const sv = supportingViewings(d);
   h += '<div class="card" style="margin:0 0 12px">'
     + '<div class="prov">' + escH(t('vw_support_b')) + '</div>'
     + (sv.length
         ? sv.map(v => '<button class="pick" onclick="openViewingSheet(' + jsArg(v.id) + ')">'
             + escH(fdate(v.ts) + ' · ' + clientName(v.clientId))
-            + '<span class="pd">' + escH(agentEm(v.agentId) + ' ' + agentName(v.agentId) + ' · '
+            + '<span class="pd">' + escH(agentName(v.agentId) + ' · '
               + outcomeLabel(v.outcome) + ' · '
               + (v.signedTs ? t('vw_signed') + ' ' + fdate(v.signedTs) : t('vw_unsigned')))
             + '</span></button>').join('')
-        : '<div class="notice bad">' + escH('⚠️ ' + t('vw_support_none')) + '</div>')
+        : '<div class="notice bad">' + escH('' + t('vw_support_none')) + '</div>')
     + '</div>';
 
   /* ---- the two clocks and the checklist ---- */
@@ -6018,13 +6292,13 @@ function openDeal(id){
      pulled, consents obtained, the non-cash sentence said out loud, the notary, the filing
      deadline — and printing a to-do list is how a product signals it does not know what a
      document is for. */
-  h += '<div class="sec">📌 ' + escH(t('d_checklist')) + '</div>';
+  h += '<div class="sec">' + escH(t('d_checklist')) + '</div>';
   h += '<div class="card" style="margin:0 0 12px">';
   if(d.dates.notaryTs && !d.dates.filedTs && !d.void){
     const left = workingDaysLeft(d.dates.notaryTs, S.cfg.filingDays, S.today);
     h += '<div class="row"><span class="mlbl">' + escH(t('d_filing')) + '</span><span class="num">'
       + escH(filingLeftText(left)) + '</span></div>'
-      + (left < 0 ? '<div class="notice bad">' + escH('⏳ ' + t('c_clock_over')) + '</div>' : '')
+      + (left < 0 ? '<div class="notice bad">' + escH('' + t('c_clock_over')) + '</div>' : '')
       /* A COUNTDOWN THAT CANNOT SAY WHAT CALENDAR IT USED IS A COUNTDOWN NOBODY TRUSTS. */
       + '<div class="prov' + (left < 0 ? ' warn' : '') + '">'
       + escH(t(holidayTableCovers(d.dates.notaryTs, S.cfg.filingDays) ? 'd_filing_src'
@@ -6033,14 +6307,17 @@ function openDeal(id){
   if(DEAL_RANK[d.stage] >= DEAL_RANK.deposit && d.price > 300000 && !d.void){
     /* a NOTICE, not a blocker. The app is not the compliance officer; it is the thing that says
        the sentence out loud before the notary does. */
-    h += '<div class="notice">' + escH('💳 ' + t('d_noncash')) + '</div>';
+    h += '<div class="notice">' + escH('' + t('d_noncash')) + '</div>';
   }
   const consOk = d.consents.spouse && d.consents.coOwners;
   h += '<div class="row"><span class="mlbl">' + escH(t('d_consents')) + '</span>'
     + '<span>' + (consOk ? badge('b-green','✓') : badge('b-gold','!')) + '</span></div>'
     + '<div class="prov' + (consOk ? '' : ' warn') + '">'
-      + escH((d.consents.spouse ? '✓ ' : '□ ') + t('d_cons_spouse') + ' · '
-           + (d.consents.coOwners ? '✓ ' : '□ ') + t('d_cons_co')) + '</div>'
+      /* ✓ and ○ are both in the typographic set the strip keeps; the white square that used
+         to mark the unticked half was not, and a pair where only the TICKED half survives reads
+         as «both unticked» on the two consents a notary refuses a deal without. */
+      + escH((d.consents.spouse ? '✓ ' : '○ ') + t('d_cons_spouse') + ' · '
+           + (d.consents.coOwners ? '✓ ' : '○ ') + t('d_cons_co')) + '</div>'
     + (d.unifiedCertTs ? '<div class="row"><span class="mlbl">' + escH(t('d_unified')) + '</span><span>'
         + escH(fdate(d.unifiedCertTs)) + '</span></div>' : '')
     + (d.notary.name ? '<div class="row"><span class="mlbl">' + escH(t('d_notary')) + '</span><span>'
@@ -6058,7 +6335,7 @@ function openDeal(id){
 
   const blk = stageBlock(d);
   if(blk && !(d.void && d.void.ts)){
-    h += '<div class="alert"><div class="t">💳 ' + escH(t('d_paid_block')) + '</div>'
+    h += '<div class="alert"><div class="t">' + escH(t('d_paid_block')) + '</div>'
       + '<div class="d">' + escH(fmt('d_paid_block_b', {n:amdTxt(blk.left)})) + '</div>'
       + '<div class="act"><button class="btn primary" onclick="closeModal();setTab('
         + jsArg('payouts') + ')">' + escH(t('c_btn_pay')) + '</button></div></div>';
@@ -6070,10 +6347,10 @@ function openDeal(id){
   /* THE CLOSING SHEET — what goes in the folder when this is over, and the one document that
      collects the parties, the property, the evidence and the money in one place. */
   h += '<button class="btn ghost full" style="margin-top:12px" onclick="openDealSheetDoc('
-    + jsArg(d.id) + ')">🧾 ' + escH(t('doc_ds_open')) + '</button>';
+    + jsArg(d.id) + ')">' + escH(t('doc_ds_open')) + '</button>';
   if(!(d.void && d.void.ts)){
     h += '<button class="btn ghost full" style="margin-top:8px" onclick="openVoid(' + jsArg(d.id)
-      + ')">✖️ ' + escH(t('d_void_do')) + '</button>';
+      + ')">✕ ' + escH(t('d_void_do')) + '</button>';
   }
   h += '<button class="btn ghost full" style="margin-top:8px" onclick="closeModal()">' + escH(t('close')) + '</button>';
   openModal(h);
@@ -6196,12 +6473,12 @@ function drawVoid(){
   const al = allocation(d);
   const earned = dealEarnRows(d.id).reduce((n,r) => n + safeInt(r.amt,0), 0)
     + rowsOfDeal(d.id).filter(r => r.type === 'reverse').reduce((n,r) => n + safeInt(r.amt,0), 0);
-  openModal('<h3>✖️ ' + escH(t('d_void_title')) + '</h3>'
+  openModal('<h3>✕ ' + escH(t('d_void_title')) + '</h3>'
     + '<div class="muted">' + escH((pr ? propAddr(pr) : '') + ' · ' + dealDocNo(d)) + '</div>'
     + '<div class="prov">' + escH(t('d_void_help')) + '</div>'
     /* WHAT IS ABOUT TO BE REVERSED, IN DRAM, BEFORE THE OWNER COMMITS. A void that silently
        unwinds a six-figure fee is a void the owner should have been warned about. */
-    + (earned ? '<div class="notice bad" style="margin-top:10px">' + escH('⚠️ ' + t('lt_reverse')
+    + (earned ? '<div class="notice bad" style="margin-top:10px">' + escH('' + t('lt_reverse')
         + sepC() + amdTxt(earned) + ' ֏') + '</div>' : '')
     + (al && !earned ? '<div class="prov">' + escH(t('st_expected') + sepC() + amdTxt(al.fee) + ' ֏') + '</div>' : '')
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('d_void_reason')) + '</div>'
@@ -6238,13 +6515,11 @@ function saveVoid(){
    Both levels were read-only before this, and the nav badge counted agents with no share while
    routing to a screen that offered no way to set one.
    ===================================================================================== */
-const AGENT_EMS = ['🧑','👩','👨','🧕','🙋','🧑‍💼','👩‍💼','👨‍💼','🧔','👱'];
 let AG = null;
 function openAgent(agentId){
   const a = agentId ? agentById(agentId) : null;
   const q = (a && a.qual) || {};
   AG = { id: a ? a.id : '', name: a ? a.name : '', phone: a ? a.phone : '',
-         em: a ? a.em : AGENT_EMS[0],
          share: (a && a.defaultShareBp != null) ? pctText(a.defaultShareBp) : '',
          regNo: String(q.regNo || ''), insurer: String(q.insurerName || ''),
          examTs: safeInt(q.examTs, 0), insTo: safeInt(q.insuranceTo, 0),
@@ -6268,35 +6543,32 @@ function agPaintSave(){
   const b = document.getElementById('agSave');
   if(b) b.disabled = !String(AG.name || '').trim() || agShareBad();
   const e = document.getElementById('agErrShare');
-  if(e) e.innerHTML = agShareBad() ? '<div class="notice bad">' + escH('⚠️ ' + t('ag_share_bad')) + '</div>' : '';
+  if(e) e.innerHTML = agShareBad() ? '<div class="notice bad">' + escH('' + t('ag_share_bad')) + '</div>' : '';
 }
 function drawAgent(){
   if(!AG) return;
   MODAL_RE = drawAgent;
   const isNew = !AG.id;
-  let h = '<h3>' + escH(AG.em + ' ' + (isNew ? t('ag_new') : t('ag_edit'))) + '</h3>'
+  let h = '<h3>' + escH(isNew ? t('ag_new') : t('ag_edit')) + '</h3>'
     + '<div class="fieldlbl" style="margin-top:10px">' + escH(t('ag_name')) + '</div>'
     + '<input type="text" value="' + escH(AG.name) + '" oninput="agField(' + jsArg('name') + ',this.value)">'
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('ag_phone')) + '</div>'
     + '<input type="tel" inputmode="tel" value="' + escH(AG.phone) + '" oninput="agField('
       + jsArg('phone') + ',this.value)">'
-    + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('ag_em')) + '</div>'
-    + '<div class="chips wrap">' + AGENT_EMS.map(e => '<button class="' + (AG.em === e ? 'active' : '')
-        + '" onclick="agPick(' + jsArg('em') + ',' + jsArg(e) + ')">' + e + '</button>').join('') + '</div>'
     /* «Միջնորդավճարի X%» — X% OF THE COMMISSION, never a bare X%. Empty is a legitimate value and
        it means «not agreed yet»; it is not zero, and the screen never invents one. */
-    + '<div class="sec">💰 ' + escH(t('ag_share_full')) + '</div>'
+    + '<div class="sec">' + escH(t('ag_share_full')) + '</div>'
     + '<div class="fieldlbl">' + escH(t('ag_share_lbl')) + '</div>'
     + '<input type="text" inputmode="decimal" placeholder="' + escH(t('ag_share_ph')) + '" value="'
       + escH(AG.share) + '" oninput="agField(' + jsArg('share') + ',this.value)">'
     + '<div class="prov">' + escH(t('ag_share_help')) + '</div>'
-    + '<div id="agErrShare">' + (agShareBad() ? '<div class="notice bad">' + escH('⚠️ '
+    + '<div id="agErrShare">' + (agShareBad() ? '<div class="notice bad">' + escH(''
         + t('ag_share_bad')) + '</div>' : '') + '</div>'
     + '<div class="prov">' + escH(t('ag_share_future')) + '</div>'
-    + '<div class="sec">🎓 ' + escH(t('ag_qual')) + '</div>'
+    + '<div class="sec">' + escH(t('ag_qual')) + '</div>'
     /* the draft law's registration, exam and insurance fields are RECORDED, not required, and the
        sheet says which of those two things is true rather than implying a duty that is not law. */
-    + '<div class="notice">' + escH('⚖️ ' + t('ag_law_note')) + '</div>'
+    + '<div class="notice">' + escH('' + t('ag_law_note')) + '</div>'
     + '<div class="fieldlbl" style="margin-top:10px">' + escH(t('ag_regno')) + '</div>'
     + '<input type="text" value="' + escH(AG.regNo) + '" oninput="agField(' + jsArg('regNo') + ',this.value)">'
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('ag_insurer')) + '</div>'
@@ -6306,7 +6578,7 @@ function drawAgent(){
       + jsArg('insTo') + ',this.value)">'
     + '<div class="prov" id="aginsTo">' + escH(AG.insTo ? fdate(AG.insTo) : t('unset')) + '</div>';
   if(!isNew){
-    h += '<div class="sec">🚪 ' + escH(t('ag_leave')) + '</div>'
+    h += '<div class="sec">' + escH(t('ag_leave')) + '</div>'
       + '<div class="chips wrap">'
         + '<button class="' + (!AG.left ? 'active' : '') + '" onclick="agPick(' + jsArg('left') + ',false)">'
           + escH(t('ps_active')) + '</button>'
@@ -6336,11 +6608,11 @@ function saveAgent(){
   let a = AG.id ? agentById(AG.id) : null;
   if(!a){
     const id = contentId('a', name + KSEP + phone, (S.agents||[]).length);
-    a = { id:id, name:name, phone:phone, em:AG.em || '🧑', defaultShareBp:null,
+    a = { id:id, name:name, phone:phone, defaultShareBp:null,
           joinedTs:S.today, leftTs:0, qual:{regNo:'', examTs:0, insurerName:'', insuranceTo:0}, rid:'' };
     (S.agents = S.agents || []).push(a);
   }
-  a.name = name; a.phone = phone; a.em = AG.em || '🧑';
+  a.name = name; a.phone = phone;
   a.defaultShareBp = bp;
   a.qual = { regNo:String(AG.regNo || ''), examTs:safeInt(AG.examTs,0),
              insurerName:String(AG.insurer || ''), insuranceTo:safeInt(AG.insTo,0) };
@@ -6395,11 +6667,11 @@ function daSumHtml(){
   const al = (fee == null || bad.length) ? null : allocBp(fee, DA.rows.map(r => daBp(r) || 0));
   return (bad.length ? '' : '<div class="row"><span class="mlbl">' + escH(t('total')) + '</span><span class="num">'
       + escH(bpTxt(sum)) + '</span></div>')
-    + (bad.length ? '<div class="notice bad">' + escH('⚠️ ' + t('da_share_need') + ' · '
+    + (bad.length ? '<div class="notice bad">' + escH('' + t('da_share_need') + ' · '
         + bad.map(r => agentName(r.agentId)).join(', ')) + '</div>' : '')
-    + (sum > 10000 ? '<div class="notice bad">' + escH('⚠️ ' + t('cm_over')) + '</div>' : '')
+    + (sum > 10000 ? '<div class="notice bad">' + escH('' + t('cm_over')) + '</div>' : '')
     + (al ? '<div class="spwrap"><table class="sp"><tbody>'
-        + DA.rows.map((r,i) => '<tr><td>' + escH(agentEm(r.agentId) + ' ' + agentName(r.agentId))
+        + DA.rows.map((r,i) => '<tr><td>' + escH(agentName(r.agentId))
             + '</td><td class="n">' + escH(bpTxt(daBp(r) || 0)) + '</td><td class="n">'
             + amdTxt(al.parts[i]) + '</td></tr>').join('')
         + '<tr class="keep"><td>' + escH(t('cm_keep')) + '</td><td class="n">'
@@ -6412,12 +6684,12 @@ function drawDealAgents(){
   const d = dealById(DA.deal); if(!d) return;
   const p = propById(d.propertyId);
   const free = activeAgents().filter(a => !DA.rows.some(r => r.agentId === a.id));
-  let h = '<h3>🧑‍💼 ' + escH(t('d_agents')) + '</h3>'
+  let h = '<h3>' + escH(t('d_agents')) + '</h3>'
     + '<div class="muted">' + escH((p ? propAddr(p) : '') + ' · ' + dealDocNo(d)) + '</div>'
     + '<div class="prov">' + escH(t('ag_share_help')) + '</div>';
   h += DA.rows.length ? DA.rows.map((r,i) =>
       '<div class="card" style="margin:10px 0 0">'
-      + '<div class="row"><span>' + escH(agentEm(r.agentId) + ' ' + agentName(r.agentId)) + '</span>'
+      + '<div class="row"><span>' + escH(agentName(r.agentId)) + '</span>'
         + '<button class="btn ghost small" onclick="daRemove(' + i + ')">' + escH(t('d_agent_remove')) + '</button></div>'
       + '<div class="chips wrap" style="margin-top:8px">'
         + ['listing','selling'].map(sd => '<button class="' + (r.side === sd ? 'active' : '')
@@ -6429,12 +6701,12 @@ function drawDealAgents(){
       + '</div>').join('')
     : '<div class="notice">' + escH(t('d_agents_none')) + '</div>';
   if(free.length){
-    h += '<div class="sec">➕ ' + escH(t('d_agents_add')) + '</div>'
+    h += '<div class="sec">+ ' + escH(t('d_agents_add')) + '</div>'
       + free.map(a => '<button class="pick" onclick="daAdd(' + jsArg(a.id) + ')">'
-        + escH(a.em + ' ' + a.name) + '<span class="pd">' + escH(a.defaultShareBp == null
+        + escH(a.name) + '<span class="pd">' + escH(a.defaultShareBp == null
           ? t('ag_share_none') : t('ag_share') + ' ' + bpTxt(a.defaultShareBp)) + '</span></button>').join('');
   }
-  h += '<div class="sec">🧮 ' + escH(t('cm_share')) + '</div>'
+  h += '<div class="sec">' + escH(t('cm_share')) + '</div>'
     + '<div class="card" style="margin:0" id="daSum">' + daSumHtml() + '</div>'
     + '<button class="btn primary full" id="daSave" style="margin-top:14px"'
       + (daBlocked() ? ' disabled' : '') + ' onclick="saveDealAgents()">' + escH(t('dep_save')) + '</button>'
@@ -6470,7 +6742,7 @@ function payoutsView(){
     payable: acc.payable + x.m.payable, paid: acc.paid + x.m.paid
   }), {expected:0, earned:0, payable:0, paid:0});
 
-  let h = secTitle('💳', t('pay_title'));
+  let h = secTitle(t('pay_title'));
   h += '<div class="card"><div class="mlbl">' + escH(t('st_payable')) + '</div>' + amdBig(tot.payable)
     + '<div class="pofour">'
       + '<div><div class="l">' + escH(t('st_expected')) + '</div><div class="v">' + amdTxt(tot.expected) + '<span class="cur">֏</span></div></div>'
@@ -6495,7 +6767,7 @@ function payoutsView(){
 }
 function payoutRow(a, m){
   return '<div class="card">'
-    + '<div class="poh"><div class="pav">' + escH(a.em) + '</div>'
+    + '<div class="poh"><div class="pav">' + emOf(a.name) + '</div>'
       + '<div class="pon"><div class="addr">' + escH(a.name) + '</div>'
         + '<div class="muted">' + escH(a.defaultShareBp == null ? t('ag_share_none')
           : t('ag_share') + ' ' + bpTxt(a.defaultShareBp)) + '</div></div></div>'
@@ -6517,11 +6789,11 @@ function payoutRow(a, m){
        third meaning, so the label names who it was advanced to. */
     + (m.advance ? '<div class="notice">' + escH(t('pay_advance') + sepC() + amdTxt(m.advance) + ' ֏') + '</div>' : '')
     + '<div class="row" style="margin-top:12px">'
-      + '<button class="btn ghost small" onclick="openStatement(' + jsArg(a.id) + ')">📄 '
+      + '<button class="btn ghost small" onclick="openStatement(' + jsArg(a.id) + ')">'
         + escH(t('stmt_title')) + '</button>'
-      + (m.payable ? '<button class="btn small primary" onclick="openPayout(' + jsArg(a.id) + ')">💳 '
+      + (m.payable ? '<button class="btn small primary" onclick="openPayout(' + jsArg(a.id) + ')">'
           + escH(t('pay_pay')) + '</button>'
-        : '<button class="btn small ghost" onclick="openAdjust(' + jsArg(a.id) + ')">⚖️ '
+        : '<button class="btn small ghost" onclick="openAdjust(' + jsArg(a.id) + ')">'
           + escH(t('adj_open')) + '</button>')
     + '</div>'
     + '</div>';
@@ -6609,13 +6881,13 @@ function openStatement(agentId){
 
   const ag = S.agency || {};
   const to = upto;
-  let h = '<h3>📄 ' + escH(t('stmt_title')) + '</h3>'
+  let h = '<h3>' + escH(t('stmt_title')) + '</h3>'
     + '<div class="muted">' + escH(t('doc_no') + ' ' + stmtDocNo(agentId, from, STMT_P)
       + ' · ' + fdate(S.today)) + '</div>'
     + '<hr class="actrule">'
     + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
       + docParty(t('doc_agency'), ag.name, docTin(ag.tin))
-      + docParty(t('doc_agent'), a.em + ' ' + a.name, a.phone)
+      + docParty(t('doc_agent'), a.name, a.phone)
     + '</div>'
     /* the period selector is a control, not part of the document */
     + '<div class="chips wrap noprint" style="margin-top:10px">'
@@ -6652,7 +6924,7 @@ function openStatement(agentId){
     + docFoot(t('stmt_note')) + '</div>'
     + '<div class="prov noprint">' + escH(t('pay_derived')) + '</div>'
     + '<button class="btn ghost full noprint" style="margin-top:12px" onclick="openAdjust('
-      + jsArg(agentId) + ')">⚖️ ' + escH(t('adj_open')) + '</button>'
+      + jsArg(agentId) + ')">' + escH(t('adj_open')) + '</button>'
     + docTail();
   openModal(h);
 }
@@ -6665,10 +6937,9 @@ function viewingRow(v){
   const p = propById(v.propertyId);
   return '<div class="card' + (!v.signedTs ? ' rail rail-note' : '') + '">'
     + '<div class="sug" style="border-bottom:none;padding:0">'
-      + '<div class="pav">' + (p ? (KIND_EM[p.kind]||'🏠') : '🏠') + '</div>'
+      + '<div class="pav">' + emOf(p ? propAddr(p) : '') + '</div>'
       + '<div class="info"><div class="addr">' + escH(p ? propAddr(p) : '—') + '</div>'
-        + '<div class="muted">' + escH(clientName(v.clientId) + ' · ' + agentEm(v.agentId) + ' '
-          + agentName(v.agentId) + ' · ' + fdatetime(v.ts)) + '</div></div>'
+        + '<div class="muted">' + escH(clientName(v.clientId) + ' · ' + agentName(v.agentId) + ' · ' + fdatetime(v.ts)) + '</div></div>'
     + '</div>'
     + '<div class="row" style="margin-top:10px">'
       + '<div class="badgerow">' + badge(VO_CLASS[v.outcome]||'b-neutral', outcomeLabel(v.outcome))
@@ -6677,8 +6948,8 @@ function viewingRow(v){
     /* the sheet is one tap away from every row, because the only thing that turns a viewing into
        a defensible fee claim is a client's signature on a piece of paper. */
     + '<div class="row" style="margin-top:12px"><button class="btn ghost small" onclick="openViewingSheet('
-      + jsArg(v.id) + ')">🖨 ' + escH(t('vw_print')) + '</button>'
-    + (v.signedTs ? '' : '<button class="btn small ghost" onclick="signViewing(' + jsArg(v.id) + ')">✍️ '
+      + jsArg(v.id) + ')">' + escH(t('vw_print')) + '</button>'
+    + (v.signedTs ? '' : '<button class="btn small ghost" onclick="signViewing(' + jsArg(v.id) + ')">'
         + escH(t('vw_sign')) + '</button>') + '</div>'
     + '</div>';
 }
@@ -6715,12 +6986,12 @@ function renderViewList(){
     : emptyCard(VIEW_F.q || VIEW_F.agent || VIEW_F.unsigned ? t('nothing_found') : t('vw_none'), '');
 }
 function viewsView(){
-  let h = secTitle('🔑', t('views_title'));
+  let h = secTitle(t('views_title'));
   /* the sentence that makes this screen worth having, said once at the top */
-  h += '<div class="notice">' + escH('🔑 ' + t('vw_evidence')) + '</div>';
+  h += '<div class="notice">' + escH('' + t('vw_evidence')) + '</div>';
   /* THE ONE ACCENT BUTTON ON THIS SCREEN, at the top, always. An agent between viewings needs
      this in four taps with no network, and everything below it is a ghost. */
-  h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewViewing()">🔑 '
+  h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewViewing()">'
     + escH(t('vw_new')) + '</button>';
   h += '<input class="search" type="text" inputmode="search" value="' + escH(VIEW_F.q)
     + '" placeholder="' + escH(t('vw_filter')) + '" oninput="setViewQ(this.value)">';
@@ -6731,7 +7002,7 @@ function viewsView(){
       + escH(t('vw_unsigned')) + '</button>'
     + activeAgents().map(a => '<button class="' + (VIEW_F.agent === a.id ? 'active' : '')
         + '" onclick="setViewF(' + jsArg('agent') + ',' + jsArg(a.id) + ')">'
-        + escH(a.em + ' ' + a.name) + '</button>').join('')
+        + escH(a.name) + '</button>').join('')
     + '</div>';
   h += '<div id="viewlist">' + (viewList().length ? viewList().map(viewingRow).join('')
       : emptyCard(VIEW_F.q || VIEW_F.agent || VIEW_F.unsigned ? t('nothing_found') : t('vw_none'), '')) + '</div>';
@@ -6745,15 +7016,15 @@ function clearViewF(){ VIEW_F.agent = ''; VIEW_F.unsigned = false; renderAll(); 
 function clientCard(c){
   const roles = (c.kind||[]).map(r => badge('b-neutral', roleLabel(r))).join('');
   return '<div class="card"><div class="poh">'
-    + '<div class="pav">👤</div>'
+    + '<div class="pav">' + emOf(c.name) + '</div>'
     + '<div class="pon"><div class="addr">' + escH(c.name) + '</div>'
       /* the agent's next action after opening a client is ALWAYS to call them */
       + (c.phone ? '<a class="telbtn" href="tel:' + escH(c.phone.replace(/[^\d+]/g,'')) + '"'
-          + ' aria-label="' + escH(t('cl_call') + ' ' + c.name) + '">📞 '
+          + ' aria-label="' + escH(t('cl_call') + ' ' + c.name) + '">'
           + escH(c.phone) + '</a>' : '') + '</div>'
     + '</div>'
     + '<div class="badgerow" style="margin-top:10px">' + roles
-      + badge('b-neutral', agentEm(c.agentId) + ' ' + agentName(c.agentId)) + '</div>'
+      + badge('b-neutral', agentName(c.agentId)) + '</div>'
     + '<div class="row" style="margin-top:12px"><button class="btn ghost small" onclick="openClient('
       + jsArg(c.id) + ')">' + escH(t('p_open')) + '</button>'
       + '<span class="muted" style="font-size:var(--fs-micro)">' + escH(t('vw_count')) + ' '
@@ -6778,8 +7049,8 @@ function renderClientList(){
     : emptyCard(CL_F.q || CL_F.role ? t('nothing_found') : t('cl_none'), '');
 }
 function clientsView(){
-  let h = secTitle('👥', t('clients_title'));
-  h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewClient()">➕ '
+  let h = secTitle(t('clients_title'));
+  h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewClient()">+ '
     + escH(t('cl_new')) + '</button>';
   /* search, and the four role chips — վաճառող / գնորդ / տանտեր / վարձակալ. A list with role
      badges on every card and no way to filter by one is a list that stops working at a screenful. */
@@ -6808,7 +7079,7 @@ function mandateCard(m){
   const pct = span ? Math.max(0, Math.min(100, Math.round((span - Math.max(0,left||0)) * 100 / span))) : 0;
   const props = (m.propertyIds||[]).map(pid => propById(pid)).filter(Boolean);
   return '<div class="card">'
-    + '<div class="poh"><div class="pav">📄</div>'
+    + '<div class="poh"><div class="pav">' + emOf(clientName(m.clientId)) + '</div>'
       + '<div class="pon"><div class="addr">' + escH(clientName(m.clientId)) + '</div>'
         + '<div class="muted">' + escH(t('mn_kind_'+m.kind) + (m.docNo ? ' · ' + m.docNo : '')) + '</div></div>'
       + '<div>' + badge(MS_CLASS[m.status]||'b-neutral', manStLabel(m.status)) + '</div></div>'
@@ -6824,27 +7095,27 @@ function mandateCard(m){
         ? (left != null
             ? '<div class="hbar" style="margin-top:8px"><i style="width:' + pct + '%"></i></div>'
               + '<div class="prov' + (left <= 14 ? ' warn' : '') + '">'
-              /* SAY IT ONCE. It read «🔒 Բացառիկ · բացառիկ՝ մնաց 81 օր» — the word twice in one
+              /* SAY IT ONCE. It read «Բացառիկ · բացառիկ՝ մնաց 81 օր» — the word twice in one
                  line, because the property card's standalone phrase was reused after a label
                  that already carries it. */
-              + escH('🔒 ' + t('mn_exclusive') + ' · ' + fmt('c_excl_b', {n:Math.max(0, left)})
+              + escH('' + t('mn_exclusive') + ' · ' + fmt('c_excl_b', {n:Math.max(0, left)})
                 + ' · ' + t('mn_excl_cap')) + '</div>'
-            : '<div class="prov">' + escH('🔒 ' + t('mn_exclusive') + ' · '
+            : '<div class="prov">' + escH('' + t('mn_exclusive') + ' · '
                 + fdate(m.exclusiveFrom) + ' — ' + fdate(m.exclusiveTo)) + '</div>')
         : '')
-    + (m.retainUntil ? '<div class="prov">' + escH('🗄 ' + t('mn_retain') + ' ' + fdate(m.retainUntil)) + '</div>' : '')
+    + (m.retainUntil ? '<div class="prov">' + escH('' + t('mn_retain') + ' ' + fdate(m.retainUntil)) + '</div>' : '')
     /* the platform field exists so the record is ready; it is greyed and says why. */
-    + '<div class="prov">' + escH('🏛 ' + t('mn_platform') + sepC()
+    + '<div class="prov">' + escH('' + t('mn_platform') + sepC()
         + (m.platformRegTs ? fdate(m.platformRegTs) : t('mn_platform_off'))) + '</div>'
     + '<div class="row" style="margin-top:12px"><button class="btn ghost small" onclick="openMandateDoc('
-      + jsArg(m.id) + ')">🖨 ' + escH(t('doc_mn_print')) + '</button>'
+      + jsArg(m.id) + ')">' + escH(t('doc_mn_print')) + '</button>'
     + (termsComplete(m.terms) ? '' : '<button class="btn small ghost" onclick="openMandateTerms('
         + jsArg(m.id) + ')">' + escH(t('cm_fill')) + '</button>') + '</div>'
     + '</div>';
 }
 function docsView(){
-  let h = secTitle('📄', t('docs_title'));
-  h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewMandate()">➕ '
+  let h = secTitle(t('docs_title'));
+  h += '<button class="btn primary full" style="margin-bottom:12px" onclick="openNewMandate()">+ '
     + escH(t('mn_new')) + '</button>';
   const list = (S.mandates||[]).slice().sort((a,b) => b.signedTs - a.signedTs);
   h += list.length ? list.map(mandateCard).join('') : emptyCard(t('docs_title'), '');
@@ -6858,26 +7129,26 @@ function dataView(){
   const bad = verifyLedger();
   const money = (S.rows||[]).filter(isMoneyRow).length;
   const ev = (S.rows||[]).length - money;
-  let h = secTitle('📈', t('data_title'));
-  h += '<div class="card' + (bad.length ? ' rail rail-bad' : '') + '"><h3>📒 ' + escH(t('dt_ledger')) + '</h3>'
+  let h = secTitle(t('data_title'));
+  h += '<div class="card' + (bad.length ? ' rail rail-bad' : '') + '"><h3>' + escH(t('dt_ledger')) + '</h3>'
     + '<div class="row"><span class="mlbl">' + escH(t('dt_money_rows')) + '</span><span class="num">' + money + ' ' + escH(t('dt_rows')) + '</span></div>'
     + '<div class="row"><span class="mlbl">' + escH(t('dt_ev_rows')) + '</span><span class="num">' + ev + ' ' + escH(t('dt_rows')) + '</span></div>'
     + '<div class="prov">' + escH(bad.length ? t('dt_bad') : '✓ ' + t('dt_ok')) + '</div>'
     + (bad.length ? '<button class="btn primary full" style="margin-top:10px" onclick="doHeal()">'
         + escH(t('dt_rebuild')) + '</button>' : '')
-    + '<button class="btn ghost full" style="margin-top:10px" onclick="runSelfTest()">🧪 '
+    + '<button class="btn ghost full" style="margin-top:10px" onclick="runSelfTest()">'
       + escH(t('dt_selftest')) + '</button>'
     /* A REFUSED ROW IS NEVER SILENT. The ledger drops a row it cannot fold — an evidence row
        carrying money, an unknown agent, a non-finite amount — and the count of those refusals is
        on screen with its reason, because a books product that discards a row without saying so is
        a books product nobody should trust. */
-    + (LEDGER_REJECTS.length ? '<div class="notice bad">' + escH('⚠ ' + t('dt_refused') + ': '
+    + (LEDGER_REJECTS.length ? '<div class="notice bad">' + escH('' + t('dt_refused') + ': '
         + LEDGER_REJECTS.length + ' · ' + LEDGER_REJECTS.map(x => x.why).join(', ')) + '</div>' : '')
     + '</div>';
 
   /* the privacy card: exactly what an agent's device can and cannot see. Written as a promise the
      code keeps, not as a reassurance. */
-  h += '<div class="card"><h3>🔒 ' + escH(t('dt_priv')) + '</h3>'
+  h += '<div class="card"><h3>' + escH(t('dt_priv')) + '</h3>'
     + '<div class="muted">' + escH(t('dt_priv_b')) + '</div>'
     /* THE CARD DESCRIBES A RULE, AND THE RULE IS NOT YET A FEATURE. There is no agent device and
        no sync in this build, so the card would otherwise be describing a wall around a room that
@@ -6885,21 +7156,21 @@ function dataView(){
        kind of sentence a product should never make. */
     + '<div class="prov">' + escH(t('dt_priv_soon')) + '</div></div>';
 
-  h += '<div class="card"><h3>🎨 ' + escH(t('dt_theme')) + '</h3><div class="chips wrap">'
+  h += '<div class="card"><h3>' + escH(t('dt_theme')) + '</h3><div class="chips wrap">'
     + ['light','dark'].map(v => '<button class="' + (U.theme === v ? 'active' : '') + '" onclick="setTheme('
         + jsArg(v) + ')">' + escH(t(v === 'light' ? 'dt_light' : 'dt_dark')) + '</button>').join('')
-    + '</div><h3 style="margin-top:16px">🌐 ' + escH(t('dt_lang')) + '</h3><div class="chips wrap">'
+    + '</div><h3 style="margin-top:16px">' + escH(t('dt_lang')) + '</h3><div class="chips wrap">'
     + [['hy','Հայերեն'],['en','English'],['ru','Русский']].map(x => '<button class="'
         + (lang === x[0] ? 'active' : '') + '" onclick="setLang(' + jsArg(x[0]) + ')">' + escH(x[1]) + '</button>').join('')
     + '</div></div>';
 
-  h += '<div class="card"><h3>⬇ ' + escH(t('dt_export')) + '</h3>'
+  h += '<div class="card"><h3>' + escH(t('dt_export')) + '</h3>'
     + '<button class="btn ghost full" onclick="exportCommission()">' + escH(t('dt_export_comm')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:10px" onclick="exportViewings()">' + escH(t('dt_export_views')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:10px" onclick="exportLedger()">' + escH(t('dt_export_ledger')) + '</button>'
     + '<div class="prov">' + escH(t('dt_export_b')) + '</div></div>';
 
-  h += '<div class="card"><h3>♻ ' + escH(t('dt_reset')) + '</h3>'
+  h += '<div class="card"><h3>' + escH(t('dt_reset')) + '</h3>'
     + '<div class="muted">' + escH(t('dt_reset_b')) + '</div>'
     + '<button class="btn danger full" style="margin-top:10px" onclick="startFresh()">' + escH(t('dt_reset')) + '</button></div>';
   return h;
@@ -6963,7 +7234,7 @@ const docTin = tin => t('doc_tin') + ' ' + (tin || '—');
    the shape the screen beside them prints, read as 0 and the button went dark with no reason
    given. One parser, one warning, everywhere a person types dram. */
 const amdWarnHtml = raw => (String(raw == null ? '' : raw).trim() !== '' && amdFromInput(raw) == null)
-  ? '<div class="notice bad">' + escH('⚠️ ' + t('cm_amd_bad')) + '</div>' : '';
+  ? '<div class="notice bad">' + escH('' + t('cm_amd_bad')) + '</div>' : '';
 function docSign(label){
   return '<div class="signb" style="flex:1 1 150px;min-width:150px"><div class="doclbl">'
     + escH(label) + '</div><div class="actsignline"></div></div>';
@@ -6974,7 +7245,7 @@ function docFoot(note){
 /* every printable sheet closes the same way: one accent-filled print button, one ghost close,
    both `noprint` so the paper carries the document and nothing else. */
 function docTail(){
-  return '<button class="btn primary full noprint" style="margin-top:16px" onclick="window.print()">🖨 '
+  return '<button class="btn primary full noprint" style="margin-top:16px" onclick="window.print()">'
     + escH(t('print')) + '</button>'
     + '<button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">'
     + escH(t('close')) + '</button>';
@@ -7076,7 +7347,7 @@ function vwPropRows(){
   list = list.sort((a,b) => lastTouch(b) - lastTouch(a));
   const show = list.slice(0, 6);
   return show.map(p => '<button class="pick' + (VW.prop === p.id ? ' on' : '') + '" onclick="vwPick('
-      + jsArg('prop') + ',' + jsArg(p.id) + ')">' + (KIND_EM[p.kind] || '🏠') + ' ' + escH(propAddr(p))
+      + jsArg('prop') + ',' + jsArg(p.id) + ')">' + escH(propAddr(p))
       + '<span class="pd">' + escH(kindLabel(p.kind) + ' · ' + dealKindLabel(p.deal)) + '</span></button>').join('')
     + (list.length > show.length ? '<div class="prov">' + escH(fmt('vw_more', {n:list.length - show.length})) + '</div>' : '')
     + (list.length ? '' : '<div class="prov">' + escH(t('p_none_b')) + '</div>');
@@ -7089,7 +7360,7 @@ function vwClientRows(){
   list = list.sort((a,b) => lastTouch(b) - lastTouch(a));
   const show = list.slice(0, 6);
   return show.map(c => '<button class="pick' + (VW.client === c.id ? ' on' : '') + '" onclick="vwPick('
-      + jsArg('client') + ',' + jsArg(c.id) + ')">👤 ' + escH(c.name)
+      + jsArg('client') + ',' + jsArg(c.id) + ')">' + escH(c.name)
       + '<span class="pd">' + escH(c.phone || '—') + '</span></button>').join('')
     + (list.length > show.length ? '<div class="prov">' + escH(fmt('vw_more', {n:list.length - show.length})) + '</div>' : '');
 }
@@ -7098,15 +7369,15 @@ function drawNewViewing(){
   if(!VW) return;
   MODAL_RE = drawNewViewing;
   const ready = !!(VW.prop && (VW.client || (VW.nc && VW.ncName.trim())) && VW.agent);
-  let h = '<h3>🔑 ' + escH(t('vw_new')) + '</h3>';
+  let h = '<h3>' + escH(t('vw_new')) + '</h3>';
   h += '<div class="prov">' + escH(t('vw_locked')) + '</div>';
 
   /* A PICKER THAT HAS BEEN ANSWERED COLLAPSES TO ITS ANSWER. Three open lists of six rows each
      is 18 rows of scrolling between the agent and the button they came here to press; an answered
      question is one row with a «change» beside it. This is the difference between four taps and
      four screens. */
-  const chosen = (secEm, secLbl, txt, sub, clearKey) =>
-    '<div class="sec">' + secEm + ' ' + escH(secLbl) + '</div>'
+  const chosen = (secLbl, txt, sub, clearKey) =>
+    '<div class="sec">' + escH(secLbl) + '</div>'
     + '<div class="row"><div style="min-width:0"><b>' + escH(txt) + '</b>'
       + (sub ? '<div class="muted">' + escH(sub) + '</div>' : '') + '</div>'
     + '<button class="btn ghost small" onclick="vwPick(' + jsArg(clearKey) + ',' + jsArg('') + ')">'
@@ -7114,17 +7385,17 @@ function drawNewViewing(){
 
   const pp = VW.prop ? propById(VW.prop) : null;
   h += pp
-    ? chosen('🏠', t('vw_prop'), (KIND_EM[pp.kind] || '🏠') + ' ' + propAddr(pp),
+    ? chosen(t('vw_prop'), propAddr(pp),
         kindLabel(pp.kind) + ' · ' + dealKindLabel(pp.deal), 'prop')
-    : '<div class="sec">🏠 ' + escH(t('vw_prop')) + '</div>'
+    : '<div class="sec">' + escH(t('vw_prop')) + '</div>'
       + '<input class="search" type="text" placeholder="' + escH(t('vw_search_p')) + '" value="'
         + escH(VW.pq) + '" oninput="vwSearch(' + jsArg('pq') + ',this.value,' + jsArg('vwPropList') + ')">'
       + '<div id="vwPropList">' + vwPropRows() + '</div>';
 
   const cc = VW.client ? clientById(VW.client) : null;
-  if(cc){ h += chosen('👤', t('vw_client'), cc.name, cc.phone, 'client'); }
+  if(cc){ h += chosen(t('vw_client'), cc.name, cc.phone, 'client'); }
   else {
-  h += '<div class="sec">👤 ' + escH(t('vw_client')) + '</div>';
+  h += '<div class="sec">' + escH(t('vw_client')) + '</div>';
   if(VW.nc){
     h += '<input type="text" placeholder="' + escH(t('vw_nc_name')) + '" value="' + escH(VW.ncName)
       + '" oninput="vwField(' + jsArg('ncName') + ',this.value)">'
@@ -7144,17 +7415,17 @@ function drawNewViewing(){
 
   const aa = VW.agent ? agentById(VW.agent) : null;
   h += aa
-    ? chosen('🧑‍💼', t('vw_agent'), aa.em + ' ' + aa.name, aa.phone, 'agent')
-    : '<div class="sec">🧑‍💼 ' + escH(t('vw_agent')) + '</div>'
+    ? chosen(t('vw_agent'), aa.name, aa.phone, 'agent')
+    : '<div class="sec">' + escH(t('vw_agent')) + '</div>'
       + activeAgents().map(a => '<button class="pick" onclick="vwPick('
-          + jsArg('agent') + ',' + jsArg(a.id) + ')">' + escH(a.em + ' ' + a.name) + '</button>').join('');
+          + jsArg('agent') + ',' + jsArg(a.id) + ')">' + escH(a.name) + '</button>').join('');
 
-  h += '<div class="sec">✅ ' + escH(t('vw_outcome')) + '</div>'
+  h += '<div class="sec">✓ ' + escH(t('vw_outcome')) + '</div>'
     + '<div class="chips wrap">' + VIEW_OUTCOMES.map(o => '<button class="' + (VW.outcome === o ? 'active' : '')
         + '" onclick="vwPick(' + jsArg('outcome') + ',' + jsArg(o) + ')">' + escH(outcomeLabel(o))
         + '</button>').join('') + '</div>';
 
-  h += '<div class="sec">🗓️ ' + escH(t('vw_when')) + '</div>'
+  h += '<div class="sec">' + escH(t('vw_when')) + '</div>'
     + '<input type="date" value="' + escH(isoDate(VW.ts)) + '" onchange="vwDate(this.value)">'
     + '<div class="fieldlbl" style="margin-top:10px">' + escH(t('vw_time')) + '</div>'
     + '<input type="time" value="' + escH(VW.time || '') + '" onchange="vwTime(this.value)">'
@@ -7162,7 +7433,7 @@ function drawNewViewing(){
        BROWSER's locale and cannot be restyled, so the app states the instant it actually holds. */
     + dateEcho('vwDateEcho', vwStamp());
 
-  h += '<div class="sec">✍️ ' + escH(t('vw_note')) + '</div>'
+  h += '<div class="sec">' + escH(t('vw_note')) + '</div>'
     + '<textarea rows="2" oninput="vwField(' + jsArg('note') + ',this.value)">' + escH(VW.note) + '</textarea>';
 
   h += '<button class="btn primary full" style="margin-top:16px"' + (ready ? '' : ' disabled')
@@ -7232,14 +7503,14 @@ function openViewingSheet(id){
   MODAL_RE = () => openViewingSheet(id);
   const p = propById(v.propertyId), c = clientById(v.clientId), a = agentById(v.agentId);
   const ag = S.agency || {};
-  let h = '<h3>🔑 ' + escH(t('doc_view_title')) + '</h3>'
+  let h = '<h3>' + escH(t('doc_view_title')) + '</h3>'
     + '<div class="muted">' + escH(t('doc_no') + ' ' + viewDocNo(v) + ' · ' + fdate(v.ts)) + '</div>'
     + '<hr class="actrule">'
     + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
       + docParty(t('doc_agency'), ag.name, docTin(ag.tin))
       + docParty(t('doc_client'), c ? c.name : '—', c ? c.phone : '')
     + '</div>'
-    + '<div class="sec">🏠 ' + escH(t('doc_prop')) + '</div>'
+    + '<div class="sec">' + escH(t('doc_prop')) + '</div>'
     + '<div class="row"><span class="mlbl">' + escH(t('props_title')) + '</span><span>'
       + escH(p ? propAddr(p) : '—') + '</span></div>'
     + '<div class="row"><span class="mlbl">' + escH(t('p_cad')) + '</span><span class="cad">'
@@ -7249,7 +7520,7 @@ function openViewingSheet(id){
                 p.floor ? p.floor + '/' + (p.floors||'—') + ' ' + t('p_floor') : ''].filter(Boolean).join(' · '))
         + '</span></div>' : '')
     + '<div class="row"><span class="mlbl">' + escH(t('doc_agent')) + '</span><span>'
-      + escH(a ? (a.em + ' ' + a.name + (a.phone ? ' · ' + a.phone : '')) : '—') + '</span></div>'
+      + escH(a ? (a.name + (a.phone ? ' · ' + a.phone : '')) : '—') + '</span></div>'
     + '<div class="row"><span class="mlbl">' + escH(minsOfDay(v.ts) ? t('doc_when_t') : t('doc_when'))
       + '</span><span>' + escH(fdatetime(v.ts))
       + (minsOfDay(v.ts) ? '' : ' <span class="muted">' + escH('· ' + t('vw_time_none')) + '</span>')
@@ -7275,7 +7546,7 @@ function openViewingSheet(id){
     + docFoot(t('doc_view_note')) + '</div>'
     + (v.signedTs ? ''
         : '<button class="btn ghost full noprint" style="margin-top:14px" onclick="signViewing('
-          + jsArg(v.id) + ')">✍️ ' + escH(t('vw_sign')) + '</button>'
+          + jsArg(v.id) + ')">' + escH(t('vw_sign')) + '</button>'
           + '<div class="prov noprint">' + escH(t('vw_sign_q')) + '</div>')
     + docTail();
   openModal(h);
@@ -7288,7 +7559,7 @@ function openProp(id){
   const dom = daysOnMarket(p);
   const m = mandateOfProp(p.id);
   const vs = viewingsOfProp(p.id);
-  let h = '<h3>' + (KIND_EM[p.kind] || '🏠') + ' ' + escH(propAddr(p)) + '</h3>'
+  let h = '<h3>' + escH(propAddr(p)) + '</h3>'
     + '<div class="cad" style="margin-bottom:12px">' + escH(p.cadCode) + '</div>'
     + '<div class="badgerow" style="margin-bottom:12px">'
       + badge(PROP_ST_CLASS[p.status] || 'b-neutral', propStLabel(p.status))
@@ -7299,29 +7570,29 @@ function openProp(id){
     + '<div class="row"><span class="mlbl">' + escH(t('p_owner')) + '</span><span>'
       + escH(clientName(p.ownerClientId) || '—') + '</span></div>'
     + '<div class="row"><span class="mlbl">' + escH(t('tab_agents')) + '</span><span>'
-      + escH(agentEm(p.agentId) + ' ' + agentName(p.agentId)) + '</span></div>'
+      + escH(agentName(p.agentId)) + '</span></div>'
     + (dom ? '<div class="row"><span class="mlbl">' + escH(t('p_dom')) + '</span><span class="num">'
         + dom.days + ' ' + escH(t('p_dom_d')) + '</span></div>'
         /* the number never appears without the sentence that says where it came from */
         + '<div class="prov">' + escH(domSrcText(dom.src)) + '</div>' : '')
-    + (m ? '' : '<div class="notice">' + escH('⚖️ ' + t('p_nomandate')) + '</div>')
+    + (m ? '' : '<div class="notice">' + escH('' + t('p_nomandate')) + '</div>')
     + editTrail('prop', p.id, 'prop_edit');
 
-  h += '<div class="sec">🔑 ' + escH(t('vw_history')) + '</div>';
+  h += '<div class="sec">' + escH(t('vw_history')) + '</div>';
   h += vs.length
     ? vs.map(v => '<button class="pick" onclick="openViewingSheet(' + jsArg(v.id) + ')">'
         + escH(fdate(v.ts) + ' · ' + clientName(v.clientId))
-        + '<span class="pd">' + escH(agentEm(v.agentId) + ' ' + agentName(v.agentId) + ' · '
+        + '<span class="pd">' + escH(agentName(v.agentId) + ' · '
           + outcomeLabel(v.outcome) + ' · ' + (v.signedTs ? t('vw_signed') : t('vw_unsigned')))
         + '</span></button>').join('')
     : '<div class="prov">' + escH(t('vw_hist_none')) + '</div>';
 
   h += '<button class="btn primary full" style="margin-top:16px" onclick="closeModal();openNewViewing({prop:'
-    + jsArg(p.id) + '})">🔑 ' + escH(t('vw_new')) + '</button>'
+    + jsArg(p.id) + '})">' + escH(t('vw_new')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="openEditProp('
-    + jsArg(p.id) + ')">✏️ ' + escH(t('p_edit')) + '</button>'
+    + jsArg(p.id) + ')">' + escH(t('p_edit')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal();openNewOffer({prop:'
-    + jsArg(p.id) + '})">📝 ' + escH(t('of_new')) + '</button>'
+    + jsArg(p.id) + '})">' + escH(t('of_new')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('close')) + '</button>';
   openModal(h);
 }
@@ -7333,7 +7604,7 @@ function editTrail(key, id, reason){
   const rows = (S.rows||[]).filter(r => r && r.reason === reason && r[key] === id)
     .sort((a,b) => (b.ts - a.ts) || (a.uuid < b.uuid ? 1 : -1)).slice(0, 4);
   if(!rows.length) return '';
-  return '<div class="sec">🧾 ' + escH(t('ed_trail')) + '</div>'
+  return '<div class="sec">' + escH(t('ed_trail')) + '</div>'
     + rows.map(r => '<div class="prov">' + escH(fdate(r.ts) + sepC() + r.note) + '</div>').join('');
 }
 
@@ -7342,33 +7613,33 @@ function openClient(id){
   const c = clientById(id); if(!c) return;
   MODAL_RE = () => openClient(id);
   const vs = viewingsOfClient(c.id);
-  let h = '<h3>👤 ' + escH(c.name) + '</h3>'
+  let h = '<h3>' + escH(c.name) + '</h3>'
     + '<div class="badgerow" style="margin-bottom:12px">'
       + (c.kind||[]).map(r => badge('b-neutral', roleLabel(r))).join('')
-      + badge('b-neutral', agentEm(c.agentId) + ' ' + agentName(c.agentId)) + '</div>'
-    + (c.phone ? '<a class="telbtn" href="tel:' + escH(c.phone.replace(/[^\d+]/g,'')) + '">📞 '
+      + badge('b-neutral', agentName(c.agentId)) + '</div>'
+    + (c.phone ? '<a class="telbtn" href="tel:' + escH(c.phone.replace(/[^\d+]/g,'')) + '">'
         + escH(c.phone) + '</a>' : '')
     + (c.tin ? '<div class="row"><span class="mlbl">' + escH(t('doc_tin')) + '</span><span class="num">'
         + escH(c.tin) + '</span></div>' : '')
     + editTrail('client', c.id, 'client_edit');
 
-  h += '<div class="sec">🔑 ' + escH(t('vw_shown')) + '</div>';
+  h += '<div class="sec">' + escH(t('vw_shown')) + '</div>';
   h += vs.length
     ? vs.map(v => { const p = propById(v.propertyId);
         return '<button class="pick" onclick="openViewingSheet(' + jsArg(v.id) + ')">'
-          + (p ? (KIND_EM[p.kind] || '🏠') : '🏠') + ' ' + escH(p ? propAddr(p) : '—')
+          + escH(p ? propAddr(p) : '—')
           + '<span class="pd">' + escH(fdate(v.ts) + ' · ' + outcomeLabel(v.outcome) + ' · '
             + (v.signedTs ? t('vw_signed') : t('vw_unsigned'))) + '</span></button>'; }).join('')
     : '<div class="prov">' + escH(t('vw_shown_none')) + '</div>';
 
   h += '<button class="btn primary full" style="margin-top:16px" onclick="closeModal();openNewViewing({client:'
-    + jsArg(c.id) + '})">🔑 ' + escH(t('vw_new')) + '</button>'
+    + jsArg(c.id) + '})">' + escH(t('vw_new')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="openEditClient('
-    + jsArg(c.id) + ')">✏️ ' + escH(t('cl_edit')) + '</button>'
+    + jsArg(c.id) + ')">' + escH(t('cl_edit')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal();openNewOffer({client:'
-    + jsArg(c.id) + '})">📝 ' + escH(t('of_new')) + '</button>'
+    + jsArg(c.id) + '})">' + escH(t('of_new')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal();openNewMandate({client:'
-    + jsArg(c.id) + '})">📄 ' + escH(t('mn_new')) + '</button>'
+    + jsArg(c.id) + '})">' + escH(t('mn_new')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('close')) + '</button>';
   openModal(h);
 }
@@ -7397,7 +7668,7 @@ function pickPropRows(q, sel, fn, only){
                           - Math.max(safeInt(a.listedTs,0), safeInt(a.createdTs,0)));
   const show = list.slice(0, 6);
   return show.map(x => '<button class="pick' + (sel === x.id ? ' on' : '') + '" onclick="' + fn
-      + '(' + jsArg(x.id) + ')">' + (KIND_EM[x.kind] || '🏠') + ' ' + escH(propAddr(x))
+      + '(' + jsArg(x.id) + ')">' + escH(propAddr(x))
       + '<span class="pd">' + escH((x.cadCode || '—') + ' · ' + dealKindLabel(x.deal)) + '</span></button>').join('')
     + (list.length > show.length ? '<div class="prov">' + escH(fmt('vw_more', {n:list.length - show.length})) + '</div>' : '')
     + (list.length ? '' : '<div class="prov">' + escH(t('p_none_b')) + '</div>');
@@ -7409,14 +7680,14 @@ function pickClientRows(q, sel, fn){
   list = list.sort((a,b) => safeInt(b.createdTs,0) - safeInt(a.createdTs,0));
   const show = list.slice(0, 6);
   return show.map(c => '<button class="pick' + (sel === c.id ? ' on' : '') + '" onclick="' + fn
-      + '(' + jsArg(c.id) + ')">👤 ' + escH(c.name)
+      + '(' + jsArg(c.id) + ')">' + escH(c.name)
       + '<span class="pd">' + escH(c.phone || '—') + '</span></button>').join('')
     + (list.length > show.length ? '<div class="prov">' + escH(fmt('vw_more', {n:list.length - show.length})) + '</div>' : '');
 }
 function pickAgentChips(sel, fn){
   return '<div class="chips wrap">' + activeAgents().map(a => '<button class="'
     + (sel === a.id ? 'active' : '') + '" onclick="' + fn + '(' + jsArg(a.id) + ')">'
-    + escH(a.em + ' ' + a.name) + '</button>').join('') + '</div>';
+    + escH(a.name) + '</button>').join('') + '</div>';
 }
 /* the app's own date format, printed under a native date input. Chromium paints that control in
    the BROWSER's locale — «08/20/2026» three fields below a header reading «20.08.2026» — and the
@@ -7470,7 +7741,7 @@ function ncField(k, v){
   const b = document.getElementById('ncSave');
   if(b) b.disabled = !ncOk();
   const e = document.getElementById('ncErrTin');
-  if(e) e.innerHTML = ncTinBad() ? '<div class="notice bad">' + escH('⚠️ ' + t('cl_tin_bad')) + '</div>' : '';
+  if(e) e.innerHTML = ncTinBad() ? '<div class="notice bad">' + escH('' + t('cl_tin_bad')) + '</div>' : '';
 }
 function ncRole(r){
   if(!NC) return;
@@ -7482,7 +7753,7 @@ function ncAgent(id){ if(NC){ NC.agent = (NC.agent === id ? '' : id); drawNewCli
 function drawNewClient(){
   if(!NC) return;
   MODAL_RE = drawNewClient;
-  openModal('<h3>👤 ' + escH(NC.id ? t('cl_edit') : t('cl_new')) + '</h3>'
+  openModal('<h3>' + escH(NC.id ? t('cl_edit') : t('cl_new')) + '</h3>'
     + '<div class="fieldlbl" style="margin-top:10px">' + escH(t('vw_nc_name')) + '</div>'
     + '<input type="text" value="' + escH(NC.name) + '" oninput="ncField(' + jsArg('name') + ',this.value)">'
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('vw_nc_phone')) + '</div>'
@@ -7491,15 +7762,15 @@ function drawNewClient(){
     /* the ՀՎՀՀ and the passport are what the NOTARY needs, and they are optional until then */
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('doc_tin')) + '</div>'
     + '<input type="text" value="' + escH(NC.tin) + '" oninput="ncField(' + jsArg('tin') + ',this.value)">'
-    + '<div id="ncErrTin">' + (ncTinBad() ? '<div class="notice bad">' + escH('⚠️ ' + t('cl_tin_bad'))
+    + '<div id="ncErrTin">' + (ncTinBad() ? '<div class="notice bad">' + escH('' + t('cl_tin_bad'))
         + '</div>' : '') + '</div>'
     + '<div class="prov">' + escH(t('cl_tin_hint')) + '</div>'
-    + '<div class="sec">🏷 ' + escH(t('cl_roles_q')) + '</div>'
+    + '<div class="sec">' + escH(t('cl_roles_q')) + '</div>'
     /* a person can be two things at once — a seller who is also a buyer — so these are toggles */
     + '<div class="chips wrap">' + CLIENT_ROLES.map(r => '<button class="'
         + (NC.roles.indexOf(r) >= 0 ? 'active' : '') + '" onclick="ncRole(' + jsArg(r) + ')">'
         + escH(roleLabel(r)) + '</button>').join('') + '</div>'
-    + '<div class="sec">🧑‍💼 ' + escH(t('vw_agent')) + '</div>'
+    + '<div class="sec">' + escH(t('vw_agent')) + '</div>'
     + pickAgentChips(NC.agent, 'ncAgent')
     + '<button class="btn primary full" id="ncSave" style="margin-top:16px"'
       + (ncOk() ? '' : ' disabled') + ' onclick="saveNewClient()">'
@@ -7601,25 +7872,25 @@ function npPaint(){
   const b = document.getElementById('npSave');
   if(b) b.disabled = !npReady();
   const ep = document.getElementById('npePrice');
-  if(ep) ep.innerHTML = npPriceBad() ? '<div class="notice bad">' + escH('⚠️ ' + t('p_price_bad')) + '</div>' : '';
+  if(ep) ep.innerHTML = npPriceBad() ? '<div class="notice bad">' + escH('' + t('p_price_bad')) + '</div>' : '';
   const ec = document.getElementById('npeCad');
   const dup = npCadDup();
-  if(ec) ec.innerHTML = dup ? '<div class="notice bad">' + escH('⚠️ '
+  if(ec) ec.innerHTML = dup ? '<div class="notice bad">' + escH(''
       + fmt('p_dup_inline', {n: propAddr(dup)})) + '</div>' : '';
 }
 function drawNewProp(){
   if(!NP) return;
   MODAL_RE = drawNewProp;
-  openModal('<h3>🏠 ' + escH(NP.id ? t('p_edit') : t('p_new')) + '</h3>'
-    + '<div class="sec">🏷 ' + escH(t('p_kind_q')) + '</div>'
+  openModal('<h3>' + escH(NP.id ? t('p_edit') : t('p_new')) + '</h3>'
+    + '<div class="sec">' + escH(t('p_kind_q')) + '</div>'
     + '<div class="chips wrap">' + PROP_KINDS.map(k => '<button class="' + (NP.kind === k ? 'active' : '')
-        + '" onclick="npPick(' + jsArg('kind') + ',' + jsArg(k) + ')">' + (KIND_EM[k]||'🏠') + ' '
+        + '" onclick="npPick(' + jsArg('kind') + ',' + jsArg(k) + ')">'
         + escH(kindLabel(k)) + '</button>').join('') + '</div>'
-    + '<div class="sec">🤝 ' + escH(t('p_deal_q')) + '</div>'
+    + '<div class="sec">' + escH(t('p_deal_q')) + '</div>'
     + '<div class="chips wrap">' + DEAL_KINDS.map(k => '<button class="' + (NP.deal === k ? 'active' : '')
         + '" onclick="npPick(' + jsArg('deal') + ',' + jsArg(k) + ')">' + escH(dealKindLabel(k))
         + '</button>').join('') + '</div>'
-    + '<div class="sec">📍 ' + escH(t('p_district_q')) + '</div>'
+    + '<div class="sec">' + escH(t('p_district_q')) + '</div>'
     + '<div class="chips wrap">' + YER_DISTRICTS.map(dd => '<button class="'
         + (NP.district === dd ? 'active' : '') + '" onclick="npPick(' + jsArg('district') + ','
         + jsArg(dd) + ')">' + escH(districtLabel(dd)) + '</button>').join('') + '</div>'
@@ -7629,7 +7900,7 @@ function drawNewProp(){
     + '<input type="text" value="' + escH(NP.no) + '" oninput="npField(' + jsArg('no') + ',this.value)">'
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('p_cad')) + '</div>'
     + '<input type="text" value="' + escH(NP.cad) + '" oninput="npField(' + jsArg('cad') + ',this.value)">'
-    + '<div id="npeCad">' + (npCadDup() ? '<div class="notice bad">' + escH('⚠️ '
+    + '<div id="npeCad">' + (npCadDup() ? '<div class="notice bad">' + escH(''
         + fmt('p_dup_inline', {n: propAddr(npCadDup())})) + '</div>' : '') + '</div>'
     + '<div class="prov">' + escH(t('p_need')) + '</div>'
     + '<div class="row" style="gap:10px;margin-top:12px">'
@@ -7651,13 +7922,13 @@ function drawNewProp(){
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(NP.deal === 'lease' ? t('p_permo') : t('p_ask')) + '</div>'
     + '<input type="text" inputmode="numeric" value="' + escH(NP.price) + '" oninput="npField('
       + jsArg('price') + ',this.value)">'
-    + '<div id="npePrice">' + (npPriceBad() ? '<div class="notice bad">' + escH('⚠️ '
+    + '<div id="npePrice">' + (npPriceBad() ? '<div class="notice bad">' + escH(''
         + t('p_price_bad')) + '</div>' : '') + '</div>'
-    + '<div class="sec">👤 ' + escH(t('p_owner')) + '</div>'
+    + '<div class="sec">' + escH(t('p_owner')) + '</div>'
     + '<input class="search" type="text" inputmode="search" placeholder="' + escH(t('cl_search'))
       + '" value="' + escH(NP.oq) + '" oninput="npSearch(this.value)">'
     + '<div id="npOwnerList">' + pickClientRows(NP.oq, NP.owner, 'npOwner') + '</div>'
-    + '<div class="sec">🧑‍💼 ' + escH(t('vw_agent')) + '</div>'
+    + '<div class="sec">' + escH(t('vw_agent')) + '</div>'
     + pickAgentChips(NP.agent, 'npAgent')
     + '<button class="btn primary full" id="npSave" style="margin-top:16px"'
       + (npReady() ? '' : ' disabled') + ' onclick="saveNewProp()">'
@@ -7765,16 +8036,16 @@ function drawNewMandate(){
   MODAL_RE = drawNewMandate;
   const needsProp = ['sell','let'].indexOf(NM.kind) >= 0;
   const ok = !!NM.client;
-  openModal('<h3>📄 ' + escH(t('mn_new')) + '</h3>'
-    + '<div class="sec">🏷 ' + escH(t('mn_kind_q')) + '</div>'
+  openModal('<h3>' + escH(t('mn_new')) + '</h3>'
+    + '<div class="sec">' + escH(t('mn_kind_q')) + '</div>'
     + '<div class="chips wrap">' + ['sell','buy','let','rent'].map(k => '<button class="'
         + (NM.kind === k ? 'active' : '') + '" onclick="nmPick(' + jsArg('kind') + ',' + jsArg(k) + ')">'
         + escH(t('mn_kind_'+k)) + '</button>').join('') + '</div>'
-    + '<div class="sec">👤 ' + escH(t('vw_client')) + '</div>'
+    + '<div class="sec">' + escH(t('vw_client')) + '</div>'
     + '<input class="search" type="text" inputmode="search" placeholder="' + escH(t('cl_search'))
       + '" value="' + escH(NM.cq) + '" oninput="nmSearch(' + jsArg('cq') + ',this.value)">'
     + '<div id="nmClientList">' + pickClientRows(NM.cq, NM.client, 'nmClient') + '</div>'
-    + (needsProp ? '<div class="sec">🏠 ' + escH(t('vw_prop')) + '</div>'
+    + (needsProp ? '<div class="sec">' + escH(t('vw_prop')) + '</div>'
         + '<input class="search" type="text" inputmode="search" placeholder="' + escH(t('p_search'))
           + '" value="' + escH(NM.pq) + '" oninput="nmSearch(' + jsArg('pq') + ',this.value)">'
         + '<div id="nmPropList">' + pickPropRows(NM.pq, NM.prop, 'nmProp') + '</div>' : '')
@@ -7786,7 +8057,7 @@ function drawNewMandate(){
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('doc_mn_term')) + '</div>'
     + '<input type="date" value="' + escH(NM.end ? isoDate(NM.end) : '') + '" onchange="nmDate('
       + jsArg('end') + ',this.value)">' + dateEcho('nmend', NM.end)
-    + '<div class="sec">🔒 ' + escH(t('mn_exclusive')) + '</div>'
+    + '<div class="sec">' + escH(t('mn_exclusive')) + '</div>'
     + '<div class="chips wrap">'
       + '<button class="' + (NM.exclusive ? 'active' : '') + '" onclick="nmPick(' + jsArg('exclusive') + ',true)">'
         + escH(t('mn_exclusive')) + '</button>'
@@ -7883,22 +8154,22 @@ function ofPaint(){
 function drawNewOffer(){
   if(!OF) return;
   MODAL_RE = drawNewOffer;
-  openModal('<h3>📝 ' + escH(t('of_new')) + '</h3>'
-    + '<div class="sec">🏠 ' + escH(t('vw_prop')) + '</div>'
+  openModal('<h3>' + escH(t('of_new')) + '</h3>'
+    + '<div class="sec">' + escH(t('vw_prop')) + '</div>'
     + '<input class="search" type="text" inputmode="search" placeholder="' + escH(t('p_search'))
       + '" value="' + escH(OF.pq) + '" oninput="ofSearch(' + jsArg('pq') + ',this.value)">'
     + '<div id="ofPropList">' + pickPropRows(OF.pq, OF.prop, 'ofProp') + '</div>'
-    + '<div class="sec">👤 ' + escH(t('vw_client')) + '</div>'
+    + '<div class="sec">' + escH(t('vw_client')) + '</div>'
     + '<input class="search" type="text" inputmode="search" placeholder="' + escH(t('cl_search'))
       + '" value="' + escH(OF.cq) + '" oninput="ofSearch(' + jsArg('cq') + ',this.value)">'
     + '<div id="ofClientList">' + pickClientRows(OF.cq, OF.client, 'ofClient') + '</div>'
-    + '<div class="sec">🧑‍💼 ' + escH(t('vw_agent')) + '</div>'
+    + '<div class="sec">' + escH(t('vw_agent')) + '</div>'
     + pickAgentChips(OF.agent, 'ofAgent')
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('of_price')) + '</div>'
     + '<input type="text" inputmode="numeric" value="' + escH(OF.price) + '" oninput="ofField('
       + jsArg('price') + ',this.value)">'
     + '<div id="ofePrice">' + amdWarnHtml(OF.price) + '</div>'
-    + '<div class="sec">⚖️ ' + escH(t('dep_kind_q')) + '</div>'
+    + '<div class="sec">' + escH(t('dep_kind_q')) + '</div>'
     + '<div class="prov">' + escH(t('dep_diff')) + '</div>'
     + DEPOSIT_KINDS.map(k => '<button class="pick' + (OF.depKind === k ? ' on' : '') + '" onclick="ofPick('
         + jsArg('depKind') + ',' + jsArg(k) + ')">' + escH(t('dep_' + k))
@@ -7994,14 +8265,14 @@ function openOfferSheet(id){
   MODAL_RE = () => openOfferSheet(id);
   const pr = propById(o.propertyId), c = clientById(o.clientId), a = agentById(o.agentId);
   const ag = S.agency || {};
-  let h = '<h3>📝 ' + escH(t('doc_of_title')) + '</h3>'
+  let h = '<h3>' + escH(t('doc_of_title')) + '</h3>'
     + '<div class="muted">' + escH(t('doc_no') + ' ' + offerDocNo(o) + ' · ' + fdate(o.ts)) + '</div>'
     + '<hr class="actrule">'
     + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
       + docParty(t('doc_agency'), ag.name, docTin(ag.tin))
       + docParty(t('doc_client'), c ? c.name : '—', c ? c.phone : '')
     + '</div>'
-    + '<div class="sec">🏠 ' + escH(t('doc_prop')) + '</div>'
+    + '<div class="sec">' + escH(t('doc_prop')) + '</div>'
     + '<div class="row"><span class="mlbl">' + escH(t('props_title')) + '</span><span>'
       + escH(pr ? propAddr(pr) : '—') + '</span></div>'
     + '<div class="row"><span class="mlbl">' + escH(t('p_cad')) + '</span><span class="cad">'
@@ -8009,17 +8280,17 @@ function openOfferSheet(id){
     + '<div class="row"><span class="mlbl">' + escH(t('of_price_lbl')) + '</span>' + amd(o.price) + '</div>'
     + '<div class="muted">' + escH(t('stmt_words')) + sepC() + '<b>' + escH(amWords(o.price)) + '</b></div>';
   if(o.depositAmount){
-    h += '<div class="sec">⚖️ ' + escH(t('dep_title')) + '</div>'
+    h += '<div class="sec">' + escH(t('dep_title')) + '</div>'
       + '<div class="row"><span class="mlbl">' + escH(t('dep_' + o.depositKind)) + '</span>'
       + amd(o.depositAmount) + '</div>'
       /* THE CONSEQUENCE IS ON THE PAPER, under the chosen option, not in a tooltip. */
       + '<div>' + escH(t(o.depositKind === 'nakh' ? 'dep_nakh_law' : 'dep_kankh_law')) + '</div>'
-      + (o.depositAmount > 300000 ? '<div class="prov">' + escH('💳 ' + t('d_noncash')) + '</div>' : '');
+      + (o.depositAmount > 300000 ? '<div class="prov">' + escH('' + t('d_noncash')) + '</div>' : '');
   }
   h += '<div class="row" style="margin-top:10px"><span class="mlbl">' + escH(t('of_validto'))
       + '</span><span>' + escH(fdate(o.validTo)) + '</span></div>'
     + '<div class="row"><span class="mlbl">' + escH(t('doc_agent')) + '</span><span>'
-      + escH(a ? (a.em + ' ' + a.name + (a.phone ? ' · ' + a.phone : '')) : '—') + '</span></div>'
+      + escH(a ? (a.name + (a.phone ? ' · ' + a.phone : '')) : '—') + '</span></div>'
     + (o.note ? '<div class="prov">' + escH(o.note) + '</div>' : '')
     + '<div class="signblk"><div style="display:flex;gap:20px;flex-wrap:wrap">'
       + docSign(t('doc_sign_client') + (c ? ' · ' + c.name : ''))
@@ -8053,17 +8324,16 @@ function offerRow(o){
   const pr = propById(o.propertyId);
   return '<div class="card' + (o.status === 'sent' ? ' rail rail-note' : '') + '">'
     + '<div class="sug" style="border-bottom:none;padding:0">'
-      + '<div class="pav">' + (pr ? (KIND_EM[pr.kind]||'🏠') : '🏠') + '</div>'
+      + '<div class="pav">' + emOf(pr ? propAddr(pr) : '') + '</div>'
       + '<div class="info"><div class="addr">' + escH(pr ? propAddr(pr) : '—') + '</div>'
-        + '<div class="muted">' + escH(clientName(o.clientId) + ' · ' + agentEm(o.agentId) + ' '
-          + agentName(o.agentId) + ' · ' + fdate(o.ts)) + '</div></div>'
+        + '<div class="muted">' + escH(clientName(o.clientId) + ' · ' + agentName(o.agentId) + ' · ' + fdate(o.ts)) + '</div></div>'
     + '</div>'
     + '<div style="margin-top:10px">' + amdBig(o.price) + '</div>'
     + '<div class="badgerow" style="margin-top:8px">' + badge(OS_CLASS[o.status]||'b-neutral', offerStLabel(o.status))
       + (o.depositAmount ? badge('b-neutral', t('dep_' + o.depositKind) + ' ' + amdTxt(o.depositAmount) + ' ֏') : '')
       + (o.validTo ? badge('b-neutral', t('of_validto') + ' ' + fdate(o.validTo)) : '') + '</div>'
     + '<div class="row" style="margin-top:12px">'
-      + '<button class="btn ghost small" onclick="openOfferSheet(' + jsArg(o.id) + ')">🖨 '
+      + '<button class="btn ghost small" onclick="openOfferSheet(' + jsArg(o.id) + ')">'
         + escH(t('doc_of_print')) + '</button>'
       + (o.status === 'sent' ? '<button class="btn small primary" onclick="setOfferStatus('
           + jsArg(o.id) + ',' + jsArg('accepted') + ')">' + escH(t('of_accept')) + '</button>' : '')
@@ -8232,7 +8502,7 @@ function tfPaint(){
   TF_FIELDS.forEach(f => {
     const n = document.getElementById('tfe_' + f); if(!n) return;
     const p = probs.filter(x => x.f === f)[0];
-    n.innerHTML = p ? '<div class="notice bad">' + escH('⚠️ ' + p.m) + '</div>' : '';
+    n.innerHTML = p ? '<div class="notice bad">' + escH('' + p.m) + '</div>' : '';
   });
   const ok = tfSaveOk();
   const b = document.getElementById('tfSave'); if(b) b.disabled = !ok;
@@ -8251,7 +8521,7 @@ function tfPreviewHtml(){
      over a state that cannot be saved. */
   if(probs.length || !termsComplete(tm)){
     return '<div class="nofig">' + escH(t('cm_none')) + '</div>'
-      + probs.map(p => '<div class="notice bad">' + escH('⚠️ ' + p.m) + '</div>').join('')
+      + probs.map(p => '<div class="notice bad">' + escH('' + p.m) + '</div>').join('')
       + '<div class="prov warn">' + escH(t('cm_incomplete')) + '</div>';
   }
   const ps = payerSplit(tm, fee);
@@ -8276,16 +8546,16 @@ function tfPreviewHtml(){
     const al = allocation({ agents:d.agents, terms:tm });
     if(al && !al.over){
       h += '<div class="spwrap"><table class="sp"><tbody>'
-        + al.rows.map(r => '<tr><td>' + escH(agentEm(r.agentId) + ' ' + agentName(r.agentId))
+        + al.rows.map(r => '<tr><td>' + escH(agentName(r.agentId))
             + '</td><td class="n">' + escH(bpTxt(r.shareBp)) + '</td><td class="n">'
             + amdTxt(r.amount) + '</td></tr>').join('')
         + '<tr class="keep"><td>' + escH(t('cm_keep')) + '</td><td class="n">'
           + escH(bpTxt(Math.max(0, 10000 - al.sumBp))) + '</td><td class="n">'
           + amdTxt(al.agencyKeep) + '</td></tr>'
         + '</tbody></table></div>'
-        + '<div class="prov">' + escH((assertReconciles(al) ? '✓ ' : '⚠️ ') + t('cm_recon')) + '</div>';
+        + '<div class="prov">' + escH((assertReconciles(al) ? '✓ ' : '') + t('cm_recon')) + '</div>';
     } else if(al && al.over){
-      h += '<div class="notice bad">' + escH('⚠️ ' + t('cm_over')) + '</div>';
+      h += '<div class="notice bad">' + escH('' + t('cm_over')) + '</div>';
     }
   }
   /* THE AMENDMENT, SHOWN BEFORE IT IS POSTED. If this deal has already earned, the owner sees
@@ -8298,11 +8568,11 @@ function tfPreviewHtml(){
 /* the amendment panel: empty string unless this is a deal whose fee has already been minted */
 function tfAmendHtml(d, tm){
   if(!d || !dealEarnRows(d.id).length) return '';
-  if(d.void && d.void.ts) return '<div class="notice bad">' + escH('⚠️ ' + t('cm_amend_void')) + '</div>';
-  let h = '<hr class="actrule"><div class="notice">' + escH('⚖️ ' + t('cm_amend_hd')) + '</div>'
+  if(d.void && d.void.ts) return '<div class="notice bad">' + escH('' + t('cm_amend_void')) + '</div>';
+  let h = '<hr class="actrule"><div class="notice">' + escH('' + t('cm_amend_hd')) + '</div>'
     + '<div class="prov">' + escH(t('cm_amend_why')) + '</div>';
   const dl = termsAmendDeltas(d, tm);
-  if(dl == null) return h + '<div class="notice bad">' + escH('⚠️ ' + t('cm_amend_bad')) + '</div>';
+  if(dl == null) return h + '<div class="notice bad">' + escH('' + t('cm_amend_bad')) + '</div>';
   if(!dl.length) return h + '<div class="prov">' + escH('✓ ' + t('cm_amend_none')) + '</div>';
   /* EVERY ROW REPRODUCES FROM ITS OWN PRINTED OPERANDS: now − was = delta, on the line. */
   /* TWO COLUMNS, NOT FOUR. At 390 px an Armenian four-column header wraps into a wall; the
@@ -8330,10 +8600,10 @@ function drawTerms(){
   const modes = TF.basis === 'rent_month' ? ['months','pct','flat'] : ['pct','flat'];
   const ok = tfSaveOk();
 
-  let h = '<h3>💼 ' + escH(t('cm_terms')) + '</h3>'
+  let h = '<h3>' + escH(t('cm_terms')) + '</h3>'
     + '<div class="muted">' + escH(p ? propAddr(p) : '') + '</div>'
     /* THE SENTENCE THAT JUSTIFIES THE EMPTY FORM, at the top, every time. */
-    + '<div class="notice">' + escH('⚖️ ' + t('cm_no_default')) + '</div>';
+    + '<div class="notice">' + escH('' + t('cm_no_default')) + '</div>';
 
   /* «usual terms» — a prefill with a name on it, never a silent default */
   h += tpl
@@ -8341,14 +8611,14 @@ function drawTerms(){
       + '<div class="prov">' + escH(fmt('cm_tpl_set', {by: actorName(tpl.setBy), d: fdate(S.cfg.termsTemplateTs)})) + '</div>'
     : '<div class="prov">' + escH(t('cm_tpl_none')) + '</div>';
 
-  h += '<div class="sec">🧮 ' + escH(t('cm_base_lbl')) + '</div>'
+  h += '<div class="sec">' + escH(t('cm_base_lbl')) + '</div>'
     + '<div class="prov">' + escH(basisLabel(TF.basis)) + '</div>'
     + '<input type="text" inputmode="numeric" value="' + escH(TF.base) + '" oninput="tfInput('
       + jsArg('base') + ',this.value)">'
     + '<div id="tfe_base"></div>'
     + '<div class="prov">' + escH(t('cm_base_help')) + '</div>';
 
-  h += '<div class="sec">📐 ' + escH(t('cm_mode_q')) + '</div>'
+  h += '<div class="sec">' + escH(t('cm_mode_q')) + '</div>'
     + '<div class="chips wrap">' + modes.map(m => '<button class="' + (TF.mode === m ? 'active' : '')
         + '" onclick="tfPick(' + jsArg('mode') + ',' + jsArg(m) + ')">' + escH(modeLabel(m))
         + '</button>').join('') + '</div>';
@@ -8370,7 +8640,7 @@ function drawTerms(){
   }
 
   const kind = tfKind();
-  h += '<div class="sec">💳 ' + escH(t('cm_payer_q')) + '</div>'
+  h += '<div class="sec">' + escH(t('cm_payer_q')) + '</div>'
     + PAYERS.map(x => '<button class="pick' + (TF.payer === x ? ' on' : '') + '" onclick="tfPick('
         + jsArg('payer') + ',' + jsArg(x) + ')">' + escH(payerLabelK(kind, x))
         /* THE HELP TEXT FOLLOWS THE KIND, like every other label on this screen. On a lease it
@@ -8389,25 +8659,25 @@ function drawTerms(){
       + '<div id="tfe_buyerPct"></div><div id="tfe_split"></div>';
   }
 
-  h += '<div class="sec">⏱ ' + escH(t('cm_trigger_q')) + '</div>'
+  h += '<div class="sec">' + escH(t('cm_trigger_q')) + '</div>'
     + triggersFor(kind).map(x => '<button class="pick' + (TF.trigger === x ? ' on' : '') + '" onclick="tfPick('
         + jsArg('trigger') + ',' + jsArg(x) + ')">' + escH(triggerLabel(x))
         + '<span class="pd">' + escH(fmt('cm_trigger_at', {s: stageLabel(TRIGGER_STAGE[x])})) + '</span>'
         + '</button>').join('');
 
-  h += '<div class="sec">🧾 ' + escH(t('cm_vat_q')) + '</div>'
+  h += '<div class="sec">' + escH(t('cm_vat_q')) + '</div>'
     + '<div class="chips wrap">' + VAT_FLAGS.map(v => '<button class="' + (TF.vat === v ? 'active' : '')
         + '" onclick="tfPick(' + jsArg('vat') + ',' + jsArg(v) + ')">' + escH(vatLabel(v))
         + '</button>').join('') + '</div>'
     + '<div class="prov">' + escH(t('cm_vat_note')) + '</div>';
 
-  h += '<div class="sec">👁 ' + escH(t('cm_preview')) + '</div>'
+  h += '<div class="sec">' + escH(t('cm_preview')) + '</div>'
     + '<div class="card" style="margin:0 0 12px" id="tfPreview">' + tfPreviewHtml() + '</div>';
 
   /* the button says what it is about to do — «save» and «save and post an adjustment» are not
      the same promise, and the one that writes money rows must say so on its face */
   const amending = !!(d && dealEarnRows(d.id).length && !(d.void && d.void.ts));
-  h += (tfVoided() ? '<div class="notice bad">' + escH('⚠️ ' + t('cm_amend_void')) + '</div>' : '')
+  h += (tfVoided() ? '<div class="notice bad">' + escH('' + t('cm_amend_void')) + '</div>' : '')
     + '<button class="btn primary full" id="tfSave"' + (ok ? '' : ' disabled')
       + ' onclick="saveTerms()">' + escH(amending ? t('cm_amend_btn') : t('cm_save')) + '</button>'
     + '<button class="btn ghost full" id="tfTpl" style="margin-top:9px"' + (ok ? '' : ' disabled')
@@ -8535,7 +8805,7 @@ function dpNoticeHtml(){
   if(warn) return warn;
   /* A NOTICE, NOT A BLOCKER. Any payment over AMD 300,000 must be non-cash. The app is not the
      compliance officer; it is the thing that says the sentence out loud before the notary does. */
-  return amt > 300000 ? '<div class="notice">' + escH('💳 ' + t('d_noncash')) + '</div>' : '';
+  return amt > 300000 ? '<div class="notice">' + escH('' + t('d_noncash')) + '</div>' : '';
 }
 function drawDeposit(){
   if(!DP) return;
@@ -8543,13 +8813,13 @@ function drawDeposit(){
   const d = dealById(DP.deal); if(!d) return;
   const p = propById(d.propertyId);
   const ok = !!(DP.kind && amdFromInput(DP.amount) > 0);
-  let h = '<h3>🤝 ' + escH(t('dep_title')) + '</h3>'
+  let h = '<h3>' + escH(t('dep_title')) + '</h3>'
     + '<div class="muted">' + escH(p ? propAddr(p) : '') + '</div>'
     /* THE CONFIRMATION HAS TO BE TRUE. Recording a deposit on a deal with no commission terms
        said «Գրանցվեց» and silently left the pipeline where it was; the sheet now says so BEFORE
        the tap, and the toast says what did and did not happen after it. */
-    + (termsComplete(d.terms) ? '' : '<div class="notice bad">' + escH('⚠️ ' + t('dep_noterms')) + '</div>')
-    + '<div class="sec">⚖️ ' + escH(t('dep_kind_q')) + '</div>'
+    + (termsComplete(d.terms) ? '' : '<div class="notice bad">' + escH('' + t('dep_noterms')) + '</div>')
+    + '<div class="sec">' + escH(t('dep_kind_q')) + '</div>'
     + '<div class="prov">' + escH(t('dep_diff')) + '</div>'
     + DEPOSIT_KINDS.map(k => '<button class="pick' + (DP.kind === k ? ' on' : '') + '" onclick="dpPick('
         + jsArg('kind') + ',' + jsArg(k) + ')">' + escH(t('dep_' + k))
@@ -8650,7 +8920,7 @@ function poPaint(){
   const over = amt > m.payable;
   const el = document.getElementById('poNote');
   if(el) el.innerHTML = warn || (over
-    ? '<div class="notice bad">' + escH('⚠️ ' + fmt('pay_over', {n: amdTxt(m.payable)})) + '</div>' : '');
+    ? '<div class="notice bad">' + escH('' + fmt('pay_over', {n: amdTxt(m.payable)})) + '</div>' : '');
   const b = document.getElementById('poSave');
   if(b) b.disabled = !(amt > 0 && !over && !warn);
 }
@@ -8662,7 +8932,7 @@ function drawPayout(){
   const ds = payableDealsOf(PO.agent);
   const amt = amdFromInput(PO.amount) || 0;
   const ok = amt > 0 && amt <= m.payable && !amdWarnHtml(PO.amount);
-  let h = '<h3>💳 ' + escH(a.em + ' ' + a.name) + '</h3>'
+  let h = '<h3>' + escH(a.name) + '</h3>'
     + '<div class="mlbl">' + escH(t('st_payable')) + '</div>' + amdBig(m.payable)
     + '<div class="prov">' + escH(t('st_payable_b')) + '</div>';
   if(!m.payable){
@@ -8683,7 +8953,7 @@ function drawPayout(){
       + '<div id="poNote"></div>'
       /* WHICH DEAL THIS PAYS FOR. Optional — an agency pays round sums against a running balance
          and the ledger tolerates that — but offered, prefilled and printed when it is answered. */
-      + (ds.length ? '<div class="sec">🤝 ' + escH(t('pay_which')) + '</div>'
+      + (ds.length ? '<div class="sec">' + escH(t('pay_which')) + '</div>'
           + ds.map(x => '<button class="pick' + (PO.deal === x.deal.id ? ' on' : '')
               + '" onclick="poDeal(' + jsArg(x.deal.id) + ')">'
               + escH(dealDocNo(x.deal) + ' · ' + propAddr(propById(x.deal.propertyId)))
@@ -8697,7 +8967,7 @@ function drawPayout(){
         + ' onclick="savePayout()">' + escH(t('pay_confirm')) + '</button>';
   }
   h += '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal();openStatement('
-      + jsArg(PO.agent) + ')">📄 ' + escH(t('stmt_title')) + '</button>'
+      + jsArg(PO.agent) + ')">' + escH(t('stmt_title')) + '</button>'
     + '<button class="btn ghost full" style="margin-top:9px" onclick="closeModal()">' + escH(t('close')) + '</button>';
   openModal(h);
 }
@@ -8738,8 +9008,8 @@ function drawAdjust(){
   MODAL_RE = drawAdjust;
   const a = agentById(AJ.agent); if(!a) return;
   const ok = ajOk();
-  openModal('<h3>⚖️ ' + escH(t('adj_title')) + '</h3>'
-    + '<div class="muted">' + escH(a.em + ' ' + a.name) + '</div>'
+  openModal('<h3>' + escH(t('adj_title')) + '</h3>'
+    + '<div class="muted">' + escH(a.name) + '</div>'
     + '<div class="prov">' + escH(t('adj_help')) + '</div>'
     + '<div class="chips wrap" style="margin-top:10px">'
       + '<button class="' + (AJ.sign > 0 ? 'active' : '') + '" onclick="ajPick(1)">＋ ' + escH(t('adj_plus')) + '</button>'
@@ -8796,7 +9066,7 @@ function openMandateDoc(mid){
   const days = mandateExclDays(m);
   const mk = mandateDealKind(m.kind);
 
-  let h = '<h3>📄 ' + escH(t('doc_mn_title')) + '</h3>'
+  let h = '<h3>' + escH(t('doc_mn_title')) + '</h3>'
     + '<div class="muted">' + escH(t('doc_no') + ' ' + (m.docNo || m.id) + ' · ' + fdate(m.signedTs)) + '</div>'
     + '<hr class="actrule">'
     + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
@@ -8805,20 +9075,20 @@ function openMandateDoc(mid){
           [c && c.phone, c && c.tin ? docTin(c.tin) : ''].filter(Boolean).join(' · '))
     + '</div>'
 
-    + '<div class="sec">📌 ' + escH(t('doc_mn_scope')) + '</div>'
+    + '<div class="sec">' + escH(t('doc_mn_scope')) + '</div>'
     + '<div>' + escH(t('doc_mn_scope_' + m.kind)) + '</div>'
     + '<div class="badgerow" style="margin-top:8px">'
       + badge(MS_CLASS[m.status] || 'b-neutral', manStLabel(m.status))
-      + (m.exclusive ? badge('b-gold', '🔒 ' + t('doc_mn_excl_on')) : '') + '</div>';
+      + (m.exclusive ? badge('b-gold', '' + t('doc_mn_excl_on')) : '') + '</div>';
 
   /* THE PROPERTY IS IDENTIFIED BY ITS CADASTRAL CODE, which is what the contract, the վկայական
      and the future state platform all key on. An address alone identifies nothing. */
   if(props.length){
-    h += '<div class="sec">🏠 ' + escH(t('doc_prop')) + '</div>'
-      + props.map(p => '<div class="row"><span>' + (KIND_EM[p.kind] || '🏠') + ' '
-          + escH(propAddr(p)) + '</span><span class="cad">' + escH(p.cadCode) + '</span></div>').join('');
+    h += '<div class="sec">' + escH(t('doc_prop')) + '</div>'
+      + props.map(p => '<div class="row"><span>' + escH(propAddr(p))
+          + '</span><span class="cad">' + escH(p.cadCode) + '</span></div>').join('');
   } else if(m.brief && (m.brief.minPrice || m.brief.maxPrice || m.brief.rooms || m.brief.note)){
-    h += '<div class="sec">🏠 ' + escH(t('doc_prop')) + '</div>'
+    h += '<div class="sec">' + escH(t('doc_prop')) + '</div>'
       + '<div class="muted">' + escH([
           m.brief.rooms ? m.brief.rooms + ' ' + t('p_rooms') : '',
           m.brief.minPrice || m.brief.maxPrice
@@ -8828,7 +9098,7 @@ function openMandateDoc(mid){
 
   /* THE FEE STRUCTURE AND THE PAYMENT TERMS — required content on the draft law's own checklist,
      and the thing the client is actually signing. No default, here as everywhere. */
-  h += '<div class="sec">💼 ' + escH(t('doc_mn_fee')) + '</div>';
+  h += '<div class="sec">' + escH(t('doc_mn_fee')) + '</div>';
   if(termsComplete(m.terms)){
     const fee = feeOf(m.terms);
     const ps = payerSplit(m.terms, fee);
@@ -8858,14 +9128,14 @@ function openMandateDoc(mid){
        reader who cannot see the app has no way to tell that the fee is simply missing. So the
        marketing sentence is .noprint with the warning and the button, and the paper carries a
        plain statement that the clause is not agreed and the contract is not ready to sign. */
-    h += '<div class="notice bad noprint">' + escH('⚠️ ' + t('doc_mn_terms_none')) + '</div>'
+    h += '<div class="notice bad noprint">' + escH('' + t('doc_mn_terms_none')) + '</div>'
       + '<button class="btn primary full noprint" onclick="openMandateTerms(' + jsArg(mid) + ')">'
         + escH(t('cm_fill')) + '</button>'
       + '<div>' + escH(t('doc_mn_terms_blank')) + '</div>'
       + '<div class="prov noprint">' + escH(t('cm_none_b')) + '</div>';
   }
 
-  h += '<div class="sec">🗓️ ' + escH(t('doc_mn_term')) + '</div>'
+  h += '<div class="sec">' + escH(t('doc_mn_term')) + '</div>'
     + '<div class="row"><span class="mlbl">' + escH(t('mn_signed_on')) + '</span><span>'
       + escH(fdate(m.signedTs)) + '</span></div>'
     + '<div class="row"><span class="mlbl">' + escH(t('doc_mn_term')) + '</span><span>'
@@ -8880,12 +9150,12 @@ function openMandateDoc(mid){
       /* THE CAP IS INFORMATION, NOT A RULE. The law is not enacted; the field is kept so the
          record is ready the day it is, and the sentence says which of those two things is true. */
       + (days > EXCL_CAP_DAYS
-          ? '<div class="notice">' + escH('⚖️ ' + t('doc_mn_excl_cap_warn')) + '</div>'
+          ? '<div class="notice">' + escH('' + t('doc_mn_excl_cap_warn')) + '</div>'
           : '<div class="prov">' + escH(t('mn_excl_cap')) + '</div>');
   }
 
   if(agent){
-    h += '<div class="sec">🧑‍💼 ' + escH(t('doc_mn_broker')) + '</div>'
+    h += '<div class="sec">' + escH(t('doc_mn_broker')) + '</div>'
       + '<div class="row"><span class="mlbl">' + escH(t('doc_agent')) + '</span><span>'
         + escH(agent.name + (agent.phone ? ' · ' + agent.phone : '')) + '</span></div>'
       + ((agent.qual && (agent.qual.regNo || agent.qual.insurerName))
@@ -8894,7 +9164,7 @@ function openMandateDoc(mid){
               .filter(Boolean).join(' · ')) + '</div>' : '');
   }
 
-  h += '<div class="sec">🏛 ' + escH(t('doc_mn_platform')) + '</div>'
+  h += '<div class="sec">' + escH(t('doc_mn_platform')) + '</div>'
     + '<div class="prov">' + escH(t('mn_platform') + sepC()
         + (m.platformRegTs ? fdate(m.platformRegTs) : t('mn_platform_off'))) + '</div>'
     + '<div class="signblk"><div style="display:flex;gap:20px;flex-wrap:wrap">'
@@ -8902,7 +9172,7 @@ function openMandateDoc(mid){
       + docSign(t('doc_sign_client') + (c ? ' · ' + c.name : '')) + '</div>'
     + docFoot(fmt('doc_mn_note', {d: fdate(m.retainUntil)})) + '</div>'
     + '<button class="btn ghost full noprint" style="margin-top:12px" onclick="openMandateEdit('
-      + jsArg(mid) + ')">✍️ ' + escH(t('doc_mn_edit')) + '</button>'
+      + jsArg(mid) + ')">' + escH(t('doc_mn_edit')) + '</button>'
     + docTail();
   openModal(h);
 }
@@ -8932,18 +9202,18 @@ function meLenHtml(){
   if(!ME || !ME.exclusive || !ME.from || !ME.to) return '';
   const days = Math.max(0, daysBetween(ME.from, ME.to));
   return '<div class="prov">' + escH(fmt('doc_mn_excl_len', {n:days})) + '</div>'
-    + (days > EXCL_CAP_DAYS ? '<div class="notice">' + escH('⚖️ ' + t('doc_mn_excl_cap_warn')) + '</div>'
+    + (days > EXCL_CAP_DAYS ? '<div class="notice">' + escH('' + t('doc_mn_excl_cap_warn')) + '</div>'
        : '<div class="prov">' + escH(t('mn_excl_cap')) + '</div>');
 }
 function drawMandateEdit(){
   if(!ME) return;
   MODAL_RE = drawMandateEdit;
   const m = mandateById(ME.id); if(!m) return;
-  openModal('<h3>✍️ ' + escH(t('doc_mn_edit')) + '</h3>'
+  openModal('<h3>' + escH(t('doc_mn_edit')) + '</h3>'
     + '<div class="muted">' + escH(clientName(m.clientId)) + '</div>'
     + '<div class="fieldlbl" style="margin-top:12px">' + escH(t('doc_mn_no')) + '</div>'
     + '<input type="text" value="' + escH(ME.docNo) + '" oninput="meField(' + jsArg('docNo') + ',this.value)">'
-    + '<div class="sec">🔒 ' + escH(t('doc_mn_excl_on')) + '</div>'
+    + '<div class="sec">' + escH(t('doc_mn_excl_on')) + '</div>'
     + '<div class="chips wrap">'
       + '<button class="' + (ME.exclusive ? 'active' : '') + '" onclick="meSet(' + jsArg('exclusive') + ',true)">'
         + escH(t('mn_exclusive')) + '</button>'
@@ -9022,7 +9292,7 @@ function openDealSheetDoc(dealId){
   const net = dealNetBySubject(d.id);
   const vs = supportingViewings(d);
 
-  let h = '<h3>🧾 ' + escH(t('doc_ds_title')) + '</h3>'
+  let h = '<h3>' + escH(t('doc_ds_title')) + '</h3>'
     + '<div class="muted">' + escH(t('doc_no') + ' ' + dealDocNo(d) + ' · ' + fdate(dealDocDate(d))) + '</div>'
     + '<hr class="actrule">'
     /* BOTH PARTIES, with ՀՎՀՀ where it applies — and named for the KIND of deal, so a lease
@@ -9038,9 +9308,9 @@ function openDealSheetDoc(dealId){
     + '</div>';
 
   /* ---- the thing that was sold or let ---- */
-  h += '<div class="sec">🏠 ' + escH(t('doc_prop')) + '</div>';
+  h += '<div class="sec">' + escH(t('doc_prop')) + '</div>';
   if(pr){
-    h += '<div class="row"><span>' + (KIND_EM[pr.kind] || '🏠') + ' ' + escH(propAddr(pr))
+    h += '<div class="row"><span>' + escH(propAddr(pr))
         + '</span><span class="cad">' + escH(pr.cadCode) + '</span></div>'
       + '<div class="prov">' + escH([kindLabel(pr.kind), dealKindLabel(pr.deal),
           pr.area ? pr.area + ' ' + t('p_area') : '', pr.rooms ? pr.rooms + ' ' + t('p_rooms') : '',
@@ -9057,16 +9327,16 @@ function openDealSheetDoc(dealId){
     /* ONE PERSON ON BOTH SIDES IS A DATA ERROR, and a document that prints it twice without
        comment is a document that discredits itself. Say it on the paper. */
     + ((seller && buyer && seller.id === buyer.id)
-        ? '<div class="notice bad">' + escH('⚠️ ' + t('doc_ds_sameparty')) + '</div>' : '');
+        ? '<div class="notice bad">' + escH('' + t('doc_ds_sameparty')) + '</div>' : '');
 
   if(d.void && d.void.ts){
-    h += '<div class="notice bad">' + escH('✖️ ' + t('d_void') + sepC() + d.void.reason
+    h += '<div class="notice bad">' + escH('✕ ' + t('d_void') + sepC() + d.void.reason
       + ' · ' + fdate(d.void.ts)) + '</div>';
   }
 
   /* ---- the deposit, and WHICH instrument it was: the two have different consequences ---- */
   if(d.deposit && d.deposit.amount){
-    h += '<div class="sec">🤝 ' + escH(t('dep_title')) + '</div>'
+    h += '<div class="sec">' + escH(t('dep_title')) + '</div>'
       + '<div class="row"><span class="mlbl">' + escH(t('dep_' + d.deposit.kind)) + '</span>'
         + amd(d.deposit.amount) + '</div>'
       + '<div class="prov">' + escH(fdate(d.deposit.ts)) + '</div>'
@@ -9078,7 +9348,7 @@ function openDealSheetDoc(dealId){
   /* ---- how it walked ---- */
   const walk = dealStageWalk(d);
   if(walk.length){
-    h += '<div class="sec">🗓️ ' + escH(t('doc_ds_walk')) + '</div>'
+    h += '<div class="sec">' + escH(t('doc_ds_walk')) + '</div>'
       + walk.map(x => '<div class="row"><span class="mlbl">' + escH(stageLabel(x[0]))
           + '</span><span>' + escH(fdate(x[1])) + '</span></div>').join('');
   }
@@ -9091,14 +9361,14 @@ function openDealSheetDoc(dealId){
     [t('doc_ds_unified'), d.unifiedCertTs ? fdate(d.unifiedCertTs) : '']
   ].filter(x => x[1]);
   if(closing.length){
-    h += '<div class="sec">🏛 ' + escH(t('doc_ds_closing')) + '</div>'
+    h += '<div class="sec">' + escH(t('doc_ds_closing')) + '</div>'
       + closing.map(x => '<div class="row"><span class="mlbl">' + escH(x[0]) + '</span><span>'
           + escH(x[1]) + '</span></div>').join('');
   }
 
   /* ---- THE EVIDENCE. The viewing, not the listing, is what supports the fee claim in this
      product, and the closing sheet is where an owner needs that list without hunting for it. ---- */
-  h += '<div class="sec">🔑 ' + escH(t('doc_ds_evid')) + '</div>'
+  h += '<div class="sec">' + escH(t('doc_ds_evid')) + '</div>'
     + (vs.length
         ? vs.map(v => '<div class="row"><span>' + escH(viewDocNo(v) + sepC() + fdatetime(v.ts))
             + '</span><span>' + escH(clientName(v.clientId) + ' · '
@@ -9106,7 +9376,7 @@ function openDealSheetDoc(dealId){
         : '<div class="muted">' + escH(t('doc_ds_evid_none')) + '</div>');
 
   /* ---- THE COMMISSION ---- */
-  h += '<div class="sec">💼 ' + escH(t('cm_terms')) + '</div>';
+  h += '<div class="sec">' + escH(t('cm_terms')) + '</div>';
   if(!termsComplete(d.terms)){
     /* A CLOSING SHEET WITH NO AGREED FEE SAYS SO ON THE PAPER, in a sentence about this deal —
        never the product's own reasoning, which a reader holding the sheet cannot see. */
@@ -9143,11 +9413,11 @@ function openDealSheetDoc(dealId){
        computed figure. */
     if(al && !al.over){
       const printed = al.rows.reduce((a, r) => a + r.amount, 0) + al.agencyKeep;
-      h += '<div class="sec">💰 ' + escH(t('doc_ds_split')) + '</div>'
+      h += '<div class="sec">' + escH(t('doc_ds_split')) + '</div>'
         + '<div class="spwrap"><table class="sp"><thead><tr><th>' + escH(t('doc_col'))
           + '</th><th class="n">' + escH(t('cm_share')) + '</th><th class="n">'
           + escH(t('amount_col')) + '</th></tr></thead><tbody>'
-        + al.rows.map(r => '<tr><td>' + escH(agentEm(r.agentId) + ' ' + agentName(r.agentId))
+        + al.rows.map(r => '<tr><td>' + escH(agentName(r.agentId))
             + (r.side ? '<div class="muted">' + escH(t('ag_side_' + r.side)) + '</div>' : '')
             + '</td><td class="n">' + escH(bpTxt(r.shareBp)) + '</td><td class="n">'
             + amdTxt(r.amount) + '</td></tr>').join('')
@@ -9157,9 +9427,9 @@ function openDealSheetDoc(dealId){
         + '<tr class="tot"><td>' + escH(t('cm_fee')) + '</td><td class="n"></td><td class="n">'
           + amdTxt(printed) + '</td></tr></tbody></table></div>'
         + '<div class="prov">' + escH(printed === fee ? '✓ ' + t('cm_recon')
-            : '⚠️ ' + t('doc_ds_nofoot')) + '</div>';
+            : '' + t('doc_ds_nofoot')) + '</div>';
     } else if(al && al.over){
-      h += '<div class="notice bad">' + escH('⚠️ ' + t('cm_over')) + '</div>';
+      h += '<div class="notice bad">' + escH('' + t('cm_over')) + '</div>';
     }
 
     /* WHAT THE LEDGER ACTUALLY SAYS, beside what the terms say. On a clean deal the two agree
@@ -9171,14 +9441,14 @@ function openDealSheetDoc(dealId){
        than earned — the four money states, which every screen keeps apart, collapsed into one on
        the one document that leaves the desk. */
     if(!ids.length){
-      h += '<div class="sec">📒 ' + escH(t('doc_ds_ledger')) + '</div>'
+      h += '<div class="sec">' + escH(t('doc_ds_ledger')) + '</div>'
         + '<div class="row"><span class="mlbl">' + escH(t('doc_ds_ledger_tot')) + '</span>'
         + amd(0) + '</div>'
         + '<div class="prov">' + escH(t('doc_ds_nothing')) + '</div>';
     }
     if(ids.length){
       const ledger = ids.reduce((a,k) => a + net[k], 0);
-      h += '<div class="sec">📒 ' + escH(t('doc_ds_ledger')) + '</div>'
+      h += '<div class="sec">' + escH(t('doc_ds_ledger')) + '</div>'
         + '<div class="spwrap"><table class="sp"><tbody>'
         + ids.sort().map(k => '<tr><td>' + escH(subjectName(k)) + '</td><td class="n">'
             + (net[k] < 0 ? '−' : '') + amdTxt(Math.abs(net[k])) + '</td></tr>').join('')
@@ -9188,7 +9458,7 @@ function openDealSheetDoc(dealId){
            discrepancy — so the sheet must not point the reader at adjustment rows that do not
            exist. Three states, three sentences, and never the wrong one. */
         + '<div class="prov">' + escH(
-            (d.void && d.void.ts) ? '✖️ ' + t('doc_ds_reversed')
+            (d.void && d.void.ts) ? '✕ ' + t('doc_ds_reversed')
             : ledger === fee ? '✓ ' + t('doc_ds_agrees')
             : fmt('doc_ds_differs', {n: amdTxt(Math.abs(fee - ledger))})) + '</div>';
     }
@@ -9354,7 +9624,7 @@ function exportViewings(){
 function doHeal(){ healLedger(); saveState(); renderAll(); toast(t('dt_ok')); }
 function runSelfTest(){
   const r = estateSelfTest();
-  openModal('<h3>🧪 ' + escH(t('dt_selftest')) + '</h3>'
+  openModal('<h3>' + escH(t('dt_selftest')) + '</h3>'
     + '<pre style="white-space:pre-wrap;font-size:14px;line-height:1.5">' + escH(r.lines.join('\n')) + '</pre>'
     + '<button class="btn ghost full" style="margin-top:14px" onclick="closeModal()">' + escH(t('close')) + '</button>');
 }
@@ -9407,11 +9677,11 @@ function renderRecovery(err){
     '<div class="logo"><div class="logomark">Է</div><div>' + escH(t('app_name')) + '</div></div>';
   document.getElementById('app').innerHTML =
     '<div style="max-width:460px;margin:8vh auto 0;padding:0 18px">'
-    + '<div class="card rail rail-bad"><h3>⚠ ' + escH(t('rec_title')) + '</h3>'
+    + '<div class="card rail rail-bad"><h3>' + escH(t('rec_title')) + '</h3>'
     + '<div class="muted" style="line-height:1.55">' + escH(t('rec_body')) + '</div>'
     + (hasLKG() ? '<button class="btn primary full" style="margin-top:14px" onclick="restoreLKG()">↺ '
         + escH(t('rec_restore')) + '</button>' : '')
-    + '<button class="btn ghost full" style="margin-top:9px" onclick="startFresh()">🗑 '
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="startFresh()">'
       + escH(t('rec_fresh')) + '</button>'
     + '<div class="muted" style="margin-top:12px;font-size:14px">'
       + escH(String(err && err.message || err || '')) + '</div>'
@@ -9529,7 +9799,7 @@ function estateSelfTest(){
 
     /* an evidence row may not carry money, and it is refused rather than silently zeroed */
     /* THE PROBE CLEANS UP THE REJECT IT DELIBERATELY CAUSED. It did not, and the Data screen's
-       integrity panel then reported «⚠ Մատյանը մերժել է տողեր: 1 · evidence_amount» for the rest
+       integrity panel then reported «Մատյանը մերժել է տողեր: 1 · evidence_amount» for the rest
        of the session — the app's own integrity display crying wolf, triggered by the app's own
        test button. The fractional-money probe below already snapshots and restores; so does this. */
     ok('an evidence row with money is refused', (() => {
@@ -9939,8 +10209,8 @@ function estateSelfTest(){
     })());
     ok('migrate survives garbage', (() => {
       const s = migrate({ agents:[null,{},{id:'x',defaultShareBp:'abc'}], props:'nope',
-        deals:[{id:'d', stage:'☠', agents:[{agentId:'x', shareBp:-5}]}], rows:[{type:'nope'}],
-        cfg:{payWhen:'☠', stuckDays:-4} });
+        deals:[{id:'d', stage:'nope', agents:[{agentId:'x', shareBp:-5}]}], rows:[{type:'nope'}],
+        cfg:{payWhen:'nope', stuckDays:-4} });
       return s.props.length === 0 && s.cfg.payWhen === 'received' && s.cfg.stuckDays === 1
         && s.deals[0].stage === 'agreed' && s.deals[0].agents[0].shareBp === 0
         && s.agents.find(a => a.id === 'x').defaultShareBp === null && s.rows.length === 0;
@@ -10235,8 +10505,10 @@ function estateSelfTest(){
        PROP_STATUS.every(x => T.hy['ps_'+x] && T.en['ps_'+x] && T.ru['ps_'+x]));
     ok('every district has a label',
        YER_DISTRICTS.every(x => T.hy['dis_'+x] && T.en['dis_'+x] && T.ru['dis_'+x]));
-    ok('every nav key has a label and an icon',
-       NAV_KEYS.every(x => T.hy['tab_'+x] && T.en['tab_'+x] && T.ru['tab_'+x] && NAV_ICON[x]));
+    /* the icon half of this assertion went with NAV_ICON: the bar carries words now, and a
+       destination with no word is the only way a cell can arrive unnamed. */
+    ok('every nav key has a label',
+       NAV_KEYS.every(x => T.hy['tab_'+x] && T.en['tab_'+x] && T.ru['tab_'+x]));
 
     /* ---- the storage namespace ---- */
     ok('every key is estate_*', Object.keys(K).every(k => String(K[k]).indexOf('estate_') === 0));
