@@ -301,12 +301,12 @@ button{font-family:var(--font)}
    without the fill. */
 .btn.cyan.wide,.btn.green.wide,.btn.violet.wide{width:100%;min-height:52px;font-size:16px;font-weight:700}
 /* R17 · min-WIDTH, not just min-height. `.btn` sets overflow:hidden, which makes a flex item's
-   automatic minimum size 0 — so inside an h3 with justify-content:space-between the «⬇ CSV»
+   automatic minimum size 0 — so inside an h3 with justify-content:space-between the «CSV»
    button was squeezed to 40.4×44 at 320px in Armenian: the only tap target under 44×44 left in
    the build. min-width is a floor flexbox may not shrink past. */
 .btn.small{padding:0 var(--s3);min-height:44px;min-width:44px;font-size:var(--fs-label);border-radius:var(--r-xs)}
-/* the export buttons sit beside a heading that CAN wrap, and they cannot: a two-line «⬇ / CSV»
-   is not what «⬇ CSV» means. They keep their content width and the heading gives instead. */
+/* the export buttons sit beside a heading that CAN wrap, and they cannot: a two-line «/ CSV»
+   is not what «CSV» means. They keep their content width and the heading gives instead. */
 .btn.small.noprint{flex:0 0 auto;white-space:nowrap}
 
 /* PRIMARY — the one thing to do next. 52px, full-width, accent fill. */
@@ -508,7 +508,7 @@ button.pav .pavdots{position:absolute;right:2px;bottom:0;font-size:14px;line-hei
   .posrow .posact{flex:1 1 100% !important;min-width:0 !important;text-align:left !important;margin-top:9px;display:flex;gap:10px;align-items:center}
   .posrow .posact .addbtn{margin-top:0 !important;flex:1}
 }
-/* R4: the supplier «📨 Առաջարկել պատվեր» button pushed the Խանութի մնացորդ tab 17px wide at
+/* R4: the supplier «Առաջարկել պատվեր» button pushed the Խանութի մնացորդ tab 17px wide at
    320px in Russian. Let it take its own line instead of forcing a horizontal page scroll. */
 @media (max-width:460px){
   .selloutfoot{flex-wrap:wrap}
@@ -883,7 +883,7 @@ input.err,textarea.err{border-color:var(--danger)}
 /* R7 fix — the cause, not the shrink order. R6's predecessor let the split toggle lose letters
    («Մեկ կ»); R6 inverted the priority and the date was squeezed to 0px instead (390/ru). Both are
    symptoms of ONE fact: seven controls plus a date want ~420px and the phone has 390. So below
-   461px the header carries FIVE controls, not seven — theme, sync and language fold into one ⚙
+   461px the header carries FIVE controls, not seven — theme, sync and language fold into one 
    that opens them as a sheet. That buys ~90px: at 390/ru, the worst of the nine width×language
    cases, the row now measures ~341px with the date rendered in full. Nothing shrinks any more,
    so nothing can truncate. The chip drops the YEAR (kept in title=, and every printed document
@@ -895,7 +895,7 @@ input.err,textarea.err{border-color:var(--danger)}
 }
 /* every global control is one 38px square; a control that carries words widens, nothing else does */
 /* R9 · 38×38 was under the 44px tap floor on the three controls he uses most, including the
-   daily 🔔. The header row grows to fit — legibility and reach beat a 52px chrome budget. */
+   daily . The header row grows to fit — legibility and reach beat a 52px chrome budget. */
 .tbtn{
   width:44px;height:44px;min-width:44px;min-height:44px;padding:0;flex:0 0 auto;position:relative;
   border:var(--bw) solid var(--stroke2);border-radius:var(--r-xs);
@@ -905,7 +905,7 @@ input.err,textarea.err{border-color:var(--danger)}
   backdrop-filter:none;
   transition:transform var(--dur-1) var(--ease),background var(--dur-1) var(--ease);
 }
-/* R7: an inline count made «🔔 5» 5px wider than its own 38px button at 320px. A badge is a
+/* R7: an inline count made «5» 5px wider than its own 38px button at 320px. A badge is a
    corner mark, not a second word — it leaves the glyph centred and costs the row no width. */
 .tbtn .dot,.tbtn .okdot{
   position:absolute;top:-6px;right:-6px;z-index:1;
@@ -921,7 +921,7 @@ input.err,textarea.err{border-color:var(--danger)}
 .tbtn .okdot.idle{background:var(--muted)}
 /* amber = written down here, not yet acknowledged by the other device */
 .tbtn .okdot.pend{background:var(--acc)}
-/* the phone header: one ⚙ stands in for theme + sync + language */
+/* the phone header: one stands in for theme + sync + language */
 .tbtn.hdr-sm{display:none}
 @media (max-width:460px){
   .tbtn.hdr-lg{display:none}
@@ -952,11 +952,11 @@ input.err,textarea.err{border-color:var(--danger)}
 @media (max-width:340px){
   #top{gap:3px;padding-left:5px;padding-right:5px}
   .tbtn.wide{padding:0 4px}
-  /* R16 · the DEMO header carries two controls the real one does not — the split toggle and ⏭ —
+  /* R16 · the DEMO header carries two controls the real one does not — the split toggle and —
      and at 320px the split toggle's Russian label «Две стороны» is 119px of the 320. The row
      measured 327 and the page scrolled sideways: 5px of it arrived with the self-hosted fonts,
      the rest was there before and unmeasured, because the a11y sweep signs in. Same remedy the
-     row already uses below 461px, where theme + sync + language fold into one ⚙: at this width
+     row already uses below 461px, where theme + sync + language fold into one : at this width
      the toggle keeps its 44px target and its ▚/▙, and its words move to title=/aria-label. The
      three shipped labels are untouched — this hides one, it does not rewrite it. */
   .tbtn.wide.splitbtn .lbl{display:none}
@@ -1707,6 +1707,250 @@ input:disabled{
   .acttbl.buyact th:nth-child(4),.acttbl.buyact td:nth-child(4),
   .acttbl.buyact th:nth-child(5),.acttbl.buyact td:nth-child(5){display:none}
 }
+
+/* ===== LEDGER SKIN ===== */
+/* the marks sit in the text: one weight, currentColor, never filled */
+.ic{
+  width:21px; height:21px; flex:0 0 auto; display:inline-block; vertical-align:-4px;
+  fill:none; stroke:currentColor; stroke-width:1.4;
+  stroke-linecap:round; stroke-linejoin:round;
+}
+.tbtn .ic{width:22px; height:22px; vertical-align:0}
+.btn .ic{width:19px; height:19px}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEDGER — the skin, appended last so it wins on equal specificity.
+
+   The product replaces a paper notebook, so it is built like one: ruled blocks
+   instead of cards, ink instead of a palette, and figures that align because a
+   ledger's figures align. Two colours carry meaning and nothing else does —
+   ink for what is normal and correction red for what is not. Everything here
+   is token-level or a single component rule; deleting this block restores the
+   previous skin exactly.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── tokens · dark (ink paper) ───────────────────────────────────────────── */
+:root{
+  --bg:#14161A;
+  --surface:#14161A;          /* no card fill: a block sits on the page */
+  --surface-2:#1C1F25;        /* inputs, steppers, quiet fills */
+  --surface-3:#252931;
+  --ink:#E9E7E2;
+  --muted:#9BA1AB;
+  --dim:#8A9099;
+  --sep:#2A2E35;
+  --stroke:#2A2E35;
+  --stroke2:#3A3F48;
+
+  --acc:#9FC0E8;              /* ballpoint blue */
+  --acc-ink:#10141A;
+  --acc-tint:#1A2130;
+  --acc-line:#31405A;
+  --acc-text:#AECBEE;
+  --gold:var(--acc); --gold2:var(--acc-text);
+
+  /* correction red is the ONLY alert colour. Everything else is ink. */
+  --danger:#E4897C;  --danger-tint:#241716; --danger-line:#4A2A26;
+  --success:#E9E7E2; --success-tint:#1C1F25; --success-line:#2A2E35;
+  --info:#9FC0E8;    --info-tint:#1A2130;   --info-line:#31405A;
+  --note:#9BA1AB;    --note-tint:#1C1F25;   --note-line:#2A2E35;
+  --rose:var(--danger); --green:var(--success); --cyan:var(--info);
+  --violet:var(--note); --blue:var(--info);
+  --glass:var(--surface); --glass2:var(--surface-2);
+
+  --r-xs:0; --r-sm:0; --r:0; --r-lg:0;   /* --r-pill stays: a dot is round */
+
+  --sh-0:none; --sh-1:none; --sh-2:none;
+  --sh-3:0 -1px 0 var(--stroke);
+  --focus:0 0 0 2px var(--bg), 0 0 0 4px var(--acc);
+
+  /* a ledger is written, not shouted: the display weights come down */
+  --fw-display-l:600; --fw-display-m:600; --fw-display-s:600;
+  --fw-title:600; --fw-body-l:500; --fw-caps:600;
+  --ls-caps:1.3px;
+}
+
+/* ── tokens · light (paper) ──────────────────────────────────────────────── */
+body.light{
+  --bg:#FFFEFC;
+  --surface:#FFFEFC;
+  --surface-2:#F5F3EE;
+  --surface-3:#EBE8E1;
+  --ink:#161A1F;              /* 16.9:1 on --bg */
+  --muted:#5E646E;            /* 6.4:1 */
+  --dim:#666C76;              /* 5.9:1 */
+  --sep:#DFDBD2;
+  --stroke:#DFDBD2;
+  --stroke2:#C6C1B6;
+
+  --acc:#1E3A5F;              /* white on it: 10.4:1 */
+  --acc-ink:#FFFEFC;
+  --acc-tint:#EFF2F6;
+  --acc-line:#C3CDDA;
+  --acc-text:#1E3A5F;
+  --gold:var(--acc); --gold2:var(--acc-text);
+
+  --danger:#9B2C1E;  --danger-tint:#FAF0EE; --danger-line:#E4C6C0;
+  --success:#161A1F; --success-tint:#F5F3EE; --success-line:#DFDBD2;
+  --info:#1E3A5F;    --info-tint:#EFF2F6;   --info-line:#C3CDDA;
+  --note:#5E646E;    --note-tint:#F5F3EE;   --note-line:#DFDBD2;
+  --rose:var(--danger); --green:var(--success); --cyan:var(--info);
+  --violet:var(--note); --blue:var(--info);
+  --glass:var(--surface); --glass2:var(--surface-2);
+
+  --sh-0:none; --sh-1:none; --sh-2:none;
+  --sh-3:0 -1px 0 var(--stroke);
+  --focus:0 0 0 2px var(--bg), 0 0 0 4px var(--acc);
+  background:var(--bg);
+}
+
+/* ── the figures line up ─────────────────────────────────────────────────── */
+body{font-variant-numeric:tabular-nums lining-nums}
+
+/* ── a card is a ruled block, not a box ──────────────────────────────────── */
+.card{
+  background:none; border:0; border-radius:0; box-shadow:none;
+  border-bottom:var(--bw) solid var(--sep);
+  padding:var(--s5) 0;
+}
+.card:last-child{border-bottom:0}
+/* inside a sheet the page already has its own rules; a nested card would draw twice */
+.mbody .card{border-bottom:var(--bw) solid var(--sep); padding:var(--s4) 0}
+
+/* ── one filled button per screen; everything else is a written link ─────── */
+.btn{border-radius:0}
+.btn.primary,.btn.full.cyan,.btn.full.green,.btn.full.violet{
+  background:var(--ink); color:var(--bg); border-color:var(--ink);
+  font-weight:600; letter-spacing:0;
+}
+.btn.ghost,.btn.ghost.full{
+  background:none; border:0; border-radius:0;
+  color:var(--acc-text); font-weight:600;
+  min-height:44px; padding:0; width:auto; max-width:100%;
+  display:inline-flex; justify-content:flex-start; text-align:left;
+  box-shadow:none;
+}
+.btn.ghost>*{text-align:left}
+.btn.ghost::after{content:""; position:absolute; left:0; right:0; bottom:10px;
+  border-bottom:var(--bw-strong) solid var(--acc); display:block}
+.btn.ghost:active{background:none; transform:none; opacity:.6}
+.btn.small{border-radius:0}
+
+/* ── a badge is a written note, not a pill ──────────────────────────────── */
+.badge{
+  background:none !important; border:0 !important; border-radius:0 !important;
+  padding:0 !important; font-weight:600; color:var(--muted);
+}
+.badge.b-rose,.badge.b-danger{color:var(--danger)}
+.badge.b-gold,.badge.b-acc{color:var(--acc-text)}
+.badge.b-green,.badge.b-cyan,.badge.b-violet,.badge.b-neutral{color:var(--muted)}
+
+/* ── section labels are ledger column headings ──────────────────────────── */
+.sec{
+  font-size:var(--fs-label); font-weight:600; letter-spacing:var(--ls-caps);
+  text-transform:uppercase; color:var(--muted);
+  margin:var(--s6) 0 var(--s2);
+}
+
+/* ── a notice is an indented remark ─────────────────────────────────────── */
+.notice{border-left-width:2px; border-left-color:var(--stroke2)}
+.notice.bad{border-left-color:var(--danger)}
+
+/* ── chrome ──────────────────────────────────────────────────────────────── */
+#top{background:var(--bg); border-bottom:var(--bw) solid var(--ink); box-shadow:none}
+.tbtn{border-radius:0; background:none; border:0; color:var(--ink)}
+.tbtn.on{color:var(--acc-text)}
+#nav,nav{background:var(--bg); border-top:var(--bw) solid var(--ink); box-shadow:none}
+#nav button,nav button{border-radius:0; font-weight:500; color:var(--muted)}
+#nav button.active,nav button.active{
+  color:var(--ink); font-weight:600;
+  background:none; border-radius:0; box-shadow:none;
+}
+#nav button.active::before,nav button.active::before{background:var(--ink); height:2px}
+#nav .icw,nav .icw{display:none}             /* the label is the destination */
+#nav button>span:last-child,nav button>span:last-child{font-size:var(--fs-nav)}
+.navbadge{
+  position:absolute; top:2px; left:auto; right:6px;
+  background:none; color:var(--danger); border:0; box-shadow:none;
+  border-radius:0; padding:0; min-width:0; width:auto; height:auto;
+  font-size:var(--fs-label); font-weight:700; line-height:1;
+}
+body:not(.light) .navbadge{color:var(--danger)}
+
+/* ── an alert is an indented remark with a rule, not a boxed card ───────── */
+.alert{
+  background:none; border:0; border-radius:0; box-shadow:none;
+  border-left:2px solid var(--stroke2);
+  padding:var(--s2) 0 var(--s2) var(--s3);
+}
+.alert.bad{border-left-color:var(--danger)}
+
+/* ── sheets ──────────────────────────────────────────────────────────────── */
+.mbody{border-radius:0; border-top:var(--bw-strong) solid var(--ink)}
+.grabber{background:var(--stroke2); border-radius:0; height:2px}
+
+/* ── the item mark is its initial, in a ruled square ────────────────────── */
+.pav,.mrico{
+  border-radius:0; background:none;
+  border:var(--bw) solid var(--stroke);
+  font-size:var(--fs-body-l); font-weight:600; color:var(--muted);
+}
+
+/* ── controls ────────────────────────────────────────────────────────────── */
+.search,input,select,textarea{border-radius:0}
+.qtyctl,.stepper{border-radius:0}
+.qtyctl button{border-radius:0}
+.chip,.chips button{border-radius:0}
+.roleswitch,.roleswitch button,.seg,.seg button{border-radius:0}
+.morerow{border-radius:0}
+.bar,.track,.meter,.hbar .track{border-radius:0}
+.fill,.bar i,.track .fill{border-radius:0}
+
+/* ── the rails go ────────────────────────────────────────────────────────── */
+.card[style*="border-left"],.rail,.railcard{border-left:0 !important}
+
+/* ── the last round shapes ───────────────────────────────────────────────── */
+.chips button,.tblwrap::-webkit-scrollbar-thumb,.hbar .track,.hbar .fill,
+.oline,.fab,.grabber{border-radius:0}
+.onode,.tbtn .okdot,.dot{border-radius:var(--r-pill)}   /* a dot stays a dot */
+button.pav{position:relative}
+button.pav .pavdots{display:none}                        /* the box is the affordance */
+.chips button.active,.chips button[aria-pressed="true"]{
+  background:none; color:var(--ink); border-color:var(--ink);
+}
+
+/* ── nothing in a ledger is round ────────────────────────────────────────── */
+button,.btn,.chip,input,select,textarea,.seg,.seg button,.roleswitch,
+.roleswitch button,.morerow,.pav,.mrico,.card,.notice,.alert,.tbl,.tblwrap,
+.qtyctl,.qtyctl button,.stepper,.bar,.track,.fill,.meter,.badge,.tag{
+  border-radius:0;
+}
+/* …except the three things that are genuinely a dot */
+.dot,.okdot,.onode,.tbtn .okdot,.spark i{border-radius:var(--r-pill)}
+/* an icon box emptied by the emoji strip must not hold a 44px hole open */
+.mrico:empty,.icw:empty,.em:empty,.pav:empty{display:none}
+.morerow .mrico:empty{display:none}
+.pcchip{border-radius:0; border-color:var(--stroke2)}
+
+/* ── what the skin exposed in ArmVoski ───────────────────────────────────────
+   Four rules and one hole. Three of the four are ArmTrade design-system CSS this
+   file inherited verbatim and never used — the toast's go-button, the desktop
+   pane scrollbar, the sparkline — but a pill radius left standing in a ledger is
+   a pill radius, so they are named here with the one that IS used: the count
+   screen's progress bar. The hole is .stub .se, the «not built yet» medallion:
+   the strip empties it and a 30px line plus its margin stays behind. */
+#toast .tgo{border-radius:0}
+.cnprog .bar,.cnprog .bar i{border-radius:0}
+.panebody::-webkit-scrollbar-thumb{border-radius:0}
+.spark i{border-radius:0}
+.stub .se:empty{display:none;margin:0}
+/* A WRITTEN LINK IS STILL A TAP TARGET. .btn.ghost gives up its full width to become one, and
+   the rule is 44px, not «44px tall». In Armenian «Փակել» is 55px wide and nothing showed; in
+   English «Close» is 39px, so at every width and in both themes the sheet's only way out was
+   five pixels under reach. The link stays left-aligned and its rule still ends with the word —
+   min-width only guarantees the box behind it. */
+.btn.ghost{min-width:44px}
+/* ===== END LEDGER SKIN ===== */
 </style>
 </head>
 <body class="light">
@@ -1717,6 +1961,35 @@ input:disabled{
 <div id="modalRoot"></div>
 
 <script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEDGER MARKS — the only glyphs left in the product.
+
+   Every emoji in the content is gone; the words carry the meaning. What is
+   left is a handful of controls that genuinely cannot be labelled in a 44px
+   square. They are drawn at one hairline weight in currentColor, so they sit
+   in the text rather than on top of it, and they inherit the theme.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const IC = (()=>{
+  const w = d => '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">'+d+'</svg>';
+  return {
+    theme:  w('<path d="M20 14.2A8 8 0 0 1 9.8 4 8.2 8.2 0 1 0 20 14.2z"/>'),
+    sync:   w('<path d="M10 13a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.2 1.2"/><path d="M14 11a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7L12 18.5"/>'),
+    bell:   w('<path d="M18 15V10a6 6 0 1 0-12 0v5l-1.6 2.5h15.2z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>'),
+    gear:   w('<circle cx="12" cy="12" r="3"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/>'),
+    print:  w('<path d="M7 9V3.5h10V9"/><rect x="3.5" y="9" width="17" height="7.5" rx="1"/><path d="M7 14h10v6.5H7z"/>'),
+    down:   w('<path d="M12 3.5v12M7.5 11l4.5 4.5 4.5-4.5"/><path d="M4 17.5v3h16v-3"/>'),
+    camera: w('<path d="M3.5 8h3.2l1.4-2h7.8l1.4 2h3.2v11h-17z"/><circle cx="12" cy="13" r="3.4"/>'),
+    trash:  w('<path d="M4.5 6.5h15M9.5 6.5V4h5v2.5"/><path d="M6.5 6.5 7.6 20.5h8.8L17.5 6.5"/>'),
+    pen:    w('<path d="M4 20.2 4.9 16 16.4 4.5a2 2 0 0 1 2.8 2.8L7.7 18.8z"/><path d="M14.4 6.5 17.5 9.6"/>'),
+    person: w('<circle cx="12" cy="8" r="3.6"/><path d="M4.6 20.5a7.4 7.4 0 0 1 14.8 0"/>'),
+    day:    w('<rect x="3.5" y="5.5" width="17" height="15" rx="1"/><path d="M3.5 10h17M8 3.5v4M16 3.5v4"/>'),
+    next:   w('<path d="M5 5.5 14 12l-9 6.5z"/><path d="M18.5 5v14"/>'),
+    plus:   w('<path d="M12 5.5v13M5.5 12h13"/>'),
+    search: w('<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l4.5 4.5"/>'),
+    back:   w('<path d="M19 12H5"/><path d="M10.5 6.5 5 12l5.5 5.5"/>')
+  };
+})();
+
 /* =====================================================================================
    ԱրմՈսկի / ArmVoski — a jeweller's trade product for the Armenian market.
    The ArmTrade engine reconfigured for gold: stock held by weight and purity instead of
@@ -4032,8 +4305,8 @@ function ftime(ts){
 const NAV_KEYS = ['home','sell','buy','tray','count','recv','mark','debts','repair','data'];
 /* order of surrender: the daily loop is the last to leave the bar */
 const NAV_PRIO = ['home','sell','buy','tray','count','recv','mark','debts','repair','data'];
-const NAV_ICON = { home:'☀', sell:'🏷', buy:'🤝', tray:'💍', recv:'📦', count:'📋',
-                   mark:'🔖', repair:'🔧', debts:'💳', data:'⚙' };
+const NAV_ICON = { home:'', sell:'', buy:'', tray:'', recv:'', count:'',
+                   mark:'', repair:'', debts:'', data:'' };
 let NAVMC = null;
 function navTextW(txt){
   try{
@@ -4083,7 +4356,7 @@ function renderNav(){
     + ' onclick="setTab(' + jsArg(k) + ')">'
     + '<span class="icw">' + NAV_ICON[k] + '</span><span>' + escH(t('tab_'+k)) + '</span></button>').join('')
     + (NAV_HIDDEN.length ? '<button aria-label="' + escH(t('menu_title')) + '" onclick="openMoreNav()">'
-        + '<span class="icw">☰</span><span>' + escH(t('more_tab')) + '</span></button>' : '');
+        + '<span class="icw"></span><span>' + escH(t('more_tab')) + '</span></button>' : '');
 }
 function openMoreNav(){
   const rows = NAV_HIDDEN.map(k =>
@@ -4093,9 +4366,9 @@ function openMoreNav(){
      director being shown three products had to retype the address. These are links, not tabs:
      they leave the app, so they sit under a rule, below the destinations. */
   const away = '<div style="border-top:var(--bw) solid var(--sep);margin:14px 0 4px"></div>'
-    + '<a class="morerow" href="/armvoski/about/"><span class="mrico">❓</span><span class="mrnm">' + escH(t('what_is_this')) + '</span></a>'
-    + '<a class="morerow" href="/"><span class="mrico">🏠</span><span class="mrnm">' + escH(t('all_products')) + '</span></a>';
-  openModal('<h3>☰ ' + escH(t('menu_title')) + '</h3>' + rows + away
+    + '<a class="morerow" href="/armvoski/about/"><span class="mrico"></span><span class="mrnm">' + escH(t('what_is_this')) + '</span></a>'
+    + '<a class="morerow" href="/"><span class="mrico"></span><span class="mrnm">' + escH(t('all_products')) + '</span></a>';
+  openModal('<h3>' + escH(t('menu_title')) + '</h3>' + rows + away
     + '<button class="btn ghost full" style="margin-top:16px" onclick="closeModal()">' + escH(t('close')) + '</button>');
 }
 function setTab(k){
@@ -4161,10 +4434,10 @@ function toast(msg){
 function topBar(){
   return '<div class="logo"><div class="logomark">Ո</div><div>' + escH(t('app_name'))
     + '<small>' + escH(t('app_sub')) + '</small></div></div>'
-    + '<span class="datechip" title="' + escH(fdate(S.today)) + '">📅 ' + escH(fdate(S.today)) + '</span>'
+    + '<span class="datechip" title="' + escH(fdate(S.today)) + '">' + escH(fdate(S.today)) + '</span>'
     + '<div class="spacer"></div>'
     + '<button class="tbtn" onclick="toggleTheme()" title="' + escH(t('theme_lbl')) + '" aria-label="'
-      + escH(t('theme_lbl')) + '">' + (U.theme==='light' ? '🌙' : '☀️') + '</button>'
+      + escH(t('theme_lbl')) + '">' + IC.theme + '</button>'
     + '<button class="tbtn wide" onclick="toggleLang()" aria-label="' + escH(t('lang_lbl')) + '">'
       + ({hy:'EN', en:'РУ', ru:'ՀԱՅ'})[lang] + '</button>';
 }
@@ -4389,7 +4662,7 @@ function viewTray(){
   const pm = pureByMetal();
   if(!groups.length){
     return '<main class="anim"><div class="sec">' + escH(t('tray_title')) + '</div>'
-      + '<div class="empty"><div class="em">💍</div><div>' + escH(t('tray_empty')) + '</div></div>'
+      + '<div class="empty"><div class="em"></div><div>' + escH(t('tray_empty')) + '</div></div>'
       + '<button class="btn primary" onclick="openNewItem()">+ ' + escH(t('ni_title')) + '</button></main>';
   }
   const body = groups.map(g => {
@@ -4502,7 +4775,7 @@ function openPiece(id){
     + '<div class="row"><span class="mlbl">' + escH(p.priceManual ? t('pr_manual') : t('pr_computed')) + '</span>'
       + '<span class="big">' + price.toLocaleString('en-US') + '<span class="cur">֏</span></span></div>'
     + breakdown(p)
-    + (warn ? '<div class="alert bad" style="margin-top:12px"><div class="t">⚠ '
+    + (warn ? '<div class="alert bad" style="margin-top:12px"><div class="t">'
         + escH(fmt('pr_warn80', { p: warn.pct })) + '</div><div class="d">'
         + escH(fmt('pr_warn80_sub', { a: warn.computed.toLocaleString('en-US') + ' ֏',
             b: warn.floor.toLocaleString('en-US') + ' ֏', c: warn.manual.toLocaleString('en-US') + ' ֏' }))
@@ -4646,7 +4919,7 @@ function viewData(){
             + ({hy:'ՀԱՅ', en:'EN', ru:'РУ'})[l] + '</button>').join('')
       + '</div>'
     + '</div>'
-    + '<div class="card rail rail-info"><h3>🔒 ' + escH(t('data_privacy')) + '</h3>'
+    + '<div class="card rail rail-info"><h3>' + escH(t('data_privacy')) + '</h3>'
       + '<div class="muted" style="line-height:1.55">' + escH(t('data_privacy_body')) + '</div>'
       + '<div class="notice" style="margin-top:10px">' + escH(t('data_ns')) + '</div>'
     + '</div>'
@@ -4997,7 +5270,7 @@ function sellCandidates(){
 function sellListHtml(){
   const rows = sellCandidates();
   if(!rows.length)
-    return '<div class="empty"><div class="em">🏷</div><div>'
+    return '<div class="empty"><div class="em"></div><div>'
       + escH(SELLQ.trim() ? t('sl_noresult') : t('tray_empty')) + '</div></div>';
   return '<div class="fgrp"><div class="fbody">' + rows.map(x => {
     const p = x.p, nm = modelName(p), bits = [];
@@ -5068,7 +5341,7 @@ function slAmount(){
 }
 function slWarnHtml(w){
   if(!w) return '';
-  return '<div class="alert bad" style="margin-top:12px"><div class="t">⚠ '
+  return '<div class="alert bad" style="margin-top:12px"><div class="t">'
     + escH(fmt('pr_warn80', { p: w.pct })) + '</div><div class="d">'
     + escH(fmt('pr_warn80_sub', { a: w.computed.toLocaleString('en-US') + ' ֏',
         b: w.floor.toLocaleString('en-US') + ' ֏',
@@ -5572,8 +5845,8 @@ function openBuyAct(ref){
   if(!a) return;
   const sign = lbl => '<div style="flex:1;min-width:150px"><div class="doclbl">' + escH(lbl) + '</div>'
     + '<div class="actsignline"></div></div>';
-  const party = (ttl, em, name, sub) => '<div style="min-width:150px"><div class="doclbl">' + escH(ttl) + '</div>'
-    + '<b>' + escH(em + ' ' + (name || '—')) + '</b>'
+  const party = (ttl, name, sub) => '<div style="min-width:150px"><div class="doclbl">' + escH(ttl) + '</div>'
+    + '<b>' + escH(name || '—') + '</b>'
     + '<div class="muted">' + sub + '</div></div>';
   const sl = a.seller || {};
   const sellerSub = [
@@ -5601,13 +5874,13 @@ function openBuyAct(ref){
     + '<td class="num">' + safeAmd(a.stonesAmd,0).toLocaleString('en-US') + '</td></tr>');
 
   openModal(
-    '<h3>📄 ' + escH(t('act_title')) + ' № ' + escH(a.id) + '</h3>'
+    '<h3>' + escH(t('act_title')) + ' № ' + escH(a.id) + '</h3>'
     + '<div class="muted">' + escH(fdate(a.ts)) + '</div>'
     + '<hr class="actrule">'
     + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
-      + party(t('act_buyer'), '🏪', S.cfg.shopName || t('app_name'),
+      + party(t('act_buyer'), S.cfg.shopName || t('app_name'),
               escH(t('data_tin')) + ' <span class="num">' + escH(S.cfg.tin || '—') + '</span>')
-      + party(t('act_seller'), '👤', sl.name, sellerSub)
+      + party(t('act_seller'), sl.name, sellerSub)
     + '</div>'
     + '<div class="tblwrap" style="max-height:none"><table class="tbl acttbl buyact"><thead><tr>'
       + '<th>' + escH(t('act_col_n')) + '</th><th>' + escH(t('act_col_metal')) + '</th>'
@@ -5631,7 +5904,7 @@ function openBuyAct(ref){
     /* NO COPY ASSERTING THE IDENTITY FIELDS ARE LEGALLY REQUIRED. That is unverified, and a
        document that asserts a legal requirement it cannot source is worse than one that does not. */
     + '<div class="muted" style="font-size:14px;margin-top:6px">' + escH(t('by_id_note')) + '</div>'
-    + '<button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">🖨 '
+    + '<button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">'
       + escH(t('print')) + '</button>'
     + '<button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">'
       + escH(t('close')) + '</button>'
@@ -6072,7 +6345,7 @@ function cnListHtml(){
         || String(r.kind === 'piece' ? (r.p.code||'') : '').toLowerCase().indexOf(q) >= 0
         || String(r.fineness).indexOf(q) >= 0;
   });
-  if(!rows.length) return '<div class="empty"><div class="em">📋</div><div>'
+  if(!rows.length) return '<div class="empty"><div class="em"></div><div>'
     + escH(q ? t('sl_noresult') : t('cn_none')) + '</div></div>';
   return '<div class="fgrp"><div class="fbody">' + rows.map(cnRowHtml).join('') + '</div></div>';
 }
@@ -6214,12 +6487,12 @@ function openCountAct(id){
     + '</tr>').join('');
 
   openModal(
-    '<h3>📋 ' + escH(t('cn_act')) + ' № ' + escH(a.id) + '</h3>'
+    '<h3>' + escH(t('cn_act')) + ' № ' + escH(a.id) + '</h3>'
     + '<div class="muted">' + escH(fdate(a.ts) + ' · ' + t('cn_scope_lbl') + '՝ ' + t('cn_scope_' + a.scope)) + '</div>'
     + '<hr class="actrule">'
     + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
       + '<div style="min-width:150px"><div class="doclbl">' + escH(t('data_shop')) + '</div>'
-        + '<b>🏪 ' + escH(S.cfg.shopName || t('app_name')) + '</b>'
+        + '<b>' + escH(S.cfg.shopName || t('app_name')) + '</b>'
         + '<div class="muted">' + escH(t('data_tin')) + ' <span class="num">' + escH(S.cfg.tin || '—') + '</span></div></div>'
       + '<div style="min-width:150px"><div class="doclbl">' + escH(t('cn_counter')) + '</div>'
         + '<b>' + escH(a.counter || '—') + '</b>'
@@ -6361,7 +6634,7 @@ function openCountAct(id){
     + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
       + sign(t('cn_counter')) + sign(t('cn_mrp')) + '</div>'
     + '<div class="muted" style="font-size:14px;margin-top:14px">' + escH(t('act_note')) + '</div>'
-    + '<button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">🖨 '
+    + '<button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">'
       + escH(t('print')) + '</button>'
     + '<button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">'
       + escH(t('close')) + '</button>'
@@ -6680,12 +6953,12 @@ function openHmList(id){
   const sign = lbl => '<div style="flex:1;min-width:150px"><div class="doclbl">' + escH(lbl) + '</div>'
     + '<div class="actsignline"></div></div>';
   const tot = h.items.reduce((a,i) => round3(a + num(i.netG)), 0);
-  openModal('<h3>🔖 ' + escH(t('hm_list')) + ' № ' + escH(h.id) + '</h3>'
+  openModal('<h3>' + escH(t('hm_list')) + ' № ' + escH(h.id) + '</h3>'
     + '<div class="muted">' + escH(fdate(h.ts)) + '</div>'
     + '<hr class="actrule">'
     + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
       + '<div style="min-width:150px"><div class="doclbl">' + escH(t('data_shop')) + '</div>'
-        + '<b>🏪 ' + escH(S.cfg.shopName || t('app_name')) + '</b>'
+        + '<b>' + escH(S.cfg.shopName || t('app_name')) + '</b>'
         + '<div class="muted">' + escH(t('data_tin')) + ' <span class="num">' + escH(S.cfg.tin || '—') + '</span></div></div>'
       + '<div style="min-width:150px"><div class="doclbl">' + escH(t('hm_office')) + '</div>'
         + '<b>' + escH(h.office || '—') + '</b></div>'
@@ -6706,7 +6979,7 @@ function openHmList(id){
     + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
       + sign(t('hm_list_hand')) + sign(t('hm_list_take')) + '</div>'
     + '<div class="muted" style="font-size:14px;margin-top:14px">' + escH(t('hm_list_note')) + '</div>'
-    + '<button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">🖨 '
+    + '<button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">'
       + escH(t('print')) + '</button>'
     + '<button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">'
       + escH(t('close')) + '</button>');
@@ -6870,7 +7143,7 @@ function openRepair(id){
   if(!r) return;
   RP_SHEET = id;
   const due = repairDue(r);
-  openModal('<h3>🔧 ' + escH(t('rp_sheet')) + ' · ' + escH(r.id) + '</h3>'
+  openModal('<h3>' + escH(t('rp_sheet')) + ' · ' + escH(r.id) + '</h3>'
     + '<div class="row"><span style="font-size:17px;font-weight:700">' + escH(r.custName || '—') + '</span>'
       + '<span class="badge ' + (r.status === 'out' ? 'b-neutral' : (r.status === 'ready' ? 'b-green' : 'b-gold')) + '">'
       + escH(t('rp_st_' + r.status)) + '</span></div>'
@@ -7004,15 +7277,15 @@ function openRepairSlip(id, kind){
   const back = kind === 'out';
   const sign = lbl => '<div style="flex:1;min-width:150px"><div class="doclbl">' + escH(lbl) + '</div>'
     + '<div class="actsignline"></div></div>';
-  openModal('<h3>🧾 ' + escH(back ? t('rp_slip_out_t') : t('rp_slip_in_t')) + ' № ' + escH(r.id) + '</h3>'
+  openModal('<h3>' + escH(back ? t('rp_slip_out_t') : t('rp_slip_in_t')) + ' № ' + escH(r.id) + '</h3>'
     + '<div class="muted">' + escH(fdate(back ? (r.outTs || S.today) : r.inTs)) + '</div>'
     + '<hr class="actrule">'
     + '<div class="row" style="align-items:flex-start;gap:14px;flex-wrap:wrap">'
       + '<div style="min-width:150px"><div class="doclbl">' + escH(t('data_shop')) + '</div>'
-        + '<b>🏪 ' + escH(S.cfg.shopName || t('app_name')) + '</b>'
+        + '<b>' + escH(S.cfg.shopName || t('app_name')) + '</b>'
         + '<div class="muted">' + escH(t('data_tin')) + ' <span class="num">' + escH(S.cfg.tin || '—') + '</span></div></div>'
       + '<div style="min-width:150px"><div class="doclbl">' + escH(t('rp_cust')) + '</div>'
-        + '<b>👤 ' + escH(r.custName || '—') + '</b>'
+        + '<b>' + escH(r.custName || '—') + '</b>'
         + '<div class="muted">' + escH(r.custPhone || '') + '</div></div>'
     + '</div>'
     + '<div class="tblwrap" style="max-height:none"><table class="tbl"><thead><tr>'
@@ -7040,7 +7313,7 @@ function openRepairSlip(id, kind){
       + sign(back ? t('rp_sign_cust') : t('rp_sign_shop')) + '</div>'
     + '<div class="muted" style="font-size:14px;margin-top:14px">'
       + escH(back ? t('rp_slip_out_note') : t('rp_slip_in_note')) + '</div>'
-    + '<button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">🖨 '
+    + '<button class="btn primary noprint" style="margin-top:16px" onclick="window.print()">'
       + escH(t('print')) + '</button>'
     + '<button class="btn ghost full noprint" style="margin-top:9px" onclick="closeModal()">'
       + escH(t('close')) + '</button>');
@@ -7245,7 +7518,7 @@ function openSupplier(id){
   const bal = billed - paid;
   const sign = lbl => '<div style="flex:1;min-width:150px"><div class="doclbl">' + escH(lbl) + '</div>'
     + '<div class="actsignline"></div></div>';
-  openModal('<h3>💳 ' + escH(t('db_stmt')) + '</h3>'
+  openModal('<h3>' + escH(t('db_stmt')) + '</h3>'
     + '<div class="row"><span style="font-size:17px;font-weight:700">' + escH(sup.name) + '</span></div>'
     + '<div class="muted" style="margin-top:4px">' + escH([sup.tin ? t('data_tin') + ' ' + sup.tin : '',
         sup.phone].filter(Boolean).join(' · ')) + '</div>'
@@ -7289,7 +7562,7 @@ function openSupplier(id){
     + '<div style="display:flex;gap:20px;margin-top:22px;flex-wrap:wrap">'
       + sign(t('data_shop')) + sign(t('db_sup')) + '</div>'
     + '<div class="muted" style="font-size:14px;margin-top:14px">' + escH(t('db_stmt_note')) + '</div>'
-    + '<button class="btn ghost full noprint" style="margin-top:16px" onclick="window.print()">🖨 '
+    + '<button class="btn ghost full noprint" style="margin-top:16px" onclick="window.print()">'
       + escH(t('print')) + '</button>'
     + '<button class="btn ghost full noprint" style="margin-top:9px" onclick="DB_SHEET=null;closeModal()">'
       + escH(t('close')) + '</button>');
@@ -7329,11 +7602,11 @@ function renderRecovery(err){
     '<div class="logo"><div class="logomark">Ո</div><div>' + escH(t('app_name')) + '</div></div>';
   document.getElementById('app').innerHTML =
     '<div style="max-width:460px;margin:8vh auto 0;padding:0 18px">'
-    + '<div class="card rail rail-bad"><h3>⚠ ' + escH(t('rec_title')) + '</h3>'
+    + '<div class="card rail rail-bad"><h3>' + escH(t('rec_title')) + '</h3>'
     + '<div class="muted" style="line-height:1.55">' + escH(t('rec_body')) + '</div>'
     + (hasLKG() ? '<button class="btn primary full" style="margin-top:14px" onclick="restoreLKG()">↺ '
         + escH(t('rec_restore')) + '</button>' : '')
-    + '<button class="btn ghost full" style="margin-top:9px" onclick="startFresh()">🗑 '
+    + '<button class="btn ghost full" style="margin-top:9px" onclick="startFresh()">'
       + escH(t('rec_fresh')) + '</button>'
     + '<div class="muted" style="margin-top:12px;font-size:14px">'
       + escH(String(err && err.message || err || '')) + '</div>'
