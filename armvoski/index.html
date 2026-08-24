@@ -1742,11 +1742,11 @@ input:disabled{
   --stroke:#2A2E35;
   --stroke2:#3A3F48;
 
-  --acc:#9FC0E8;              /* ballpoint blue */
-  --acc-ink:#10141A;
-  --acc-tint:#1A2130;
-  --acc-line:#31405A;
-  --acc-text:#AECBEE;
+  --acc:#E0A867;              /* ballpoint blue */
+  --acc-ink:#1A1206;
+  --acc-tint:#2A2115;
+  --acc-line:#4E3D22;
+  --acc-text:#E8BA85;
   --gold:var(--acc); --gold2:var(--acc-text);
 
   /* correction red is the ONLY alert colour. Everything else is ink. */
@@ -1783,11 +1783,11 @@ body.light{
   --stroke:#DFDBD2;
   --stroke2:#C6C1B6;
 
-  --acc:#1E3A5F;              /* white on it: 10.4:1 */
+  --acc:#8A4B0F;              /* white on it: 10.4:1 */
   --acc-ink:#FFFEFC;
-  --acc-tint:#EFF2F6;
-  --acc-line:#C3CDDA;
-  --acc-text:#1E3A5F;
+  --acc-tint:#F7F1E8;
+  --acc-line:#DCC7A8;
+  --acc-text:#8A4B0F;
   --gold:var(--acc); --gold2:var(--acc-text);
 
   --danger:#9B2C1E;  --danger-tint:#FAF0EE; --danger-line:#E4C6C0;
@@ -1869,7 +1869,7 @@ body{font-variant-numeric:tabular-nums lining-nums}
   color:var(--ink); font-weight:600;
   background:none; border-radius:0; box-shadow:none;
 }
-#nav button.active::before,nav button.active::before{background:var(--ink); height:2px}
+#nav button.active::before,nav button.active::before{background:var(--acc); height:2px}
 #nav .icw,nav .icw{display:none}             /* the label is the destination */
 #nav button>span:last-child,nav button>span:last-child{font-size:var(--fs-nav)}
 /* the count reads as a superscript ON the word, not as a number floating above the
@@ -1958,6 +1958,20 @@ button,.btn,.chip,input,select,textarea,.seg,.seg button,.roleswitch,
    min-width only guarantees the box behind it. */
 .btn.ghost{min-width:44px}
 /* ===== END LEDGER SKIN ===== */
+
+/* ── which program am I in ───────────────────────────────────────────────────
+   The ledger made all three products the same page with different words. One
+   hue per product, and only in the three places that answer that question: the
+   rule under the header, the badge in it, and the one filled button. Correction
+   red is unchanged in all three, and inside a screen the accent still means
+   only "you can act on this" — what changed is which accent. */
+#top{border-bottom:2px solid var(--acc)}
+.btn.primary,.btn.full.cyan,.btn.full.green,.btn.full.violet,
+.btn.small.primary,.btn.small.cyan,.btn.small.green,.btn.small.violet{
+  background:var(--acc); color:var(--acc-ink); border-color:var(--acc);
+}
+.logomark{border-radius:0}
+
 </style>
 </head>
 <body class="light">
