@@ -1590,7 +1590,7 @@ body{font-variant-numeric:tabular-nums lining-nums}
   color:var(--ink); font-weight:600;
   background:none; border-radius:0; box-shadow:none;
 }
-#nav button.active::before,nav button.active::before{background:var(--ink); height:2px}
+#nav button.active::before,nav button.active::before{background:var(--acc); height:2px}
 #nav .icw,nav .icw{display:none}             /* the label is the destination */
 #nav button>span:last-child,nav button>span:last-child{font-size:var(--fs-nav)}
 /* the count reads as a superscript ON the word, not as a number floating above the
@@ -1675,6 +1675,26 @@ button,.btn,.chip,input,select,textarea,.seg,.seg button,.roleswitch,
   min-width:0; width:auto; height:auto; font-weight:700;
 }
 .okdot,.onode,.tbtn .okdot,.spark i{border-radius:var(--r-pill)}
+
+
+/* ── which program am I in ───────────────────────────────────────────────────
+   The ledger made all three products the same page with different words. One
+   hue per product, and only in the three places that answer that question: the
+   rule under the header, the badge in it, and the one filled button. Correction
+   red is unchanged in all three, and inside a screen the accent still means
+   only "you can act on this" — what changed is which accent. */
+#top{border-bottom:2px solid var(--acc)}
+.btn.primary,.btn.full.cyan,.btn.full.green,.btn.full.violet,
+.btn.small.primary,.btn.small.cyan,.btn.small.green,.btn.small.violet{
+  background:var(--acc); color:var(--acc-ink); border-color:var(--acc);
+}
+.logomark{border-radius:0}
+/* ArmTrade hid the whole logo below 461px to fit seven controls. The badge IS the
+   "which program am I in" signal, so the square comes back at every width even where
+   the word cannot — there are 220px of slack in that bar at 390. */
+#top .logo{display:flex; align-items:center; gap:var(--s2); min-width:0}
+#top .logo > *:not(.logomark){display:none}
+@media (min-width:461px){ #top .logo > *:not(.logomark){display:block} }
 
 </style>
 </head>
