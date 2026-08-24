@@ -243,6 +243,40 @@ h1{
   h1{font-size:38px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ── one hue per product ─────────────────────────────────────────────────────
+   The ledger made the four cards the same tile with different words. Each
+   product carries its own colour inside its own program; the hub is the index,
+   so it keeps the site's ink blue and lends each card only its badge and its
+   own «Բացել». ARMGOLD's graphite says what the tier heading already says: it
+   is a tool, not a fourth product. Contrast checked on paper and on ink —
+   lowest of the eight is 6.0:1. */
+.mk[data-i18n="m_trade"] {--pc:#1E3A5F}
+.mk[data-i18n="m_voski"] {--pc:#8A4B0F}
+.mk[data-i18n="m_estate"]{--pc:#2A5741}
+.mk[data-i18n="m_gold"]  {--pc:#4A4A52}
+.mk{background:var(--pc); border-color:var(--pc); color:#FFFEFC}
+.card:has(.mk[data-i18n="m_trade"])  .cta{color:#1E3A5F}
+.card:has(.mk[data-i18n="m_voski"])  .cta{color:#8A4B0F}
+.card:has(.mk[data-i18n="m_estate"]) .cta{color:#2A5741}
+.card:has(.mk[data-i18n="m_gold"])   .cta{color:#4A4A52}
+@media (prefers-color-scheme: dark){
+  body:not(.light) .mk[data-i18n="m_trade"] {--pc:#9FC0E8}
+  body:not(.light) .mk[data-i18n="m_voski"] {--pc:#E0A867}
+  body:not(.light) .mk[data-i18n="m_estate"]{--pc:#8FC5A8}
+  body:not(.light) .mk[data-i18n="m_gold"]  {--pc:#A9A9B4}
+  body:not(.light) .mk{color:#10141A}
+}
+body.dark .mk[data-i18n="m_trade"] {--pc:#9FC0E8}
+body.dark .mk[data-i18n="m_voski"] {--pc:#E0A867}
+body.dark .mk[data-i18n="m_estate"]{--pc:#8FC5A8}
+body.dark .mk[data-i18n="m_gold"]  {--pc:#A9A9B4}
+body.dark .mk{color:#10141A}
+body.dark .card:has(.mk[data-i18n="m_trade"])  .cta{color:#9FC0E8}
+body.dark .card:has(.mk[data-i18n="m_voski"])  .cta{color:#E0A867}
+body.dark .card:has(.mk[data-i18n="m_estate"]) .cta{color:#8FC5A8}
+body.dark .card:has(.mk[data-i18n="m_gold"])   .cta{color:#A9A9B4}
+
 </style>
 </head>
 <body class="light">
