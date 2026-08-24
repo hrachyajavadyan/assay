@@ -11,7 +11,7 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armestate-shell-v8';   /* v8: the ledger skin. Ruled blocks instead of cards, ink
+const CACHE = 'armestate-shell-v9';   /* v8: the ledger skin. Ruled blocks instead of cards, ink
       instead of a palette, every radius at zero, one filled button per screen and a written link
       for everything else — and 257 pictographs gone, including the avatar an owner used to pick
       from a list of ten. The five printable documents are the product and they changed shape, so
