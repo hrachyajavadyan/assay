@@ -1978,6 +1978,213 @@ button,.btn,.chip,input,select,textarea,.seg,.seg button,.roleswitch,
 }
 .logomark{border-radius:0}
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLASS TOUCH LAYER
+   ═══════════════════════════════════════════════════════════════════════════
+   Ledger made every surface a ruled block and every button a written link. That
+   reads as calm, but it also left nothing on screen that announces "you can
+   press this", and it made the three products look identical.
+
+   This block re-materialises ONLY the layer you touch — buttons, chips, the
+   header, the bottom nav, the toast, the sheet — and tints all of it in the
+   product's own hue. Reading surfaces (ruled blocks, tables, typography) are
+   untouched: the calm is in the paper, the colour is in the controls.
+
+   TWO KINDS OF GLASS, deliberately:
+   - Elements that FLOAT OVER SCROLLING CONTENT (#top, #nav, #toast, the modal
+     scrim, one filled button per screen) get a real `backdrop-filter`. That is
+     where blur means something, because there is something behind to blur.
+   - Everything else (chips, ghost buttons, steppers, icon buttons) gets tint +
+     a specular top edge + radius, and NO blur. `backdrop-filter` is expensive —
+     emil-design-eng: "Heavy blur is expensive, especially in Safari" — and a
+     screen can hold thirty chips. The glass LOOK comes from the highlight and
+     the tint; the blur only earns its cost where content moves behind it.
+
+   CONTRAST IS NOT NEGOTIABLE. Every translucent fill is high-alpha (.82-.96) so
+   the worst-case composite still clears WCAG AA against its own text. The
+   filled button's weakest case — the .88 stop over paper — measures 5.4:1
+   (ArmVoski), 6.1:1 (ArmEstate) and 7.9:1 (ArmTrade); every other surface is
+   further ahead.
+
+   Three escapes, because glass must never be the only way to read the screen:
+   `@supports not (backdrop-filter)` for old Android WebView, a
+   `prefers-reduced-transparency` opt-out, and a print reset.
+
+   Delete this block to return to plain Ledger.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* the hue as channels, so one rule can tint it at any alpha. ArmVoski = amber #8A4B0F on paper, #E0A867 on ink paper */
+:root{
+  --acc-rgb:224,168,103;
+  --bg-rgb:20,22,26;
+  --ink-rgb:233,231,226;
+  --hi:rgba(255,255,255,.10);      /* specular top edge — faint on ink paper */
+  --glass-blur:14px;
+  --gr:12px;                        /* pressables */
+  --gr-sm:10px;                     /* chips, steppers, icon buttons */
+  --gr-lg:18px;                     /* the sheet */
+}
+body.light{
+  --acc-rgb:138,75,15;
+  --bg-rgb:255,254,252;
+  --ink-rgb:22,26,31;
+  --hi:rgba(255,255,255,.62);
+}
+
+/* ── 1 · chrome that floats over scrolling content ───────────────────────── */
+/* THE BLUR DOES THE WORK HERE, NOT THE TRANSPARENCY. These two bars are the only
+   surfaces in the app with live content moving behind them, and the naive glass
+   recipe — .8 alpha, modest blur — leaves the sentence underneath legible enough
+   to compete with the nav labels. Worse, in the safe-area strip below the labels
+   it reads as a smudge rather than as depth. A 24px blur turns what is behind
+   into an unreadable wash of its own colour, which is the whole effect; .96 then
+   costs nothing in legibility while still letting that colour tint the bar and
+   shift as the page scrolls. This is how iOS bars are actually built. */
+#top{
+  background:rgba(var(--bg-rgb),.96);
+  -webkit-backdrop-filter:blur(24px) saturate(1.8);
+          backdrop-filter:blur(24px) saturate(1.8);
+  box-shadow:inset 0 1px 0 var(--hi);
+}
+#nav,nav{
+  background:rgba(var(--bg-rgb),.96);
+  -webkit-backdrop-filter:blur(24px) saturate(1.8);
+          backdrop-filter:blur(24px) saturate(1.8);
+  box-shadow:inset 0 1px 0 var(--hi);
+}
+/* the active tab carries the product's colour — the "which tool am I in" signal,
+   repeated on every screen. NO background tint here: a nav button is a
+   full-height flex cell, so a fill paints a bare rectangle down into the
+   safe-area inset rather than a pill. The colour rides the label and the rule. */
+#nav button.active,nav button.active{ color:var(--acc-text) }
+#nav button.active::before,nav button.active::before{
+  background:var(--acc); height:3px;
+}
+
+/* ── 2 · the toast ───────────────────────────────────────────────────────── */
+#toast{
+  background:rgba(var(--ink-rgb),.90);
+  -webkit-backdrop-filter:blur(10px) saturate(1.4);
+          backdrop-filter:blur(10px) saturate(1.4);
+  border-radius:var(--gr);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 8px 24px rgba(0,0,0,.28);
+}
+#toast .tgo{border-radius:var(--gr-sm)}
+
+/* ── 3 · the sheet ───────────────────────────────────────────────────────── */
+/* the scrim is the one place a heavy blur is unambiguously right: the screen
+   behind is inert, and blurring it is what tells the eye the sheet is in front. */
+.modal{
+  -webkit-backdrop-filter:blur(10px) saturate(1.2);
+          backdrop-filter:blur(10px) saturate(1.2);
+}
+.mbody{
+  border-radius:var(--gr-lg) var(--gr-lg) 0 0;
+  border-top:1px solid rgba(var(--acc-rgb),.45);
+  box-shadow:inset 0 1px 0 var(--hi),0 -12px 40px rgba(0,0,0,.22);
+}
+.grabber{border-radius:var(--gr-sm);background:rgba(var(--acc-rgb),.35)}
+@media (min-width:980px){ .mbody{border-radius:var(--gr-lg)} }
+
+/* ── 4 · the filled button — one per screen, so it can afford the blur ───── */
+.btn.primary,.btn.full.cyan,.btn.full.green,.btn.full.violet,
+.btn.small.primary,.btn.small.cyan,.btn.small.green,.btn.small.violet,.fab{
+  background:linear-gradient(180deg,rgba(var(--acc-rgb),.96),rgba(var(--acc-rgb),.88));
+  color:var(--acc-ink);
+  border:1px solid rgba(var(--acc-rgb),1);
+  border-radius:var(--gr);
+  -webkit-backdrop-filter:blur(6px);
+          backdrop-filter:blur(6px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.26),0 2px 8px rgba(var(--acc-rgb),.28);
+}
+.fab{border-radius:16px}
+.btn.primary:active,.btn.full.cyan:active,.btn.full.green:active,
+.btn.full.violet:active,.btn.small.primary:active,.fab:active{
+  filter:brightness(.94);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 1px 4px rgba(var(--acc-rgb),.24);
+}
+
+/* ── 5 · the quiet pressables: tint + edge + radius, no blur ─────────────── */
+/* Ledger's ghost button was a bare underline. It is a button again — but a
+   quiet one, so the filled button above it still reads as the primary action. */
+.btn.ghost,.btn.ghost.full{
+  background:rgba(var(--acc-rgb),.10);
+  border:1px solid rgba(var(--acc-rgb),.26);
+  border-radius:var(--gr);
+  color:var(--acc-text);
+  text-decoration:none;
+  padding:0 var(--s3);
+  justify-content:center;
+  box-shadow:inset 0 1px 0 var(--hi);
+}
+.btn.ghost:active,.btn.ghost.full:active{
+  background:rgba(var(--acc-rgb),.20);
+  transform:scale(.98);
+  opacity:1;
+}
+.btn.danger,.btn.danger.full{border-radius:var(--gr)}
+.btn,.btn.small{border-radius:var(--gr)}
+
+.chips button,.chip,.iconbtn,.addbtn,button.pav,.qtyctl button,.stepper button{
+  background:rgba(var(--acc-rgb),.08);
+  border:1px solid rgba(var(--acc-rgb),.20);
+  border-radius:var(--gr-sm);
+  box-shadow:inset 0 1px 0 var(--hi);
+}
+.chips button.active,.chips button[aria-pressed="true"]{
+  background:rgba(var(--acc-rgb),.20);
+  border-color:rgba(var(--acc-rgb),.55);
+  color:var(--acc-text);
+}
+.qtyctl,.stepper{border-radius:var(--gr-sm)}
+/* the header controls sit six-in-a-row, so their tint is the faintest on screen:
+   enough to say "target", not enough to make the header a row of boxes. */
+.tbtn{
+  background:rgba(var(--acc-rgb),.07);
+  border:1px solid rgba(var(--acc-rgb),.16);
+  border-radius:var(--gr-sm);
+}
+.tbtn.on{
+  background:rgba(var(--acc-rgb),.24);
+  border-color:rgba(var(--acc-rgb),.50);
+  color:var(--acc-text);
+}
+/* the three things that are genuinely a dot stay round */
+.dot,.okdot,.onode,.tbtn .okdot,.spark i{border-radius:var(--r-pill)}
+
+/* ── 6 · escapes ─────────────────────────────────────────────────────────── */
+/* old Android WebView has no backdrop-filter: it would render these surfaces at
+   82% over whatever scrolls beneath, which is unreadable rather than merely
+   plain. Solid is the correct degradation. */
+@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
+  #top,#nav,nav{background:var(--bg)}
+  #toast{background:var(--ink)}
+  .modal{background:rgba(6,10,18,.72)}
+  .btn.primary,.btn.full.cyan,.btn.full.green,.btn.full.violet,
+  .btn.small.primary,.fab{background:var(--acc)}
+}
+@media (prefers-reduced-transparency:reduce){
+  #top,#nav,nav{background:var(--bg);-webkit-backdrop-filter:none;backdrop-filter:none}
+  #toast{background:var(--ink);-webkit-backdrop-filter:none;backdrop-filter:none}
+  .modal{-webkit-backdrop-filter:none;backdrop-filter:none}
+  .btn.primary,.btn.full.cyan,.btn.full.green,.btn.full.violet,
+  .btn.small.primary,.fab{
+    background:var(--acc);-webkit-backdrop-filter:none;backdrop-filter:none;
+  }
+}
+/* on paper every mark is ink: no tints, no blur, no glow. */
+@media print{
+  .btn,.btn.primary,.btn.ghost,.btn.ghost.full,.btn.small,.btn.danger,
+  .chips button,.chip,.tbtn,.iconbtn,.addbtn,button.pav,.qtyctl button,
+  .stepper button,.fab,.grabber,.mbody{
+    background:transparent !important;
+    box-shadow:none !important;
+    filter:none !important;
+    -webkit-backdrop-filter:none !important;
+            backdrop-filter:none !important;
+  }
+}
 </style>
 </head>
 <body class="light">

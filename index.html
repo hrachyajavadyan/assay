@@ -291,6 +291,66 @@ body.dark .card:has(.mk[data-i18n="m_voski"])  .cta{color:#E0A867}
 body.dark .card:has(.mk[data-i18n="m_estate"]) .cta{color:#8FC5A8}
 body.dark .card:has(.mk[data-i18n="m_gold"])   .cta{color:#A9A9B4}
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLASS TOUCH LAYER · hub
+   The same treatment the three apps get, in each card's own hue: the link you
+   press is a glass pill tinted by the product it opens, so the colour that
+   identifies a tool starts on the page that hands you the tools.
+   Reading surfaces — the ruled blocks, the headings — are untouched.
+   Delete this block to return to plain Ledger.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root{
+  --hi:rgba(255,255,255,.62);
+  --ink-rgb:22,26,31;
+  --gr:12px; --gr-sm:10px;
+}
+body.dark{ --hi:rgba(255,255,255,.10); --ink-rgb:233,231,226 }
+
+/* the hue each card already paints on its mark and its link, as channels */
+.card:has(.mk[data-i18n="m_trade"]) { --c-rgb:30,58,95 }
+.card:has(.mk[data-i18n="m_voski"]) { --c-rgb:138,75,15 }
+.card:has(.mk[data-i18n="m_estate"]){ --c-rgb:42,87,65 }
+.card:has(.mk[data-i18n="m_gold"])  { --c-rgb:74,74,82 }
+body.dark .card:has(.mk[data-i18n="m_trade"]) { --c-rgb:159,192,232 }
+body.dark .card:has(.mk[data-i18n="m_voski"]) { --c-rgb:224,168,103 }
+body.dark .card:has(.mk[data-i18n="m_estate"]){ --c-rgb:143,197,168 }
+body.dark .card:has(.mk[data-i18n="m_gold"])  { --c-rgb:169,169,180 }
+
+/* the fallback channels are the ink, so a card with no mark still gets a button
+   rather than an invisible one — :has() is well supported now, but a selector
+   that silently produces a transparent control is not a risk worth taking. */
+.cta{
+  background:rgba(var(--c-rgb,var(--ink-rgb)),.10);
+  border:1px solid rgba(var(--c-rgb,var(--ink-rgb)),.28);
+  border-radius:var(--gr);
+  padding:0 14px;
+  text-decoration:none;
+  box-shadow:inset 0 1px 0 var(--hi);
+  transition:opacity var(--dur-press) var(--ease-out),
+             background var(--dur-press) var(--ease-out);
+}
+.cta:active{ background:rgba(var(--c-rgb,var(--ink-rgb)),.20); opacity:1 }
+.mk{ border-radius:var(--gr-sm); box-shadow:inset 0 1px 0 rgba(255,255,255,.22) }
+
+/* the language chips and the theme toggle are hub chrome, not a product, so
+   they take the ink rather than any one hue. */
+.seg button,.tbtn{
+  background:rgba(var(--ink-rgb),.05);
+  border:1px solid rgba(var(--ink-rgb),.14);
+  border-radius:var(--gr-sm);
+}
+.seg button[aria-pressed="true"]{
+  background:rgba(var(--ink-rgb),.14);
+  border-color:rgba(var(--ink-rgb),.30);
+}
+
+@media (prefers-reduced-transparency:reduce){
+  .cta{background:none;border-color:currentColor}
+}
+@media print{
+  .cta,.mk,.seg button,.tbtn{background:transparent !important;box-shadow:none !important}
+}
 </style>
 </head>
 <body class="light">

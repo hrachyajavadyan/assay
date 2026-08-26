@@ -11,7 +11,12 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armestate-shell-v10';
+const CACHE = 'armestate-shell-v11';
+   /* v11: the glass touch layer. Buttons, chips, the header, the bottom nav, the toast and
+      the sheet are translucent, rounded and tinted in the product's own hue; reading surfaces are
+      untouched. A cached v10 shell would paint the old flat Ledger controls beside the new ones
+      on the hub and the other two apps, which is the one thing a shared house style cannot survive. */
+  
    /* v10: motion pass against Emil Kowalski's emil-design-eng skill. The full-screen fade
       on every tab switch is gone (the most repeated action in the app must not animate), sheets
       now leave on a 160ms exit instead of vanishing, the toast exits faster than it enters, the
