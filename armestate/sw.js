@@ -11,7 +11,13 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armestate-shell-v9';   /* v8: the ledger skin. Ruled blocks instead of cards, ink
+const CACHE = 'armestate-shell-v10';
+   /* v10: motion pass against Emil Kowalski's emil-design-eng skill. The full-screen fade
+      on every tab switch is gone (the most repeated action in the app must not animate), sheets
+      now leave on a 160ms exit instead of vanishing, the toast exits faster than it enters, the
+      1.6s and 0.9s attention flashes are cut to 260ms, and the progress bar no longer promises a
+      transition on `width`. A cached v9 shell would keep fading the screen on every nav tap. */
+     /* v8: the ledger skin. Ruled blocks instead of cards, ink
       instead of a palette, every radius at zero, one filled button per screen and a written link
       for everything else — and 257 pictographs gone, including the avatar an owner used to pick
       from a list of ten. The five printable documents are the product and they changed shape, so

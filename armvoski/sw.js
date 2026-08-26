@@ -10,7 +10,13 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armvoski-shell-v9';   /* v8: the ledger skin — ruled blocks instead of cards, ink
+const CACHE = 'armvoski-shell-v10';
+   /* v10: motion pass against Emil Kowalski's emil-design-eng skill. The full-screen fade
+      on every tab switch is gone (the most repeated action in the app must not animate), sheets
+      now leave on a 160ms exit instead of vanishing, the toast exits faster than it enters, the
+      1.6s and 0.9s attention flashes are cut to 260ms, and the progress bar no longer promises a
+      transition on `width`. A cached v9 shell would keep fading the screen on every nav tap. */
+     /* v8: the ledger skin — ruled blocks instead of cards, ink
       instead of a palette, square corners, and no pictographs left in the product. A cached v7
       shell would keep painting the old skin beside the new one on the hub and the other two
       apps, which is the one thing a shared house style cannot survive. v5: the count no longer posts a movement against a book figure read AFTER the weighing (a

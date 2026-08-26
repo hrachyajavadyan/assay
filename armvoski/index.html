@@ -286,7 +286,7 @@ button{font-family:var(--font)}
   padding:0 var(--s4);min-height:44px;
   display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
   backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;
-  transition:transform var(--dur-1) var(--ease),background var(--dur-1) var(--ease),border-color var(--dur-1) var(--ease);
+  transition:transform var(--dur-1) var(--ease-out),background var(--dur-1) var(--ease),border-color var(--dur-1) var(--ease);
 }
 .btn::after{display:none}                          /* the gloss overlay is gone */
 .btn:active{transform:scale(.97);background:var(--surface-3)}
@@ -366,7 +366,7 @@ button{font-family:var(--font)}
   border-radius:var(--r-xs);padding:0 var(--s3);min-height:44px;
   font-family:var(--font);font-weight:700;font-size:var(--fs-label);
   cursor:pointer;width:100%;box-shadow:none;
-  transition:transform var(--dur-1) var(--ease),background var(--dur-1) var(--ease);
+  transition:transform var(--dur-1) var(--ease-out),background var(--dur-1) var(--ease);
 }
 .addbtn:active{background:var(--surface-3)}
 .addbtn:active{transform:scale(.96)}
@@ -391,7 +391,7 @@ button{font-family:var(--font)}
   border:var(--bw) solid var(--stroke2);background:var(--surface);color:var(--muted);
   font-size:17px;line-height:1;font-weight:600;cursor:pointer;flex:0 0 auto;
   display:flex;align-items:center;justify-content:center;
-  transition:transform var(--dur-1) var(--ease),background var(--dur-1) var(--ease);
+  transition:transform var(--dur-1) var(--ease-out),background var(--dur-1) var(--ease);
 }
 .iconbtn:active{transform:scale(.94);background:var(--surface-2)}
 
@@ -480,7 +480,7 @@ body:not(.light) .navbadge{color:#2A0710}
 }
 /* the avatar doubles as the item-card button, so the product name keeps its full column */
 button.pav{padding:0;position:relative;cursor:pointer;color:inherit;font-family:inherit;
-  transition:transform var(--dur-1) var(--ease),background var(--dur-1) var(--ease)}
+  transition:transform var(--dur-1) var(--ease-out),background var(--dur-1) var(--ease)}
 button.pav:active{transform:scale(.94);background:var(--surface-3)}
 button.pav .pavdots{position:absolute;right:2px;bottom:0;font-size:14px;line-height:1;font-weight:700;color:var(--muted)}
 /* Armenian product names run 150-190px; on a 320-412px phone the flex row can never give them
@@ -682,8 +682,7 @@ input.err,textarea.err{border-color:var(--danger)}
 .hbar .hl b{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
 .hbar .track{height:8px;border-radius:var(--r-pill);background:var(--surface-2);
   overflow:hidden;border:var(--bw) solid var(--stroke)}
-.hbar .fill{height:100%;border-radius:var(--r-pill);background:var(--acc);box-shadow:none;
-  transition:width var(--dur-3) var(--ease)}
+.hbar .fill{height:100%;border-radius:var(--r-pill);background:var(--acc);box-shadow:none}
 .hbar .fill.cy{background:var(--info)}
 .spark{display:inline-flex;gap:2px;align-items:flex-end;height:20px;vertical-align:middle}
 .spark i{width:4px;background:var(--acc);border-radius:1px;display:block;min-height:2px;opacity:.7}
@@ -903,7 +902,7 @@ input.err,textarea.err{border-color:var(--danger)}
   font-family:var(--font);font-size:17px;line-height:1;font-weight:600;
   cursor:pointer;display:flex;align-items:center;justify-content:center;gap:var(--s1);
   backdrop-filter:none;
-  transition:transform var(--dur-1) var(--ease),background var(--dur-1) var(--ease);
+  transition:transform var(--dur-1) var(--ease-out),background var(--dur-1) var(--ease);
 }
 /* R7: an inline count made «5» 5px wider than its own 38px button at 320px. A badge is a
    corner mark, not a second word — it leaves the glyph centred and costs the row no width. */
@@ -980,7 +979,7 @@ input.err,textarea.err{border-color:var(--danger)}
 .panetabs{margin-bottom:0}
 .panetabs button{padding:0 var(--s3);min-height:44px;font-size:var(--fs-micro)}
 .panebody{padding:var(--s4)}
-.pane.flash{animation:flashPane .9s var(--ease)}
+.pane.flash{animation:flashPane var(--dur-3) var(--ease-out)}
 @keyframes flashPane{
   0%{box-shadow:var(--sh-1)}
   25%{box-shadow:0 0 0 2px var(--acc), var(--sh-2)}
@@ -997,8 +996,6 @@ input.err,textarea.err{border-color:var(--danger)}
    the nav row itself plus a gutter plus the home-indicator inset, so the final control on any
    tab is fully clear of the strip. */
 main{padding:var(--s3) var(--s4) calc(var(--h-nav-row) + var(--s4) + env(safe-area-inset-bottom));max-width:680px;margin:0 auto}
-main.anim{animation:fadeUp var(--dur-3) var(--ease-out) both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes slideUp{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}
 
@@ -1122,9 +1119,9 @@ nav button{flex:1 1 0;max-width:none}
   z-index:100;opacity:0;pointer-events:none;
   max-width:calc(100% - var(--s8));text-align:center;
   box-shadow:var(--sh-2);
-  transition:opacity var(--dur-2) var(--ease),transform var(--dur-2) var(--ease-out);
+  transition:opacity var(--dur-1) var(--ease-out),transform var(--dur-1) var(--ease-out);
 }
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);transition:opacity var(--dur-2) var(--ease-out),transform var(--dur-2) var(--ease-out)}
 /* docked mode: a sheet is open, so the toast sits under the header, never over the action row */
 #toast.top{bottom:auto;top:calc(var(--h-top) + env(safe-area-inset-top) + var(--s2));
   transform:translateX(-50%) translateY(-8px)}
@@ -1149,6 +1146,15 @@ body.light .modal{background:rgba(14,23,38,.42)}
   box-shadow:var(--sh-3);backdrop-filter:none;
   animation:slideUp var(--dur-3) var(--ease-out);
 }
+
+/* ===== MOTION: EXIT STATES =====
+   emil-design-eng: "elements appearing or disappearing without transition feel broken", and
+   exit must be FASTER than enter. The sheet entered on a 260ms slideUp and left in 0ms, because
+   closeModal() cleared #modalRoot outright. It now leaves on a 160ms transition — a transition,
+   not a keyframe, so a rapid close/open retargets instead of restarting. translateY(100%) is
+   relative to the sheet's own height, so it clears the screen whatever the sheet contains. */
+.modal.out{animation:none;opacity:0;pointer-events:none;transition:opacity 140ms var(--ease-out)}
+.modal.out .mbody{animation:none;transform:translateY(100%);transition:transform 160ms var(--ease-out)}
 .grabber{width:36px;height:4px;border-radius:var(--r-pill);background:var(--stroke2);
   margin:var(--s2) auto var(--s4)}
 .mbody h3{
@@ -1283,7 +1289,7 @@ body.light .flowmark{background:var(--acc) !important;color:#fff !important;
   100%{box-shadow:0 0 0 0 rgba(0,0,0,0)}
 }
 /* NOT `.hl` — that class already exists inside `.hbar` as the meter's label row. */
-.hlflash{animation:hlPulse 1.6s var(--ease) 1}
+.hlflash{animation:hlPulse var(--dur-3) var(--ease-out) 1}
 tr.hlflash{animation:none;background:var(--acc-tint)}
 /* the global reduced-motion rule collapses every animation to 0.001ms, which would make the
    ring invisible. Reduced motion must not mean "no feedback". */
@@ -4412,7 +4418,24 @@ function openModal(inner){
     + '<div class="mbody"><div class="grabber"></div>' + inner + '</div></div>';
   if(y){ try{ r.querySelector('.modal').scrollTop = y; }catch(e){} }
 }
-function closeModal(){ MODAL_RE = null; document.getElementById('modalRoot').innerHTML = ''; }
+function closeModal(){
+  /* emil-design-eng: a sheet that entered on a 260ms slideUp and vanished in 0ms reads as broken.
+     State is dropped IMMEDIATELY (nothing downstream may observe a half-closed sheet); only the
+     DOM clear waits for the 160ms exit. If a new sheet opens inside that window, openModal()
+     replaces innerHTML and the outgoing node — the one carrying data-out — is gone, so the
+     timeout finds nothing to clear and leaves the new sheet alone. */
+  const r = document.getElementById('modalRoot');
+  const ov = r ? r.querySelector('.modal') : null;
+  MODAL_RE = null;
+  if(!ov){ if(r) r.innerHTML=''; return; }
+  if(ov.dataset.out) return;
+  ov.dataset.out = '1';
+  ov.classList.add('out');
+  const quick = (window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches);
+  setTimeout(function(){
+    if(r.querySelector('.modal[data-out]')) r.innerHTML='';
+  }, quick ? 0 : 170);
+}
 
 /* ---- AN OPEN SHEET IS PART OF THE SCREEN, so a global repaint must repaint it too ----
    renderAll() rebuilds #top, #app and #nav and never touched #modalRoot, so switching the

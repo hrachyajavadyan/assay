@@ -242,6 +242,20 @@ h1{
   .card.tool{max-width:640px}
   h1{font-size:38px}
 }
+
+/* ===== PRESS FEEDBACK =====
+   emil-design-eng: "Buttons must feel responsive to press." The hub had no :active state at all
+   and exactly one transition in the file (the reduced-motion reset) — the three product links
+   were the only targets on the page and nothing acknowledged the tap. 120ms sits in the
+   100-160ms band the skill gives for press feedback; the curve is the same strong ease-out the
+   apps use, so a press feels identical on the hub and inside a product.
+   Boxes scale. The CTAs are underlined text, where a scale drags the underline with it, so they
+   dim instead — the same idiom .btn.ghost:active already uses in all three apps. */
+:root{--dur-press:120ms;--ease-out:cubic-bezier(.16,1,.3,1)}
+.cta{transition:opacity var(--dur-press) var(--ease-out)}
+.cta:active{opacity:.55}
+.seg button,.tbtn{transition:transform var(--dur-press) var(--ease-out)}
+.seg button:active,.tbtn:active{transform:scale(.94)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 /* ── one hue per product ─────────────────────────────────────────────────────
