@@ -2185,6 +2185,115 @@ body.light{
             backdrop-filter:none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLASS TOUCH LAYER · polish pass
+   Against Apple's Designing Fluid Interfaces / Principles of Great Design,
+   via the apple-design skill. Five things it flagged that the first pass missed.
+   Delete this block with the one above it to return to plain Ledger.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1 · RESPONSE · kill the tap delay ───────────────────────────────────────
+   "Be vigilant about every latency… anything on the input path that isn't
+   essential is a regression." Nothing in the suite set `touch-action`, so on
+   every touch engine that still arbitrates double-tap-to-zoom, each press paid
+   a recognition delay before :active could even paint. The press feedback was
+   already correct; it was just arriving late. This is the cheapest real latency
+   in the whole app. Buttons and links only — never a scroll container. */
+button,a[href],[role="button"],summary{ touch-action:manipulation }
+
+/* ── 2 · MATERIALS · never stack a light translucent surface on another ──────
+   "Never stack a light translucent surface on another — legibility collapses."
+   #top and #nav ARE the material; the controls sitting on them were adding a
+   second translucent layer on top, so the header's blur showed through a button
+   that was itself see-through. The fix keeps the identical tint but stacks it on
+   an OPAQUE base: the gradient layer is the tint, --bg underneath is solid, so
+   the control composites against the bar instead of compounding with it.
+   Away from the chrome the plain translucent version still applies. */
+#top .tbtn,#top .iconbtn,#nav .tbtn,nav .tbtn{
+  background:linear-gradient(rgba(var(--acc-rgb),.07),rgba(var(--acc-rgb),.07)),var(--bg);
+}
+#top .tbtn.on,#nav .tbtn.on,nav .tbtn.on{
+  background:linear-gradient(rgba(var(--acc-rgb),.24),rgba(var(--acc-rgb),.24)),var(--bg);
+}
+/* the toast's own action button was already opaque --bg, so it never compounded. */
+
+/* ── 3 · MATERIALS · vibrancy on the floating layer ──────────────────────────
+   "Over blurred/translucent surfaces, don't use flat gray text — use higher
+   contrast, slightly heavier weight, and a small letter-spacing bump."
+   The inactive nav labels were --muted at weight 500, chosen when the bar was
+   opaque. On a material they need the extra half-step to hold their edge. The
+   colour is left alone — it already measures well clear of AA — because weight
+   and tracking buy legibility without flattening the active/inactive contrast
+   that tells you which tab you are on. */
+#nav button,nav button{ font-weight:600; letter-spacing:.1px }
+#nav button.active,nav button.active{ font-weight:700; letter-spacing:.1px }
+
+/* ── 4 · MATERIALS · materialize, don't just fade ────────────────────────────
+   "For glass/blur surfaces, animate blur radius and scale together on enter and
+   exit, so the surface reads as a real material arriving rather than a plain
+   opacity fade." The scrim was fading its opacity while its blur snapped from
+   none to full on frame one — the sheet arrived, but the glass behind it simply
+   appeared. Now the blur builds with the dim and unwinds with it.
+   The SHEET itself still only slides. A bottom sheet that also scales reads as
+   a dialog rather than a drawer, and this one carries tables of money figures
+   that must stay square to the eye the whole way up. */
+@keyframes glassIn{
+  from{ opacity:0; -webkit-backdrop-filter:blur(0px) saturate(1); backdrop-filter:blur(0px) saturate(1) }
+  to  { opacity:1; -webkit-backdrop-filter:blur(10px) saturate(1.2); backdrop-filter:blur(10px) saturate(1.2) }
+}
+.modal{ animation:glassIn var(--dur-2) var(--ease-out) }
+.modal.out{
+  -webkit-backdrop-filter:blur(0px) saturate(1);
+          backdrop-filter:blur(0px) saturate(1);
+  transition:opacity 140ms var(--ease-out),backdrop-filter 140ms var(--ease-out),
+             -webkit-backdrop-filter 140ms var(--ease-out);
+}
+
+/* ── 5 · MATERIALS · a scroll edge, not a hard divider ───────────────────────
+   "Instead of a 1px border under a sticky header, fade a small blur/gradient
+   mask where content meets floating chrome."
+   ONE DELIBERATE DEVIATION: the 2px accent rule under #top stays. It is not a
+   divider — it is the line that tells you which of the three products you are
+   looking at, and it is the same signal the hub paints on the card you came
+   from. What is added is the soft edge Apple asks for, immediately outside the
+   chrome, so scrolling content dissolves into the bar instead of colliding
+   with it. Pure CSS and pointer-transparent: no scroll listener, nothing on the
+   input path. */
+#top::after,#nav::after,nav::after{
+  content:"";position:absolute;left:0;right:0;height:12px;
+  pointer-events:none;
+}
+#top::after{ top:100%; background:linear-gradient(to bottom,rgba(var(--bg-rgb),.55),rgba(var(--bg-rgb),0)) }
+#nav::after,nav::after{ bottom:100%; background:linear-gradient(to top,rgba(var(--bg-rgb),.55),rgba(var(--bg-rgb),0)) }
+
+/* ── 6 · ACCESSIBILITY · the third signal ────────────────────────────────────
+   The first pass answered prefers-reduced-motion and prefers-reduced-transparency
+   but not prefers-contrast, which apple-design names alongside them: "near-solid
+   backgrounds with a defined, contrasting border." A reader who has asked the OS
+   for more contrast is asking for edges, not atmosphere. */
+@media (prefers-contrast:more){
+  #top,#nav,nav{
+    background:var(--bg);
+    -webkit-backdrop-filter:none;backdrop-filter:none;
+  }
+  #top::after,#nav::after,nav::after{ display:none }
+  #toast{ background:var(--ink);-webkit-backdrop-filter:none;backdrop-filter:none }
+  .modal{ background:rgba(6,10,18,.86);-webkit-backdrop-filter:none;backdrop-filter:none;animation:none }
+  .btn.primary,.btn.full.cyan,.btn.full.green,.btn.full.violet,
+  .btn.small.primary,.fab{
+    background:var(--acc);border-color:var(--ink);
+    -webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;
+  }
+  .btn.ghost,.btn.ghost.full,.chips button,.chip,.iconbtn,.addbtn,
+  button.pav,.qtyctl button,.stepper button,.tbtn{
+    background:var(--surface);border-color:var(--ink);box-shadow:none;
+  }
+  .chips button.active,.chips button[aria-pressed="true"],.tbtn.on{
+    background:var(--acc-tint);border-color:var(--acc);
+  }
+}
+@media print{ #top::after,#nav::after,nav::after{ display:none !important } }
 </style>
 </head>
 <body class="light">

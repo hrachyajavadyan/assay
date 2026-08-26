@@ -351,6 +351,19 @@ body.dark .card:has(.mk[data-i18n="m_gold"])  { --c-rgb:169,169,180 }
 @media print{
   .cta,.mk,.seg button,.tbtn{background:transparent !important;box-shadow:none !important}
 }
+
+/* ── polish · apple-design ───────────────────────────────────────────────────
+   Response: nothing set touch-action, so every press paid the double-tap-zoom
+   recognition delay before :active could paint. Contrast: the third accessibility
+   signal the first pass missed — a reader who asks the OS for more contrast is
+   asking for edges, not atmosphere. The hub has no translucent chrome, so the
+   stacking and vibrancy rules the apps needed do not arise here. */
+button,a[href],[role="button"],summary{ touch-action:manipulation }
+@media (prefers-contrast:more){
+  .cta{ background:none;border-color:currentColor;box-shadow:none }
+  .seg button,.tbtn{ background:none;border-color:currentColor;box-shadow:none }
+  .seg button[aria-pressed="true"]{ background:rgba(var(--ink-rgb),.18) }
+}
 </style>
 </head>
 <body class="light">

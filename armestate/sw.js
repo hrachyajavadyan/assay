@@ -11,7 +11,13 @@
    - /api/* is NEVER cached — sync must fail honestly, never replay a stale room;
    - anything else falls through to the network untouched.
    Bump CACHE when the shell changes. */
-const CACHE = 'armestate-shell-v11';
+const CACHE = 'armestate-shell-v12';
+   /* v12: apple-design polish on the glass layer. touch-action removes the tap-recognition
+      delay before :active can paint; controls on #top/#nav no longer stack translucency on
+      translucency; nav labels gain vibrancy weight; the modal scrim's blur builds and unwinds
+      instead of snapping; a soft scroll edge replaces the hard collision under the chrome; and
+      prefers-contrast is answered. A cached v11 shell would keep the compounded translucency. */
+  
    /* v11: the glass touch layer. Buttons, chips, the header, the bottom nav, the toast and
       the sheet are translucent, rounded and tinted in the product's own hue; reading surfaces are
       untouched. A cached v10 shell would paint the old flat Ledger controls beside the new ones
